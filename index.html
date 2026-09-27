@@ -7,13 +7,14 @@
     <meta name="color-scheme" content="dark" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="description" content="Lanternlocks: flip the canal locks, sort the grumpy Mopes, keep the Great Lantern lit. A cozy puzzle-defence prototype." />
-    <title>Lanternlocks</title>
+    <meta name="description" content="Lantern Guard: Tower Defense. Build your towers, grow your defence and keep the lantern lit." />
+    <meta name="apple-mobile-web-app-title" content="Lantern Guard" />
+    <title>Lantern Guard: Tower Defense</title>
     <link rel="icon" href="./icon.svg" type="image/svg+xml" />
   </head>
   <body>
     <div id="app">
-      <main id="stage" aria-label="Lanternlocks">
+      <main id="stage" aria-label="Lantern Guard: Tower Defense">
         <header id="hud">
           <div class="stat stat-light" title="Light: Mopes that reach the Great Lantern dim it">
             <span class="stat-ic" id="ic-light"></span><b id="lives">25</b><span class="sr-only"> light</span>
@@ -29,7 +30,7 @@
         </header>
         <section id="field">
           <canvas id="cv" tabindex="0" role="application" aria-roledescription="canal map" aria-label="Canal map" aria-describedby="map-help"></canvas>
-          <p id="map-help" class="sr-only">Tap pads to build keepers and lock gates to steer Mopes. With a keyboard: arrow keys move between pads and locks, Enter selects or flips, 1 to 6 builds on a selected pad, H opens charms for a lock.</p>
+          <p id="map-help" class="sr-only">Tap pads to build towers. Between waves, tap a lock to compare routes; during combat, tap to switch or hold to compare. With a keyboard: arrow keys move between pads and locks, Enter selects, Q and E switch locks, and 1 to 6 builds on a selected pad.</p>
           <div id="paused-chip" role="status" hidden></div>
           <div id="msgs">
             <div id="banner" role="status" aria-live="polite"></div>

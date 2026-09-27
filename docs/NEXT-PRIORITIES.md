@@ -1,6 +1,6 @@
 # Next three refinement priorities
 
-Status: recommendations for the next development pass. These changes are not implemented by this document.
+Status: priorities 1 and 2 now have an implemented refinement pass. See [Lantern Guard implementation, balance and verification](LANTERN-GUARD.md). The original recommendations below remain the acceptance criteria; observed newcomer/retention testing and physical iPhone validation are still outstanding.
 
 ## 1. Make the board clear and make routing earn its place
 

@@ -4,6 +4,8 @@ import { sound } from '../core/audio'
 import type { CharmTrait, EnemyId, TowerId } from '../game/defs'
 import { WORLD_H, WORLD_W, type Segment } from '../game/level'
 import type { Enemy, GateState, Proj, Sim, SimEvent, Tower } from '../game/sim'
+import { routeCoverage, towerPartners } from '../game/route-plan'
+import { CANAL_STAGES } from '../game/canal-growth'
 import { BANK_W, BG_PAD_X, BG_PAD_Y, bridgeGeo, CANAL_W, layoutDecor, millGeo, renderBackground, type BridgeGeo, type Decor, type MillGeo } from './bg'
 import { BLOOM_FAMS, bloomColor, clearBloomColors, famIndex, paintBloom, type BloomStyle } from './blooms'
 import { drawEnemy, drawEnemyIcon, ENEMY_VIS, setEnemySpriteScale } from './enemies'
@@ -18,6 +20,7 @@ export type Selection =
   | null
 
 export interface ViewState {
+  routeDir?: 0 | 1
   upgradeRange?: number
   selection: Selection
   /** Tower type being previewed on the selected pad (or armed from the tray). */
@@ -118,6 +121,12 @@ export class Renderer {
   private bgKey = ''
   private decor: Decor[]
   private gateGeo = new Map<string, GateGeo>()
+  private routeKey = ''
+  private routePlan: ReturnType<typeof routeCoverage> | null = null
+  private partnerKey = ''
+  private partners: Tower[] = []
+  private newPads: number[] = []
+  private revealUntil = 0
   private flowAlpha = new Map<string, number>()
   private lanternPulse = 0
   private leakFlash = 0
@@ -141,6 +150,11 @@ export class Renderer {
   }
 
   attach(sim: Sim, preserveBlooms = false) {
+    this.routeKey = ''
+    this.partnerKey = ''
+    this.newPads = preserveBlooms && sim.challenge.expanding && sim.canalStage > 0
+      ? CANAL_STAGES[sim.canalStage].pads.filter(p => !(CANAL_STAGES[sim.canalStage - 1].pads as readonly number[]).includes(p)) : []
+    this.revealUntil = this.time + 5
     if (this.levelBuilt !== sim.level) {
       this.levelBuilt = sim.level
       this.decor = layoutDecor(sim.level)
@@ -685,6 +699,7 @@ export class Renderer {
     ctx.drawImage(this.bloomCv!, 0, 0, WORLD_W, WORLD_H)
     this.drawSluice(ctx, sim)
     this.drawRanges(ctx, sim, view)
+    this.drawRoutePlan(ctx, sim, view)
 
     // pads
     for (let i = 0; i < sim.pads.length; i++) {
@@ -697,6 +712,13 @@ export class Renderer {
       const sel = view.selection?.kind === 'pad' && view.selection.index === i
       const armed = view.armed !== null
       drawPad(ctx, p.x, p.y, sel ? 'selected' : armed ? 'buildable' : 'empty', t)
+      if (t < this.revealUntil && this.newPads.includes(i)) {
+        ctx.strokeStyle = withAlpha(P.amberHi, this.settings.reduceMotion ? 0.8 : 0.6 + Math.sin(t * 4) * 0.3)
+        ctx.lineWidth = 3
+        ctx.beginPath()
+        ctx.ellipse(p.x, p.y, PAD_R + 7, PAD_R * 0.56 + 5, 0, 0, TAU)
+        ctx.stroke()
+      }
     }
     // gate bodies under the Mopes
     for (const g of sim.gates) if (sim.gateAvailable(g)) this.drawGateBase(ctx, sim, g, dt)
@@ -738,6 +760,13 @@ export class Renderer {
           seed: tw.uid,
         })
       } else {
+        if (sim.challenge.guard && item.e.rich) {
+          ctx.strokeStyle = withAlpha(P.amberHi, 0.8)
+          ctx.lineWidth = 2
+          ctx.beginPath()
+          ctx.ellipse(item.e.x, item.e.y + 6, item.e.def.radius + 4, item.e.def.radius * 0.52 + 3, 0, 0, TAU)
+          ctx.stroke()
+        }
         drawEnemy(ctx, item.e, t, { hiddenAlpha: 0.26, showBars: true })
         if (item.e.def.id === 'gloom' && item.e.def.splitAtGate) this.drawShroud(ctx, item.e, t)
       }
@@ -1205,10 +1234,41 @@ export class Renderer {
       ctx.lineDashOffset = -this.time * 12
       ctx.stroke()
       ctx.setLineDash([])
+      // Paint the actual reachable water, so a range circle has a concrete meaning.
+      ctx.strokeStyle = withAlpha(color, 0.65)
+      ctx.lineWidth = 8
+      ctx.lineCap = 'round'
+      ctx.beginPath()
+      for (const segment of sim.level.segs.values()) {
+        let inside = false
+        for (const p of segment.line.pts) {
+          if ((p.x - x) ** 2 + (p.y - y) ** 2 <= r * r) {
+            if (inside) ctx.lineTo(p.x, p.y)
+            else ctx.moveTo(p.x, p.y)
+            inside = true
+          } else inside = false
+        }
+      }
+      ctx.stroke()
     }
     if (sel?.kind === 'tower' && sel.tower) {
       const tw = sel.tower
       ring(tw.x, tw.y, sim.effRange(tw), tw.def.hue)
+      const key = `${sim.seed}:${sim.canalStage}:${tw.uid}|${sim.towers.map(t => `${t.uid}:${t.id}:${t.a}:${t.b}:${sim.effRange(t)}`).join(',')}`
+      if (key !== this.partnerKey) { this.partnerKey = key; this.partners = towerPartners(sim, tw) }
+      ctx.strokeStyle = withAlpha(P.lime, 0.8)
+      ctx.lineWidth = 2.5
+      ctx.setLineDash([5, 5])
+      for (const partner of this.partners) {
+        ctx.beginPath()
+        ctx.moveTo(tw.x, tw.y)
+        ctx.lineTo(partner.x, partner.y)
+        ctx.stroke()
+        ctx.beginPath()
+        ctx.ellipse(partner.x, partner.y, PAD_R, PAD_R * 0.56, 0, 0, TAU)
+        ctx.stroke()
+      }
+      ctx.setLineDash([])
       if (view.upgradeRange && view.upgradeRange > sim.effRange(tw)) ring(tw.x, tw.y, view.upgradeRange, P.cream, true)
       if (tw.id !== 'owl' && tw.id !== 'garden' && tw.id !== 'bell') {
         ctx.strokeStyle = withAlpha(P.lime, 0.35)
@@ -1222,8 +1282,39 @@ export class Renderer {
     }
     if (sel?.kind === 'pad' && view.preview) {
       const p = sim.pads[sel.index]
-      if (p) ring(p.x, p.y, previewRange(view.preview), P.amber)
+      if (p) ring(p.x, p.y, sim.towerStats(view.preview, 0, 0).range, P.amber)
     }
+  }
+
+  private drawRoutePlan(ctx: CanvasRenderingContext2D, sim: Sim, view: ViewState) {
+    if (view.selection?.kind !== 'gate' || !sim.challenge.guard) return
+    const g = view.selection.gate
+    const dir = view.routeDir ?? sim.gateEffectiveDir(g)
+    const key = `${sim.seed}:${sim.canalStage}:${g.def.id}:${dir}|${sim.gates.map(g => sim.gateEffectiveDir(g)).join(',')}|${sim.towers.map(t => `${t.uid}:${t.id}:${t.a}:${t.b}:${sim.effRange(t)}`).join(',')}`
+    if (key !== this.routeKey) { this.routeKey = key; this.routePlan = routeCoverage(sim, g, dir) }
+    const plan = this.routePlan!
+    ctx.save()
+    ctx.lineCap = 'round'
+    const drawPath = (segment: Segment) => {
+      ctx.beginPath()
+      segment.line.pts.forEach((p, i) => i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y))
+      ctx.stroke()
+    }
+    const other = sim.level.segs.get(g.def.outs[dir ? 0 : 1])
+    ctx.setLineDash([7, 10])
+    ctx.strokeStyle = withAlpha(P.cream, 0.45)
+    ctx.lineWidth = 3
+    if (other) drawPath(other)
+    ctx.setLineDash([])
+    ctx.strokeStyle = withAlpha(P.amberHi, 0.95)
+    ctx.lineWidth = 5
+    plan.segments.forEach(drawPath)
+    for (const tower of plan.towers) {
+      ctx.beginPath()
+      ctx.ellipse(tower.x, tower.y, PAD_R + 3, PAD_R * 0.56 + 2, 0, 0, TAU)
+      ctx.stroke()
+    }
+    ctx.restore()
   }
 
   private drawGateBase(ctx: CanvasRenderingContext2D, sim: Sim, g: GateState, dt: number) {
@@ -1902,11 +1993,6 @@ export function incoming(sim: Sim, g: GateState, n: number): Enemy[] {
   }
   out.sort((a, b) => a.d - b.d)
   return out.slice(0, n).map((o) => o.e)
-}
-
-function previewRange(id: TowerId): number {
-  const base = { wick: 150, cracker: 165, bell: 115, owl: 150, beam: 205, garden: 130 }
-  return base[id]
 }
 
 function haptic(ms: number) {

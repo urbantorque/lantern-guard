@@ -191,6 +191,8 @@ export type SimEvent =
 
 /** Rules a night is played under. Plain nights use {}; tides and weekly nights set several. */
 export interface Challenge {
+  /** Lantern Guard rules. Opt-in for new growing nights; older saves keep their balance. */
+  guard?: 1
   /** Versioned growing canal; absent on legacy saves and challenge nights. */
   expanding?: 1
   waterway?: WaterwayId
@@ -414,7 +416,7 @@ export class Sim {
     this.maxLives = d.lives
     this.hpMul = d.hp
     this.speedMul = d.speed
-    this.level = buildLevel(challenge.expanding ? growingCanal(0) : waterwayLevel(challenge.waterway))
+    this.level = buildLevel(challenge.expanding ? growingCanal(0, !!challenge.guard) : waterwayLevel(challenge.waterway))
     this.gates = this.level.def.gates.map((g) => ({ def: g, state: g.lockedDir, charm: null, jammed: false, cd: 0, flipT: -9, routeT: [-9, -9], flips: 0, swingT: 0 }))
     this.pads = this.level.def.pads.map((p) => ({ x: p.x, y: p.y, tower: null }))
     // a tide opens mid-night: the locks and the sluice are already open, and there is a bank to build with
@@ -487,7 +489,7 @@ export class Sim {
   /** Only called on an empty canal, or before restoring its saved occupants. */
   private revealCanal(stage: number) {
     this.canalStage = stage
-    this.level = buildLevel(growingCanal(stage))
+    this.level = buildLevel(growingCanal(stage, !!this.challenge.guard))
     this.gates.forEach((g, i) => { g.def = this.level.def.gates[i] })
     this.recomputeRoutes()
     this.buildGateDistances()
@@ -523,6 +525,7 @@ export class Sim {
   canStartWave(): boolean {
     if (this.over) return false
     if (this.wave >= FINAL_WAVE && !this.freeplay) return false
+    if (this.challenge.guard && [8, 10, 16, 25].includes(this.wave + 1) && this.waveActive) return false
     // Expansions happen in a planning break, never under moving Mopes.
     if (this.challenge.expanding && stageForWave(this.wave + 1) > this.canalStage && this.waveActive) return false
     return this.spawners.length === 0
@@ -539,6 +542,15 @@ export class Sim {
         6: 'Mopes now enter upstream. Your original towers still guard the Great Lantern. Crackers handle this Wisp swarm.',
         7: 'Lighthouses are ready. Their heavy beam is good for Bloats and armour.',
       }
+      if (this.challenge.guard) Object.assign(notes, {
+        2: 'Tap the Lower Lock to compare routes. Choose the water your towers cover best.',
+        5: 'Shellbacks arrive. Cracker bursts and heavy upgrades crack armour; the Mill is another option.',
+        8: 'Hidden Veils arrive. Put a Lamp Owl beside your damage towers, or use the Lantern bridge.',
+        10: 'Gloomtoad jams its nearby lock. Plan a route through your strongest towers before it arrives.',
+        13: 'Mixed crowds. Moonbell slows groups while nearby Crackers keep bursting.',
+        16: 'Veiled Shells need sight and heavy hits together. Pair an Owl with heavy towers.',
+        25: 'Old Gloom splits at the Lower Lock. Both lower branches need strong towers; its shroud falls at the split.',
+      })
       return { ...WAVES[n - 1], note: notes[n] ?? WAVES[n - 1].note }
     }
     return n <= FINAL_WAVE ? (this.challenge.waterway === 'reedbank' ? REEDBANK_WAVES : WAVES)[n - 1] : freeplayWave(n - FINAL_WAVE, this.seed)
@@ -546,6 +558,17 @@ export class Sim {
 
   towerCost(id: TowerId): number {
     return TOWERS[id].cost
+  }
+
+  /** Support coverage improves in new nights without rewriting legacy towers or saves. */
+  towerStats(id: TowerId, a: number, b: number) {
+    const stats = computeStats(id, a, b)
+    if (this.challenge.guard && (id === 'bell' || id === 'owl')) stats.range += 20
+    return stats
+  }
+
+  get guardPlanning(): boolean {
+    return !!this.challenge.guard && !this.waveActive && [8, 10, 16, 25].includes(this.wave + 1)
   }
 
   sellValue(t: Tower): number {
@@ -567,6 +590,7 @@ export class Sim {
   }
 
   get charmsAllowed(): boolean {
+    if (this.challenge.guard) return false
     if (this.challenge.expanding && this.planningWave < 8) return false
     return !this.challenge.lockedGates && !this.challenge.noCharms && DIFFICULTY[this.difficulty].charms
   }
@@ -589,7 +613,7 @@ export class Sim {
       y: pad.y,
       a: 0,
       b: 0,
-      stats: computeStats(id, 0, 0),
+      stats: this.towerStats(id, 0, 0),
       cd: 0.15,
       priority: 'first',
       spent: cost,
@@ -625,7 +649,7 @@ export class Sim {
     t.spent += cost
     if (path === 0) t.a++
     else t.b++
-    t.stats = computeStats(t.id, t.a, t.b)
+    t.stats = this.towerStats(t.id, t.a, t.b)
     t.upT = this.time
     this.stats.upgrades++
     this.stats.maxTier = Math.max(this.stats.maxTier, t.a, t.b)
@@ -651,7 +675,7 @@ export class Sim {
     if (!this.canFlip(g)) return false
     g.state = g.state === 0 ? 1 : 0
     g.flipT = this.time
-    g.cd = GATE_COOLDOWN
+    g.cd = this.challenge.guard && !this.waveActive ? 0 : GATE_COOLDOWN
     // a tidal lock opened onto its short run starts counting down to swing back; closing it stops the count
     g.swingT = this.challenge.tidal && g.state !== g.def.lockedDir ? this.challenge.tidal : 0
     g.flips++
@@ -789,7 +813,9 @@ export class Sim {
     const d = DIFFICULTY[this.difficulty]
     const lw = Math.min(wave, FINAL_WAVE)
     const deep = Math.max(0, lw - 11)
-    const late = def.boss ? 1 + Math.max(0, lw - 10) * d.bossLate : 1 + deep * d.late + deep * deep * d.late2
+    // Keep Nightfall's ordinary late enemies tougher than Standard after their opening ramp.
+    const lateRate = this.challenge.guard && this.difficulty === 'nightfall' ? 0.25 : d.late
+    const late = def.boss ? 1 + Math.max(0, lw - 10) * d.bossLate : 1 + deep * lateRate + deep * deep * d.late2
     const hp = def.hp * ramp * late * (this.freeplay ? 1 + (this.wave - FINAL_WAVE) * 0.06 : 1)
     const shell = (def.shell ?? 0) * ramp * late * (this.challenge.thick ?? 1)
     const e: Enemy = {
@@ -900,7 +926,7 @@ export class Sim {
       const r = owl ? this.effRange(t) : this.effRange(t) * SPOT_FRACTION
       for (const e of this.near(t.x, t.y, r, tmpA)) {
         if (!e.def.hidden) continue
-        e.seenT = 0.12
+        e.seenT = this.challenge.guard ? Math.max(e.seenT, owl ? 0.8 : 0.12) : 0.12
         // each hidden Mope counts once, for the first owl to spot it while it is still veiled
         if (owl && !e.owlSeen && !e.revealedPerm) {
           e.owlSeen = true
@@ -1130,7 +1156,7 @@ export class Sim {
     }
     if (amount <= 0) return true
     // Old Gloom's shroud: only a sliver lands before the split, and never enough to stop it
-    if (e.shrouded) amount = Math.min(amount * SHROUD_TAKEN, Math.max(0, e.hp - e.maxHp * SHROUD_FLOOR))
+    if (e.shrouded) amount = Math.min(amount * (this.challenge.guard ? 0.45 : SHROUD_TAKEN), Math.max(0, e.hp - e.maxHp * SHROUD_FLOOR))
     e.hp -= amount
     if (e.hp <= 0.0001) this.kill(e, src)
     return true
@@ -1147,8 +1173,9 @@ export class Sim {
         lurer = t
       }
     }
-    const reward = e.reward * (1 + lure) * e.seg.bonus
-    if (lurer) lurer.earned += e.reward * lure * e.seg.bonus
+    const routeBonus = this.challenge.guard ? (e.rich ? 2 : 1) : e.seg.bonus
+    const reward = e.reward * (1 + lure) * routeBonus
+    if (lurer) lurer.earned += e.reward * lure * routeBonus
     this.glowFrac += reward
     const whole = Math.floor(this.glowFrac)
     this.glowFrac -= whole
@@ -1162,7 +1189,7 @@ export class Sim {
       src.pops++
       this.stats.popsBy[src.id] = (this.stats.popsBy[src.id] ?? 0) + 1
     }
-    this.events.push({ t: 'pop', x: e.x, y: e.y, tx: e.tx, ty: e.ty, size: e.def.radius, enemy: e.def.id, family: e.def.family, reward: whole, lured: lure > 0 || e.seg.bonus > 1, boss: !!e.def.boss })
+    this.events.push({ t: 'pop', x: e.x, y: e.y, tx: e.tx, ty: e.ty, size: e.def.radius, enemy: e.def.id, family: e.def.family, reward: whole, lured: lure > 0 || routeBonus > 1, boss: !!e.def.boss })
     if (e.def.split) {
       for (let i = 0; i < e.def.split.count; i++) {
         const c = this.spawnEnemy(e.def.split.type, e.seg, Math.max(0, e.s - 6 - i * 12), e.wave)
@@ -1724,7 +1751,7 @@ export class Sim {
         y: pad.y,
         a: t.a,
         b: t.b,
-        stats: computeStats(t.id, t.a, t.b),
+        stats: sim.towerStats(t.id, t.a, t.b),
         cd: t.cd ?? 0.2,
         priority: t.priority,
         spent: t.spent,

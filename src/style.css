@@ -2164,7 +2164,7 @@ html.reduce-motion .stat-light.hurt {
 /* Tower inspection occupies the existing dock, keeping the full board visible. */
 #tray .tw-btn { min-height:88px; }
 #sheet.tower-sheet { top:6px; height:auto; max-height:none; padding:4px; box-shadow:0 0 18px rgba(0,0,0,.25); }
-.tower-sheet .sh-head { height:44px; gap:6px; margin:0 0 4px; }
+.tower-sheet .sh-head { min-height:44px; height:auto; gap:6px; margin:0 0 4px; }
 .tower-sheet .sh-portrait { width:34px; height:34px; border-radius:8px; }
 .tower-sheet .sh-h { font-size:16px; }
 .tower-sheet .sh-sub { font-size:11px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
@@ -2239,3 +2239,40 @@ html.reduce-motion .stat-light.hurt {
 .big-text .tw-btn .tw-role { font-size:12px; min-height:28px; }
 .big-text #canal-progress { font-size:12px; }
 @media (max-height:680px) { .simple-title .key-art { height:84px; } .simple-title .tagline { margin-bottom:12px; } }
+
+/* Route planning stays on the board, with two explicit choices. */
+.title-genre { display:block; font-size:14px; font-weight:450; letter-spacing:.07em; margin-top:7px; color:var(--text-2); }
+.simple-title .logo h1 { white-space:nowrap; font-size:clamp(22px, 7vw, 31px); }
+#canal-progress.planning-tip { order:-3; color:var(--text); font-size:12px; padding:4px 6px; }
+#sheet.route-sheet { padding:10px; }
+#dock.route-planning #sheet { position:static; order:1; flex:none; width:100%; max-height:min(44vh, 340px); box-shadow:none; }
+#dock.route-planning #gates, #dock.route-planning #canal-progress { display:none; }
+#dock.route-planning #tray[hidden] { display:none; }
+.route-sheet .sh-head { align-items:flex-start; gap:6px; }
+.route-sheet .sh-h { font-size:17px; margin:0 0 3px; }
+.route-sheet .sh-title span { font-size:12px; }
+.route-options { display:grid; grid-template-columns:1fr 1fr; gap:7px; }
+.route-choice { min-height:110px; display:flex; flex-direction:column; align-items:stretch; gap:6px; padding:9px; background:var(--panel-2); border:1px solid var(--line-2); border-radius:12px; text-align:left; font-size:12px; line-height:1.3; }
+.route-choice.on { border:2px solid var(--amber); padding:8px; background:rgba(255,181,71,.08); }
+.route-choice:disabled { opacity:.65; cursor:default; }
+.route-choice-title { display:flex; flex-wrap:wrap; align-items:center; gap:4px; }
+.route-choice-title b { font-size:14px; }
+.route-choice-title .ic { width:16px; height:16px; }
+.route-status { margin-left:auto; font-size:11px; color:var(--text-2); }
+.route-choice.on .route-status { color:var(--amber); }
+.route-cover { color:var(--text); }
+.route-choice small { color:var(--text-2); font-size:11px; }
+.route-note { margin:8px 0 0; color:var(--text-2); font-size:11px; line-height:1.35; }
+.combo-note { margin:5px 4px 1px; font-size:11px; line-height:1.35; color:var(--text-2); }
+.tower-sheet.manage-open .combo-note { display:none; }
+.big-text .combo-note, .big-text .route-note { font-size:13px; }
+.big-text .route-choice { font-size:14px; }
+.big-text .route-choice small, .big-text .route-sheet .sh-title span { font-size:13px; }
+.big-text #sheet.route-sheet { zoom:1; }
+.bloom-goal { border:1px solid var(--line-2); border-radius:12px; padding:12px; margin:14px 0; }
+.bloom-goal h3 { margin:0 0 5px; font-size:16px; }
+.bloom-goal p { margin:0 0 10px; font-size:14px; }
+.bloom-goal button { width:100%; min-height:44px; }
+@media (min-width:900px) and (min-aspect-ratio:5/4), (orientation:landscape) and (max-height:540px) {
+  #dock.route-planning #sheet { max-height:none; }
+}

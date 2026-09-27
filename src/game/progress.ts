@@ -127,6 +127,7 @@ export const saveSettings = (s: Settings) => write(KEY_SETTINGS, { ...s, v: 2 })
 // ------------------------------------------------------------------ coaching
 
 export interface Coach {
+  routesSeen?: boolean
   built: boolean
   started: boolean
   flipped: boolean

@@ -22,12 +22,12 @@ const MODE_ICON: Record<Difficulty, Parameters<typeof icon>[0]> = { relaxed: 'fl
 const COUNTER_TIP: Record<EnemyId, string> = {
   drip: 'More Wicklings, or a Twin Wick upgrade, handle Drip crowds.',
   skitter: 'Moonbells slow Skitters, and the long loops give your keepers more time. Keep Skitters off the short runs.',
-  shell: 'Send Shellbacks down the Mill run: its waterwheel cracks every shell. Crackers, Lighthouses and Hot Wax Wicklings crack them too.',
-  veil: 'Send Veils down the Lantern run: its bridge reveals them for good. A Lamp Owl spots them too, which matters once the West Sluice opens.',
+  shell: 'Crackers, Lighthouses and Hot Wax Wicklings crack armour. The Mill run is another option when your towers cover it.',
+  veil: 'Put a Lamp Owl where it shares water with your damage towers. The Lantern bridge also reveals Veils, but west-entry enemies skip it.',
   bloat: 'Lighthouses melt Bloats, and each one bursts into three Drips, so keep something quick behind them.',
   wisp: 'Cracker bursts cheer up whole Wisp swarms at once.',
   mender: 'Set a keeper to Strong so it cheers up Menders before they heal the crowd.',
-  vshell: 'Veiled Shells want both short runs: the Lantern bridge reveals them and the Mill wheel cracks them.',
+  vshell: 'Pair a Lamp Owl with Crackers or a Lighthouse to handle hidden armour. The bridge and mill also help.',
   toad: 'Gloomtoads jam locks. Set both locks to the long loops before one arrives, and put a Lighthouse on its path.',
   gloom: 'Old Gloom splits at the Lower Lock, so both lower channels need a Lighthouse or Candelabra.',
 }
@@ -49,7 +49,7 @@ function resultLine(r: ChallengeResult): string {
 
 /** Plain text a player can paste anywhere: which challenge, how it went, what made it hard. */
 function challengeShareText(o: ChallengeOffer, r: ChallengeResult): string {
-  const head = o.kind === 'daily' ? `Lanternlocks daily tide: ${o.name}, ${o.when}` : `Lanternlocks weekly night: ${o.name} (${o.when})`
+  const head = o.kind === 'daily' ? `Lantern Guard daily tide: ${o.name}, ${o.when}` : `Lantern Guard weekly night: ${o.name} (${o.when})`
   const body = r.won ? `Dawn with ${r.light}/${r.maxLight} light and ${r.flips} lock flips` : `The lantern went out after ${r.held} of ${r.waves} waves`
   return [head, body, offerSummary(o)].join('\n')
 }
@@ -191,8 +191,8 @@ export class Screens {
     this.show(
       `<div class="card title-card simple-title">
         <canvas class="key-art" aria-hidden="true"></canvas>
-        <div class="logo"><canvas id="logo-cv" width="128" height="128" aria-hidden="true"></canvas><h1 translate="no">Lantern<em>locks</em></h1></div>
-        <p class="tagline">Build your keepers. Steer the water.<br>Keep the lantern lit.</p>
+        <div class="logo"><canvas id="logo-cv" width="128" height="128" aria-hidden="true"></canvas><h1 translate="no" aria-label="Lantern Guard: Tower Defense">Lantern <em>Guard</em><span class="title-genre">Tower Defense</span></h1></div>
+        <p class="tagline">Build your towers. Grow your defence.<br>Keep the lantern lit.</p>
         <div class="title-play stack">
           <button class="big-btn primary" data-act="${save ? 'continue' : 'play'}">${icon('play')} ${save ? 'Continue' : 'Play'}${save ? `<small>${name} · ${save.wave > FINAL_WAVE ? 'free wave' : off ? 'tide wave' : 'wave'} ${shown}</small>` : ''}</button>
           <button class="title-quiet" data-act="night">${save ? 'Start a new night' : `Difficulty: ${DIFFICULTY[this.difficulty].name}`}</button>
@@ -596,18 +596,19 @@ export class Screens {
 
   journal(tab: 'basics' | 'keepers' | 'mopes') {
     let body = ''
+    const guard = !!this.app.sim.challenge.guard
     if (tab === 'basics') {
       const row = (ic: Parameters<typeof icon>[0], title: string, text: string) =>
         `<div class="j-row"><div class="j-ic">${icon(ic)}</div><div><b>${title}</b><span>${text}</span></div></div>`
       body = `<div class="journal">
         ${row('tap', 'Build keepers', 'Tap a stone pad, then pick a keeper (on a phone, tap it twice). Keepers cheer up Mopes that drift past.')}
         ${row('waves', 'Grow the same defence', 'Start at Lantern bend. Before wave 6 the upper canal opens; before wave 11 the west inlet opens. Your towers and upgrades stay in place. New tower choices arrive a few at a time.')}
-        ${row('swap', 'Steer with the locks', 'Tap a lock, or its button at the bottom, to send Mopes down the other channel. Flowing water and the arrow show where they will go.')}
-        ${row('flower', 'Long loops or short runs', 'Long loops are safe: more time under your keepers. Short runs pay double glow, and each has a trick: the Lantern bridge reveals Veils, the Mill wheel cracks shells.')}
-        ${row('sparkle', 'Match colour and shape', 'Each keeper works 1.5x faster on Mopes that wear its colour and symbol. Sort each kind toward the keepers that suit it.')}
-        ${row('star', 'Charms', 'Charms make a lock always send one kind of Mope the same way, whatever the arrow says. Open them from the Charms button, or press and hold a lock.')}
+        ${row('swap', guard ? 'Plan your routes' : 'Steer with the locks', guard ? 'Between waves, tap a lock to compare both routes and the towers covering them. Your choice stays set. During combat, tap to switch quickly; hold a lock or pause to compare routes.' : 'Tap a lock, or its button at the bottom, to send Mopes down the other channel. Flowing water and the arrow show where they will go.')}
+        ${row('flower', 'Long loops or short runs', guard ? 'Long loops give towers more firing time. Short routes mark Mopes with a gold ring: double glow when defeated, double light lost if they escape, wherever they finish. The bonus never stacks. The bridge reveals Veils; the mill cracks armour.' : 'Long loops give more firing time. Defeats on short runs pay double glow; any Mope that took one costs double light on escape. The bridge reveals Veils; the mill cracks shells.')}
+        ${row('sparkle', 'Combine your towers', 'Moonbell slows groups for Cracker bursts. Lamp Owl reveals hidden targets for nearby attackers. Select a tower to see shared coverage. Matching a Mope’s colour and symbol also deals 1.5× damage.')}
+        ${!guard ? row('star', 'Charms', 'Charms make a lock always send one kind of Mope the same way, whatever the arrow says. Open them from the Charms button, or press and hold a lock.') : ''}
         ${row('heart', 'Keep the lantern lit', 'Mopes that reach the Great Lantern dim it. When the light runs out, the night is lost.')}
-        ${row('pause', 'Pause to plan', 'Pause any time and keep building, upgrading and setting locks. Keys: 1-6 keepers, Q and E flip locks, Space starts a wave, C charms, P pause, F speed.')}
+        ${row('pause', 'Pause to plan', `Pause any time to build and upgrade. On Nightfall, live route changes require time to run. Keys: 1–6 towers, Q/E quick switches, Space starts a wave, P pauses, F changes speed.${guard ? '' : ' C opens charms.'}`)}
       </div>`
     } else if (tab === 'keepers') {
       body = `<div class="journal">${TOWER_ORDER.map((id: TowerId) => {
@@ -680,10 +681,10 @@ export class Screens {
     if (unused.length) {
       const id = unused[0]
       next = `<div class="tip alt">${icon('sparkle')}<div>Try next: you never built a <b>${TOWERS[id].name}</b>. ${TOWERS[id].blurb}</div></div>`
-    } else if (st.flips < 4) {
+    } else if (st.flips < 4 && !sim.challenge.guard) {
       next = `<div class="tip alt">${icon('swap')}<div>Try next: steer more. Short runs pay double glow, crack shells and reveal Veils. Sorting each group is worth a lot.</div></div>`
     } else if (sim.difficulty !== 'nightfall' && won && !offer) {
-      next = `<div class="tip alt">${icon('moon')}<div>Try next: ${sim.difficulty === 'relaxed' ? 'Standard' : 'Nightfall'}. The Mopes are tougher and every lock decision counts.</div></div>`
+      next = `<div class="tip alt">${icon('moon')}<div>Try next: ${sim.difficulty === 'relaxed' ? 'Standard' : 'Nightfall'}. Tougher Mopes reward carefully upgraded tower combinations.</div></div>`
     }
     const featsHtml = fresh.length
       ? `<h3>New feats</h3><div class="feats">${fresh
@@ -691,6 +692,12 @@ export class Screens {
           .map((f) => `<div class="feat done new">${icon('star')}<div><b>${f.name}</b> <span>${f.desc}</span></div></div>`)
           .join('')}</div>`
       : ''
+    const progress = loadProgress()
+    const challenges = loadChallenges()
+    const goal = ['reed', 'lily', 'moss', 'moon', 'pearl'].map(id => BLOOM_SETS.find(b => b.id === id)!).find(b => !b.earned(progress, challenges))
+    const goalText = goal?.id === 'moss' ? `${Math.max(0, 5000 - journalTotal(progress)).toLocaleString('en')} more Mopes to cheer across your nights.` : goal?.unlock
+    const bloomGoal = goal ? `<section class="bloom-goal"><h3>Next bloom set: ${goal.name}</h3><p>${goalText}</p><button class="pill-btn" data-act="blooms">View your bloom collection</button></section>`
+      : '<section class="bloom-goal"><h3>All bloom sets earned</h3><p>Try a daily tide or a different tower combination.</p><button class="pill-btn" data-act="collection">View collection</button></section>'
     // the wave the lantern went out on was not held
     const extra = Math.max(0, sim.wave - FINAL_WAVE - (sim.over === 'lost' ? 1 : 0))
     const held = Math.max(0, sim.wave - sim.waveOffset - (sim.over === 'lost' ? 1 : 0))
@@ -735,7 +742,7 @@ export class Screens {
           <div><b>${st.glowEarned}</b><span>Glow earned</span></div>
           <div><b>${mins}:${String(secs).padStart(2, '0')}</b><span>Night length</span></div>
         </div>
-        ${tip}${next}${featsHtml}
+        ${tip}${next}${bloomGoal}${featsHtml}
         <h3>Tonight's canal</h3>
         <figure class="postcard">
           <div class="pc-frame" role="img" aria-label="A picture of the canal as the night ended: the banks in bloom, your keepers and the Great Lantern."></div>
@@ -747,6 +754,8 @@ export class Screens {
     this.on('[data-act="free"]', () => app.continueFreeplay())
     this.on('[data-act="again"]', () => app.restart())
     this.on('[data-act="title"]', () => app.quitToTitle())
+    this.on('[data-act="blooms"]', () => this.bloomJournal('sets'))
+    this.on('[data-act="collection"]', () => this.collection())
     this.el.querySelector<HTMLElement>('[data-act="share"]')?.addEventListener('click', async (e) => {
       sound.tap()
       // share this attempt (the Tides screen shares the best one)
@@ -786,7 +795,7 @@ export class Screens {
       btn.disabled = false
       btn.addEventListener('click', async () => {
         sound.tap()
-        flashOutcome(btn, await shareImage(cv, `lanternlocks-${dayKey(new Date())}.png`, `A night on ${sim.level.def.name} in Lanternlocks`))
+        flashOutcome(btn, await shareImage(cv, `lantern-guard-${dayKey(new Date())}.png`, `A night on ${sim.level.def.name} in Lantern Guard: Tower Defense`))
       })
     }
     // the canvas text needs the game font; wait for it, then paint off the card's first frame

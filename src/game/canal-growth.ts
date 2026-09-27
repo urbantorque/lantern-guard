@@ -24,7 +24,7 @@ export const KEEPER_HELP: Record<TowerId, string> = {
 
 export const stageForWave = (wave: number) => wave >= 11 ? 2 : wave >= 6 ? 1 : 0
 
-export function growingCanal(stage: number): LevelDef {
+export function growingCanal(stage: number, guard = false): LevelDef {
   const first = stage === 0
   return {
     ...LEVEL,
@@ -33,7 +33,13 @@ export function growingCanal(stage: number): LevelDef {
       ...LEVEL.segments.filter(s => ['w2', 'e2', 'h'].includes(s.id)),
     ] : LEVEL.segments.filter(s => stage >= 2 || s.id !== 'inlet'),
     // Keep both gate indices stable for saves. An unrevealed gate has no outlets on the current board.
-    gates: LEVEL.gates.map(g => ({ ...g, unlockWave: g.id === 'upper' ? 6 : 2 })),
+    gates: LEVEL.gates.map(g => ({ ...g, unlockWave: g.id === 'upper' ? 6 : 2,
+      blurbs: guard ? g.outs.map(id => {
+        const segment = LEVEL.segments.find(s => s.id === id)!
+        return segment.bonus ? `Marks Mopes for double glow and double light lost, all the way to the lantern. ${segment.feature?.kind === 'reveal' ? 'Bridge reveals hidden Mopes.' : 'Mill cracks armour.'}`
+          : 'More firing time. Does not add a ×2 mark; existing marks stay.'
+      }) as [string, string] : g.blurbs,
+    })),
     sources: LEVEL.sources.filter(s => stage >= 2 || s.id === 'north'),
     bounds: first ? { x: 80, y: 392, w: 640, h: 564 } : { x: 0, y: -36, w: 720, h: 976 },
   }

@@ -1,7 +1,8 @@
 import fixtures from './fixtures.json'
 import growthFixtures from './growth-fixtures.json'
+import guardFixtures from './guard-fixtures.json'
 import { Sim, DT, type SaveSnapshot } from '../src/game/sim'
-import { clearRun, saveRun } from '../src/game/progress'
+import { clearRun, loadSettings, saveRun, saveSettings } from '../src/game/progress'
 import { Renderer } from '../src/render/renderer'
 
 if (!import.meta.env.DEV) throw new Error('QA fixtures require the development server')
@@ -11,8 +12,9 @@ const backup = () => {
 }
 document.querySelectorAll<HTMLButtonElement>('[data-fixture]').forEach(b => b.onclick = () => {
   backup()
+  saveSettings({ ...loadSettings(), muted: true })
   clearRun()
-  const all: Record<string, unknown> = { ...fixtures, ...growthFixtures }
+  const all: Record<string, unknown> = { ...fixtures, ...growthFixtures, ...guardFixtures }
   saveRun(all[b.dataset.fixture!] as SaveSnapshot)
   location.assign('/')
 })
@@ -21,6 +23,7 @@ document.querySelector<HTMLButtonElement>('#restore')!.onclick = () => {
   if (!previous) return
   for (const key of Object.keys(localStorage).filter(k => k.startsWith('lanternlocks.'))) localStorage.removeItem(key)
   for (const [k, v] of Object.entries(JSON.parse(previous))) localStorage.setItem(k, String(v))
+  saveSettings({ ...loadSettings(), muted: true })
   localStorage.removeItem(backupKey)
   location.assign('/')
 }

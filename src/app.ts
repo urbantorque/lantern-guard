@@ -1,8 +1,9 @@
 import { saveHealth } from './game/save-store'
 import { watchAppState } from './core/platform'
 import { sound } from './core/audio'
-import { computeStats, canUpgrade, CHARM_COST, CHARM_ORDER, DIFFICULTY, ENEMIES, TOWER_ORDER, TOWERS, type CharmTrait, type Difficulty, type EnemyId, type Priority, type TowerId } from './game/defs'
+import { canUpgrade, CHARM_COST, CHARM_ORDER, DIFFICULTY, ENEMIES, TOWER_ORDER, TOWERS, type CharmTrait, type Difficulty, type EnemyId, type Priority, type TowerId } from './game/defs'
 import { CANAL_STAGES, KEEPER_HELP, KEEPER_ROLE, KEEPER_WAVE } from './game/canal-growth'
+import { comboHint, routeCoverage } from './game/route-plan'
 import {
   BLOOM_SETS,
   clearRun,
@@ -78,7 +79,7 @@ export class App {
   paused = false
   mode: 'title' | 'play' | 'over' = 'title'
   /** Which dock sheet is open: a keeper (via view.selection) or the lock charms. */
-  sheetMode: 'none' | 'tower' | 'charms' = 'none'
+  sheetMode: 'none' | 'tower' | 'charms' | 'routes' = 'none'
   private acc = 0
   private last = performance.now()
   private hudCache: Record<string, string | number | boolean> = {}
@@ -118,7 +119,7 @@ export class App {
     this.settings = loadSettings()
     this.coach = loadCoach()
     this.renderer = new Renderer($<HTMLCanvasElement>('cv'))
-    this.sim = new Sim('standard', { expanding: 1 })
+    this.sim = new Sim('standard', { expanding: 1, guard: 1 })
     this.renderer.attach(this.sim)
     this.screens = new Screens(this)
     this.applySettings()
@@ -163,7 +164,7 @@ export class App {
   newRun(difficulty: Difficulty) {
     this.leaveRun()
     clearRun()
-    this.sim = new Sim(difficulty, { expanding: 1 }, 7)
+    this.sim = new Sim(difficulty, { expanding: 1, guard: 1 }, 7)
     this.startRun()
     this.persist(true)
     if (loadProgress().runs < 2 && this.settings.flipHint) this.toast('Build on a stone pad. The arrows lead to the Great Lantern.', 3500)
@@ -249,7 +250,7 @@ export class App {
     this.paused = false
     this.view.paused = false
     const snap = loadRun()
-    this.sim = snap ? Sim.restore(snap) : new Sim('standard', { expanding: 1 })
+    this.sim = snap ? Sim.restore(snap) : new Sim('standard', { expanding: 1, guard: 1 })
     this.renderer.attach(this.sim)
     this.closeSheet()
     this.clearMessages()
@@ -314,7 +315,7 @@ export class App {
       this.tickTimers(dt)
       sound.tick(dt, Math.min(1, sim.enemies.length / 40))
     } catch (err) {
-      if (this.frameErrors++ < 3) console.error('Lanternlocks frame error', err)
+      if (this.frameErrors++ < 3) console.error('Lantern Guard frame error', err)
       this.sim.events.length = 0
     }
   }
@@ -394,7 +395,7 @@ export class App {
         case 'leak':
           if (!this.lowWarned && this.sim.lives > 0 && this.sim.lives <= this.sim.maxLives * 0.4) {
             this.lowWarned = true
-            this.toast('The lantern is dimming. Pause and plan, and keep tough Mopes on the long loops.', 4200)
+            this.toast(this.sim.challenge.guard ? 'The lantern is dimming. Pause and check which water your attacking towers cover.' : 'The lantern is dimming. Pause and plan, and keep tough Mopes on the long loops.', 4200)
           }
           break
         case 'victory':
@@ -472,7 +473,8 @@ export class App {
         this.longPressed = true
         const g = this.pressGate
         this.pressGate = null
-        this.openCharms(g)
+        if (this.sim.challenge.guard) this.chooseGate(g, true)
+        else this.openCharms(g)
       }
     }
     if (this.sellArmed && performance.now() - this.sellArmed.at > 2600) {
@@ -480,7 +482,7 @@ export class App {
       this.sheetKey = ''
     }
     if ((this.persistPending && performance.now() - this.lastPersist > 1500) || (this.mode === 'play' && !this.paused && performance.now() - this.lastPersist > 5000)) this.persist(true)
-    if (this.mode === 'play' && this.settings.autoStart && !this.paused && !this.sim.expansionPlanning && this.sim.canStartWave() && !this.sim.waveActive && this.sim.wave > 0) {
+    if (this.mode === 'play' && this.settings.autoStart && !this.paused && this.sheetMode === 'none' && !this.sim.expansionPlanning && !this.sim.guardPlanning && this.sim.canStartWave() && !this.sim.waveActive && this.sim.wave > 0) {
       this.autoTimer += dt
       if (this.autoTimer > 1.4) {
         this.autoTimer = 0
@@ -545,6 +547,8 @@ export class App {
     if (this.mode !== 'play' || this.sim.over) return
     const early = this.sim.earlyBonus()
     if (this.sim.startWave()) {
+      this.clearMessages()
+      if (this.sheetMode === 'routes') this.closeSheet()
       sound.tap()
       if (early > 0) this.toast(`Called early: +${early} glow`, 1400)
       if (!this.coach.started) {
@@ -584,7 +588,7 @@ export class App {
       this.toast(`${g.def.name} is jammed. Wait for the boss to pass.`)
       return false
     }
-    if (this.paused && !DIFFICULTY[sim.difficulty].pausedFlips) {
+    if (this.paused && !DIFFICULTY[sim.difficulty].pausedFlips && (!sim.challenge.guard || sim.waveActive)) {
       sound.deny()
       nudge()
       this.toast('Nightfall: no flipping while paused.')
@@ -599,7 +603,7 @@ export class App {
     btn?.classList.remove('flash')
     void btn?.offsetWidth
     btn?.classList.add('flash')
-    if (!sim.waveActive) this.toast(`${g.def.labels[g.state]}: ${g.def.blurbs[g.state]}`, 4000)
+    if (!sim.waveActive && !sim.challenge.guard) this.toast(`${g.def.labels[g.state]}: ${g.def.blurbs[g.state]}`, 4000)
     if (!this.coach.flipped) {
       this.coach.flipped = true
       saveCoach(this.coach)
@@ -711,11 +715,30 @@ export class App {
 
   select(sel: Selection) {
     this.view.selection = sel
+    this.view.routeDir = undefined
     if (!sel || sel.kind !== 'pad') this.view.preview = null
     this.sheetMode = sel?.kind === 'tower' ? 'tower' : 'none'
     this.sheetKey = ''
     this.refreshSheet()
     this.updateCoach()
+  }
+
+  private chooseGate(g: GateState, inspect = false) {
+    if (!this.sim.challenge.guard) { this.flip(g); return }
+    if (this.mode !== 'play' || this.sim.over) return
+    if (this.sim.waveActive && !this.paused && !inspect) { this.flip(g); return }
+    sound.tap()
+    this.clearMessages()
+    this.view.hint = null
+    this.coach.routesSeen = true
+    saveCoach(this.coach)
+    this.view.selection = { kind: 'gate', gate: g }
+    this.view.armed = null
+    this.view.preview = null
+    this.view.routeDir = this.sim.gateEffectiveDir(g)
+    this.sheetMode = 'routes'
+    this.sheetKey = ''
+    this.refreshSheet()
   }
 
   openCharms(focus?: GateState) {
@@ -739,6 +762,7 @@ export class App {
     this.view.selection = null
     this.view.preview = null
     this.view.upgradeRange = undefined
+    this.view.routeDir = undefined
     this.sheetMode = 'none'
     this.sheetKey = ''
     this.sellArmed = null
@@ -759,7 +783,7 @@ export class App {
       const r = cv.getBoundingClientRect()
       const w = this.renderer.toWorld(e.clientX - r.left, e.clientY - r.top)
       const hit = this.mode === 'play' ? this.renderer.pick(this.sim, w.x, w.y) : null
-      if (hit?.kind === 'gate') {
+      if (hit?.kind === 'gate' && (this.sim.charmsAllowed || this.sim.challenge.guard)) {
         this.pressGate = hit.gate
         this.pressTimer = LONG_PRESS
       }
@@ -919,7 +943,7 @@ export class App {
       e.preventDefault()
       const t = targets[this.cursor]
       this.sheetOpener = $('cv')
-      if (t.kind === 'gate') this.flip(t.gate)
+      if (t.kind === 'gate') this.chooseGate(t.gate)
       else {
         const pad = this.sim.pads[t.index]
         if (pad.tower) this.select({ kind: 'tower', tower: pad.tower })
@@ -947,8 +971,7 @@ export class App {
       return
     }
     if (sel.kind === 'gate') {
-      // the core verb: a tap only flips, so you can watch the Mopes you just rerouted
-      this.flip(sel.gate)
+      this.chooseGate(sel.gate)
       this.view.armed = null
       return
     }
@@ -1033,9 +1056,11 @@ export class App {
         fromLongPress = false
         if (e.button !== 0) return
         this.longPressed = false
-        this.pressGate = this.sim.gates[i]
-        this.pressTimer = LONG_PRESS
-        b.classList.add('holding')
+        if (this.sim.charmsAllowed || this.sim.challenge.guard) {
+          this.pressGate = this.sim.gates[i]
+          this.pressTimer = LONG_PRESS
+          b.classList.add('holding')
+        }
       })
       const cancel = () => {
         if (this.longPressed) fromLongPress = true
@@ -1051,7 +1076,7 @@ export class App {
           this.longPressed = false
           return
         }
-        this.flip(this.sim.gates[i])
+        this.chooseGate(this.sim.gates[i])
       })
       gates.appendChild(b)
       return b
@@ -1207,7 +1232,7 @@ export class App {
       const locked = sim.gateLocked(g)
       const dir = sim.gateEffectiveDir(g)
       const next = incoming(sim, g, 3)
-      const key = `${locked}|${dir}|${g.jammed}|${next.map((e) => e.def.id).join(',')}|${this.mode}|${g.charm?.trait}|${g.charm?.dir}|${!!sim.over}|${!!sim.challenge.tidal}`
+      const key = `${locked}|${dir}|${g.jammed}|${next.map((e) => e.def.id).join(',')}|${this.mode}|${g.charm?.trait}|${g.charm?.dir}|${!!sim.over}|${!!sim.challenge.tidal}|${sim.waveActive}|${this.paused}`
       if (force || b.dataset.key !== key) {
         b.dataset.key = key
         b.classList.toggle('locked', locked)
@@ -1216,13 +1241,14 @@ export class App {
         const rich = sim.level.segs.get(g.def.outs[dir])!.bonus > 1
         b.querySelector('.g-state')!.textContent = locked ? (sim.challenge.lockedGates ? 'Fixed' : `Wave ${g.def.unlockWave}`) : g.jammed ? 'Jammed!' : `${g.def.labels[dir]}${rich ? ' ×2' : ''}`
         b.classList.toggle('rich', !locked && rich)
-        b.title = locked ? `Opens at wave ${g.def.unlockWave}` : `${g.def.labels[dir]}: ${g.def.blurbs[dir]} Tap to switch.`
+        const action = sim.challenge.guard ? (sim.waveActive && !this.paused ? 'Tap to switch. Hold to compare routes.' : 'Tap to compare routes.') : 'Tap to flip, press and hold for charms.'
+        b.title = locked ? `Opens at wave ${g.def.unlockWave}` : `${g.def.labels[dir]}: ${g.def.blurbs[dir]} ${action}`
         b.querySelector('.g-next')!.innerHTML = next.map((e) => `<img src="${enemyIcon(e.def.id)}" alt="" width="24" height="24">`).join('')
         b.querySelector('.g-charm')!.innerHTML = g.charm ? `<img src="${enemyIcon(CHARM_ICON[g.charm.trait])}" alt="" width="24" height="24">` : ''
         const charmNote = g.charm ? ` Charm: ${CHARM_LABEL[g.charm.trait]} always take the ${g.def.labels[g.charm.dir]}.` : ''
         const nextNote = next.length ? ` Next: ${next.map((e) => e.def.name).join(', ')}.` : ''
         const tidalNote = sim.challenge.tidal && !locked ? ` Tidal lock: its short run swings shut ${sim.challenge.tidal} seconds after you open it.` : ''
-        b.setAttribute('aria-label', `${g.def.name}: ${locked ? (sim.challenge.lockedGates ? 'fixed tonight' : `opens at wave ${g.def.unlockWave}`) : g.jammed ? 'jammed' : 'sending Mopes along the ' + g.def.labels[dir] + (rich ? ', double glow and double light lost on escape' : ', long route with more time to attack')}.${charmNote}${tidalNote}${nextNote} Tap to flip, press and hold for charms.`)
+        b.setAttribute('aria-label', `${g.def.name}: ${locked ? (sim.challenge.lockedGates ? 'fixed tonight' : `opens at wave ${g.def.unlockWave}`) : g.jammed ? 'jammed' : 'sending Mopes along the ' + g.def.labels[dir] + (rich ? ', double glow and double light lost on escape' : ', long route with more time to attack')}.${charmNote}${tidalNote}${nextNote} ${action}`)
       }
       const cd = b.querySelector('.cd') as HTMLElement
       const w = g.cd > 0 ? `${(g.cd / 0.9) * 100}%` : '0%'
@@ -1256,7 +1282,22 @@ export class App {
     progress.hidden = !sim.challenge.expanding
     if (sim.challenge.expanding) {
       const stage = CANAL_STAGES[sim.canalStage]
-      const text = `${stage.name} · ${stage.next}`
+      const advice: Record<number, string> = {
+        1: 'Build on a stone pad. Highlighted water shows where your tower can reach.',
+        2: 'Routes stay set. Tap the Lower Lock to compare your tower coverage.',
+        3: 'Moonbell slows groups. Pair it with an attacking tower on the same bend.',
+        5: 'Armour next: Cracker bursts and heavy upgrades crack shells.',
+        6: 'Upper canal open. Your original towers still guard the lantern.',
+        8: 'Hidden enemies next: pair a Lamp Owl with your damage towers.',
+        10: 'Boss next: Gloomtoad jams the lock beside it. Set your route first.',
+        11: 'West inlet open. Hidden enemies from here skip the Lantern bridge.',
+        16: 'Hidden armour next: combine Lamp Owl sight with heavy attacks.',
+        24: 'Old Gloom arrives at wave 25. Prepare strong towers on both lower branches.',
+        25: 'Old Gloom splits at the Lower Lock. Cover BOTH branches before starting.',
+      }
+      const tip = sim.challenge.guard && !sim.waveActive ? advice[sim.wave + 1] : undefined
+      const text = tip ?? `${stage.name} · ${stage.next}`
+      progress.classList.toggle('planning-tip', !!tip)
       if (progress.textContent !== text) progress.textContent = text
     }
     this.refreshSheet()
@@ -1273,12 +1314,15 @@ export class App {
       this.view.selection = null
       this.sheetMode = 'none'
     }
+    $('dock').classList.toggle('route-planning', this.sheetMode === 'routes')
     let key = 'none'
     if (this.sheetMode === 'tower' && this.view.selection?.kind === 'tower') {
       const t = this.view.selection.tower
       key = `t|${t.uid}|${t.a}|${t.b}|${t.priority}`
     } else if (this.sheetMode === 'charms') {
       key = `c|${sim.gates.map((g) => `${g.charm?.trait}${g.charm?.dir}${sim.gateLocked(g)}${this.pendingTrait[g.def.id] ?? ''}`).join('|')}|${sim.glow >= CHARM_COST}`
+    } else if (this.sheetMode === 'routes' && sel?.kind === 'gate') {
+      key = `r|${sel.gate.def.id}|${sim.gates.map(g => `${g.state}:${sim.gateLocked(g)}:${g.jammed}`).join('|')}|${sim.towers.map(t => `${t.uid}:${t.a}:${t.b}`).join(',')}|${sim.waveActive}|${this.paused}`
     }
     if (key !== this.sheetKey && !(this.sheetPointer && key !== 'none' && this.sheetKey !== 'none' && this.sheetKey !== '')) {
       const wasOpen = this.sheetKey !== 'none' && this.sheetKey !== ''
@@ -1302,16 +1346,60 @@ export class App {
       if (!wasOpen) this.sheetOpenedAt = performance.now()
       sheet.hidden = false
       sheet.classList.toggle('tower-sheet', this.sheetMode === 'tower')
+      sheet.classList.toggle('route-sheet', this.sheetMode === 'routes')
       sheet.classList.remove('manage-open')
       $('planbar').inert = this.sheetMode === 'tower' && getComputedStyle(sheet).position !== 'static'
       tray.hidden = true
       if (this.sheetMode === 'tower' && this.view.selection?.kind === 'tower') this.renderTowerSheet(sheet, this.view.selection.tower)
+      else if (this.sheetMode === 'routes' && sel?.kind === 'gate') this.renderRouteSheet(sheet, sel.gate)
       else this.renderCharmSheet(sheet)
       if (focusKey) sheet.querySelector<HTMLElement>(`[data-focuskey="${focusKey}"]`)?.focus({ preventScroll: true })
       else if (!wasOpen && isKeyboardMode()) sheet.querySelector<HTMLElement>('.sh-close')?.focus({ preventScroll: true })
       this.placeSheet()
     }
     if (this.sheetMode === 'tower' && this.view.selection?.kind === 'tower') this.patchTowerSheet(sheet, this.view.selection.tower)
+  }
+
+  private renderRouteSheet(el: HTMLElement, g: GateState) {
+    const sim = this.sim
+    const locked = sim.gateLocked(g)
+    const pausedLock = this.paused && sim.waveActive && !DIFFICULTY[sim.difficulty].pausedFlips
+    const blocked = locked || g.jammed || pausedLock
+    const dir = sim.gateEffectiveDir(g)
+    this.view.routeDir = dir
+    const reason = locked ? (sim.challenge.lockedGates ? 'Routes are fixed in this challenge.' : `Opens before wave ${g.def.unlockWave}.`)
+      : g.jammed ? 'Jammed until the boss passes.' : pausedLock ? 'Resume to change a route on Nightfall.'
+      : sim.waveActive ? 'Choose a route for the next enemies. Towers already built stay put.'
+      : 'Choose a route, then start the wave. Your choice stays set.'
+    el.setAttribute('role', 'region')
+    el.setAttribute('aria-labelledby', 'sheet-title')
+    el.innerHTML = `<div class="sh-head"><div class="sh-title"><h2 class="sh-h" id="sheet-title">${g.def.name}</h2><span>${reason}</span></div><button class="sh-close" data-focuskey="close" aria-label="Close routes">${icon('close')}</button></div>
+      <div class="route-options">${([0, 1] as const).map(d => {
+        const plan = routeCoverage(sim, g, d)
+        const rich = plan.segments[0]?.bonus > 1
+        const names = plan.branchTowers.map(t => t.def.name).filter((name, i, all) => all.indexOf(name) === i)
+        return `<button class="route-choice ${d === dir ? 'on' : ''}" data-route="${d}" data-focuskey="route${d}" aria-pressed="${d === dir}" ${blocked ? 'disabled' : ''}>
+          <span class="route-choice-title">${icon(d === 0 ? 'bendLeft' : 'bendRight')}<b>${g.def.labels[d]}</b><span class="route-status">${d === dir ? 'Set' : 'Use'}</span></span>
+          <span>${rich ? 'Short · ×2 glow & light lost' : 'Long · more firing time'}</span>
+          <span class="route-cover">${plan.attackers.length} damage ${plan.attackers.length === 1 ? 'tower' : 'towers'}${plan.support.length ? ` · ${plan.support.length} support` : ''} on this branch</span>
+          <small>${names.join(', ') || 'Build along this water to cover it.'}</small>
+        </button>`
+      }).join('')}</div><p class="route-note">Gold path: to the lantern. Short-route ×2 marks last until defeat or escape and never stack. ${g.def.id === 'upper' ? 'Bridge reveals hidden enemies.' : 'Mill cracks armour.'}</p>`
+    el.querySelector('.sh-close')!.addEventListener('click', () => this.closeSheet())
+    el.querySelectorAll<HTMLButtonElement>('[data-route]').forEach(button => {
+      const d = Number(button.dataset.route) as 0 | 1
+      const preview = () => { this.view.routeDir = d }
+      button.addEventListener('pointerenter', preview)
+      button.addEventListener('focus', preview)
+      button.addEventListener('pointerleave', () => { this.view.routeDir = sim.gateEffectiveDir(g) })
+      button.addEventListener('blur', () => { this.view.routeDir = sim.gateEffectiveDir(g) })
+      button.addEventListener('click', () => {
+        if (g.state !== d && !this.flip(g)) return
+        this.view.routeDir = d
+        this.sheetKey = ''
+        this.refreshSheet()
+      })
+    })
   }
 
   /** A keeper low on the map gets its sheet at the top, so the sheet never hides what you selected. */
@@ -1372,7 +1460,7 @@ export class App {
         else if (!canUpgrade(t.a, t.b, path)) btn = `<div class="up-btn locked"><b>${p.tiers[tier].name}</b><span class="desc">Locked: the other path went past tier 1.</span><span class="price">${icon('lock')}</span></div>`
         else {
           const up = p.tiers[tier]
-          btn = `<button class="up-btn" data-path="${path}" data-focuskey="up${path}" aria-label="Upgrade to ${up.name}, ${up.cost} glow. ${up.desc}"><b>${up.name}</b><span class="desc">${up.desc}</span><span class="price">${up.cost}<small>${upgradeSummary(t.id, t.a, t.b, path)}</small></span></button>`
+          btn = `<button class="up-btn" data-path="${path}" data-focuskey="up${path}" aria-label="Upgrade to ${up.name}, ${up.cost} glow. ${up.desc}"><b>${up.name}</b><span class="desc">${up.desc}</span><span class="price">${up.cost}<small>${upgradeSummary(t.id, t.a, t.b, path, (id, a, b) => this.sim.towerStats(id, a, b))}</small></span></button>`
         }
         return `<div class="path"><div class="path-head"><span>${p.name}</span><span class="pips" role="img" aria-label="Tier ${tier} of 3">${pips}</span></div>${btn}</div>`
       })
@@ -1390,7 +1478,7 @@ export class App {
         ${canTarget ? `<button class="pill-btn" data-act="prio" data-focuskey="prio" aria-label="Targeting: ${PRIORITY_LABEL[t.priority]}. Tap to change.">${icon('crosshair')} ${PRIORITY_LABEL[t.priority]}</button>` : ''}
         <button class="pill-btn sell" data-act="sell" data-focuskey="sell"></button>
       </div>
-      <div class="paths">${paths}</div>${lockNote}`
+      <div class="paths">${paths}</div><p class="combo-note">${comboHint(this.sim, t)}</p>${lockNote}`
     el.setAttribute('aria-labelledby', 'sheet-title')
     el.querySelector('.sh-close')!.addEventListener('click', () => this.closeSheet())
     el.querySelector('[data-act="manage"]')!.addEventListener('click', () => {
@@ -1409,7 +1497,7 @@ export class App {
     el.querySelectorAll<HTMLButtonElement>('button.up-btn').forEach(b => {
       const path = Number(b.dataset.path) as 0 | 1
       const preview = () => {
-        const stats = computeStats(t.id, t.a + (path === 0 ? 1 : 0), t.b + (path === 1 ? 1 : 0))
+        const stats = this.sim.towerStats(t.id, t.a + (path === 0 ? 1 : 0), t.b + (path === 1 ? 1 : 0))
         this.view.upgradeRange = stats.range * t.rangeMul
       }
       b.addEventListener('pointerenter', preview)
@@ -1582,11 +1670,11 @@ export class App {
       }
       return
     }
-    if (!this.coach.flipped && sim.wave >= 2 && this.settings.flipHint) {
+    if (!this.coach.flipped && sim.planningWave >= 2 && this.settings.flipHint && (!sim.challenge.guard || (!this.coach.routesSeen && !sim.waveActive))) {
       const i = sim.challenge.expanding && sim.canalStage === 0 ? 1 : 0
       const g = sim.gates[i]
       if (!sim.gateLocked(g)) {
-        this.view.hint = { x: g.def.x, y: g.def.y - 30, label: 'Tap to switch routes' }
+        this.view.hint = { x: g.def.x, y: g.def.y - 30, label: sim.challenge.guard ? 'Compare routes' : 'Tap to switch routes' }
         this.gateBtns[i].classList.add('coach')
       }
     }

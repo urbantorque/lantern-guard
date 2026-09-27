@@ -27,6 +27,7 @@ export function validSnapshot(s: unknown): s is SaveSnapshot {
   if (s.challenge.keepers !== undefined && (!Array.isArray(s.challenge.keepers) || !s.challenge.keepers.every(v => typeof v === 'string' && Object.hasOwn(TOWERS, v)))) return false
   if (s.challenge.waterway !== undefined && !Object.hasOwn(WATERWAYS, String(s.challenge.waterway))) return false
   if (s.challenge.expanding !== undefined && (s.challenge.expanding !== 1 || s.v !== 2 || s.challenge.waterway !== undefined || s.challenge.id !== undefined || s.challenge.tide !== undefined || !integer(s.canalStage, 0, 2))) return false
+  if (s.challenge.guard !== undefined && (s.challenge.guard !== 1 || s.challenge.expanding !== 1)) return false
   if (!Array.isArray(s.towers) || s.towers.length > LEVEL.pads.length || !Array.isArray(s.gates) || s.gates.length !== 2) return false
   const pads = new Set<number>()
   for (const t of s.towers) {

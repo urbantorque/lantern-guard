@@ -1,15 +1,15 @@
 # Positioning and routing recommendation
 
-Status: proposed direction, September 2026. This document does not implement a rename or new mechanics.
+Status: original proposal, September 2026. The user selected **Lantern Guard: Tower Defense**. The first routing and tower refinement pass is now implemented; see [the implementation and results](LANTERN-GUARD.md). The discussion below records the original alternatives and the remaining observed-playtest decision.
 
-## Working title: Lantern Keep: Tower Defense
+## Name shortlist (Lantern Guard selected)
 
 Lanternlocks makes the canal switches sound like the main attraction and leaves the genre unclear. The game's stronger promise is building a defence, watching it grow and protecting the Great Lantern.
 
 | Candidate | Judgment |
 |---|---|
-| **Lantern Keep: Tower Defense** | Recommended. A short, warm identity with an explicit genre. Works whether routing survives or is removed. |
-| **Lantern Guard: Tower Defense** | Clearer emphasis on the defenders; a little less distinctive in tone. |
+| **Lantern Keep: Tower Defense** | Original recommendation; superseded by the user's choice. |
+| **Lantern Guard: Tower Defense** | Selected. A clear emphasis on the defenders and an explicit genre. |
 | **Wickwater: Tower Defense** | Preserves the setting's existing name, but requires more explanation and is less immediate to say and remember. |
 
 Suggested store pitch: **Build your towers. Grow your defence. Keep the lantern lit.** Lead screenshots with the visible board and a growing established defence. Routing can be a supporting feature if playtests justify it.

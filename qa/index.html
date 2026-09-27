@@ -1,10 +1,14 @@
 <!doctype html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Lanternlocks QA</title></head>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Lantern Guard QA</title></head>
 <body style="background:#081319;color:#f6ecd6;font:16px system-ui;padding:20px">
-<h1>Local test fixtures</h1><p>Development only. These replace the test night's save on this origin. The previous test data is backed up first.</p>
+<h1>Local test fixtures</h1><p>Development only. These replace the test night's save on this origin and mute game audio. The previous test data and settings are backed up first. Audio stays muted after restoring.</p>
 <p><button data-fixture="wickwater">Wickwater busy wave 24</button> <button data-fixture="reedbank">Reedbank busy wave 24</button></p>
 <p><button data-fixture="reedbank-dawn">Reedbank moment before dawn</button> <button id="restore">Restore earlier test data</button></p>
 <p><button id="benchmark">Measure late-wave rendering</button></p><output id="result" role="status"></output>
+<h2>Lantern Guard</h2>
+<p><button data-fixture="guard-start">Fresh Lantern Guard</button> <button data-fixture="guard-plan-2">First route choice</button></p>
+<p><button data-fixture="guard-plan-6">Guard upper expansion</button> <button data-fixture="guard-plan-8">Plan hidden enemies</button> <button data-fixture="guard-plan-11">Guard west expansion</button></p>
+<p><button data-fixture="guard-plan-25">Plan final boss</button> <button data-fixture="guard-split">Guard boss split</button> <button data-fixture="guard-dawn">Guard before dawn</button></p>
 <h2>Growing canal</h2>
 <p><button data-fixture="growth-start">Fresh growing canal</button></p>
 <p><button data-fixture="growth-before-6">Before upper expansion</button> <button data-fixture="growth-after-6">Upper canal planning</button></p>

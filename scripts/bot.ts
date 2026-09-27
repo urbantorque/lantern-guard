@@ -5,6 +5,7 @@
  */
 import { CHARM_COST, TOWERS, type CharmTrait, type EnemyId, type TowerId } from '../src/game/defs'
 import { DT, FINAL_WAVE, Sim, type Challenge, type Enemy, type GateState, type Tower } from '../src/game/sim'
+import { coveredLength, routeCoverage } from '../src/game/route-plan'
 
 export interface BotOpts {
   name: string
@@ -15,7 +16,7 @@ export interface BotOpts {
   /** Preferred upgrade path per keeper type. */
   paths?: Partial<Record<TowerId, 0 | 1>>
   /** smart: sorts each Mope; none: never flips; random: flips at random; park: both locks on the rich runs for good. */
-  router: 'smart' | 'none' | 'random' | 'park'
+  router: 'smart' | 'none' | 'random' | 'park' | 'plan'
   /** park only: sort like 'smart' until this wave, then park (a player who stops routing late). */
   parkFrom?: number
   /** Build this many gardens early. */
@@ -207,6 +208,27 @@ function wantDir(sim: Sim, g: GateState, e: Enemy, greed: boolean): 0 | 1 {
 /** How far ahead (seconds) the router looks: a flip holds for at least the lock's cooldown. */
 const WINDOW = 1.1
 
+/** A planning-only player: compare built coverage once between waves, never sort live enemies. */
+function planRoutes(sim: Sim) {
+  for (const gate of sim.gates) {
+    if (sim.gateLocked(gate)) continue
+    const score = (dir: 0 | 1) => {
+      const plan = routeCoverage(sim, gate, dir)
+      const branch = plan.segments[0]
+      return plan.branchTowers.reduce((sum, t) => {
+        const s = t.stats
+        const power = t.id === 'beam' ? s.damage * s.beams * (s.beamLine ? 1.6 : 1)
+          : (s.damage * s.count * Math.min(s.pierce, 3) * (s.splash ? 2.2 : 1) + s.slow * 8) / s.interval
+        return sum + coveredLength(branch, t.x, t.y, sim.effRange(t)) * power
+      }, 0)
+    }
+    const left = score(0), right = score(1)
+    if (Math.max(left, right) === 0) continue
+    const dir = left > right ? 0 : 1
+    if (gate.state !== dir) sim.flipGate(gate)
+  }
+}
+
 function route(sim: Sim, mode: BotOpts['router'], rng: () => number, greed = true, parkFrom = 0) {
   if (mode === 'park' && sim.wave < parkFrom) mode = 'smart'
   for (const g of sim.gates) {
@@ -396,6 +418,7 @@ export function runBot(o: BotOpts, difficulty: Sim['difficulty'], seed = 7, hook
   let gloomGone = -1
   while (!sim.over && sim.stats.time < 60 * 60) {
     if (!sim.waveActive) {
+      if (o.router === 'plan') planRoutes(sim)
       const g0 = sim.glow
       // between waves a player spends until nothing more is worth buying (a tide opens with a large bank)
       for (let i = 0; i < 12; i++) {
@@ -404,6 +427,7 @@ export function runBot(o: BotOpts, difficulty: Sim['difficulty'], seed = 7, hook
         if (sim.glow === before) break
       }
       spent += Math.max(0, g0 - sim.glow)
+      if (o.router === 'plan') planRoutes(sim)
       if (sim.wave >= FINAL_WAVE) break
       if (sim.wave + 1 >= 15) bank = Math.max(bank, sim.glow)
       fadePresence(sim)
@@ -414,7 +438,7 @@ export function runBot(o: BotOpts, difficulty: Sim['difficulty'], seed = 7, hook
     sim.step(DT)
     steps++
     if (steps % 10 === 0) trackPresence(sim, DT * 10)
-    if (steps % reactionSteps === 0 && o.router !== 'none') route(sim, o.router, rng, o.greed ?? true, o.parkFrom)
+    if (steps % reactionSteps === 0 && o.router !== 'none' && o.router !== 'plan') route(sim, o.router, rng, o.greed ?? true, o.parkFrom)
     if (steps % spendSteps === 0) {
       const g0 = sim.glow
       spend(sim, o)

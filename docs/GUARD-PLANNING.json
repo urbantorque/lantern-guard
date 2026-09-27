@@ -1,0 +1,531 @@
+[
+  {
+    "seed": 7,
+    "difficulty": "nightfall",
+    "options": {
+      "name": "Planning beams: 6 towers, 0 garden",
+      "mix": {
+        "beam": 2.5,
+        "owl": 1.2
+      },
+      "paths": {
+        "beam": 1,
+        "wick": 1
+      },
+      "router": "plan",
+      "greed": false,
+      "maxTowers": 6,
+      "gardens": 0
+    },
+    "name": "Planning beams: 6 towers, 0 garden",
+    "outcome": "lost",
+    "wave": 25,
+    "lives": 0,
+    "maxLives": 15,
+    "leaks": {
+      "veil": 1,
+      "gloom": 1998
+    },
+    "flips": 0,
+    "towers": "wick13 wick13 cracker31 cracker31 owl31 beam13 beam02",
+    "minutes": 16.2,
+    "waveLeaks": {
+      "8": 1,
+      "25": 14
+    },
+    "spent": 9870,
+    "margin": {
+      "1": 52,
+      "2": 32,
+      "3": 4,
+      "4": 21,
+      "5": 11,
+      "6": 41,
+      "7": 16,
+      "8": 0,
+      "9": 20,
+      "10": 28,
+      "11": 63,
+      "12": 61,
+      "13": 63,
+      "14": 35,
+      "15": 25,
+      "16": 33,
+      "17": 29,
+      "18": 30,
+      "19": 33,
+      "20": 35,
+      "21": 22,
+      "22": 29,
+      "23": 45,
+      "24": 44,
+      "25": 0
+    },
+    "richLeak": 1998,
+    "bank": 593,
+    "earned": 10434,
+    "gloom": "split@85% leaked"
+  },
+  {
+    "seed": 7,
+    "difficulty": "nightfall",
+    "options": {
+      "name": "Planning beams: 8 towers, 0 garden",
+      "mix": {
+        "beam": 2.5,
+        "owl": 1.2
+      },
+      "paths": {
+        "beam": 1,
+        "wick": 1
+      },
+      "router": "plan",
+      "greed": false,
+      "maxTowers": 8,
+      "gardens": 0
+    },
+    "name": "Planning beams: 8 towers, 0 garden",
+    "outcome": "lost",
+    "wave": 25,
+    "lives": 0,
+    "maxLives": 15,
+    "leaks": {
+      "veil": 1,
+      "bloat": 8,
+      "gloom": 1998
+    },
+    "flips": 0,
+    "towers": "wick13 wick13 cracker21 cracker21 owl31 beam13 beam13 owl21",
+    "minutes": 16,
+    "waveLeaks": {
+      "8": 1,
+      "25": 14
+    },
+    "spent": 10200,
+    "margin": {
+      "1": 52,
+      "2": 32,
+      "3": 4,
+      "4": 21,
+      "5": 11,
+      "6": 41,
+      "7": 16,
+      "8": 0,
+      "9": 20,
+      "10": 60,
+      "11": 58,
+      "12": 57,
+      "13": 63,
+      "14": 33,
+      "15": 32,
+      "16": 38,
+      "17": 30,
+      "18": 26,
+      "19": 3,
+      "20": 12,
+      "21": 22,
+      "22": 32,
+      "23": 51,
+      "24": 70,
+      "25": 0
+    },
+    "richLeak": 2006,
+    "bank": 824,
+    "earned": 10311,
+    "gloom": "split@57% leaked"
+  },
+  {
+    "seed": 7,
+    "difficulty": "nightfall",
+    "options": {
+      "name": "Planning beams: 10 towers, 0 garden",
+      "mix": {
+        "beam": 2.5,
+        "owl": 1.2
+      },
+      "paths": {
+        "beam": 1,
+        "wick": 1
+      },
+      "router": "plan",
+      "greed": false,
+      "maxTowers": 10,
+      "gardens": 0
+    },
+    "name": "Planning beams: 10 towers, 0 garden",
+    "outcome": "lost",
+    "wave": 25,
+    "lives": 0,
+    "maxLives": 15,
+    "leaks": {
+      "veil": 1,
+      "gloom": 1998
+    },
+    "flips": 0,
+    "towers": "wick13 wick13 cracker21 cracker21 owl21 beam13 beam13 owl21 bell21 bell21",
+    "minutes": 17.2,
+    "waveLeaks": {
+      "8": 1,
+      "25": 14
+    },
+    "spent": 10640,
+    "margin": {
+      "1": 52,
+      "2": 32,
+      "3": 4,
+      "4": 21,
+      "5": 11,
+      "6": 41,
+      "7": 16,
+      "8": 0,
+      "9": 20,
+      "10": 60,
+      "11": 58,
+      "12": 57,
+      "13": 64,
+      "14": 25,
+      "15": 38,
+      "16": 38,
+      "17": 44,
+      "18": 33,
+      "19": 21,
+      "20": 12,
+      "21": 21,
+      "22": 43,
+      "23": 42,
+      "24": 83,
+      "25": 0
+    },
+    "richLeak": 1998,
+    "bank": 938,
+    "earned": 10505,
+    "gloom": "split@55% leaked"
+  },
+  {
+    "seed": 7,
+    "difficulty": "nightfall",
+    "options": {
+      "name": "Planning beams: 12 towers, 0 garden",
+      "mix": {
+        "beam": 2.5,
+        "owl": 1.2
+      },
+      "paths": {
+        "beam": 1,
+        "wick": 1
+      },
+      "router": "plan",
+      "greed": false,
+      "maxTowers": 12,
+      "gardens": 0
+    },
+    "name": "Planning beams: 12 towers, 0 garden",
+    "outcome": "lost",
+    "wave": 25,
+    "lives": 0,
+    "maxLives": 15,
+    "leaks": {
+      "veil": 1,
+      "gloom": 1998
+    },
+    "flips": 0,
+    "towers": "wick13 wick13 cracker11 cracker11 owl11 beam13 beam13 owl11 bell11 bell11 beam02 beam01",
+    "minutes": 17.2,
+    "waveLeaks": {
+      "8": 1,
+      "25": 14
+    },
+    "spent": 10380,
+    "margin": {
+      "1": 52,
+      "2": 32,
+      "3": 4,
+      "4": 21,
+      "5": 11,
+      "6": 41,
+      "7": 16,
+      "8": 0,
+      "9": 20,
+      "10": 60,
+      "11": 58,
+      "12": 57,
+      "13": 64,
+      "14": 25,
+      "15": 38,
+      "16": 38,
+      "17": 44,
+      "18": 48,
+      "19": 25,
+      "20": 42,
+      "21": 22,
+      "22": 32,
+      "23": 48,
+      "24": 69,
+      "25": 0
+    },
+    "richLeak": 1998,
+    "bank": 706,
+    "earned": 10726,
+    "gloom": "split@37% leaked"
+  },
+  {
+    "seed": 7,
+    "difficulty": "nightfall",
+    "options": {
+      "name": "Planning beams: 6 towers, 1 garden",
+      "mix": {
+        "beam": 2.5,
+        "owl": 1.2
+      },
+      "paths": {
+        "beam": 1,
+        "wick": 1
+      },
+      "router": "plan",
+      "greed": false,
+      "maxTowers": 6,
+      "gardens": 1
+    },
+    "name": "Planning beams: 6 towers, 1 garden",
+    "outcome": "WON",
+    "wave": 25,
+    "lives": 11,
+    "maxLives": 15,
+    "leaks": {
+      "shell": 4
+    },
+    "flips": 0,
+    "towers": "wick13 wick13 garden13 cracker31 cracker31 owl31 beam13 beam13 beam00",
+    "minutes": 15.5,
+    "waveLeaks": {
+      "5": 4
+    },
+    "spent": 13080,
+    "margin": {
+      "1": 52,
+      "2": 32,
+      "3": 4,
+      "4": 5,
+      "5": 0,
+      "6": 37,
+      "7": 13,
+      "8": 18,
+      "9": 86,
+      "10": 48,
+      "11": 65,
+      "12": 63,
+      "13": 63,
+      "14": 40,
+      "15": 32,
+      "16": 47,
+      "17": 33,
+      "18": 31,
+      "19": 19,
+      "20": 55,
+      "21": 19,
+      "22": 49,
+      "23": 59,
+      "24": 44,
+      "25": 2
+    },
+    "richLeak": 0,
+    "bank": 771,
+    "earned": 13307,
+    "gloom": "split@57% halves 31s"
+  },
+  {
+    "seed": 7,
+    "difficulty": "nightfall",
+    "options": {
+      "name": "Planning beams: 8 towers, 1 garden",
+      "mix": {
+        "beam": 2.5,
+        "owl": 1.2
+      },
+      "paths": {
+        "beam": 1,
+        "wick": 1
+      },
+      "router": "plan",
+      "greed": false,
+      "maxTowers": 8,
+      "gardens": 1
+    },
+    "name": "Planning beams: 8 towers, 1 garden",
+    "outcome": "WON",
+    "wave": 25,
+    "lives": 11,
+    "maxLives": 15,
+    "leaks": {
+      "shell": 4
+    },
+    "flips": 0,
+    "towers": "wick13 wick13 garden12 cracker31 cracker21 owl31 beam13 beam13 owl31",
+    "minutes": 15.7,
+    "waveLeaks": {
+      "5": 4
+    },
+    "spent": 12640,
+    "margin": {
+      "1": 52,
+      "2": 32,
+      "3": 4,
+      "4": 5,
+      "5": 0,
+      "6": 37,
+      "7": 13,
+      "8": 18,
+      "9": 86,
+      "10": 66,
+      "11": 58,
+      "12": 65,
+      "13": 66,
+      "14": 45,
+      "15": 47,
+      "16": 63,
+      "17": 58,
+      "18": 38,
+      "19": 22,
+      "20": 51,
+      "21": 30,
+      "22": 66,
+      "23": 65,
+      "24": 65,
+      "25": 5
+    },
+    "richLeak": 0,
+    "bank": 400,
+    "earned": 12909,
+    "gloom": "split@56% halves 18s"
+  },
+  {
+    "seed": 7,
+    "difficulty": "nightfall",
+    "options": {
+      "name": "Planning beams: 10 towers, 1 garden",
+      "mix": {
+        "beam": 2.5,
+        "owl": 1.2
+      },
+      "paths": {
+        "beam": 1,
+        "wick": 1
+      },
+      "router": "plan",
+      "greed": false,
+      "maxTowers": 10,
+      "gardens": 1
+    },
+    "name": "Planning beams: 10 towers, 1 garden",
+    "outcome": "WON",
+    "wave": 25,
+    "lives": 11,
+    "maxLives": 15,
+    "leaks": {
+      "shell": 4
+    },
+    "flips": 0,
+    "towers": "wick13 wick13 garden12 cracker21 cracker21 owl21 beam13 beam13 owl21 bell31 bell31",
+    "minutes": 17.1,
+    "waveLeaks": {
+      "5": 4
+    },
+    "spent": 12840,
+    "margin": {
+      "1": 52,
+      "2": 32,
+      "3": 4,
+      "4": 5,
+      "5": 0,
+      "6": 37,
+      "7": 13,
+      "8": 18,
+      "9": 86,
+      "10": 66,
+      "11": 58,
+      "12": 65,
+      "13": 65,
+      "14": 53,
+      "15": 50,
+      "16": 46,
+      "17": 56,
+      "18": 38,
+      "19": 22,
+      "20": 36,
+      "21": 37,
+      "22": 57,
+      "23": 63,
+      "24": 63,
+      "25": 8
+    },
+    "richLeak": 0,
+    "bank": 351,
+    "earned": 12943,
+    "gloom": "split@59% halves 18s"
+  },
+  {
+    "seed": 7,
+    "difficulty": "nightfall",
+    "options": {
+      "name": "Planning beams: 12 towers, 1 garden",
+      "mix": {
+        "beam": 2.5,
+        "owl": 1.2
+      },
+      "paths": {
+        "beam": 1,
+        "wick": 1
+      },
+      "router": "plan",
+      "greed": false,
+      "maxTowers": 12,
+      "gardens": 1
+    },
+    "name": "Planning beams: 12 towers, 1 garden",
+    "outcome": "WON",
+    "wave": 25,
+    "lives": 11,
+    "maxLives": 15,
+    "leaks": {
+      "shell": 4
+    },
+    "flips": 0,
+    "towers": "wick13 wick13 garden11 cracker11 cracker11 owl11 beam13 beam13 owl11 bell11 bell11 beam13 beam02",
+    "minutes": 16.9,
+    "waveLeaks": {
+      "5": 4
+    },
+    "spent": 12480,
+    "margin": {
+      "1": 52,
+      "2": 32,
+      "3": 4,
+      "4": 5,
+      "5": 0,
+      "6": 37,
+      "7": 13,
+      "8": 18,
+      "9": 86,
+      "10": 66,
+      "11": 58,
+      "12": 65,
+      "13": 65,
+      "14": 53,
+      "15": 50,
+      "16": 46,
+      "17": 56,
+      "18": 57,
+      "19": 27,
+      "20": 45,
+      "21": 32,
+      "22": 54,
+      "23": 61,
+      "24": 62,
+      "25": 17
+    },
+    "richLeak": 0,
+    "bank": 808,
+    "earned": 12585,
+    "gloom": "split@46% halves 12s"
+  }
+]
