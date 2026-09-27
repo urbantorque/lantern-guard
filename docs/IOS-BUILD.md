@@ -41,6 +41,11 @@ Use a small iPhone and a current device with a home indicator. Record device mod
 | Haptics on/off | Appropriate feedback when enabled; none when disabled |
 | Wave 24, final boss, free play at 1x/3x | Stable frame pacing and acceptable heat over a full session |
 | Expansion, dawn, free play, restart, relaunch | Correct canal section and towers retained; one reward per completed night |
+| Campaign → daily tide → title → campaign | Each slot retains its own towers, resources and flowers |
+| Defeat → revise → force quit → Continue | Exact planning resources retained; repeated enemies grant no duplicate journal credit |
+| Wave 25 → Harbour → view canal / harbour | Existing towers stay anchored; four new pads work; offscreen threats are signalled |
+| Harbour Warden and Ember fire, background / resume | New enemies, fire and tower counters resume identically; no repeated boss surge |
+| Harbour victory → reload → free play | One Harbour result; no duplicate canal reward; extra-wave counter starts after 33 |
 
 The desktop browser late-wave measurement is not evidence of device frame rate, battery life or thermal behavior. Those remain physical-device gates.
 
@@ -48,10 +53,14 @@ The desktop browser late-wave measurement is not evidence of device frame rate, 
 
 ```sh
 npm run check
-npm run balance:growth
+npm run balance:journey
 npm run ios:sync
 ```
 
 `npm run qa:fixtures` rebuilds development fixtures from actual winning runs. Start Vite and open `/qa/` on a disposable local test origin to exercise busy-wave reloads, the victory/reward screen and a 300-frame rendering sample. This page is excluded from the production build and backs up test data before replacing it.
+
+`npm run test:journey` and `npm run balance:journey` rebuild the retry, Harbour and Ember fixtures. Every fixture mutes audio. Keep tests silent unless the tester explicitly chooses an audio-interruption test on the device.
+
+For the first beta, record first unaided placement, whether the player can describe the next enemy's route, losses around waves 8–10, voluntary resumes, different tower combinations, and return visits on a later day. The local playtest log records actions and attempts, not player understanding or a retention rate. A small observed group must supply that evidence.
 
 Official references: [Capacitor iOS](https://capacitorjs.com/docs/ios), [Preferences and the privacy manifest](https://capacitorjs.com/docs/apis/preferences), [App Store deployment](https://capacitorjs.com/docs/ios/deploying-to-app-store).

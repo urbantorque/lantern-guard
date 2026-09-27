@@ -1,5 +1,7 @@
 # Lanternlocks: path to an iOS release
 
+Historical initial plan. The current title is **Lantern Guard: Tower Defense**. Follow [the current device/build checklist](IOS-BUILD.md) and [journey implementation and validation](JOURNEY.md); the flip-centric metrics below describe the original prototype.
+
 The browser slice proves three things: the core loop (build, sort with the locks, upgrade), the look and feel, and the balance. This plan covers everything between here and the App Store, most valuable first.
 
 ## 1. Validate before building more (2 to 3 weeks)

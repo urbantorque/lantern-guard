@@ -1,5 +1,7 @@
 # Lanternlocks: design notes
 
+Historical concept document. The current game is **Lantern Guard: Tower Defense**, with build-dependent route planning and a continuous defence. See [the current implementation](LANTERN-GUARD.md) and [the journey expansion](JOURNEY.md). The research and monetisation ideas below are proposals, not shipped features or validated demand.
+
 **Pitch:** A cozy puzzle-defence game for iPhone. Grumpy ink Mopes drift down lantern-lit canals. You build keepers on the banks and flip the canal locks mid-wave, sorting each group into the channel that suits it. Keep the Great Lantern lit.
 
 ## 1. The niche

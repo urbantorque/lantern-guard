@@ -4,7 +4,7 @@ A lantern-lit tower defence game for phones. Build your towers, grow your defenc
 
 A browser game with a Capacitor iOS project, designed portrait-first for iPhone. It also plays on desktop.
 
-New nights use one growing canal: Lantern bend first, the upper canal before wave 6, then the west inlet before wave 11. Existing towers and upgrades stay in place. Compare routes against your tower coverage, combine slowing and revealing towers with attackers, and refine the same defence through all 25 waves. See [the Lantern Guard refinement and verification](docs/LANTERN-GUARD.md) and [the native build handoff](docs/IOS-BUILD.md). Legacy saves retain their original map and rules.
+New nights use one growing canal: Lantern bend first, the upper canal before wave 6, then the west inlet before wave 11. Existing towers and upgrades stay in place. Compare routes against your tower coverage, combine slowing and revealing towers with attackers, and refine the same defence through 25 waves. At dawn, open **Lantern Harbour** for eight authored waves, four new pads and a new boss without rebuilding your canal. See [the journey expansion and verification](docs/JOURNEY.md), [the Lantern Guard foundations](docs/LANTERN-GUARD.md) and [the native build handoff](docs/IOS-BUILD.md). Legacy saves retain their original map and rules.
 
 - Design, niche, twist, monetisation and the iOS plan: [docs/DESIGN.md](docs/DESIGN.md)
 - Research: [docs/research.json](docs/research.json) (raw findings with sources)
@@ -37,6 +37,8 @@ Other scripts:
 | `npm run balance:growth` | 36 growing-canal nights across 6 strategies, 3 modes and 2 seeds |
 | `npm run balance:guard` | 44 Lantern Guard nights across 11 strategies, Standard/Nightfall and 2 seeds |
 | `npm run test:guard` | Versioned rules, route rewards, support interactions, save continuity and planning-only wins |
+| `npm run test:journey` | Separate saves, migrations, retry credit, Harbour continuity, guardian behaviour and current challenges |
+| `npm run balance:journey` | 12 guardian/difficulty/strategy openings, Harbour continuations with and without new investment, plus current daily/weekly checks |
 | `npm run balance:reedbank` | 48 nights across 8 strategies, 3 modes and 2 seeds |
 | `npm run ios:sync` | Build and copy the offline game into the Xcode project |
 | `npm run ios:open` | Open the project in Xcode on a Mac |
@@ -54,10 +56,12 @@ Other scripts:
 6. **Pause any time** to plan. Nightfall allows building while paused, but live route changes require time to run. Call waves early for bonus glow. New threats and the final boss get a manual planning break. The game autosaves, even mid-wave.
 7. **Tides.** After your first night, Collection offers a daily tide (waves 15 to 25 of a seeded remix, built from a 4,700-glow bank) and a weekly night (the whole canal under one rule). Everyone gets the same ones; results can be shared as text.
 8. **Bloom journal.** Every Mope you cheer up is counted. Milestones mark each kind, and play earns bloom sets that change what the banks grow. At the end of a night you can share a postcard of the canal.
+9. **Keep your defence.** Campaign and challenge nights have independent saves. On Relaxed and Standard, defeat offers a return to the last planning break with the exact towers, glow and light. Nightfall, scored challenges and free play retain their original loss rules.
+10. **Beyond dawn.** Continue into Lantern Harbour, or choose free play. Earn Crowned to unlock Ember Keeper in Collection: Crackers trade impact damage for lingering fire. This optional choice applies to new ordinary nights; challenges use the default guardian.
 
 Accessibility and assists live in Settings: a colour-safe palette, larger text, a left-hand dock, and *Slow at the locks*. **Settings > Playtest data** summarises this device's play log against the iOS plan's validation goals and exports it as JSON. Nothing leaves the device unless you copy or save it.
 
-New tower choices arrive before their wave: Wickling and Cracker at the start, Moonbell at 3, Glow Garden at 4, Lamp Owl at 6, and Lighthouse at 7. Map expansions wait until every active wave clears. Even with auto-start on, press Start yourself after an expansion so you have time to build. Older saved nights and daily/weekly challenges retain their original routing, reward and charm rules. Start a new ordinary night to play the Lantern Guard rules.
+New tower choices arrive before their wave: Wickling and Cracker at the start, Moonbell at 3, Glow Garden at 4, Lamp Owl at 6, and Lighthouse at 7. Map expansions wait until every active wave clears. Even with auto-start on, press Start yourself after an expansion so you have time to build. Newly launched daily/weekly challenges use Lantern Guard routing and support rules; previously saved challenges retain their original rules and IDs.
 
 Keyboard: `1`–`6` keepers · `Q`/`E` flip locks · `Space` or `N` start or call a wave · `C` charms · `P` pause · `F` speed · `Esc` close.
 

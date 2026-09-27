@@ -2,10 +2,52 @@ import { WATERWAYS } from './waterways'
 import { DIFFICULTY, TOWERS, ENEMIES, CHARMS } from './defs'
 import { LEVEL } from './level'
 import { CANAL_STAGES, growingCanal, stageForWave } from './canal-growth'
+import { harbourLevel, HARBOUR_PADS } from './harbour'
 import type { SaveSnapshot } from './sim'
 
 export const RUN_KEY = 'lanternlocks.run.v3'
 export const BACKUP_KEY = 'lanternlocks.run-backup.v3'
+export type RunSlot = 'campaign' | 'challenge'
+export const slotKeys = (slot: RunSlot) => slot === 'campaign' ? [RUN_KEY, BACKUP_KEY] : ['lanternlocks.challenge-run.v1', 'lanternlocks.challenge-backup.v1']
+export function activeSlot(): RunSlot {
+  try { return localStorage.getItem('lanternlocks.active-slot') === 'challenge' ? 'challenge' : 'campaign' } catch { return 'campaign' }
+}
+export function selectSlot(slot: RunSlot) {
+  try { localStorage.setItem('lanternlocks.active-slot', slot); storageChanged() } catch { setSaveHealth('unavailable') }
+}
+
+/** Migrate a challenge saved by the old single-slot build without overwriting either healthy slot. */
+export function migrateSlots(storage: Storage = localStorage) {
+  try {
+    const primary = storage.getItem(RUN_KEY), recovery = storage.getItem(BACKUP_KEY)
+    let old = decodeRun(primary) ?? decodeRun(recovery)
+    let legacy = false
+    if (!old && !primary && !recovery) {
+      const snapshot: unknown = JSON.parse(storage.getItem('lanternlocks.save.v1') ?? 'null')
+      const blooms = JSON.parse(storage.getItem('lanternlocks.blooms.v1') ?? '{"d":[]}').d
+      if (validSnapshot(snapshot) && Array.isArray(blooms) && blooms.every(Number.isFinite)) {
+        old = { snapshot, blooms, savedAt: 0 }
+        legacy = true
+      }
+    }
+    if (!old?.snapshot.challenge.id) return
+    const [key, backup] = slotKeys('challenge')
+    if (!decodeRun(storage.getItem(key)) && !decodeRun(storage.getItem(backup))) {
+      const credit = storage.getItem('lanternlocks.journal-credit.v1')
+      if (credit) storage.setItem('lanternlocks.challenge-credit.v1', credit)
+      storage.setItem(key, encodeRun(old.snapshot, old.blooms))
+    }
+    storage.removeItem(RUN_KEY)
+    storage.removeItem(BACKUP_KEY)
+    storage.removeItem('lanternlocks.journal-credit.v1')
+    if (legacy) {
+      storage.removeItem('lanternlocks.save.v1')
+      storage.removeItem('lanternlocks.blooms.v1')
+    }
+    storage.setItem('lanternlocks.active-slot', 'challenge')
+    storageChanged()
+  } catch { setSaveHealth('unavailable') }
+}
 export type SaveHealth = 'ready' | 'recovered' | 'unavailable' | 'invalid'
 export let saveHealth: SaveHealth = 'ready'
 export const setSaveHealth = (health: SaveHealth) => { saveHealth = health }
@@ -27,11 +69,14 @@ export function validSnapshot(s: unknown): s is SaveSnapshot {
   if (s.challenge.keepers !== undefined && (!Array.isArray(s.challenge.keepers) || !s.challenge.keepers.every(v => typeof v === 'string' && Object.hasOwn(TOWERS, v)))) return false
   if (s.challenge.waterway !== undefined && !Object.hasOwn(WATERWAYS, String(s.challenge.waterway))) return false
   if (s.challenge.expanding !== undefined && (s.challenge.expanding !== 1 || s.v !== 2 || s.challenge.waterway !== undefined || s.challenge.id !== undefined || s.challenge.tide !== undefined || !integer(s.canalStage, 0, 2))) return false
-  if (s.challenge.guard !== undefined && (s.challenge.guard !== 1 || s.challenge.expanding !== 1)) return false
-  if (!Array.isArray(s.towers) || s.towers.length > LEVEL.pads.length || !Array.isArray(s.gates) || s.gates.length !== 2) return false
+  if (s.challenge.guard !== undefined && (s.challenge.guard !== 1 || (s.challenge.expanding !== 1 && typeof s.challenge.id !== 'string') || s.challenge.waterway !== undefined)) return false
+  if (s.challenge.harbour !== undefined && (s.challenge.harbour !== 1 || s.challenge.guard !== 1 || s.challenge.expanding !== 1 || s.wave < 25 || s.canalStage !== 2)) return false
+  if (s.challenge.guardian !== undefined && (s.challenge.guardian !== 'ember' || s.challenge.guard !== 1 || s.challenge.id !== undefined)) return false
+  const maxPads = LEVEL.pads.length + (s.challenge.harbour ? HARBOUR_PADS.length : 0)
+  if (!Array.isArray(s.towers) || s.towers.length > maxPads || !Array.isArray(s.gates) || s.gates.length !== 2) return false
   const pads = new Set<number>()
   for (const t of s.towers) {
-    if (!object(t) || typeof t.id !== 'string' || !Object.hasOwn(TOWERS, t.id) || !integer(t.pad, 0, LEVEL.pads.length - 1) || pads.has(t.pad) || !integer(t.a, 0, 3) || !integer(t.b, 0, 3) || (t.a > 1 && t.b > 1) || !number(t.spent, 0) || !number(t.pops, 0) || !['first', 'last', 'strong', 'close'].includes(String(t.priority))) return false
+    if (!object(t) || typeof t.id !== 'string' || !Object.hasOwn(TOWERS, t.id) || !integer(t.pad, 0, maxPads - 1) || pads.has(t.pad) || !integer(t.a, 0, 3) || !integer(t.b, 0, 3) || (t.a > 1 && t.b > 1) || !number(t.spent, 0) || !number(t.pops, 0) || !['first', 'last', 'strong', 'close'].includes(String(t.priority))) return false
     pads.add(t.pad)
   }
   for (const g of s.gates) {
@@ -46,6 +91,7 @@ export function validSnapshot(s: unknown): s is SaveSnapshot {
     } else if (!number(value)) return false
   }
   for (const t of s.towers) {
+    if (t.damageDealt !== undefined && !number(t.damageDealt, 0)) return false
     for (const key of ['uid', 'cd', 'diveCd', 'mothCd', 'tolls', 'angle', 'bornT', 'fireT', 'upT', 'slowed', 'spotted', 'earned']) if (t[key] !== undefined && !number(t[key])) return false
     if (t.beams !== undefined && (!Array.isArray(t.beams) || t.beams.length !== 2 || !t.beams.every((v: unknown) => integer(v)))) return false
   }
@@ -66,9 +112,13 @@ export function validSnapshot(s: unknown): s is SaveSnapshot {
     const active = (s.enemies as unknown[]).length > 0 || (s.spawners as unknown[]).length > 0
     if (s.canalStage !== stageForWave(s.wave + (!active && !s.over ? 1 : 0))) return false
     const available = CANAL_STAGES[s.canalStage as number].pads as readonly number[]
-    if (s.towers.some(t => !available.includes((t as { pad: number }).pad))) return false
+    const harbour = !!s.challenge.harbour
+    if (s.towers.some(t => !available.includes((t as { pad: number }).pad) && !(harbour && (t as { pad: number }).pad >= LEVEL.pads.length))) return false
   }
-  const segments = new Set((s.challenge.expanding ? growingCanal(s.canalStage as number) : LEVEL).segments.map(seg => seg.id))
+  const base = s.challenge.expanding ? growingCanal(s.canalStage as number) : LEVEL
+  const segments = new Set((s.challenge.harbour ? harbourLevel(base) : base).segments.map(seg => seg.id))
+  if (s.embers !== undefined && (!Array.isArray(s.embers) || s.embers.length > 48 || !s.embers.every(p => object(p) && number(p.x) && number(p.y) && number(p.radius, 0, 1000) && number(p.life, 0, 3) && number(p.dps, 0) && integer(p.tower, 1)))) return false
+  if (s.lastLeak !== undefined && s.lastLeak !== null && (!object(s.lastLeak) || !Object.hasOwn(ENEMIES, String(s.lastLeak.enemy)) || typeof s.lastLeak.route !== 'string' || typeof s.lastLeak.hidden !== 'boolean' || typeof s.lastLeak.armoured !== 'boolean' || !integer(s.lastLeak.wave, 1) || !number(s.lastLeak.light, 0))) return false
   if (!(s.openSources as unknown[]).every(id => ['north', 'west'].includes(String(id)))) return false
   if (!(s.enemies as unknown[]).every(e => object(e) && Object.hasOwn(ENEMIES, String(e.type)) && segments.has(String(e.seg)) && number(e.s, 0) && number(e.hp) && number(e.maxHp, 0) && integer(e.uid, 1) && integer(e.wave, 1, 10000))) return false
   if (!(s.projs as unknown[]).every(p => object(p) && integer(p.tower, 1) && Array.isArray(p.hit) && number(p.x) && number(p.y))) return false
@@ -113,23 +163,25 @@ export function storeRun(snapshot: SaveSnapshot, blooms: number[], storage?: Sto
   if (!validSnapshot(snapshot)) { saveHealth = 'invalid'; return false }
   try {
     storage ??= localStorage
-    const previous = storage.getItem(RUN_KEY)
+    const [key, backup] = slotKeys(snapshot.challenge.id ? 'challenge' : 'campaign')
+    const previous = storage.getItem(key)
     // Never rotate a corrupt main save over a healthy recovery copy.
     if (decodeRun(previous)) {
-      try { storage.setItem(BACKUP_KEY, previous!) } catch { /* still attempt the primary write */ }
+      try { storage.setItem(backup, previous!) } catch { /* still attempt the primary write */ }
     }
-    storage.setItem(RUN_KEY, encodeRun(snapshot, blooms))
+    storage.setItem(key, encodeRun(snapshot, blooms))
     saveHealth = 'ready'
     storageChanged()
     return true
   } catch { saveHealth = 'unavailable'; return false }
 }
 
-export function readRun(storage?: Storage): RunEnvelope | null {
+export function readRun(storage?: Storage, slot: RunSlot = 'campaign'): RunEnvelope | null {
   try {
     storage ??= localStorage
-    const primary = storage.getItem(RUN_KEY)
-    const backup = storage.getItem(BACKUP_KEY)
+    const [key, recoveryKey] = slotKeys(slot)
+    const primary = storage.getItem(key)
+    const backup = storage.getItem(recoveryKey)
     const run = decodeRun(primary)
     if (run) return run
     const recovered = decodeRun(backup)

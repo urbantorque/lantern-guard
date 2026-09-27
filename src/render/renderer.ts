@@ -20,6 +20,7 @@ export type Selection =
   | null
 
 export interface ViewState {
+  feedbackRoute?: string
   routeDir?: 0 | 1
   upgradeRange?: number
   selection: Selection
@@ -94,6 +95,11 @@ const cellKey = (x: number, y: number) => Math.floor(x / BLOOM_CELL) * 1000 + Ma
 const FIREWORK_COLS = [P.coral, P.amberHi, P.ice, P.lime, P.lilac, P.gold, P.pink]
 
 export class Renderer {
+  harbourView = false
+  setHarbourView(on: boolean) {
+    this.harbourView = on
+    if (this.w && this.h) this.resize(this.w, this.h, this.dpr)
+  }
   cv: HTMLCanvasElement
   ctx: CanvasRenderingContext2D
   dpr = 1
@@ -150,9 +156,10 @@ export class Renderer {
   }
 
   attach(sim: Sim, preserveBlooms = false) {
+    if (!sim.challenge.harbour) this.harbourView = false
     this.routeKey = ''
     this.partnerKey = ''
-    this.newPads = preserveBlooms && sim.challenge.expanding && sim.canalStage > 0
+    this.newPads = preserveBlooms && sim.challenge.harbour ? [18, 19, 20, 21] : preserveBlooms && sim.challenge.expanding && sim.canalStage > 0
       ? CANAL_STAGES[sim.canalStage].pads.filter(p => !(CANAL_STAGES[sim.canalStage - 1].pads as readonly number[]).includes(p)) : []
     this.revealUntil = this.time + 5
     if (this.levelBuilt !== sim.level) {
@@ -196,7 +203,7 @@ export class Renderer {
     this.cv.style.width = w + 'px'
     this.cv.style.height = h + 'px'
     // keepers on the top pads reach ~80 units above them: keep that headroom on screen
-    const bounds = this.levelBuilt?.def.bounds ?? { x: 0, y: -36, w: WORLD_W, h: WORLD_H + 36 }
+    const bounds = this.harbourView ? { x: 0, y: -475, w: 720, h: 830 } : this.levelBuilt?.def.bounds ?? { x: 0, y: -36, w: WORLD_W, h: WORLD_H + 36 }
     this.scale = Math.min(w / bounds.w, h / bounds.h)
     this.ox = (w - bounds.w * this.scale) / 2 - bounds.x * this.scale
     this.oy = (h - bounds.h * this.scale) / 2 - bounds.y * this.scale
@@ -543,7 +550,7 @@ export class Renderer {
 
   /** True where a bloom would sit on water, a stone bank, a pad or a landmark. */
   private bloomBlocked(x: number, y: number) {
-    if (x < 6 || y < 6 || x > WORLD_W - 6 || y > WORLD_H - 6) return true
+    if (x < 6 || y < (this.levelBuilt?.segs.has('harbour') ? -450 : 6) || x > WORLD_W - 6 || y > WORLD_H - 6) return true
     const lvl = this.levelBuilt
     if (!lvl) return true
     for (const seg of lvl.segs.values()) if (seg.line.distanceTo(x, y) < BANK_W / 2 - 1) return true
@@ -694,12 +701,35 @@ export class Renderer {
     ctx.translate(this.ox + sx, this.oy + sy)
     ctx.scale(this.scale, this.scale)
     ctx.drawImage(this.bg!, -BG_PAD_X, -BG_PAD_Y, WORLD_W + BG_PAD_X * 2, WORLD_H + BG_PAD_Y * 2)
+    if (sim.challenge.harbour) this.drawHarbour(ctx, sim)
 
     this.drawFlow(ctx, sim, dt)
     ctx.drawImage(this.bloomCv!, 0, 0, WORLD_W, WORLD_H)
+    if (sim.challenge.harbour) for (const b of this.blooms) if (b.y < 0) paintBloom(ctx, b, this.bloomStyle, true)
     this.drawSluice(ctx, sim)
     this.drawRanges(ctx, sim, view)
     this.drawRoutePlan(ctx, sim, view)
+    if (view.feedbackRoute && !sim.waveActive && !view.selection) {
+      ctx.save()
+      ctx.strokeStyle = P.coral
+      ctx.lineWidth = 4
+      ctx.setLineDash([12, 9])
+      for (let i = 0; i + 1 < view.feedbackRoute.length; i += 2) {
+        const gate = sim.gates.find(g => g.def.id[0] === view.feedbackRoute![i])
+        const seg = gate && sim.level.segs.get(gate.def.outs[view.feedbackRoute[i + 1] === '1' ? 1 : 0])
+        if (seg) { ctx.beginPath(); seg.line.pts.forEach((p, j) => j ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)); ctx.stroke() }
+      }
+      ctx.restore()
+    }
+    for (const p of sim.embers) {
+      ctx.save()
+      ctx.globalAlpha = Math.min(.45, p.life * .3)
+      ctx.fillStyle = P.coral
+      ctx.strokeStyle = P.amberHi
+      ctx.lineWidth = 2
+      ctx.beginPath(); ctx.ellipse(p.x, p.y, p.radius, p.radius * .65, 0, 0, TAU); ctx.fill(); ctx.stroke()
+      ctx.restore()
+    }
 
     // pads
     for (let i = 0; i < sim.pads.length; i++) {
@@ -768,6 +798,7 @@ export class Renderer {
           ctx.stroke()
         }
         drawEnemy(ctx, item.e, t, { hiddenAlpha: 0.26, showBars: true })
+        if (sim.challenge.guard) this.drawStatus(ctx, item.e)
         if (item.e.def.id === 'gloom' && item.e.def.splitAtGate) this.drawShroud(ctx, item.e, t)
       }
     }
@@ -805,16 +836,63 @@ export class Renderer {
     }
     if (view.paused) {
       // a clear paused state: the map dims and cools, with a soft vignette
+      const shadeTop = sim.challenge.harbour ? -600 : -BG_PAD_Y
+      const shadeHeight = WORLD_H + BG_PAD_Y - shadeTop
       ctx.fillStyle = 'rgba(6,14,24,0.34)'
-      ctx.fillRect(-BG_PAD_X, -BG_PAD_Y, WORLD_W + BG_PAD_X * 2, WORLD_H + BG_PAD_Y * 2)
+      ctx.fillRect(-BG_PAD_X, shadeTop, WORLD_W + BG_PAD_X * 2, shadeHeight)
       const vg = ctx.createRadialGradient(WORLD_W / 2, WORLD_H / 2, WORLD_H * 0.3, WORLD_W / 2, WORLD_H / 2, WORLD_H * 0.75)
       vg.addColorStop(0, 'rgba(8,20,30,0)')
       vg.addColorStop(1, 'rgba(8,20,30,0.45)')
       ctx.fillStyle = vg
-      ctx.fillRect(-BG_PAD_X, -BG_PAD_Y, WORLD_W + BG_PAD_X * 2, WORLD_H + BG_PAD_Y * 2)
+      ctx.fillRect(-BG_PAD_X, shadeTop, WORLD_W + BG_PAD_X * 2, shadeHeight)
     }
     // the sim only updates beamIntensity while stepping, so silence the hum when it is not
     sound.beam(view.paused || sim.over ? 0 : sim.beamIntensity)
+  }
+
+  private drawStatus(ctx: CanvasRenderingContext2D, e: Enemy) {
+    const r = e.def.radius * ENEMY_VIS * e.visScale + 4
+    ctx.save()
+    ctx.lineWidth = 2
+    if (e.shell > 0) {
+      ctx.strokeStyle = P.coral
+      for (let i = 0; i < 3; i++) { ctx.beginPath(); ctx.arc(e.x, e.y, r, i * TAU / 3, i * TAU / 3 + 1.4); ctx.stroke() }
+    }
+    if (e.def.hidden && (e.revealedPerm || e.seenT > 0)) {
+      const x = e.x, y = e.y + r + 5
+      ctx.strokeStyle = P.lime
+      ctx.fillStyle = P.lime
+      ctx.beginPath(); ctx.ellipse(x, y, 7, 4, 0, 0, TAU); ctx.stroke()
+      ctx.beginPath(); ctx.arc(x, y, 1.8, 0, TAU); ctx.fill()
+    }
+    if (e.slowT > 0) {
+      ctx.strokeStyle = P.ice
+      ctx.beginPath(); ctx.ellipse(e.x, e.y + r * .5, r, 5, 0, 0, TAU); ctx.stroke()
+      ctx.beginPath(); ctx.moveTo(e.x - 3, e.y + r * .5 - 4); ctx.lineTo(e.x - 3, e.y + r * .5 + 4); ctx.moveTo(e.x + 3, e.y + r * .5 - 4); ctx.lineTo(e.x + 3, e.y + r * .5 + 4); ctx.stroke()
+    }
+    ctx.restore()
+  }
+
+  private drawHarbour(ctx: CanvasRenderingContext2D, sim: Sim) {
+    const seg = sim.level.segs.get('harbour')!
+    ctx.save()
+    const bank = ctx.createLinearGradient(0, -100, 0, 15)
+    bank.addColorStop(0, '#10242a'); bank.addColorStop(1, '#10242a00')
+    ctx.fillStyle = bank
+    ctx.fillRect(-120, -600, 960, 615)
+    ctx.lineJoin = 'round'; ctx.lineCap = 'round'
+    for (const [width, color] of [[90, '#253e42'], [70, '#476468'], [56, '#28545b']] as const) {
+      ctx.lineWidth = width; ctx.strokeStyle = color
+      ctx.beginPath(); seg.line.pts.forEach((p, i) => i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)); ctx.stroke()
+    }
+    for (const [x, y] of [[75, -375], [610, -310], [85, -110], [620, -30]]) {
+      ctx.fillStyle = '#534b3c'; ctx.fillRect(x - 22, y, 44, 38)
+      ctx.strokeStyle = '#2b342d'; ctx.lineWidth = 2
+      for (let j = 0; j < 4; j++) { ctx.beginPath(); ctx.moveTo(x - 22, y + j * 10); ctx.lineTo(x + 22, y + j * 10); ctx.stroke() }
+      ctx.fillStyle = P.amberHi; ctx.fillRect(x - 3, y - 13, 6, 13)
+      ctx.drawImage(glowSprite(P.amber, 64), x - 22, y - 32, 44, 44)
+    }
+    ctx.restore()
   }
 
   /** Old Gloom is shrouded until it splits: a slow ring of smoke that shrugs off damage. */
@@ -1906,14 +1984,16 @@ export class Renderer {
     ctx.fillStyle = P.night0
     ctx.fillRect(0, 0, W, H)
     // the whole canal fits above the caption; the painted countryside fills the sides
-    const k = (H - BAND - 24) / WORLD_H
+    const top = sim.challenge.harbour ? -480 : 0
+    const k = (H - BAND - 24) / (WORLD_H - top)
     const ox = (W - WORLD_W * k) / 2
-    const oy = 18
+    const oy = 18 - top * k
     ctx.save()
     ctx.translate(ox, oy)
     ctx.scale(k, k)
     const bg = renderBackground(this.levelBuilt!, this.decor, k)
     ctx.drawImage(bg, -BG_PAD_X, -BG_PAD_Y, WORLD_W + BG_PAD_X * 2, WORLD_H + BG_PAD_Y * 2)
+    if (sim.challenge.harbour) this.drawHarbour(ctx, sim)
     for (const b of this.blooms) paintBloom(ctx, b, this.bloomStyle, true)
     this.drawSluice(ctx, sim, false)
     for (const [i, p] of sim.pads.entries()) {

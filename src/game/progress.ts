@@ -1,5 +1,5 @@
 import type { WaterwayId } from './waterways'
-import { BACKUP_KEY, RUN_KEY, readRun, storeRun, validSnapshot, setSaveHealth, storageChanged } from './save-store'
+import { activeSlot, decodeRun, encodeRun, slotKeys, type RunSlot, readRun, storeRun, validSnapshot, setSaveHealth, storageChanged } from './save-store'
 import type { Difficulty, EnemyId, TowerId } from './defs'
 import type { RunStats, SaveSnapshot, Sim } from './sim'
 
@@ -36,12 +36,13 @@ export function saveRun(snap: SaveSnapshot, blooms: number[] = []) {
   return storeRun(snap, blooms)
 }
 
-export function loadRun(): SaveSnapshot | null {
-  const run = readRun()
+export function loadRun(slot: RunSlot = activeSlot()): SaveSnapshot | null {
+  const run = readRun(undefined, slot)
   if (run) return run.snapshot
+  if (slot === 'challenge') return null
   try {
     // A damaged new save must never silently restore an unrelated legacy night.
-    if (localStorage.getItem(RUN_KEY) || localStorage.getItem(BACKUP_KEY)) return null
+    if (slotKeys(slot).some(key => localStorage.getItem(key))) return null
     const raw = localStorage.getItem(KEY_SAVE)
     if (!raw) return null
     const snap: unknown = JSON.parse(raw)
@@ -51,9 +52,10 @@ export function loadRun(): SaveSnapshot | null {
   return null
 }
 
-export function clearRun() {
+export function clearRun(slot: RunSlot = activeSlot()) {
   try {
-    for (const key of [RUN_KEY, BACKUP_KEY, KEY_SAVE, KEY_BLOOMS, KEY_CREDIT]) localStorage.removeItem(key)
+    const extra = slot === 'campaign' ? [KEY_SAVE, KEY_BLOOMS, KEY_CREDIT, CHECKPOINT_KEY] : ['lanternlocks.challenge-credit.v1']
+    for (const key of [...slotKeys(slot), ...extra]) localStorage.removeItem(key)
     setSaveHealth('ready')
     storageChanged()
   } catch { setSaveHealth('unavailable') }
@@ -61,16 +63,30 @@ export function clearRun() {
 
 /** Kept for migration of the original separate bloom save. New saves are atomic. */
 export function saveBlooms(data: number[]) { write(KEY_BLOOMS, { d: data }) }
-export function loadBlooms(): number[] {
-  const run = readRun()
+export function loadBlooms(slot: RunSlot = activeSlot()): number[] {
+  const run = readRun(undefined, slot)
   if (run) return run.blooms
+  if (slot === 'challenge') return []
   const data = read<{ d: number[] }>(KEY_BLOOMS, { d: [] }).d
   return Array.isArray(data) && data.every(Number.isFinite) ? data : []
+}
+
+const CHECKPOINT_KEY = 'lanternlocks.planning-checkpoint.v1'
+export function canRetry(sim: Sim): boolean {
+  return !!sim.challenge.guard && !sim.isChallenge && sim.difficulty !== 'nightfall' && !sim.freeplay
+}
+export function saveCheckpoint(sim: Sim, blooms: number[]) {
+  if (!canRetry(sim) || sim.waveActive || sim.over) return
+  try { localStorage.setItem(CHECKPOINT_KEY, encodeRun(sim.snapshot(), blooms)); storageChanged() } catch { setSaveHealth('unavailable') }
+}
+export function loadCheckpoint() {
+  try { return decodeRun(localStorage.getItem(CHECKPOINT_KEY)) } catch { return null }
 }
 
 // ------------------------------------------------------------------ settings
 
 export interface Settings {
+  guardian?: 'ember'
   sfx: number
   music: number
   ambience: number
@@ -127,6 +143,7 @@ export const saveSettings = (s: Settings) => write(KEY_SETTINGS, { ...s, v: 2 })
 // ------------------------------------------------------------------ coaching
 
 export interface Coach {
+  tutorialDone?: boolean
   routesSeen?: boolean
   built: boolean
   started: boolean
@@ -140,6 +157,7 @@ export const saveCoach = (c: Coach) => write(KEY_COACH, c)
 // ------------------------------------------------------------------ progress + feats
 
 export interface Progress {
+  harbourWins?: number
   waterways: Partial<Record<WaterwayId, { wins: Partial<Record<Difficulty, number>>; best: Partial<Record<Difficulty, number>> }>>
   wins: Partial<Record<Difficulty, number>>
   best: Partial<Record<Difficulty, number>>
@@ -196,7 +214,7 @@ export const FEATS: Feat[] = [
 /** Free play after a win only extends a finished run: record the best free-play wave, nothing else. */
 export function recordFreeplay(sim: Sim) {
   const p = loadProgress()
-  p.bestFreeplay[sim.difficulty] = Math.max(p.bestFreeplay[sim.difficulty] ?? 0, sim.wave - 25)
+  p.bestFreeplay[sim.difficulty] = Math.max(p.bestFreeplay[sim.difficulty] ?? 0, sim.wave - (sim.freeplayFrom || 25))
   saveProgress(p)
 }
 
@@ -205,7 +223,8 @@ export function recordFreeplay(sim: Sim) {
  * run save (and cleared with it), so a resumed run never counts a Mope twice.
  */
 export function creditJournal(cheered: Partial<Record<EnemyId, number>>) {
-  const credited = read<{ c: Partial<Record<EnemyId, number>> }>(KEY_CREDIT, { c: {} }).c
+  const key = activeSlot() === 'campaign' ? KEY_CREDIT : 'lanternlocks.challenge-credit.v1'
+  const credited = read<{ c: Partial<Record<EnemyId, number>> }>(key, { c: {} }).c
   const p = loadProgress()
   let changed = false
   for (const [id, n] of Object.entries(cheered) as [EnemyId, number][]) {
@@ -216,12 +235,18 @@ export function creditJournal(cheered: Partial<Record<EnemyId, number>>) {
   }
   if (!changed) return
   saveProgress(p)
-  write(KEY_CREDIT, { c: { ...cheered } })
+  // A retry can rewind counts. Keep a high-water mark for each kind across attempts.
+  write(key, { c: Object.fromEntries(Object.keys({ ...credited, ...cheered }).map(id => [id, Math.max(credited[id as EnemyId] ?? 0, cheered[id as EnemyId] ?? 0)])) })
 }
 
 /** Records a finished plain night once; returns feats newly earned. Challenges keep their own log (recordChallenge). */
 export function recordRun(sim: Sim, blooms: number): string[] {
   const p = loadProgress()
+  if (sim.challenge.harbour) {
+    if (sim.won) p.harbourWins = (p.harbourWins ?? 0) + 1
+    saveProgress(p)
+    return []
+  }
   const summary: RunSummary = {
     expanding: sim.challenge.expanding,
     waterway: sim.challenge.waterway,
@@ -319,6 +344,12 @@ export const BLOOM_SETS: BloomSet[] = [
 // ------------------------------------------------------------------ playtest metrics
 
 export interface Session {
+  rules?: 'guard' | 'legacy'
+  routePlans?: number
+  retries?: number
+  lastLeak?: string
+  harbour?: boolean
+  event?: 'resume'
   at: string
   difficulty: Difficulty
   /** Challenge record key, when the run was a daily tide or weekly night. */
@@ -362,6 +393,11 @@ export interface SessionExtras {
 export function recordMetrics(sim: Sim, result: string, extra?: SessionExtras) {
   const m = read<Metrics>(KEY_METRICS, { sessions: [] })
   m.sessions.push({
+    rules: sim.challenge.guard ? 'guard' : 'legacy',
+    routePlans: sim.stats.routePlans ?? 0,
+    retries: sim.stats.retries ?? 0,
+    lastLeak: sim.lastLeak?.enemy,
+    harbour: !!sim.challenge.harbour,
     at: new Date().toISOString(),
     difficulty: sim.difficulty,
     challenge: sim.challenge.id,
@@ -396,3 +432,10 @@ export function clearMetrics() {
 }
 
 export const loadMetrics = () => read<Metrics>(KEY_METRICS, { sessions: [] })
+
+export function recordResume(sim: Sim) {
+  const m = loadMetrics()
+  m.sessions.push({ at: new Date().toISOString(), difficulty: sim.difficulty, challenge: sim.challenge.id, result: 'resumed', event: 'resume', resumed: true, rules: sim.challenge.guard ? 'guard' : 'legacy', wave: sim.wave, firstBuildSec: -1, firstFlipWave: -1, flips: sim.stats.flips, leaked: sim.stats.leaked, minutes: 0, towers: [...sim.stats.towersUsed] })
+  m.sessions = m.sessions.slice(-50)
+  write(KEY_METRICS, m)
+}

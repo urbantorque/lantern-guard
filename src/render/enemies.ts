@@ -8,7 +8,7 @@ import { ENEMY_MARK, glowSprite, mix, P, withAlpha } from './palette'
 export const ENEMY_VIS = 1.3
 
 /** Animation loop length (seconds) per Mope; 8 baked frames cover one loop. */
-const PERIOD: Record<EnemyId, number> = { drip: 1.57, skitter: 0.29, shell: 1.57, veil: 1.05, bloat: 1.26, wisp: 0.8, mender: 1.96, vshell: 1.57, toad: 2.86, gloom: 2.6 }
+const PERIOD: Record<EnemyId, number> = { drip: 1.57, skitter: 0.29, shell: 1.57, veil: 1.05, bloat: 1.26, wisp: 0.8, mender: 1.96, vshell: 1.57, toad: 2.86, gloom: 2.6, skiff: 1.57, warden: 2.6 }
 const FRAMES = 8
 
 const GLYPH_INK = '#13212a'
@@ -256,6 +256,34 @@ function drawBody(ctx: CanvasRenderingContext2D, e: Enemy, t: number, flash: boo
   ctx.lineJoin = 'round'
 
   switch (id) {
+    case 'skiff':
+    case 'warden': {
+      const big = id === 'warden'
+      ctx.beginPath()
+      ctx.moveTo(x - r, y - r * .35)
+      ctx.quadraticCurveTo(x, y - r * .9, x + r, y - r * .35)
+      ctx.lineTo(x + r * .65, y + r * .65)
+      ctx.quadraticCurveTo(x, y + r, x - r * .65, y + r * .65)
+      ctx.closePath()
+      inkFill(ctx, x, y, r, flash)
+      ctx.strokeStyle = mark
+      ctx.lineWidth = big ? 4 : 2.5
+      ctx.stroke()
+      logRim(x, y, r, r * .8)
+      ctx.fillStyle = mark
+      ctx.beginPath()
+      ctx.moveTo(x - r * .6, y - r * .35)
+      ctx.lineTo(x - r * .6, y - r * (big ? 1.15 : .7))
+      ctx.lineTo(x - r * .15, y - r * .65)
+      ctx.lineTo(x + r * .15, y - r * (big ? 1.25 : .9))
+      ctx.lineTo(x + r * .6, y - r * .65)
+      ctx.lineTo(x + r * .6, y - r * .35)
+      ctx.closePath()
+      ctx.fill()
+      eyes(ctx, x, y, r * .34, r * .16, lookX, lookY, blink)
+      if (glyph) drawGlyph(ctx, e.def.family, x, y + r * .48, r * .17, mark)
+      break
+    }
     case 'drip': {
       const hop = Math.abs(Math.sin(age * 6 + e.uid))
       const squash = 1 + (1 - hop) * 0.12
@@ -1193,7 +1221,7 @@ interface Sprite {
   used: number
 }
 
-const ID_IX: Record<EnemyId, number> = { drip: 0, skitter: 1, shell: 2, veil: 3, bloat: 4, wisp: 5, mender: 6, vshell: 7, toad: 8, gloom: 9 }
+const ID_IX: Record<EnemyId, number> = { drip: 0, skitter: 1, shell: 2, veil: 3, bloat: 4, wisp: 5, mender: 6, vshell: 7, toad: 8, gloom: 9, skiff: 10, warden: 11 }
 /** Canvas memory budget for baked frames (iOS WebKit caps total canvas memory). */
 const SPRITE_BUDGET = 32 * 1024 * 1024
 

@@ -28,6 +28,7 @@ import {
 import { buildLevel, type BuiltLevel, type GateDef, type Segment } from './level'
 import { tideWave, type TideSpec } from './tides'
 import { freeplayWave, WAVES, type Group, type WaveDef } from './waves'
+import { harbourLevel, HARBOUR_END, HARBOUR_WAVES } from './harbour'
 
 export const DT = 1 / 60
 export const FINAL_WAVE = WAVES.length
@@ -81,6 +82,7 @@ export interface Enemy {
 }
 
 export interface Tower {
+  damageDealt?: number
   uid: number
   id: TowerId
   def: TowerDef
@@ -191,6 +193,9 @@ export type SimEvent =
 
 /** Rules a night is played under. Plain nights use {}; tides and weekly nights set several. */
 export interface Challenge {
+  /** Optional second chapter, entered from a completed growing canal. */
+  harbour?: 1
+  guardian?: 'ember'
   /** Lantern Guard rules. Opt-in for new growing nights; older saves keep their balance. */
   guard?: 1
   /** Versioned growing canal; absent on legacy saves and challenge nights. */
@@ -214,6 +219,8 @@ export interface Challenge {
 }
 
 export interface RunStats {
+  retries?: number
+  routePlans?: number
   pops: number
   leaked: number
   flips: number
@@ -238,6 +245,7 @@ export interface RunStats {
 
 /** A keeper as saved. The timers are only present in v2 saves. */
 export interface SavedTower {
+  damageDealt?: number
   id: TowerId
   pad: number
   a: number
@@ -339,6 +347,8 @@ export interface SaveSnapshotV1 extends SnapshotBase {
 
 /** Full save, valid at any moment including mid-wave. Restores to an identical simulation. */
 export interface SaveSnapshotV2 extends SnapshotBase {
+  lastLeak?: LeakReport | null
+  embers?: EmberPatch[]
   v: 2
   canalStage?: number
   over: 'won' | 'lost' | null
@@ -357,6 +367,8 @@ export interface SaveSnapshotV2 extends SnapshotBase {
 }
 
 export type SaveSnapshot = SaveSnapshotV1 | SaveSnapshotV2
+export interface EmberPatch { x: number; y: number; radius: number; life: number; dps: number; tower: number }
+export interface LeakReport { enemy: EnemyId; route: string; hidden: boolean; armoured: boolean; wave: number; light: number }
 
 interface Spawner {
   group: Group
@@ -385,6 +397,8 @@ export class Sim {
   enemies: Enemy[] = []
   towers: Tower[] = []
   projs: Proj[] = []
+  embers: EmberPatch[] = []
+  lastLeak: LeakReport | null = null
   gates: GateState[]
   pads: { x: number; y: number; tower: Tower | null }[]
   events: SimEvent[] = []
@@ -416,7 +430,7 @@ export class Sim {
     this.maxLives = d.lives
     this.hpMul = d.hp
     this.speedMul = d.speed
-    this.level = buildLevel(challenge.expanding ? growingCanal(0, !!challenge.guard) : waterwayLevel(challenge.waterway))
+    this.level = buildLevel(challenge.expanding ? growingCanal(0, !!challenge.guard) : challenge.guard ? growingCanal(2, true) : waterwayLevel(challenge.waterway))
     this.gates = this.level.def.gates.map((g) => ({ def: g, state: g.lockedDir, charm: null, jammed: false, cd: 0, flipT: -9, routeT: [-9, -9], flips: 0, swingT: 0 }))
     this.pads = this.level.def.pads.map((p) => ({ x: p.x, y: p.y, tower: null }))
     // a tide opens mid-night: the locks and the sluice are already open, and there is a bank to build with
@@ -475,10 +489,11 @@ export class Sim {
   }
 
   get planningWave(): number {
-    return this.wave + (this.challenge.expanding && !this.waveActive && !this.over ? 1 : 0)
+    return this.wave + ((this.challenge.expanding || this.challenge.guard) && !this.waveActive && !this.over ? 1 : 0)
   }
 
   padAvailable(index: number): boolean {
+    if (this.challenge.harbour) return index >= 0 && index < this.pads.length
     return !this.challenge.expanding || (CANAL_STAGES[this.canalStage].pads as readonly number[]).includes(index)
   }
 
@@ -489,7 +504,9 @@ export class Sim {
   /** Only called on an empty canal, or before restoring its saved occupants. */
   private revealCanal(stage: number) {
     this.canalStage = stage
-    this.level = buildLevel(growingCanal(stage, !!this.challenge.guard))
+    const base = growingCanal(stage, !!this.challenge.guard)
+    this.level = buildLevel(this.challenge.harbour ? harbourLevel(base) : base)
+    while (this.pads.length < this.level.def.pads.length) this.pads.push({ ...this.level.def.pads[this.pads.length], tower: null })
     this.gates.forEach((g, i) => { g.def = this.level.def.gates[i] })
     this.recomputeRoutes()
     this.buildGateDistances()
@@ -524,7 +541,8 @@ export class Sim {
 
   canStartWave(): boolean {
     if (this.over) return false
-    if (this.wave >= FINAL_WAVE && !this.freeplay) return false
+    if (this.wave >= this.finalWave && !this.freeplay) return false
+    if (this.challenge.harbour && this.waveActive && !this.freeplay) return false
     if (this.challenge.guard && [8, 10, 16, 25].includes(this.wave + 1) && this.waveActive) return false
     // Expansions happen in a planning break, never under moving Mopes.
     if (this.challenge.expanding && stageForWave(this.wave + 1) > this.canalStage && this.waveActive) return false
@@ -532,9 +550,10 @@ export class Sim {
   }
 
   waveDef(n: number): WaveDef {
+    if (this.challenge.harbour && n > FINAL_WAVE && n <= HARBOUR_END) return HARBOUR_WAVES[n - FINAL_WAVE - 1]
     const tide = this.challenge.tide
     if (tide && n > tide.from && n <= FINAL_WAVE) return tideWave(tide, n)
-    if (this.challenge.expanding && n <= FINAL_WAVE) {
+    if ((this.challenge.expanding || this.challenge.guard) && n <= FINAL_WAVE) {
       const notes: Record<number, string> = {
         2: 'The Lower Lock is open. Its short Mill run pays double glow, but escapees cost double light.',
         3: 'Skitters are fast. Moonbells slow groups; the East loop gives your towers more time.',
@@ -568,7 +587,19 @@ export class Sim {
   }
 
   get guardPlanning(): boolean {
-    return !!this.challenge.guard && !this.waveActive && [8, 10, 16, 25].includes(this.wave + 1)
+    return !!this.challenge.guard && !this.waveActive && (!!this.challenge.harbour || [8, 10, 16, 25].includes(this.wave + 1))
+  }
+
+  get finalWave() { return this.challenge.harbour ? HARBOUR_END : FINAL_WAVE }
+
+  continueHarbour(): boolean {
+    if (!this.challenge.guard || !this.challenge.expanding || this.challenge.harbour || this.isChallenge || this.over !== 'won' || this.freeplay || this.wave !== FINAL_WAVE) return false
+    this.challenge = { ...this.challenge, harbour: 1 }
+    this.over = null
+    this.won = false
+    this.revealCanal(2)
+    this.events.push({ t: 'expand', stage: 3 })
+    return true
   }
 
   sellValue(t: Tower): number {
@@ -714,6 +745,7 @@ export class Sim {
 
   startWave(): boolean {
     if (!this.canStartWave()) return false
+    this.lastLeak = null
     const early = this.earlyBonus()
     if (early > 0) {
       this.glow += early
@@ -722,7 +754,7 @@ export class Sim {
       this.events.push({ t: 'income', x: this.level.def.home.x, y: this.level.def.home.y - 60, amount: early })
     }
     this.wave++
-    if (this.wave > FINAL_WAVE) this.freeplay = true
+    if (this.wave > this.finalWave) this.freeplay = true
     const def = this.waveDef(this.wave)
     for (const src of this.level.def.sources) {
       if (src.openWave === this.wave && !this.openSources.has(src.id)) {
@@ -756,6 +788,7 @@ export class Sim {
     this.buildGrid()
     this.updateTowers(dt)
     this.updateProjs(dt)
+    if (this.embers.length) this.updateEmbers(dt)
     this.enemies = this.enemies.filter((e) => e.alive)
     this.projs = this.projs.filter((p) => p.alive)
     this.checkWaves()
@@ -1013,7 +1046,14 @@ export class Sim {
         if (dist2(e.x, e.y, gd.x, gd.y) < gd.stats.range * gd.stats.range) slow = Math.max(slow, gd.stats.gardenSlow)
       }
       if (e.def.boss) slow *= 0.5
+      if (e.def.id === 'warden' && e.phase === 0 && e.hp < e.maxHp * .5) {
+        e.phase = 1
+        e.speedBase *= 1.3
+        this.events.push({ t: 'phase', x: e.x, y: e.y })
+        for (let i = 0; i < 4; i++) this.inherit(this.spawnEnemy('skiff', e.seg, Math.max(0, e.s - 24 * (i + 1)), e.wave), e)
+      }
       let speed = e.speedBase * (1 - slow)
+      if (e.def.id === 'skiff' && e.shell <= 0) speed *= 1.6
       if (e.stunT > 0) {
         e.stunT -= dt
         speed = 0
@@ -1113,6 +1153,7 @@ export class Sim {
     this.decWave(e.wave)
     // greed has a price: escapees from a short rich run cost double light
     const w = e.def.weight * (e.rich ? RICH_LEAK : 1)
+    if (this.challenge.guard) this.lastLeak = { enemy: e.def.id, route: e.route, hidden: !!e.def.hidden && !e.revealedPerm && e.seenT <= 0, armoured: e.shell > 0, wave: e.wave, light: w }
     this.lives = Math.max(0, this.lives - w)
     this.stats.leaked += w
     this.stats.leaksBy[e.def.id] = (this.stats.leaksBy[e.def.id] ?? 0) + w
@@ -1141,6 +1182,7 @@ export class Sim {
         if (!continuous) this.events.push({ t: 'clink', x: e.x, y: e.y })
       }
       const absorbed = Math.min(e.shell, amount)
+      if (src && this.challenge.guard) src.damageDealt = (src.damageDealt ?? 0) + absorbed
       e.shell -= absorbed
       amount -= absorbed
       if (e.shell <= 0.0001) {
@@ -1157,6 +1199,7 @@ export class Sim {
     if (amount <= 0) return true
     // Old Gloom's shroud: only a sliver lands before the split, and never enough to stop it
     if (e.shrouded) amount = Math.min(amount * (this.challenge.guard ? 0.45 : SHROUD_TAKEN), Math.max(0, e.hp - e.maxHp * SHROUD_FLOOR))
+    if (src && this.challenge.guard) src.damageDealt = (src.damageDealt ?? 0) + Math.min(e.hp, amount)
     e.hp -= amount
     if (e.hp <= 0.0001) this.kill(e, src)
     return true
@@ -1528,10 +1571,15 @@ export class Sim {
 
   private explode(p: Proj, x: number, y: number, spawned: Proj[]) {
     const r = p.kind === 'mini' ? 36 : p.splash
+    const ember = this.challenge.guardian === 'ember' && p.tower.id === 'cracker'
+    if (ember && p.kind !== 'mini') {
+      this.embers.push({ x, y, radius: r * .85, life: 2.4, dps: p.tower.stats.damage * .4, tower: p.tower.uid })
+      if (this.embers.length > 48) this.embers.shift()
+    }
     this.events.push({ t: 'boom', x, y, r, big: p.cluster > 0 })
     for (const e of [...this.near(x, y, r, tmpC)]) {
       if (!this.canSee(e, p.detect)) continue
-      this.damage(e, p.dmg, true, p.tower)
+      this.damage(e, p.dmg * (ember ? .6 : 1), true, p.tower)
       if (p.burn > 0 && e.alive) {
         e.burnT = p.burnDur
         e.burnDps = Math.max(e.burnDps, p.burn)
@@ -1554,6 +1602,19 @@ export class Sim {
         spawned.push(m)
       }
     }
+  }
+
+  private updateEmbers(dt: number) {
+    // Overlapping ground fire never stacks; use the strongest covering patch.
+    for (const e of this.enemies) {
+      if (!e.alive || !this.canSee(e, false)) continue
+      let patch: EmberPatch | undefined
+      for (const p of this.embers) if (dist2(e.x, e.y, p.x, p.y) <= p.radius * p.radius && (!patch || p.dps > patch.dps)) patch = p
+      if (!patch) continue
+      this.damage(e, patch.dps * dt, true, this.towers.find(t => t.uid === patch.tower) ?? null, true)
+    }
+    for (const p of this.embers) p.life -= dt
+    this.embers = this.embers.filter(p => p.life > 0)
   }
 
   // ------------------------------------------------------------------ waves
@@ -1596,8 +1657,8 @@ export class Sim {
       }
     }
     // the night is won once the final wave and every early-called straggler before it are cleared
-    if (cleared && !this.won && this.wave >= FINAL_WAVE && this.lives > 0) {
-      for (const w of this.wavesPending) if (w <= FINAL_WAVE) return
+    if (cleared && !this.won && this.wave >= this.finalWave && this.lives > 0) {
+      for (const w of this.wavesPending) if (w <= this.finalWave) return
       this.won = true
       this.over = 'won'
       this.events.push({ t: 'victory' })
@@ -1619,6 +1680,7 @@ export class Sim {
     const alive = (e: Enemy | null) => (e && e.alive ? e.uid : 0)
     return {
       v: 2,
+      ...(this.challenge.guard ? { embers: this.embers.map(p => ({ ...p })), lastLeak: this.lastLeak && { ...this.lastLeak } } : {}),
       ...(this.challenge.expanding ? { canalStage: this.canalStage } : {}),
       difficulty: this.difficulty,
       challenge: { ...this.challenge },
@@ -1627,6 +1689,7 @@ export class Sim {
       lives: this.lives,
       seed: this.seed,
       towers: this.towers.map((t) => ({
+        ...(this.challenge.guard ? { damageDealt: t.damageDealt ?? 0 } : {}),
         id: t.id,
         pad: t.pad,
         a: t.a,
@@ -1713,6 +1776,8 @@ export class Sim {
     sim.stats = { ...sim.stats, ...JSON.parse(JSON.stringify(snap.stats)) }
     sim.stats.cheered ??= {}
     if (full) {
+      sim.embers = full.embers?.map(p => ({ ...p })) ?? []
+      sim.lastLeak = full.lastLeak ? { ...full.lastLeak } : null
       sim.over = full.over
       sim.freeplay = full.freeplay
       sim.freeplayFrom = full.freeplayFrom
@@ -1743,6 +1808,7 @@ export class Sim {
       const pad = sim.pads[t.pad]
       if (!pad || pad.tower || !TOWERS[t.id]) continue
       const tw: Tower = {
+        ...(snap.challenge.guard ? { damageDealt: t.damageDealt ?? 0 } : {}),
         uid: t.uid ?? sim.uid++,
         id: t.id,
         def: TOWERS[t.id],

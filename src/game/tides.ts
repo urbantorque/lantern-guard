@@ -297,28 +297,29 @@ function modifiers(twist: Twist, rule: Rule, keepers?: TowerId[]): Challenge {
 }
 
 /** Today's tide (local calendar day). Everyone playing on the same day gets the same one. */
-export function dailyTide(date: Date): ChallengeOffer {
+export function dailyTide(date: Date, guard = false): ChallengeOffer {
   const key = dayKey(date)
   const seed = hashKey(`tide:${key}`)
   const r = rng(seed)
   const feature = FEATURES[Math.floor(r() * FEATURES.length)]
   let twist = pickWeighted<Twist>(r, { none: 1, swift: 2, thick: feature === 'shell' || feature === 'vshell' ? 2.5 : 1.2, tidal: 2, sluice: 2 })
-  const rule = pickWeighted<Rule>(r, { none: 3, noCharms: 1.5, trio: 1.5, noGarden: 1.5 })
+  const rule = pickWeighted<Rule>(r, guard ? { none: 3, trio: 1.5, noGarden: 1.5 } : { none: 3, noCharms: 1.5, trio: 1.5, noGarden: 1.5 })
   // every tide has at least one twist or rule
   if (twist === 'none' && rule === 'none') twist = 'swift'
   const keepers = rule === 'trio' ? TRIOS[Math.floor(r() * TRIOS.length)] : undefined
   const west = twist === 'sluice' ? 0.72 : 0.3 + r() * 0.2
   const tide: TideSpec = { seed, from: TIDE_FROM, glow: TIDE_GLOW, west: Math.round(west * 100) / 100, feature }
   const rules = [TWIST_TEXT[twist], ruleText(rule, keepers)].filter(Boolean)
+  const id = `daily:${key}${guard ? ':guard1' : ''}`
   return {
     kind: 'daily',
-    id: `daily:${key}`,
+    id,
     name: FEATURE_NAME[feature] ?? 'Tide',
     when: shortDate(date),
     twist,
     rule,
     keepers,
-    challenge: { ...modifiers(twist, rule, keepers), tide, id: `daily:${key}` },
+    challenge: { ...modifiers(twist, rule, keepers), ...(guard ? { guard: 1 } : {}), tide, id },
     rules,
   }
 }
@@ -336,33 +337,35 @@ const WEEKLY: { twist: Twist; rule: Rule; name: string }[] = [
 ]
 
 /** This week's night: the whole of Wickwater Canal on Standard, under one rule. */
-export function weeklyNight(date: Date): ChallengeOffer {
+export function weeklyNight(date: Date, guard = false): ChallengeOffer {
   const { year, week, monday } = isoWeek(date)
   const key = `${year}-W${pad2(week)}`
   const w = WEEKLY[(year * 53 + week) % WEEKLY.length]
   const r = rng(hashKey(`week:${key}`))
   const keepers = w.rule === 'trio' ? TRIOS[Math.floor(r() * TRIOS.length)] : undefined
   const rules = [TWIST_TEXT[w.twist], ruleText(w.rule, keepers)].filter(Boolean)
+  if (guard && w.rule === 'lean') rules.splice(0, rules.length, 'No Glow Gardens. Invest in damage and support.')
+  const id = `weekly:${key}${guard ? ':guard1' : ''}`
   return {
     kind: 'weekly',
-    id: `weekly:${key}`,
+    id,
     name: w.name,
     when: `week of ${DATE_FMT.format(monday)}`,
     twist: w.twist,
     rule: w.rule,
     keepers,
-    challenge: { ...modifiers(w.twist, w.rule, keepers), id: `weekly:${key}` },
+    challenge: { ...modifiers(w.twist, w.rule, keepers), ...(guard ? { guard: 1 } : {}), id },
     rules,
   }
 }
 
 /** The offer a saved or running challenge came from, rebuilt from its record key (for titles and share text). */
 export function offerFor(id: string): ChallengeOffer | null {
-  const [kind, key] = id.split(':')
+  const [kind, key, version] = id.split(':')
   if (kind === 'daily') {
     const [y, m, d] = key.split('-').map(Number)
     if (!y || !m || !d) return null
-    return dailyTide(new Date(y, m - 1, d))
+    return dailyTide(new Date(y, m - 1, d), version === 'guard1')
   }
   if (kind === 'weekly') {
     const m = /^(\d{4})-W(\d{2})$/.exec(key)
@@ -371,7 +374,7 @@ export function offerFor(id: string): ChallengeOffer | null {
     const jan4 = new Date(Number(m[1]), 0, 4)
     const mon = new Date(jan4)
     mon.setDate(jan4.getDate() - ((jan4.getDay() + 6) % 7) + (Number(m[2]) - 1) * 7 + 3)
-    return weeklyNight(mon)
+    return weeklyNight(mon, version === 'guard1')
   }
   return null
 }

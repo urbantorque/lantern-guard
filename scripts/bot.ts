@@ -4,7 +4,7 @@
  * route Mopes with the locks. Strategy knobs make it play very differently.
  */
 import { CHARM_COST, TOWERS, type CharmTrait, type EnemyId, type TowerId } from '../src/game/defs'
-import { DT, FINAL_WAVE, Sim, type Challenge, type Enemy, type GateState, type Tower } from '../src/game/sim'
+import { DT, FINAL_WAVE, Sim, type Challenge, type Enemy, type GateState, type Tower, type SaveSnapshot } from '../src/game/sim'
 import { coveredLength, routeCoverage } from '../src/game/route-plan'
 
 export interface BotOpts {
@@ -397,8 +397,8 @@ function spend(sim: Sim, o: BotOpts) {
 }
 
 /** hook: called every step before events are cleared (diagnostics). */
-export function runBot(o: BotOpts, difficulty: Sim['difficulty'], seed = 7, hook?: (sim: Sim) => void, challenge: Challenge = {}): BotResult {
-  const sim = new Sim(difficulty, challenge, seed)
+export function runBot(o: BotOpts, difficulty: Sim['difficulty'], seed = 7, hook?: (sim: Sim) => void, challenge: Challenge = {}, initial?: SaveSnapshot): BotResult {
+  const sim = initial ? Sim.restore(initial) : new Sim(difficulty, challenge, seed)
   let rs = seed * 7919
   const rng = () => ((rs = (rs * 16807) % 2147483647) / 2147483647)
   // other seeds also nudge the bot's tempo, so a seed ensemble shows how robust a result is (seed 7: none)
@@ -428,11 +428,11 @@ export function runBot(o: BotOpts, difficulty: Sim['difficulty'], seed = 7, hook
       }
       spent += Math.max(0, g0 - sim.glow)
       if (o.router === 'plan') planRoutes(sim)
-      if (sim.wave >= FINAL_WAVE) break
+      if (sim.wave >= sim.finalWave) break
       if (sim.wave + 1 >= 15) bank = Math.max(bank, sim.glow)
       fadePresence(sim)
       sim.startWave()
-    } else if (o.early && sim.canStartWave() && sim.enemies.length < 6 && sim.wave < FINAL_WAVE) {
+    } else if (o.early && sim.canStartWave() && sim.enemies.length < 6 && sim.wave < sim.finalWave) {
       sim.startWave()
     }
     sim.step(DT)

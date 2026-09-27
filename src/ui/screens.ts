@@ -1,11 +1,12 @@
 import { KEEPER_HELP, KEEPER_WAVE } from '../game/canal-growth'
+import { leakAdvice } from '../game/feedback'
 import { saveHealth } from '../game/save-store'
 import type { App } from '../app'
 import { sound } from '../core/audio'
 import { TAU } from '../core/math'
 import { DIFFICULTY, ENEMIES, TOWER_ORDER, TOWERS, type Difficulty, type EnemyId, type TowerId } from '../game/defs'
 import { LEVEL } from '../game/level'
-import { BLOOM_SETS, clearMetrics, FEATS, journalTotal, loadChallenges, loadMetrics, loadProgress, loadRun, type ChallengeResult, type Session, type Settings } from '../game/progress'
+import { BLOOM_SETS, canRetry, loadCheckpoint, clearMetrics, FEATS, journalTotal, loadChallenges, loadMetrics, loadProgress, loadRun, type ChallengeResult, type Settings } from '../game/progress'
 import { FINAL_WAVE } from '../game/sim'
 import { dailyTide, dayKey, offerFor, TIDE_FROM, TIDE_GLOW, weeklyNight, type ChallengeOffer, type Rule, type Twist } from '../game/tides'
 import { asBloomStyle, bloomIconURL, bloomSetURL, famIndex } from '../render/blooms'
@@ -20,6 +21,8 @@ import { copyText, downloadBlob, shareImage, shareText, type ShareOutcome } from
 const MODE_ICON: Record<Difficulty, Parameters<typeof icon>[0]> = { relaxed: 'flower', standard: 'sun', nightfall: 'moon' }
 
 const COUNTER_TIP: Record<EnemyId, string> = {
+  skiff: 'Moonbell slows the burst of speed after a Skiff loses its armour.',
+  warden: 'Keep heavy towers firing along a long route; slow its Skiff escorts.',
   drip: 'More Wicklings, or a Twin Wick upgrade, handle Drip crowds.',
   skitter: 'Moonbells slow Skitters, and the long loops give your keepers more time. Keep Skitters off the short runs.',
   shell: 'Crackers, Lighthouses and Hot Wax Wicklings crack armour. The Mill run is another option when your towers cover it.',
@@ -71,7 +74,7 @@ function flashOutcome(b: HTMLElement, outcome: ShareOutcome) {
 /** Journal milestones: bud, bloom and full bloom, scaled to how often each Mope turns up. */
 const TIER_NAMES = ['Bud', 'Bloom', 'Full bloom']
 const tierGoals = (id: EnemyId): number[] => (ENEMIES[id].boss ? [1, 5, 25] : id === 'wisp' ? [50, 500, 5000] : [25, 250, 2500])
-const JOURNAL_ORDER: EnemyId[] = ['drip', 'skitter', 'shell', 'wisp', 'bloat', 'veil', 'mender', 'vshell', 'toad', 'gloom']
+const JOURNAL_ORDER: EnemyId[] = ['drip', 'skitter', 'shell', 'wisp', 'bloat', 'veil', 'mender', 'vshell', 'toad', 'gloom', 'skiff', 'warden']
 
 const median = (xs: number[]) => {
   if (!xs.length) return NaN
@@ -182,19 +185,18 @@ export class Screens {
   title() {
     this.stack = []
     this.returnKeys = []
-    const save = loadRun()
-    const live = save as { enemies?: unknown[]; spawners?: unknown[] } | null
-    const mid = live && ((live.enemies?.length ?? 0) + (live.spawners?.length ?? 0) > 0)
-    const off = save?.challenge.tide?.from ?? 0
-    const shown = save ? (save.wave > FINAL_WAVE ? save.wave - FINAL_WAVE + (mid ? 0 : 1) : Math.min(FINAL_WAVE, (mid ? save.wave : save.wave + 1)) - off) : 1
+    const save = loadRun('campaign')
+    const challengeSave = loadRun('challenge')
     const name = save?.challenge.id ? (offerFor(save.challenge.id)?.name ?? 'Challenge') : save ? DIFFICULTY[save.difficulty].name : ''
+    const nextWave = save ? save.wave + (save.v === 2 && (save.over || save.waveAlive.length) ? 0 : 1) : 1
     this.show(
       `<div class="card title-card simple-title">
         <canvas class="key-art" aria-hidden="true"></canvas>
         <div class="logo"><canvas id="logo-cv" width="128" height="128" aria-hidden="true"></canvas><h1 translate="no" aria-label="Lantern Guard: Tower Defense">Lantern <em>Guard</em><span class="title-genre">Tower Defense</span></h1></div>
         <p class="tagline">Build your towers. Grow your defence.<br>Keep the lantern lit.</p>
         <div class="title-play stack">
-          <button class="big-btn primary" data-act="${save ? 'continue' : 'play'}">${icon('play')} ${save ? 'Continue' : 'Play'}${save ? `<small>${name} · ${save.wave > FINAL_WAVE ? 'free wave' : off ? 'tide wave' : 'wave'} ${shown}</small>` : ''}</button>
+          <button class="big-btn primary resume-btn" data-act="${save ? 'continue' : 'play'}"><span>${icon('play')} ${save ? 'Continue' : 'Play'}</span>${save ? `<small>${name} · ${save.challenge.harbour ? 'Harbour' : 'Canal'} · wave ${nextWave}${save.v === 2 && save.over ? (save.won ? ' complete' : ' · review') : ''}<br>${save.towers.length} towers · ${save.lives} light</small>` : ''}</button>
+          ${challengeSave ? `<button class="title-quiet" data-act="continue-challenge">Resume challenge · wave ${Math.max(1, challengeSave.wave - (challengeSave.challenge.tide?.from ?? 0))}</button>` : ''}
           <button class="title-quiet" data-act="night">${save ? 'Start a new night' : `Difficulty: ${DIFFICULTY[this.difficulty].name}`}</button>
         </div>
         ${saveHealth === 'invalid' ? '<p class="save-note" role="status">Your saved night could not be read. Your journal is kept separately.</p>' : saveHealth === 'recovered' ? '<p class="save-note" role="status">Continue will use your previous autosave.</p>' : saveHealth === 'unavailable' ? '<p class="save-note" role="status">Saving is unavailable. Keep the game open to retain your night.</p>' : ''}
@@ -210,6 +212,7 @@ export class Screens {
     this.runKeyArt(this.el.querySelector('.key-art') as HTMLCanvasElement)
     this.on('[data-act="play"]', () => this.app.newRun(this.difficulty))
     this.on('[data-act="continue"]', () => this.app.continueRun())
+    this.on('[data-act="continue-challenge"]', () => this.app.continueRun('challenge'))
     this.on('[data-act="night"]', () => this.chooseNight(!!save))
     this.on('[data-act="how"]', () => this.journal('basics'))
     this.on('[data-act="collection"]', () => this.collection())
@@ -229,6 +232,7 @@ export class Screens {
           <span class="medal ${won ? 'won' : ''}" aria-label="${won ? 'Won before' : ''}">${icon(won ? 'trophy' : !replace && d === this.difficulty ? 'check' : 'play')}</span>
         </button>`
       }).join('')}</div>
+      ${p.feats.crowned ? `<p>Guardian for new nights: ${this.app.settings.guardian === 'ember' ? 'Ember Keeper' : 'Lantern Keeper'}. Change in Collection.</p>` : ''}
       <div class="stack gap-top"><button class="big-btn" data-act="back">Back</button></div></div>`, () => this.chooseNight(replace))
     this.on('[data-mode]', b => {
       const d = b.dataset.mode as Difficulty
@@ -246,24 +250,46 @@ export class Screens {
       <div class="stack">
         <button class="big-btn" data-act="journal">${icon('book')} Bloom journal <small>${Math.floor(journalTotal(p)).toLocaleString('en')} blooms</small></button>
         <button class="big-btn" data-act="feats">${icon('star')} Feats <small>${Object.values(p.feats).filter(Boolean).length}/${FEATS.length}</small></button>
+        <button class="big-btn" data-act="guardians">${icon('sparkle')} Guardians <small>${p.feats.crowned ? 'Ember Keeper unlocked' : 'Master a tier-three tower to unlock Ember Keeper'}</small></button>
+        ${p.harbourWins ? `<p>Lantern Harbour kept ${p.harbourWins} ${p.harbourWins === 1 ? 'time' : 'times'}.</p>` : ''}
         ${tides ? `<button class="big-btn" data-act="tides">${icon('calendar')} Daily tides &amp; weekly nights</button>` : ''}
         <button class="big-btn" data-act="back">Back</button>
       </div></div>`, () => this.collection())
     this.on('[data-act="journal"]', () => this.bloomJournal('mopes'))
     this.on('[data-act="feats"]', () => this.feats())
+    this.on('[data-act="guardians"]', () => this.guardians())
     this.on('[data-act="tides"]', () => this.tides())
     this.on('[data-act="back"]', () => this.back())
   }
 
   // ------------------------------------------------------------------ tides
 
+  private guardians() {
+    const earned = !!loadProgress().feats.crowned
+    const ember = this.app.settings.guardian === 'ember'
+    this.show(`<div class="card"><h2>Guardians</h2><p>One familiar tower, a different way to use it. Your choice applies to new ordinary nights.</p>
+      <div class="stack"><button class="big-btn ${!ember ? 'primary' : ''}" data-guardian="lantern" aria-pressed="${!ember}">Lantern Keeper<small>Original tower abilities.</small></button>
+      <button class="big-btn ${ember ? 'primary' : ''}" data-guardian="ember" aria-pressed="${ember}" ${earned ? '' : 'disabled'}>Ember Keeper<small>Crackers trade 40% of impact damage for lingering ground fire. Overlapping fire does not stack.</small></button></div>
+      <p>${earned ? 'Same costs, six tower choices and upgrade paths. Slow enemies to keep them in the fire. Daily challenges use the Lantern Keeper.' : 'Earn the Crowned feat: finish a night after buying a tier-three tower upgrade.'}</p>
+      <button class="big-btn" data-act="back">Back</button></div>`, () => this.guardians())
+    this.on('[data-guardian]', b => {
+      if (b.dataset.guardian === 'ember' && !earned) return
+      this.app.settings.guardian = b.dataset.guardian === 'ember' ? 'ember' : undefined
+      this.app.applySettings()
+      this.stack.pop()
+      this.returnKeys.pop()
+      this.guardians()
+    })
+    this.on('[data-act="back"]', () => this.back())
+  }
+
   /** The daily tide and the weekly night: what they ask, how you did, and a way to share it. */
   tides() {
     const now = new Date()
-    const daily = dailyTide(now)
-    const weekly = weeklyNight(now)
+    const daily = dailyTide(now, true)
+    const weekly = weeklyNight(now, true)
     const results = loadChallenges()
-    const save = loadRun()
+    const save = loadRun('challenge')
     const block = (o: ChallengeOffer, sum: string, play: string) => {
       const r = results[o.id]
       const best = r ? `<p class="tide-best">${icon(r.won ? 'sun' : 'moon')}<span>Your best: ${resultLine(r).toLowerCase()}${r.tries > 1 ? `, over ${r.tries} tries` : ''}.</span></p>` : ''
@@ -284,7 +310,7 @@ export class Screens {
     // the last seven tides, oldest first: kept, lost, or not played
     const days = Array.from({ length: 7 }, (_, i) => {
       const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 6 + i)
-      const r = results[`daily:${dayKey(d)}`]
+      const r = results[`daily:${dayKey(d)}:guard1`] ?? results[`daily:${dayKey(d)}`]
       const name = d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })
       const state = r?.won ? 'kept' : r ? 'lost' : 'none'
       const label = `${name}: ${r?.won ? 'tide kept' : r ? 'played, lantern went out' : 'not played'}`
@@ -304,7 +330,7 @@ export class Screens {
     const offers = new Map([daily, weekly].map((o) => [o.id, o]))
     this.on('[data-play]', (b) => {
       const o = offers.get(b.dataset.play!)!
-      if (save) this.confirm(o.kind === 'daily' ? "Start today's tide?" : "Start this week's night?", 'Your saved run will be replaced.', 'Start', () => this.app.newChallenge(o.challenge))
+      if (save) this.confirm(o.kind === 'daily' ? "Start today's tide?" : "Start this week's night?", 'Your previous challenge will be replaced. Your canal defence stays saved.', 'Start', () => this.app.newChallenge(o.challenge))
       else this.app.newChallenge(o.challenge)
     })
     this.el.querySelectorAll<HTMLElement>('[data-share]').forEach((b) =>
@@ -399,7 +425,8 @@ export class Screens {
     const sim = this.app.sim
     const mode = DIFFICULTY[sim.difficulty]
     const offer = this.app.offer()
-    const where = sim.wave > FINAL_WAVE ? `free play wave ${sim.wave - FINAL_WAVE}` : sim.challenge.tide ? `tide wave ${this.app.shownWave()} of ${FINAL_WAVE - sim.waveOffset}` : `wave ${sim.wave} of ${FINAL_WAVE}`
+    const shown = this.app.shownWave() + (!sim.waveActive && !sim.over ? 1 : 0)
+    const where = sim.wave > sim.finalWave ? `free play wave ${sim.wave - sim.finalWave}` : sim.challenge.tide ? `tide wave ${shown} of ${FINAL_WAVE - sim.waveOffset}` : `wave ${shown} of ${sim.finalWave}`
     this.show(
       `<div class="card">
         <h2>Paused</h2>
@@ -508,25 +535,16 @@ export class Screens {
 
   // ------------------------------------------------------------------ playtest data
 
-  /**
-   * The validation numbers from the iOS plan, read off this device's own log: time to first keeper, first
-   * unprompted flip, whether flipping keeps more light, time spent paused, and whether players try new builds.
-   */
+  /** Device-local action evidence for the current journey; human understanding needs observed play. */
   playtest() {
     const s = this.app.settings
     const all = loadMetrics().sessions
     // plain nights only: tides open with a bank and skip the teaching waves
-    const nights = all.filter((x) => !x.challenge && x.result !== 'abandoned')
+    const nights = all.filter((x) => x.rules === 'guard' && !x.challenge && !x.event && x.result !== 'abandoned')
     const pct = (a: number, b: number) => (b ? `${Math.round((a / b) * 100)}%` : 'n/a')
     const firstBuild = median(nights.map((x) => x.firstBuildSec).filter((v) => v >= 0))
-    const reached3 = nights.filter((x) => x.wave >= 3)
-    const early = (xs: Session[]) => xs.filter((x) => x.firstFlipWave >= 0 && x.firstFlipWave <= 2).length
-    const unprompted = reached3.filter((x) => x.flipHint === false)
-    const ended = nights.filter((x) => x.lightLeft !== undefined && x.maxLight)
-    const mf = median(ended.map((x) => x.flips))
-    const share = (xs: Session[]) => (xs.length ? Math.round((xs.reduce((a, x) => a + x.lightLeft! / x.maxLight!, 0) / xs.length) * 100) : NaN)
-    const more = share(ended.filter((x) => x.flips > mf))
-    const fewer = share(ended.filter((x) => x.flips <= mf))
+    const resumes = all.filter(x => x.rules === 'guard' && x.event === 'resume')
+    const retried = nights.filter(x => (x.retries ?? 0) > 0)
     const paused = median(nights.filter((x) => x.pausedSec !== undefined).map((x) => x.pausedSec!))
     let pairs = 0
     let changed = 0
@@ -539,10 +557,12 @@ export class Screens {
     const tile = (v: string, label: string) => `<div><b>${v}</b><span>${label}</span></div>`
     const stats = nights.length
       ? `<div class="stats">
-          ${tile(String(nights.length), `Nights logged, ${nights.filter((x) => x.result === 'won').length} won`)}
+          ${tile(String(nights.length), `Attempts logged, ${nights.filter((x) => x.result === 'won').length} won`)}
           ${tile(Number.isNaN(firstBuild) ? 'n/a' : `${Math.round(firstBuild)} s`, 'Median time to first keeper (goal: under 10 s)')}
-          ${tile(pct(early(reached3), reached3.length), `First flip before wave 3${unprompted.length ? `; ${pct(early(unprompted), unprompted.length)} with the hint off` : ''} (goal: 60% or more)`)}
-          ${tile(Number.isNaN(more) || Number.isNaN(fewer) ? 'n/a' : `${more}% / ${fewer}%`, 'Light kept by nights with more flips / fewer flips')}
+          ${tile(String(resumes.length), 'Saved nights deliberately resumed')}
+          ${tile(pct(nights.filter(x => (x.routePlans ?? 0) > 0).length, nights.length), 'Attempts that used the route planner')}
+          ${tile(String(retried.length), 'Attempts using a planning retry')}
+          ${tile(String(nights.filter(x => x.result === 'lost' && x.wave >= 8 && x.wave <= 10).length), 'Losses during the first hidden-enemy and boss waves')}
           ${tile(Number.isNaN(paused) ? 'n/a' : `${Math.round(paused)} s`, 'Median time paused per sitting')}
           ${tile(pairs ? `${changed} of ${pairs}` : 'n/a', 'Next nights that tried a different build')}
         </div>`
@@ -550,7 +570,7 @@ export class Screens {
     this.show(
       `<div class="card">
         <h2>Playtest data</h2>
-        <p>The game keeps a small log of your last 50 nights on this device. Nothing leaves it unless you copy or save the log here.</p>
+        <p>The last 50 results and resume events stay on this device. Summaries use current Lantern Guard rules. Older records remain in the export.</p><p>Observe players separately: ask where enemies are heading and what caused a loss. These counts cannot measure understanding or prove retention.</p>
         ${stats}
         <button class="setting toggle-row" role="switch" aria-checked="${s.flipHint}" data-key="flipHint" id="set-flipHint"><span><span class="set-lbl">First-flip hint</span><span class="set-hint">Turn off to test whether players find the locks on their own</span></span><span class="toggle" aria-hidden="true"></span></button>
         <div class="row-btns">
@@ -608,6 +628,9 @@ export class Screens {
         ${row('sparkle', 'Combine your towers', 'Moonbell slows groups for Cracker bursts. Lamp Owl reveals hidden targets for nearby attackers. Select a tower to see shared coverage. Matching a Mope’s colour and symbol also deals 1.5× damage.')}
         ${!guard ? row('star', 'Charms', 'Charms make a lock always send one kind of Mope the same way, whatever the arrow says. Open them from the Charms button, or press and hold a lock.') : ''}
         ${row('heart', 'Keep the lantern lit', 'Mopes that reach the Great Lantern dim it. When the light runs out, the night is lost.')}
+        ${guard ? row('eye', 'Read the fight', 'An eye beneath a hidden enemy means it is revealed. Segmented coral armour and an icy slow ring show active defences and effects. Select a tower to see its contribution.') : ''}
+        ${guard ? row('restart', 'Revise your defence', 'On Relaxed and Standard, a lost ordinary night can return to its last planning break with the same resources. Challenges and Nightfall have no retries. Your main canal and challenge save separately.') : ''}
+        ${guard ? row('waves', 'Lantern Harbour', 'After wave 25, open eight more authored waves upstream while keeping your towers. Switch between Harbour and Canal views to inspect both parts. New Skiffs accelerate after losing armour.') : ''}
         ${row('pause', 'Pause to plan', `Pause any time to build and upgrade. On Nightfall, live route changes require time to run. Keys: 1–6 towers, Q/E quick switches, Space starts a wave, P pauses, F changes speed.${guard ? '' : ' C opens charms.'}`)}
       </div>`
     } else if (tab === 'keepers') {
@@ -616,7 +639,7 @@ export class Screens {
         return `<div class="j-row"><img src="${towerIcon(id)}" alt="" width="44" height="44"><div><b><img class="sw" src="${glyphBadgeURL(d.family)}" alt="${d.family} family" width="16" height="16">${d.name} <span class="j-cost">${d.cost}</span></b><span>${KEEPER_HELP[id]} ${KEEPER_WAVE[id] > 1 ? `Joins before wave ${KEEPER_WAVE[id]} in a new night.` : 'Available from the start.'} Paths: ${d.paths[0].name} or ${d.paths[1].name}.</span></div></div>`
       }).join('')}</div>`
     } else {
-      const ids: EnemyId[] = ['drip', 'skitter', 'shell', 'wisp', 'bloat', 'veil', 'mender', 'vshell', 'toad', 'gloom']
+      const ids: EnemyId[] = JOURNAL_ORDER
       body = `<div class="journal">${ids
         .map((id) => {
           const e = ENEMIES[id]
@@ -676,6 +699,7 @@ export class Screens {
       const route = routes.length ? describeRoute(routes[0][0]) : ''
       tip = `<div class="tip">${icon('lightning')}<div>Most light was lost to <b>${ENEMIES[worst].name}s</b> (${Math.min(amount, sim.maxLives)})${route ? ` coming along ${route}` : ''}. ${COUNTER_TIP[worst]}</div></div>`
     }
+    if (!won && sim.lastLeak) tip = `<div class="tip">${icon('lightning')}<div>${leakAdvice(sim)}</div></div>`
     const unused = TOWER_ORDER.filter((id) => !st.towersUsed.includes(id) && sim.keeperAllowed(id))
     let next = ''
     if (unused.length) {
@@ -699,7 +723,7 @@ export class Screens {
     const bloomGoal = goal ? `<section class="bloom-goal"><h3>Next bloom set: ${goal.name}</h3><p>${goalText}</p><button class="pill-btn" data-act="blooms">View your bloom collection</button></section>`
       : '<section class="bloom-goal"><h3>All bloom sets earned</h3><p>Try a daily tide or a different tower combination.</p><button class="pill-btn" data-act="collection">View collection</button></section>'
     // the wave the lantern went out on was not held
-    const extra = Math.max(0, sim.wave - FINAL_WAVE - (sim.over === 'lost' ? 1 : 0))
+    const extra = Math.max(0, sim.wave - (sim.freeplayFrom || sim.finalWave) - (sim.over === 'lost' ? 1 : 0))
     const held = Math.max(0, sim.wave - sim.waveOffset - (sim.over === 'lost' ? 1 : 0))
     let heading: string
     let body: string
@@ -711,11 +735,11 @@ export class Screens {
         : `${offer.name}, ${offer.when}. You held ${held} of ${FINAL_WAVE - sim.waveOffset} ${daily ? 'tide waves' : 'waves'}.`
       if (record) body += record.improved ? (record.best.tries > 1 ? ' A new best.' : '') : ` Your best: ${resultLine(record.best).toLowerCase()}.`
     } else {
-      heading = freeplay ? 'The long night ends' : won ? 'Dawn: the lantern burns bright' : 'The lantern went out'
+      heading = freeplay ? 'The long night ends' : won ? (sim.challenge.harbour ? 'Lantern Harbour is safe' : 'Dawn: the lantern burns bright') : 'The lantern went out'
       body = freeplay
         ? `After winning ${DIFFICULTY[sim.difficulty].name}, you held ${extra} extra ${extra === 1 ? 'wave' : 'waves'} of free play.`
         : won
-          ? `You kept the light through all ${FINAL_WAVE} waves on ${sim.level.def.name}, ${DIFFICULTY[sim.difficulty].name}. The canal is in full bloom.`
+          ? `You kept the light through all ${sim.finalWave} waves on ${sim.level.def.name}, ${DIFFICULTY[sim.difficulty].name}. Your defence is saved.`
           : `You held until wave ${sim.wave} on ${sim.level.def.name}, ${DIFFICULTY[sim.difficulty].name}.`
     }
     const buttons = offer
@@ -724,7 +748,9 @@ export class Screens {
             <button class="big-btn ${won ? '' : 'primary'}" data-act="again">${icon('restart')} Try again</button>
             <button class="big-btn" data-act="title">${icon('house')} Title</button>
           </div>`
-      : `${won && !freeplay ? `<button class="big-btn primary" data-act="free">${icon('fastForward')} Keep going in free play</button>` : ''}
+      : `${won && !freeplay && sim.challenge.guard && sim.challenge.expanding && !sim.challenge.harbour ? `<button class="big-btn primary" data-act="harbour">Open Lantern Harbour<small>8 new waves · keep your towers and glow</small></button>` : ''}
+          ${!won && canRetry(sim) && loadCheckpoint() ? `<button class="big-btn primary" data-act="retry">Revise from wave ${loadCheckpoint()!.snapshot.wave + 1}<small>Restore your last planning break</small></button>` : ''}
+          ${won && !freeplay ? `<button class="big-btn" data-act="free">${icon('fastForward')} Keep going in free play</button>` : ''}
           <div class="row-btns flush">
             <button class="big-btn ${won && !freeplay ? '' : 'primary'}" data-act="again">${icon('restart')} Play again</button>
             <button class="big-btn" data-act="title">${icon('house')} Title</button>
@@ -752,6 +778,8 @@ export class Screens {
       () => this.end(won, fresh, freeplay),
     )
     this.on('[data-act="free"]', () => app.continueFreeplay())
+    this.on('[data-act="harbour"]', () => app.continueHarbour())
+    this.on('[data-act="retry"]', () => app.retryPlanning())
     this.on('[data-act="again"]', () => app.restart())
     this.on('[data-act="title"]', () => app.quitToTitle())
     this.on('[data-act="blooms"]', () => this.bloomJournal('sets'))

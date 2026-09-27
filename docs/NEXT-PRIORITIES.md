@@ -1,6 +1,6 @@
 # Next three refinement priorities
 
-Status: priorities 1 and 2 now have an implemented refinement pass. See [Lantern Guard implementation, balance and verification](LANTERN-GUARD.md). The original recommendations below remain the acceptance criteria; observed newcomer/retention testing and physical iPhone validation are still outstanding.
+Status: the approved follow-on roadmap is now implemented: guided placement and factual loss feedback, separate campaign/challenge saves, planning retries, eight Harbour waves with the existing defence, an optional Ember guardian, and current-rule challenges. See [journey implementation and evidence](JOURNEY.md). Observed newcomer/retention testing and physical iPhone validation remain outstanding. The recommendations below preserve the original acceptance targets.
 
 ## 1. Make the board clear and make routing earn its place
 
@@ -47,4 +47,4 @@ Next work:
 
 Acceptance target: a reproducible signed build; the [device checklist](IOS-BUILD.md) passes on the chosen minimum device; uninterrupted and resumed nights reach the same outcome; and real testers complete a session and can return to their defence reliably.
 
-Implement priority 1 first, validate priority 2 through the existing simulation harness and observed play, then use priority 3 to test both in the shipping environment. Characters and extra progression systems can be reconsidered once those results are available.
+Next gate: observe first-time players and returning sessions on the implemented build, then complete the physical iPhone checklist before expanding the roster further. Ember Keeper is the single optional guardian experiment; there is no permanent power progression tree.

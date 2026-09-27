@@ -1,8 +1,11 @@
 import fixtures from './fixtures.json'
 import growthFixtures from './growth-fixtures.json'
 import guardFixtures from './guard-fixtures.json'
+import journeyFixtures from './journey-fixtures.json'
+import continuityFixtures from './continuity-fixtures.json'
 import { Sim, DT, type SaveSnapshot } from '../src/game/sim'
-import { clearRun, loadSettings, saveRun, saveSettings } from '../src/game/progress'
+import { clearRun, loadSettings, saveRun, saveSettings, saveCheckpoint } from '../src/game/progress'
+import { selectSlot } from '../src/game/save-store'
 import { Renderer } from '../src/render/renderer'
 
 if (!import.meta.env.DEV) throw new Error('QA fixtures require the development server')
@@ -13,9 +16,13 @@ const backup = () => {
 document.querySelectorAll<HTMLButtonElement>('[data-fixture]').forEach(b => b.onclick = () => {
   backup()
   saveSettings({ ...loadSettings(), muted: true })
+  const all: Record<string, unknown> = { ...fixtures, ...growthFixtures, ...guardFixtures, ...journeyFixtures, ...continuityFixtures }
+  const snapshot = all[b.dataset.fixture!] as SaveSnapshot
+  selectSlot(snapshot.challenge.id ? 'challenge' : 'campaign')
   clearRun()
-  const all: Record<string, unknown> = { ...fixtures, ...growthFixtures, ...guardFixtures }
-  saveRun(all[b.dataset.fixture!] as SaveSnapshot)
+  if (b.dataset.fixture === 'retry-loss') saveCheckpoint(Sim.restore(continuityFixtures['retry-checkpoint'] as SaveSnapshot), [])
+  if (b.dataset.fixture === 'new-journey') localStorage.removeItem('lanternlocks.coach.v1')
+  else saveRun(snapshot)
   location.assign('/')
 })
 document.querySelector<HTMLButtonElement>('#restore')!.onclick = () => {

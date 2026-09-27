@@ -1,12 +1,14 @@
-import { saveHealth } from './game/save-store'
+import { migrateSlots, selectSlot, saveHealth, type RunSlot } from './game/save-store'
 import { watchAppState } from './core/platform'
 import { sound } from './core/audio'
 import { canUpgrade, CHARM_COST, CHARM_ORDER, DIFFICULTY, ENEMIES, TOWER_ORDER, TOWERS, type CharmTrait, type Difficulty, type EnemyId, type Priority, type TowerId } from './game/defs'
 import { CANAL_STAGES, KEEPER_HELP, KEEPER_ROLE, KEEPER_WAVE } from './game/canal-growth'
 import { comboHint, routeCoverage } from './game/route-plan'
+import { leakAdvice } from './game/feedback'
 import {
   BLOOM_SETS,
   clearRun,
+  canRetry, loadCheckpoint, saveCheckpoint,
   creditJournal,
   loadBlooms,
   loadChallenges,
@@ -17,6 +19,7 @@ import {
   recordChallenge,
   recordFreeplay,
   recordMetrics,
+  recordResume,
   recordRun,
   saveCoach,
   saveRun,
@@ -116,6 +119,7 @@ export class App {
   private palette = ''
 
   constructor() {
+    migrateSlots()
     this.settings = loadSettings()
     this.coach = loadCoach()
     this.renderer = new Renderer($<HTMLCanvasElement>('cv'))
@@ -134,6 +138,28 @@ export class App {
       saveStatus.textContent = 'The extra device backup is unavailable. Your browser save is still kept.'
     })
     this.buildHud()
+    const zone = document.createElement('button')
+    zone.id = 'btn-zone'
+    zone.className = 'zone-switch'
+    zone.hidden = true
+    zone.onclick = () => {
+      this.closeSheet()
+      this.renderer.setHarbourView(!this.renderer.harbourView)
+      this.cursor = -1
+      this.refreshHud(true)
+    }
+    $('field').appendChild(zone)
+    const learn = document.createElement('div')
+    learn.id = 'learn-bar'
+    learn.hidden = true
+    learn.innerHTML = '<span></span><button aria-label="Skip build demonstration">Skip</button>'
+    learn.querySelector('button')!.onclick = () => {
+      this.coach.tutorialDone = true
+      saveCoach(this.coach)
+      this.select(null)
+      this.updateCoach()
+    }
+    $('dock').prepend(learn)
     this.buildDock()
     this.bindInput()
     this.resize()
@@ -162,16 +188,19 @@ export class App {
   // ------------------------------------------------------------------ run lifecycle
 
   newRun(difficulty: Difficulty) {
+    this.persist(true)
+    selectSlot('campaign')
     this.leaveRun()
     clearRun()
-    this.sim = new Sim(difficulty, { expanding: 1, guard: 1 }, 7)
+    this.sim = new Sim(difficulty, { expanding: 1, guard: 1, ...(this.settings.guardian === 'ember' && loadProgress().feats.crowned ? { guardian: 'ember' as const } : {}) }, 7)
     this.startRun()
     this.persist(true)
-    if (loadProgress().runs < 2 && this.settings.flipHint) this.toast('Build on a stone pad. The arrows lead to the Great Lantern.', 3500)
   }
 
   /** Starts a daily tide or weekly night (a fresh copy of its rules, so the offer is never mutated). */
   newChallenge(challenge: Challenge) {
+    this.persist(true)
+    selectSlot('challenge')
     this.leaveRun()
     clearRun()
     this.sim = new Sim('standard', JSON.parse(JSON.stringify(challenge)) as Challenge, 7)
@@ -198,13 +227,15 @@ export class App {
     const snap = loadRun()
     if (!snap) return
     // from the title (after a reload) the live sim is a placeholder: the run being replaced is the saved one
-    const sim = this.mode === 'play' ? this.sim : Sim.restore(snap)
+    const sim = Sim.restore(snap)
     if (sim.over || sim.stats.time <= 0) return
     creditJournal(sim.stats.cheered)
     recordMetrics(sim, 'abandoned', this.extras())
   }
 
-  continueRun() {
+  continueRun(slot: RunSlot = 'campaign') {
+    this.persist(true)
+    selectSlot(slot)
     const snap = loadRun()
     if (!snap) return this.newRun('standard')
     const recovered = saveHealth === 'recovered'
@@ -213,6 +244,12 @@ export class App {
     this.startRun()
     this.sitting.resumed = true
     if (blooms.length) this.renderer.importBlooms(blooms)
+    if (this.sim.over) {
+      this.lastResult = { won: this.sim.over === 'won', fresh: [], freeplay: this.sim.freeplayFrom > 0, challenge: null }
+      this.showEnd()
+      return
+    }
+    recordResume(this.sim)
     const mid = this.sim.waveActive
     const word = this.sim.challenge.tide ? 'Tide wave' : 'Wave'
     this.banner(mid ? `${word} ${this.shownWave()}` : `${word} ${this.shownWave() + 1} is next`, mid ? 'Resumed where you left off. Paused so you can get your bearings.' : 'Resumed from your last save.', 2800)
@@ -222,6 +259,7 @@ export class App {
 
   private startRun() {
     this.renderer.attach(this.sim)
+    this.renderer.setHarbourView(!!this.sim.challenge.harbour)
     this.mode = 'play'
     this.speed = 1
     this.paused = false
@@ -240,6 +278,10 @@ export class App {
     this.screens.close()
     this.buildDock()
     this.refreshDock(true)
+    if (!this.coach.tutorialDone && this.sim.challenge.expanding && !this.sim.wave && !this.sim.towers.length) {
+      this.select({ kind: 'pad', index: 12 })
+      this.view.preview = 'wick'
+    }
     this.updateCoach()
   }
 
@@ -249,7 +291,7 @@ export class App {
     this.mode = 'title'
     this.paused = false
     this.view.paused = false
-    const snap = loadRun()
+    const snap = loadRun('campaign') ?? loadRun('challenge')
     this.sim = snap ? Sim.restore(snap) : new Sim('standard', { expanding: 1, guard: 1 })
     this.renderer.attach(this.sim)
     this.closeSheet()
@@ -271,6 +313,33 @@ export class App {
     this.screens.close()
     this.refreshHud(true)
     this.banner('Free play', 'The Mopes keep coming, stronger each wave. How long can the lantern last?', 3200)
+    this.persist(true)
+  }
+
+  continueHarbour() {
+    if (!this.sim.continueHarbour()) return
+    this.mode = 'play'
+    this.overTimer = -1
+    this.paused = false
+    this.view.paused = false
+    this.screens.close()
+    this.renderer.setHarbourView(true)
+    this.refreshHud(true)
+    this.persist(true)
+  }
+
+  retryPlanning() {
+    if (!canRetry(this.sim) || this.sim.over !== 'lost') return
+    const point = loadCheckpoint()
+    if (!point || point.snapshot.challenge.harbour !== this.sim.challenge.harbour) return
+    const attempts = (this.sim.stats.retries ?? 0) + 1
+    this.sim = Sim.restore(point.snapshot)
+    this.sim.stats.retries = attempts
+    this.startRun()
+    this.renderer.importBlooms(point.blooms)
+    this.setPaused(true)
+    this.banner(`Revise wave ${this.sim.wave + 1}`, 'Same resources and enemies. Adjust your defence, then press Start.', 5000)
+    this.persist(true)
   }
 
   setPaused(p: boolean, showMenu = false) {
@@ -349,12 +418,12 @@ export class App {
       switch (ev.t) {
         case 'waveStart': {
           const def = this.sim.waveDef(ev.n)
-          const boss = def.groups.some((g) => g.type === 'toad' || g.type === 'gloom')
+          const boss = def.groups.some((g) => ENEMIES[g.type].boss)
           const tide = !!this.sim.challenge.tide
-          const label = ev.n > FINAL_WAVE ? `Free play wave ${ev.n - FINAL_WAVE}` : tide ? `Tide wave ${this.shownWave(ev.n)}` : `Wave ${ev.n}`
+          const label = ev.n > this.sim.finalWave ? `Free play wave ${ev.n - this.sim.finalWave}` : tide ? `Tide wave ${this.shownWave(ev.n)}` : `Wave ${ev.n}`
           // a tide's remixed waves carry no handmade notes: its bosses get the canonical warnings
           const note = def.note ?? (tide && boss ? (ev.n === FINAL_WAVE ? 'Old Gloom is shrouded until it splits at the Lower Lock.' : 'Gloomtoads jam any lock they sit on. Set your locks before they arrive.') : '')
-          if (note && (firstRuns || boss || ev.n === 11) && !this.notesShown.has(ev.n)) {
+          if (note && (firstRuns || boss || ev.n === 11 || this.sim.challenge.harbour) && !this.notesShown.has(ev.n)) {
             this.notesShown.add(ev.n)
             this.noteWave = ev.n
             this.banner(label, note, 4600)
@@ -364,6 +433,11 @@ export class App {
           break
         }
         case 'waveEnd':
+          if (!this.sim.waveActive && this.sim.lastLeak && !this.sim.over) {
+            this.view.feedbackRoute = this.sim.lastLeak.route
+            this.toast(leakAdvice(this.sim), 6500)
+          }
+          if (ev.n === 1) { this.coach.tutorialDone = true; saveCoach(this.coach) }
           this.persist(true)
           if (this.sim.challenge.expanding && !this.sim.waveActive && ev.n !== 5) {
             const joined = TOWER_ORDER.find(id => KEEPER_WAVE[id] === ev.n + 1)
@@ -386,7 +460,7 @@ export class App {
           this.buildDock()
           this.refreshDock(true)
           this.updateCoach()
-          this.banner(ev.stage === 1 ? 'The upper canal opens' : 'The west inlet opens', ev.stage === 1
+          this.banner(ev.stage === 3 ? 'Lantern Harbour opens' : ev.stage === 1 ? 'The upper canal opens' : 'The west inlet opens', ev.stage === 3 ? 'Four new pads upstream. Your canal stays built. Use View canal to check the lower defence.' : ev.stage === 1
             ? 'Your towers stay put. New pads, a second lock and Lamp Owls are ready. Build before wave 6.'
             : 'Four new pads are ready. From wave 11, Mopes also enter from the west. Your towers and upgrades stay.', 6500)
           this.persist(true)
@@ -482,7 +556,7 @@ export class App {
       this.sheetKey = ''
     }
     if ((this.persistPending && performance.now() - this.lastPersist > 1500) || (this.mode === 'play' && !this.paused && performance.now() - this.lastPersist > 5000)) this.persist(true)
-    if (this.mode === 'play' && this.settings.autoStart && !this.paused && this.sheetMode === 'none' && !this.sim.expansionPlanning && !this.sim.guardPlanning && this.sim.canStartWave() && !this.sim.waveActive && this.sim.wave > 0) {
+    if (this.mode === 'play' && this.settings.autoStart && !this.paused && !this.sim.lastLeak && this.sheetMode === 'none' && !this.sim.expansionPlanning && !this.sim.guardPlanning && this.sim.canStartWave() && !this.sim.waveActive && this.sim.wave > 0) {
       this.autoTimer += dt
       if (this.autoTimer > 1.4) {
         this.autoTimer = 0
@@ -502,9 +576,10 @@ export class App {
     creditJournal(sim.stats.cheered)
     if (sim.isChallenge) challenge = recordChallenge(sim, FINAL_WAVE)
     else if (freeplay) recordFreeplay(sim)
-    else fresh = recordRun(sim, this.renderer.bloomCount())
+    else if (won || !canRetry(sim)) fresh = recordRun(sim, this.renderer.bloomCount())
     recordMetrics(sim, won ? 'won' : freeplay ? 'freeplay-end' : 'lost', this.extras())
-    clearRun()
+    if (!sim.isChallenge && sim.challenge.guard && !sim.freeplay && (won || canRetry(sim))) saveRun(sim.snapshot(), this.renderer.exportBlooms())
+    else clearRun()
     this.lastResult = { won, fresh, freeplay, challenge }
   }
 
@@ -545,8 +620,10 @@ export class App {
 
   startWave() {
     if (this.mode !== 'play' || this.sim.over) return
+    if (this.sim.canStartWave()) saveCheckpoint(this.sim, this.renderer.exportBlooms())
     const early = this.sim.earlyBonus()
     if (this.sim.startWave()) {
+      this.view.feedbackRoute = undefined
       this.clearMessages()
       if (this.sheetMode === 'routes') this.closeSheet()
       sound.tap()
@@ -727,6 +804,7 @@ export class App {
     if (!this.sim.challenge.guard) { this.flip(g); return }
     if (this.mode !== 'play' || this.sim.over) return
     if (this.sim.waveActive && !this.paused && !inspect) { this.flip(g); return }
+    if (!this.sim.waveActive) this.sim.stats.routePlans = (this.sim.stats.routePlans ?? 0) + 1
     sound.tap()
     this.clearMessages()
     this.view.hint = null
@@ -897,7 +975,10 @@ export class App {
 
   private mapTargets(): MapTarget[] {
     const sim = this.sim
-    return [...sim.pads.map((p, i) => ({ kind: 'pad' as const, index: i, x: p.x, y: p.y })).filter(p => sim.padAvailable(p.index)), ...sim.gates.filter(g => sim.gateAvailable(g)).map((g) => ({ kind: 'gate' as const, gate: g, x: g.def.x, y: g.def.y - 26 }))]
+    return [...sim.pads.map((p, i) => ({ kind: 'pad' as const, index: i, x: p.x, y: p.y })).filter(p => sim.padAvailable(p.index)), ...sim.gates.filter(g => sim.gateAvailable(g)).map((g) => ({ kind: 'gate' as const, gate: g, x: g.def.x, y: g.def.y - 26 }))].filter(p => {
+      const screen = this.renderer.toScreen(p.x, p.y)
+      return screen.x >= 0 && screen.x <= $('field').clientWidth && screen.y >= 0 && screen.y <= $('field').clientHeight
+    })
   }
 
   private cursorTarget() {
@@ -1090,8 +1171,8 @@ export class App {
       b.className = 'tw-btn'
       b.appendChild(towerPortrait(id, 60, dpr))
       const name = id === 'beam' ? 'Light<wbr>house' : id === 'bell' ? 'Moon<wbr>bell' : id === 'wick' ? 'Wick<wbr>ling' : def.name
-      b.insertAdjacentHTML('beforeend', `<span class="tw-name">${name}</span><span class="tw-role">${KEEPER_ROLE[id]}</span><span class="cost">${def.cost}</span><img class="fam" src="${glyphBadgeURL(def.family)}" alt="" width="16" height="16">`)
-      b.title = KEEPER_HELP[id]
+      b.insertAdjacentHTML('beforeend', `<span class="tw-name">${name}</span><span class="tw-role">${id === 'cracker' && this.sim.challenge.guardian === 'ember' ? 'Lingering fire' : KEEPER_ROLE[id]}</span><span class="cost">${def.cost}</span><img class="fam" src="${glyphBadgeURL(def.family)}" alt="" width="16" height="16">`)
+      b.title = this.keeperHelp(id)
       b.addEventListener('pointerdown', (e) => (this.pointerType = e.pointerType))
       b.addEventListener('pointerenter', e => {
         if (e.pointerType === 'mouse' && this.view.selection?.kind === 'pad') this.view.preview = id
@@ -1107,6 +1188,13 @@ export class App {
 
   private refreshHud(force: boolean) {
     const sim = this.sim
+    const zone = $('btn-zone')
+    if (zone) {
+      zone.hidden = !sim.challenge.harbour || this.mode !== 'play'
+      const near = sim.enemies.filter(e => e.y > 470).length
+      const label = this.renderer.harbourView ? `View canal${near ? ` · ${near} approaching lantern` : ' ↓'}` : 'View harbour ↑'
+      if (zone.textContent !== label) zone.textContent = label
+    }
     const set = (key: string, v: string | number | boolean, fn: () => void) => {
       if (!force && this.hudCache[key] === v) return
       this.hudCache[key] = v
@@ -1117,12 +1205,12 @@ export class App {
       document.querySelector('.stat-light')!.classList.toggle('low', sim.lives <= sim.maxLives * 0.4)
     })
     set('glow', sim.glow, () => ($('glow').textContent = compact(sim.glow)))
-    set('wave', `${sim.wave}|${sim.freeplayFrom}|${sim.waveOffset}`, () => {
-      const free = sim.wave > FINAL_WAVE
+    set('wave', `${sim.wave}|${sim.freeplayFrom}|${sim.waveOffset}|${sim.finalWave}`, () => {
+      const free = sim.wave > sim.finalWave
       const tide = !!sim.challenge.tide
-      $('wave').textContent = String(free ? sim.wave - FINAL_WAVE : this.shownWave())
+      $('wave').textContent = String(free ? sim.wave - sim.finalWave : this.shownWave())
       ;(document.querySelector('.stat-wave .lbl') as HTMLElement).textContent = free ? 'Free' : tide ? 'Tide' : 'Wave'
-      ;(document.querySelector('.stat-wave .of') as HTMLElement).textContent = free ? ' free' : `/${FINAL_WAVE - sim.waveOffset}`
+      ;(document.querySelector('.stat-wave .of') as HTMLElement).textContent = free ? ' free' : `/${sim.finalWave - sim.waveOffset}`
     })
     set('speed', this.speed, () => {
       const b = $('btn-speed')
@@ -1144,7 +1232,7 @@ export class App {
     set('go', goKey, () => {
       const n = sim.wave + 1
       const tide = !!sim.challenge.tide
-      const label = n > FINAL_WAVE ? `Free play ${n - FINAL_WAVE}` : tide && n === sim.waveOffset + 1 ? 'Start the tide' : `Start wave ${this.shownWave(n)}`
+      const label = n > sim.finalWave ? `Free play ${n - sim.finalWave}` : tide && n === sim.waveOffset + 1 ? 'Start the tide' : `Start wave ${this.shownWave(n)}`
       go.disabled = !can
       go.classList.toggle('early', can && sim.waveActive)
       go.classList.toggle('pulse', can && !sim.waveActive && ((this.coach.built && !this.coach.started) || (tide && sim.wave === sim.waveOffset && sim.towers.length > 0)))
@@ -1159,7 +1247,7 @@ export class App {
       charms.classList.toggle('set', sim.gates.some((g) => g.charm))
       charms.setAttribute('aria-expanded', String(this.sheetMode === 'charms'))
     })
-    const showNext = this.mode === 'play' && !sim.over && sim.spawners.length === 0 && (sim.wave < FINAL_WAVE || sim.freeplay)
+    const showNext = this.mode === 'play' && !sim.over && sim.spawners.length === 0 && (sim.wave < sim.finalWave || sim.freeplay)
     set('preview', `${sim.wave}|${showNext}`, () => this.renderPreview(showNext))
   }
 
@@ -1274,7 +1362,7 @@ export class App {
       b.classList.toggle('preview', this.view.preview === id)
       b.classList.toggle('disabled', disabled)
       b.setAttribute('aria-pressed', String(this.view.armed === id || this.view.preview === id))
-      b.setAttribute('aria-label', `${def.name}, ${def.cost} glow${disabled ? ', not allowed tonight' : poor ? ', not enough glow yet' : ''}. ${KEEPER_HELP[id]}`)
+      b.setAttribute('aria-label', `${def.name}, ${def.cost} glow${disabled ? ', not allowed tonight' : poor ? ', not enough glow yet' : ''}. ${this.keeperHelp(id)}`)
     })
     $('tray').style.setProperty('--keeper-count', String(this.trayBtns.filter(b => !b.hidden).length))
     $('gates').classList.toggle('one-lock', sim.gates.filter(g => sim.gateAvailable(g)).length === 1)
@@ -1296,8 +1384,8 @@ export class App {
         25: 'Old Gloom splits at the Lower Lock. Cover BOTH branches before starting.',
       }
       const tip = sim.challenge.guard && !sim.waveActive ? advice[sim.wave + 1] : undefined
-      const text = tip ?? `${stage.name} · ${stage.next}`
-      progress.classList.toggle('planning-tip', !!tip)
+      const text = sim.challenge.harbour ? (!sim.waveActive && !sim.over ? sim.waveDef(sim.wave + 1).note ?? 'Harbour kept · your towers stay' : 'Lantern Harbour · your original canal remains defended') : tip ?? `${stage.name} · ${stage.next}`
+      progress.classList.toggle('planning-tip', !!tip || !!sim.challenge.harbour && !sim.waveActive)
       if (progress.textContent !== text) progress.textContent = text
     }
     this.refreshSheet()
@@ -1513,10 +1601,11 @@ export class App {
   private patchTowerSheet(el: HTMLElement, t: Tower, force = false) {
     const sim = this.sim
     let what = `${t.pops} cheered`
+    if (sim.challenge.guard) what = `${Math.floor(t.damageDealt ?? 0).toLocaleString('en')} damage · ${t.pops} cheered`
     if (t.def.kind === 'pulse') what = `${stat(t, 'slowed')} slowed`
     else if (t.def.kind === 'garden') what = `${stat(t, 'earned')} glow earned · ${t.stats.income} a wave`
     else if (t.id === 'owl') what = `${t.pops} cheered · ${stat(t, 'spotted')} Veils spotted`
-    const sub = `${t.def.role} · ${what}`
+    const sub = `${sim.challenge.guardian === 'ember' && t.id === 'cracker' ? 'Ember bursts · weaker impact, lingering fire' : t.def.role} · ${what}`
     const subEl = el.querySelector('.sh-sub')
     if (subEl && (force || subEl.textContent !== sub)) subEl.textContent = sub
     const sell = el.querySelector('[data-act="sell"]') as HTMLElement | null
@@ -1637,9 +1726,14 @@ export class App {
     $('toast').classList.remove('show')
   }
 
+  private keeperHelp(id: TowerId) {
+    return id === 'cracker' && this.sim.challenge.guardian === 'ember'
+      ? 'Weaker bursts leave ground fire. Slow groups to keep them burning.' : KEEPER_HELP[id]
+  }
+
   private info(id: TowerId, extra = '') {
     const d = TOWERS[id]
-    this.toast(`${d.name} (${d.cost}): ${KEEPER_HELP[id]}${extra ? ' ' + extra : ''}`, 3200)
+    this.toast(`${d.name} (${d.cost}): ${this.keeperHelp(id)}${extra ? ' ' + extra : ''}`, 3200)
   }
 
   private bumpGlow() {
@@ -1662,7 +1756,12 @@ export class App {
     this.gateBtns.forEach((b) => b.classList.remove('coach'))
     this.trayBtns.forEach((b) => b.classList.remove('coach'))
     if (this.mode !== 'play') return
-    if (!this.coach.built) {
+    const learn = $('learn-bar')
+    learn.hidden = !!this.coach.tutorialDone || sim.isChallenge || sim.wave > 1 || !!sim.stats.retries || sim.wave > 0 && !sim.towers.length
+    if (!learn.hidden) learn.querySelector('span')!.textContent = !sim.towers.length
+      ? 'Preview: the bright water is in range. Choose Wickling to build here, or tap another pad.'
+      : !sim.wave ? 'Your tower is ready. Start wave 1 and watch it cover the highlighted water.' : 'Watch enemies cross your tower’s range. You can pause and inspect any tower.'
+    if (!this.coach.built && !this.coach.tutorialDone && !sim.isChallenge && sim.wave === 0 && !sim.towers.length) {
       if (this.view.selection?.kind === 'pad') this.trayBtns[0].classList.add('coach')
       else {
         const p = sim.pads[sim.challenge.expanding && sim.canalStage === 0 ? 12 : 1]
@@ -1670,7 +1769,7 @@ export class App {
       }
       return
     }
-    if (!this.coach.flipped && sim.planningWave >= 2 && this.settings.flipHint && (!sim.challenge.guard || (!this.coach.routesSeen && !sim.waveActive))) {
+    if (!this.coach.flipped && sim.planningWave >= 2 && this.settings.flipHint && (!sim.challenge.guard || (sim.wave <= 2 && !this.coach.routesSeen && !sim.waveActive))) {
       const i = sim.challenge.expanding && sim.canalStage === 0 ? 1 : 0
       const g = sim.gates[i]
       if (!sim.gateLocked(g)) {

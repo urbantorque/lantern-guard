@@ -5,7 +5,7 @@
 
 export type TowerId = 'wick' | 'cracker' | 'bell' | 'beam' | 'owl' | 'garden'
 export type Priority = 'first' | 'last' | 'strong' | 'close'
-export type EnemyId = 'drip' | 'skitter' | 'shell' | 'veil' | 'bloat' | 'wisp' | 'mender' | 'vshell' | 'toad' | 'gloom'
+export type EnemyId = 'drip' | 'skitter' | 'shell' | 'veil' | 'bloat' | 'wisp' | 'mender' | 'vshell' | 'toad' | 'gloom' | 'skiff' | 'warden'
 export type CharmTrait = 'shell' | 'veil' | 'swift' | 'heavy'
 export type Family = 'amber' | 'coral' | 'ice' | 'lime' | 'lilac' | 'gold' | 'pink'
 
@@ -318,6 +318,8 @@ export interface EnemyDef {
 }
 
 export const ENEMIES: Record<EnemyId, EnemyDef> = {
+  skiff: { id: 'skiff', family: 'coral', name: 'Skiff', hp: 7, shell: 8, speed: 50, reward: 12, weight: 2, radius: 17, tip: 'Accelerates after its armour breaks. Pair heavy hits with Moonbell slows.' },
+  warden: { id: 'warden', family: 'lilac', name: 'Harbour Warden', hp: 1700, shell: 80, speed: 24, reward: 700, weight: 999, radius: 45, boss: true, spawn: { type: 'skiff', every: 5 }, tip: 'Launches Skiffs and surges at half health. Keep heavy towers firing along a long route.' },
   drip: { id: 'drip', family: 'amber', name: 'Drip', hp: 2, speed: 58, reward: 3, weight: 1, radius: 12, tip: 'A small, grumpy Mope. Easy to cheer up.' },
   skitter: { id: 'skitter', family: 'ice', name: 'Skitter', hp: 3, speed: 118, reward: 4, weight: 1, radius: 11, tip: 'Fast. Keep it on the long loops.' },
   shell: { id: 'shell', family: 'coral', name: 'Shellback', hp: 2, speed: 44, reward: 8, weight: 2, radius: 16, shell: 8, tip: 'Sparks only chip its shell. The Mill wheel, fireworks, beams and hot wax crack it.' },
