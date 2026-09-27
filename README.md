@@ -11,6 +11,7 @@ New nights use one growing canal: Lantern bend first, the upper canal before wav
 - Balance results: [docs/balance-matrix.txt](docs/balance-matrix.txt) (full nights) and [docs/tides-matrix.txt](docs/tides-matrix.txt) (daily tides and weekly nights)
 - Path to the App Store: [docs/IOS-PLAN.md](docs/IOS-PLAN.md)
 - Next three refinement priorities: [docs/NEXT-PRIORITIES.md](docs/NEXT-PRIORITIES.md)
+- Proposed title and routing direction: [docs/POSITIONING-AND-ROUTING.md](docs/POSITIONING-AND-ROUTING.md)
 
 ## Run it
 
