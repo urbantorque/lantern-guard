@@ -1,0 +1,73 @@
+light left per bot (x N = lost on tide wave N): 1 balanced + routing | 2 balanced, no routing | 3 sparks + bells + routing | 4 heavy hitters + routing | 5 charms only (no taps) | 6 slow reactions (1.5s) | 7 careful sorter, beams
+
+=== DAILY TIDES ===
+Mon 28 Sept      Bloat Tide         tidal/trio(wick,cracker,owl)       25 13 25 x 3 16 25 25
+Tue 29 Sept      Bloat Tide         none/noGarden                      25  7 25 23 25 25 25
+Wed 30 Sept      Shellback Tide     swift/noGarden                     x11 x11 23 x11 x11 x 1 25
+Thu 1 Oct        Bloat Tide         thick/trio(wick,beam,bell)         25 22 x 4 25 25 25 25
+Fri 2 Oct        Veil Tide          thick/none                          9 x11  5 25 11 11 25
+Sat 3 Oct        Wisp Tide          tidal/none                         x11 x11 25 16 x11 x11 25
+Sun 4 Oct        Shellback Tide     tidal/noCharms                     25 x11 25 23 x11 11 25
+Mon 5 Oct        Veil Tide          sluice/none                        25 x11 25 25 23 23 25
+Tue 6 Oct        Wisp Tide          sluice/none                        25 x11 25 25 17 25 25
+Wed 7 Oct        Shellback Tide     tidal/noCharms                     25 23 25 23 23 11 25
+Thu 8 Oct        Wisp Tide          sluice/noGarden                    15 23 25 25 25 25 25
+Fri 9 Oct        Mender Tide        sluice/none                        19 x11 11 25 17 19 25
+Sat 10 Oct       Veil Tide          sluice/noCharms                    11 x11 25 25 x11 25 25
+Sun 11 Oct       Veil Tide          tidal/noCharms                     25 x11 25 25 x11 x11 25
+Mon 12 Oct       Mender Tide        swift/none                         13 x11 25 11 x11 13 25
+Tue 13 Oct       Veil Tide          swift/noGarden                     25 x11 25 15 25 25 25
+Wed 14 Oct       Mender Tide        thick/none                         x11 x11 25 25 19 25 25
+Thu 15 Oct       Mender Tide        tidal/noCharms                     25  7 25 23  7 25 25
+Fri 16 Oct       Veil Tide          swift/none                         x11 x 7 25 23 x 7 x 7 25
+Sat 17 Oct       Wisp Tide          swift/none                         x11 x11 25 13 x11 x11 25
+Sun 18 Oct       Veiled Shell Tide  tidal/noGarden                     x11 x11 25 x11 x11 x11 25
+Mon 19 Oct       Veil Tide          sluice/none                         9 x10 25 23 x11 25 25
+Tue 20 Oct       Veiled Shell Tide  swift/none                          9 x11 25 23  9  9 25
+Wed 21 Oct       Wisp Tide          tidal/noGarden                     24 x11 25 23 25 25 25
+Thu 22 Oct       Veiled Shell Tide  thick/noGarden                     25 16 25 16 25 25 25
+Fri 23 Oct       Mender Tide        swift/noGarden                     25 x11 25 13 15 x11 25
+Sat 24 Oct       Bloat Tide         swift/none                         25 13 25 15 25 25 25
+Sun 25 Oct       Veiled Shell Tide  thick/trio(wick,beam,bell)         23 x 8 x 2 25 25 25 25
+
+=== WEEKLY NIGHTS ===
+week of 28 Sept  Lean night         none/lean                          19 12 13  9 12 19 25
+week of 5 Oct    Thick shells       thick/none                         17 x21 x19  5  1 17 25
+week of 12 Oct   Fixed locks        none/fixed                         12 12 x 9 11 12 12  4
+week of 19 Oct   Tidal locks        tidal/none                         19 12 25 15  3 x25 25
+week of 26 Oct   Swift current      swift/none                         17 x25 x19 x25 x15 21 25
+
+=== SUMMARY ===
+daily|balanced + routing                 won 22/28  avg light 16.3
+daily|balanced, no routing               won 8/28  avg light 4.4
+daily|sparks + bells + routing           won 26/28  avg light 21.9
+daily|heavy hitters + routing            won 25/28  avg light 19.0
+daily|charms only (no taps)              won 18/28  avg light 12.8
+daily|slow reactions (1.5s)              won 21/28  avg light 16.0
+daily|careful sorter, beams              won 28/28  avg light 25.0
+weekly|balanced + routing                won 5/5  avg light 16.8
+weekly|balanced, no routing              won 3/5  avg light 7.2
+weekly|sparks + bells + routing          won 2/5  avg light 7.6
+weekly|heavy hitters + routing           won 4/5  avg light 8.0
+weekly|charms only (no taps)             won 4/5  avg light 5.6
+weekly|slow reactions (1.5s)             won 4/5  avg light 13.8
+weekly|careful sorter, beams             won 5/5  avg light 20.8
+
+routing bots by modifier:
+  feature:bloat          18/20 (90%)
+  feature:mender         23/25 (92%)
+  feature:shell          12/15 (80%)
+  feature:veil           32/35 (91%)
+  feature:vshell         16/20 (80%)
+  feature:wisp           21/25 (84%)
+  rule:fixed             4/5 (80%)
+  rule:lean              5/5 (100%)
+  rule:noCharms          24/25 (96%)
+  rule:noGarden          33/40 (83%)
+  rule:none              64/75 (85%)
+  rule:trio              12/15 (80%)
+  twist:none             14/15 (93%)
+  twist:sluice           30/30 (100%)
+  twist:swift            35/45 (78%)
+  twist:thick            26/30 (87%)
+  twist:tidal            37/45 (82%)

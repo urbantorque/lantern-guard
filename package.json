@@ -1,0 +1,46 @@
+{
+  "name": "wickwater",
+  "version": "0.1.0",
+  "description": "Wickwater: a lantern-lit tower defence prototype (browser slice for iOS)",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && tsc -p scripts && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc && tsc -p scripts",
+    "sim": "tsx scripts/sim.ts",
+    "tides": "tsx scripts/tides.ts",
+    "test": "tsx scripts/selftest.ts",
+    "test:integrity": "tsx scripts/integrity-test.ts",
+    "test:growth": "tsx scripts/growth-test.ts",
+    "balance:growth": "tsx scripts/growth-balance.ts",
+    "test:release": "tsx scripts/release-test.ts",
+    "balance:reedbank": "tsx scripts/waterway-balance.ts",
+    "ios:sync": "npm run build && cap sync ios",
+    "ios:open": "cap open ios",
+    "check": "npm run typecheck && npm test && npm run test:release && npm run test:growth && npm run test:integrity",
+    "qa:fixtures": "tsx scripts/qa-fixtures.ts"
+  },
+  "type": "module",
+  "devDependencies": {
+    "@capacitor/cli": "^8.5.2",
+    "@types/node": "^26.6.2",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.1"
+  },
+  "private": true,
+  "dependencies": {
+    "@capacitor/app": "^8.1.1",
+    "@capacitor/core": "^8.5.2",
+    "@capacitor/haptics": "^8.0.2",
+    "@capacitor/ios": "^8.5.2",
+    "@capacitor/preferences": "^8.0.1",
+    "@fontsource-variable/fredoka": "^5.3.0",
+    "@phosphor-icons/core": "^2.1.1"
+  },
+  "overrides": {
+    "xcode": {
+      "uuid": "11.1.1"
+    }
+  }
+}

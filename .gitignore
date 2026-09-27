@@ -1,0 +1,22 @@
+node_modules
+dist
+dist-artifact
+.playwright-cli
+
+.recovery/
+ios/App/App/public/
+ios/App/App/capacitor.config.json
+ios/App/App/config.xml
+ios/**/xcuserdata/
+ios/**/DerivedData/
+
+# Local configuration, credentials and machine artifacts
+.env
+.env.*
+!.env.example
+*.p8
+*.p12
+*.mobileprovision
+*.log
+.DS_Store
+Thumbs.db

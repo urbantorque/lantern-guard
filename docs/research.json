@@ -1,0 +1,1219 @@
+{
+  "research": [
+    {
+      "findings": [
+        {
+          "claim": "Apple Design Award winners and finalists for 2026 are recognised for charm, craft and feel more than graphical fidelity on iPhone. A charming logic puzzle won Delight and Fun, and the finalists were rewarded for tactile feedback and chaotic but readable effects.",
+          "evidence": "Delight and Fun winner: Is This Seat Taken? (Poti Poti), a logic puzzle presented as a Saturday-morning cartoon about seating quirky people. Finalists: BALL x PIT for ricochet combat and collision animations enhanced by HDR, and PowerWash Simulator for 'thoughtful haptic feedback for each hose nozzle'. Interaction winner: Sago Mini Jinja's Garden, for swipe-to-move controls that need no reading. Visuals finalist SILT is monochrome, with strong light and shadow.",
+          "url": "https://developer.apple.com/design/awards/",
+          "source_date": "2026-06-02"
+        },
+        {
+          "claim": "In 2025 a tower defence game with direct tactile interaction was an Apple Design Award finalist. Other finalists and winners stood out through distinctive handmade art styles and haptics rather than fidelity.",
+          "evidence": "Gears & Goo (Resolution Games, visionOS) was a finalist in Innovation and Interaction: a tower defence game with 'tactile goo-throwing', described as easy to pick up with strategic depth. PBJ - The Musical won Innovation for hand-animated paper cutouts, snappy controls and 'cool haptics'. Balatro won Delight and Fun. Art of Fauna won Inclusivity with VoiceOver support, colour themes and phobia settings.",
+          "url": "https://developer.apple.com/design/awards/2025/",
+          "source_date": "2025-06"
+        },
+        {
+          "claim": "Premium strategy games sell on the US iPhone App Store, and Apple Arcade versions of the same games also chart. Bloons TD 6 and Balatro both made the 2025 year-end top-10 lists.",
+          "evidence": "Top paid iPhone games in the US for 2025: 1 Minecraft, 2 Balatro, 6 Bloons TD 6. Top Apple Arcade games: 3 Balatro+, 8 Bloons TD 6+. The top free chart was led by Block Blast!, and Last War and Whiteout Survival were in the top 10.",
+          "url": "https://9to5mac.com/2025/12/10/here-are-iphones-most-downloaded-apps-and-games-of-2025/",
+          "source_date": "2025-12-10"
+        },
+        {
+          "claim": "Thronefall shows that a deliberately minimal tower defence and strategy game can succeed commercially. Its build-by-day, defend-by-night split creates natural sessions.",
+          "evidence": "The game sold 315k units at $7 (about $1.5M gross) in two months of Early Access from August 2023, with a 6.9% refund rate and more than 35% of players past 5 hours. The team explicitly aimed for a 'super-tight gameplay loop' with minimal visuals and no heavy tutorials.",
+          "url": "https://newsletter.gamediscover.co/p/deep-dive-how-thronefall-went-minimal",
+          "source_date": "2023"
+        },
+        {
+          "claim": "Thronefall reached nearly 1 million sales within a year and came to iOS in 2025 as a free-to-try port. Destroyed buildings are restored after each night, which lowers the sting of failure.",
+          "evidence": "Wikipedia puts sales at just under 1M in the first year, with full release in October 2024 and iOS in June 2025. After a night is cleared, destroyed buildings and units come back, and gold is awarded based on how many buildings survived. The developer's post announcing iOS says players can 'try it for free'; the port was by Doghowl Games.",
+          "url": "https://en.wikipedia.org/wiki/Thronefall",
+          "source_date": "2025"
+        },
+        {
+          "claim": "Bad North is a clear model for strategy that is readable at a glance: a complex simulation stays hidden while every consequence stays visible. It targets people put off by the demands of RTS games.",
+          "evidence": "The developers call it a game for people who like 'the idea of playing strategy games more than the reality'. Readability is the core art value. Interaction is low-granularity: you position a squad and the units decide how to fight. Every sword clash and arrow hit can be seen and heard, so players understand why a tactic worked or failed.",
+          "url": "https://www.nintendo.com/en-gb/News/2018/April/Interview-Taking-on-hordes-of-invading-Vikings-in-Bad-North-1368315.html",
+          "source_date": "2018-04"
+        },
+        {
+          "claim": "Bad North's studio sized its audience as lapsed or intimidated strategy players, not RTS veterans.",
+          "evidence": "Richard Meredith describes the audience as players 'interested in playing strategic games like this but were put off by the complexity and the up-front demands of a typical RTS'. Its minimalism hides systemic depth, so newcomers can engage gradually.",
+          "url": "https://www.pocketgamer.biz/interview/68638/indie-spotlight-plausible-concept-on-bad-north/",
+          "source_date": "2018"
+        },
+        {
+          "claim": "Mini Motorways draws its routing appeal from simple-looking systems with hidden depth, a bright tourist-map style and audio generated from gameplay. Pacing comes from its constraints rather than from instructions.",
+          "evidence": "Design intent: 'seemingly-simple systems that are complex in unintuitive ways'. The art is inspired by novelty tourist maps, with bright colours and a scale that picks out the important roads. Composer Disasterpeace's audio triggers samples in procedural sequences driven by gameplay data. Players learn from spawn rules rather than prescriptive tutorials.",
+          "url": "https://www.gamedeveloper.com/audio/-i-mini-motorways-i-and-the-delicate-art-of-marrying-complexity-and-minimalism",
+          "source_date": "2019"
+        },
+        {
+          "claim": "The Mini Metro and Mini Motorways series has a large, lasting audience. Its runs use a regular choice between two upgrades and end when one building overflows. Players pushed for a sandbox mode.",
+          "evidence": "The two games had 12M combined players by May 2023. In Mini Motorways the player picks one of two upgrades after each in-game week, and the game is over when a building's timer fills. A free Creative Mode launched in August 2025 after players kept posting screenshots of the cities they built; the team also talked about adding 'juice' to the new UI.",
+          "url": "https://gamermatters.com/mini-metro-and-mini-motorways-have-12-million-players-combined-new-update-arrives-this-july-to-both-games/",
+          "source_date": "2023-05-09 / 2025-08-19"
+        },
+        {
+          "claim": "PowerWash Simulator shows how big the audience for satisfying, soothing play is. Its iPhone version made the core verb tactile and shaped sessions for mobile play.",
+          "evidence": "FuturLab reported 17M players on all platforms (March 2025). The Apple Arcade launch on December 4, 2025 added Scratch Mode (washing directly with a fingertip), full haptics and gyroscope support, auto-rotating nozzles, warp points, difficulty tuned for mobile sessions, and a hideable HUD. The CEO's stated goal was 'the ultimate pick-up and play clean-up experience'.",
+          "url": "https://www.futurlab.co.uk/news/clean-on-any-screen-with-original-powerwash-simulator-on-apple-arcade-coming-december-4th",
+          "source_date": "2025-11 / 2025-03-27"
+        },
+        {
+          "claim": "Unpacking is the benchmark for ASMR-style foley. It varies sound by material, by surface and by interaction speed, and uses layered 'sweeteners' so its variety scales without needing a unique recording for everything.",
+          "evidence": "The game ships more than 14,000 foley files. The team first estimated 75k (500 items x 15 surfaces x 10 variants) and cut this down with generic material sounds plus layered sweeteners. When two materials collide, the softer one's sound wins, and special 'hero objects' keep unique sounds. It also has distinct sounds for different interaction speeds. Unpacking launched on mobile as a premium game at about $10.",
+          "url": "https://www.gamedeveloper.com/marketing/auditory-tales-from-the-making-of-zen-puzzler-unpacking",
+          "source_date": "2022"
+        },
+        {
+          "claim": "On mobile, Vampire Survivors built reach and goodwill by staying free for real: no in-app purchases, only optional ads at the end of a run. Its design works by subtraction, while the most profitable survivor-likes rely heavily on in-app purchases.",
+          "evidence": "3M mobile downloads within about 5 weeks (1.68M iOS; AppMagic data, January 2023), with no paid user acquisition. Poncle chose an optional, 'non-predatory' model. By comparison, AppMagic estimates Survivor!.io's lifetime in-app revenue at $476M, part of Habby's $2B total (reported February 2026).",
+          "url": "https://mobilegamer.biz/vampire-survivors-mobile-hits-3m-downloads/",
+          "source_date": "2023-01-16"
+        },
+        {
+          "claim": "BALL x PIT, a hybrid of the survivors-like and brick-breaker genres, shows that a clear twist on a familiar genre plus regular free content updates drives lasting sales. It has since come to mobile.",
+          "evidence": "Released October 15, 2025. It sold 400k in its first week and 1M by early December 2025, with three free updates planned for 2026 (January, April and July). It passed 2M sold within 10 months and was recently released on mobile.",
+          "url": "https://wnhub.io/news/investment/item-51689",
+          "source_date": "2026-08"
+        },
+        {
+          "claim": "Hybrid-casual revenue is dominated by puzzles with satisfying visuals, and the category retains players far better than hypercasual.",
+          "evidence": "Global hybrid-casual net revenue on the App Store was $174.8M in March 2025. Puzzle hybrids made up about 50% of it: block 71%, screw 20% and sort 9% of puzzle revenue. D7 retention is about 20% and D30 about 10%. The revenue split is roughly 40-50% in-app purchases and 50-60% ads. Figures are from Gamigion's analysis of third-party market data.",
+          "url": "https://www.gamigion.com/2025-hybridcasual-market-overview-with-real-data/",
+          "source_date": "2025-06-11"
+        },
+        {
+          "claim": "Color Block Jam, the biggest new hybrid-casual puzzle game, combined a light tutorial with player-led discovery, a minimal and clear UI, boosters that are never required, and new features every two weeks.",
+          "evidence": "Rollic reports $100M in bookings, 3M daily active players after four months, 10% D90 retention, and every level completable without boosters, with features and events every two weeks. Gamigion notes a quick tutorial, then 12 intro levels before the menu loop, 'minimal UI, 3D clarity', and boosters such as Freeze Time and Hammer.",
+          "url": "https://www.pocketgamer.biz/how-rollic-scored-a-100m-hybridcasual-hit-by-ideating-1000-games-a-month/",
+          "source_date": "2025-07-16"
+        },
+        {
+          "claim": "Mobile retention and session benchmarks for 2025 set the bar: typical sessions are short, and the top games are far above the median.",
+          "evidence": "GameAnalytics 2026 benchmarks (2025 data, 16k+ games): median D1 about 22%, D7 under 4%, D30 about 0.7-0.8%. The top 10% reach about 40% D1 and 11-12% D7. Median session length is 3.1-3.5 minutes, with 3.8-3.9 sessions per day and about 12 minutes of play daily. The top 1% have sessions of 22+ minutes.",
+          "url": "https://www.gameanalytics.com/reports/2026-mobile-pc-gaming-benchmarks",
+          "source_date": "2026-08-24"
+        },
+        {
+          "claim": "Apple's guidelines for games set concrete rules for onboarding and readability on iPhone.",
+          "evidence": "'Teach through play': written tutorials should be optional references, not prerequisites. Defer permission requests until they are needed, and ask for a rating only after players have spent quality time with the game. Minimum text is 11pt (default 17pt) and minimum button size 28x28pt (default 44x44pt). Do not rely on colour alone to convey important details. Let players customise type size, motion intensity and sound balance.",
+          "url": "https://developer.apple.com/tutorials/data/design/human-interface-guidelines/designing-for-games.json",
+          "source_date": "2025"
+        },
+        {
+          "claim": "Apple's haptics guidance: haptics should work together with sound and visuals, be used sparingly, and always be optional.",
+          "evidence": "The guidance says to use haptics alongside other feedback so that visual, audio and tactile feedback are 'in harmony'. It warns against overuse: 'the best haptic experience is one that people may not be conscious of, but miss when it's turned off'. It also says to make haptics optional and to prefer short haptics for discrete events.",
+          "url": "https://developer.apple.com/tutorials/data/design/human-interface-guidelines/playing-haptics.json",
+          "source_date": "2025"
+        },
+        {
+          "claim": "A 2026 onboarding playbook (a secondary source aggregating others) sets clear time targets for the first session.",
+          "evidence": "Targets: core gameplay within 60 seconds, the 'aha' moment within 90 seconds, and a first-run tour of no more than two steps. Session 1 to session 2 conversion is the leading indicator of D1 retention. Deferring accounts and permissions and adding an early achievement is claimed to be worth 5-10 points of D1. The post cites Adjust and others.",
+          "url": "https://blog.playio.co/mobile-game-onboarding-retention",
+          "source_date": "2026-08-03"
+        },
+        {
+          "claim": "App Store product page behaviour: the first few screenshots decide whether someone installs, and for games they should show real gameplay and progression.",
+          "evidence": "AppTweak says users rarely scroll past the first three screenshots, and that bright, high-contrast designs and bold captions convert better; its AppQuantum case study reports 21.5% more downloads from creative A/B testing. SplitMetrics says users decide within about 7 seconds and that game screenshots should show actual gameplay and progression.",
+          "url": "https://www.apptweak.com/en/aso-blog/how-to-optimize-your-app-screenshots",
+          "source_date": "2025-11-21"
+        },
+        {
+          "claim": "Strategy was the only mobile genre to grow revenue, downloads and time spent in 2025, and puzzle also posted strong revenue gains. Players of both genres spend heavily relative to the number of installs.",
+          "evidence": "Sensor Tower's State of Gaming 2026 reports mobile at about $82B (+1%), with strategy the only genre to grow revenue, downloads and time spent (4X titles drove most of it). Puzzle posted gains led by Royal Match.",
+          "url": "https://www.prnewswire.com/news-releases/sensor-tower-state-of-gaming-gaming-drove-94-billion-in-revenue-in-2025-downloads-reached-52-billion-302696284.html",
+          "source_date": "2026-02-25"
+        },
+        {
+          "claim": "Paid acquisition for casual games on iOS costs about 10x more per install than on Android but returns more. An iOS-first indie game should plan for organic, editorial and Apple Arcade discovery rather than scaled paid acquisition.",
+          "evidence": "Liftoff/Singular 2025 casual report (February 2024 to February 2025 data): iOS cost per install $1.41 vs Android $0.14, and D30 return on ad spend 47% on iOS vs 15% on Android.",
+          "url": "https://liftoff.ai/2025-casual-gaming-apps-report/",
+          "source_date": "2025"
+        },
+        {
+          "claim": "Successful PC strategy and puzzle games are being redesigned for mobile rather than ported directly.",
+          "evidence": "Toukana says it intends to 'refresh and streamline many mechanics' for Dorfromantik on mobile (May 2025). PowerWash Simulator added warp points, auto-rotating nozzles and difficulty tuned for mobile sessions for its Arcade release.",
+          "url": "https://www.pocketgamer.com/dorfromantik/coming-to-mobile/",
+          "source_date": "2025-05-08"
+        }
+      ],
+      "implications": [
+        "Audience niche signal: players who like 'the idea of strategy more than the reality' (Bad North) plus the routing and satisfying-play crowds (Mini Motorways 12M players, PowerWash 17M). Aim for minimal, readable tower defence with hidden depth, not a busy tower defence full of numbers.",
+        "Twist direction: the strongest precedents are a direct tactile verb (PowerWash Scratch Mode, the Gears & Goo goo-throwing finalist) and live re-routing (Mini Motorways). Pick one in-wave finger action that competes with placing and upgrading towers, such as redrawing or switching the path or physically nudging enemies. It must cost something, like cooldown, energy or tower downtime, so it creates real decisions mid-wave.",
+        "First 60 seconds: no text-wall tutorial ('teach through play'). Aim for first tower placed within about 10 seconds, first enemy popped by about 20 seconds, and first wave cleared and reward chosen by about 60 seconds. Use at most two contextual prompts. Defer settings, permissions and rating requests. Use the first 3-4 waves as the equivalent of Color Block Jam's 12 intro levels, adding one new idea per wave.",
+        "Session shape: median mobile sessions are about 3-4 minutes, with about 4 sessions a day. Keep waves to 30-60 seconds, auto-save between waves so the level can be resumed, and use a 'one more wave' hook. Aim for a full level of about 12-20 minutes, as Thronefall's day and night loop fits natural stopping points.",
+        "Readability rules: limited flat palette with a signature look (tourist-map brightness like Mini Motorways, or a monochrome and accent approach like SILT). Every enemy type needs a distinct silhouette plus a colour and a shape or icon, never colour alone (Apple guidelines). Hide the simulation but show every consequence: floating damage and leak markers, and a lane danger meter. Text at least 11pt (target 17pt), touch targets 44pt, a hideable HUD, and an option for reduced motion or shake.",
+        "Upgrades: use a Mini Motorways-style choice of one of two at wave breaks, with a survivors-like layer of combos and synergies between towers and the twist verb. That creates 'try a different strategy' replay without menu bloat.",
+        "Juice and ASMR layering: coordinate visual, audio and haptic feedback so they land together. Give each enemy material its own pop, crunch or squish, with 3-5 pitch and variant samples, a speed-sensitive layer and sweeteners, following Unpacking's approach where the softer material wins. Quantise pops to a procedural music bed, as Mini Motorways does. Use short, sparing haptics only for placement, upgrade, wave cleared and leaks, with a toggle. Critical information must never be carried only by sound or haptics, since the game should read clearly muted.",
+        "Monetisation: premium or free-to-try plus a one-time unlock is validated on iOS (Balatro #2 and Bloons TD 6 #6 in US top paid for 2025, Thronefall free to try). An Apple Arcade pitch is also viable, since BTD6+ and Balatro+ were Arcade top 10. If any hybrid elements are added, boosters must never be required (Color Block Jam), and a Vampire Survivors-style optional ad at the end of a run earns goodwill. Paid extras should be cosmetics such as tower skins, pop-sound packs and themed boards, plus content packs. Keep a regular cadence of free updates (BALL x PIT's three free updates a year, PowerWash's free packs) to bring players back.",
+        "Retention features that players demonstrably want: daily and weekly seeded challenges, and later a sandbox or creative mode. Mini Motorways players asked for this for years and shared screenshots of their creations, which doubles as organic marketing.",
+        "Distribution economics: an iOS casual install costs about $1.41, versus $0.14 on Android. Lean on Apple Design Award-style craft (distinctive art, per-tool haptics, snappy controls), editorial features and an Apple Arcade pitch rather than paid acquisition.",
+        "App Store screenshots: portrait format, with the first three frames showing real mid-wave gameplay that is busy but readable. Use bright, high-contrast art, and have frame 1 state the twist in 5-7 words with the finger gesture visible. Show the upgrade and progression arc in frames 2-3, and plan A/B tests with Apple's Product Page Optimization.",
+        "The browser prototype should be tested against these targets: time to first tower, share of players who clear wave 1 without help, whether the twist verb is used unprompted by wave 3, and whether a busy late wave stays readable on a 375px-wide screen with sound muted."
+      ]
+    },
+    {
+      "findings": [
+        {
+          "claim": "Mazing, where the player's tower placement sets the enemies' route, is a mature mechanic that goes back to 2007 and moved to phones early. The routing decisions come from where you place towers, before or between waves.",
+          "evidence": "Desktop Tower Defense (Mar 2007): creeps take the shortest path they can find, and players build long, winding corridors. It was played over 15.7M times by July 2007, won the 2008 IGF Gleemie and made Time's All-Time 100 games. Fieldrunners (iPhone, Oct 5 2008): turrets can go anywhere, enemies walk around them, and you cannot fully block the path. PSP version scored 81 on Metacritic; Pocket Gamer called it 'the best Tower Defense game on iPhone so far'.",
+          "url": "https://en.wikipedia.org/wiki/Desktop_Tower_Defense",
+          "source_date": "accessed 2026-09-26 (game 2007); Fieldrunners: https://en.wikipedia.org/wiki/Fieldrunners"
+        },
+        {
+          "claim": "Current mazing games mostly fix the enemy route once a wave starts, so the maze is a planning puzzle rather than something you decide during the wave.",
+          "evidence": "TDS - Tower Defense Strategy thread (Nov 20 2024): walls placed during a wave do not reroute enemies because their path is already calculated, and they attack the walls instead. Paths are only recalculated between waves, shown by a pulsing preview line. Emberward's store page says 'Build a maze before the battle begins!' and its tetromino blocks go down before battle. It left Early Access on Sep 17 2026 with 97% positive of 2,643 reviews.",
+          "url": "https://steamcommunity.com/app/2392280/discussions/0/4633736089165683926/",
+          "source_date": "2024-11-20; Emberward page https://store.steampowered.com/app/2459550/Emberward/ accessed 2026-09-26"
+        },
+        {
+          "claim": "Roguelite games where the path grows over time, or is built from tiles, are well established. Players make their path choices between waves and draft cards or tiles.",
+          "evidence": "Rogue Tower (Jan 28 2022): you choose which direction the path expands each level, and it twists and splits at random. It has 400+ cards and upgrades and is 80% positive from 4,374 reviews. Isle of Arrows (iOS, $5.99 premium, Oct 2022) builds the island and path from tiles you draw each round and is rated 4.5 from 272 ratings. Reviewers say it is too random and ask for an undo after placing a tile.",
+          "url": "https://store.steampowered.com/app/1843760/Rogue_Tower/",
+          "source_date": "accessed 2026-09-26; Isle of Arrows https://apps.apple.com/us/app/isle-of-arrows-tower-defense/id1607942817 and https://www.148apps.com/isle-of-arrows/isle-of-arrows-tower-defense-review/"
+        },
+        {
+          "claim": "Roguelite and deckbuilder strategy games that sit next to tower defence are commercially hot, so this twist space is crowded.",
+          "evidence": "9 Kings (EA May 23 2025, a card-based kingdom builder with TD elements) sold 250K in its first week and 400K+ in its first month, and holds 92% positive. Thronefall (a minimalist TD, full release Oct 2024) sold 1M in its first year from a two-person team, and later reports say 2M+. Ballionaire (Dec 2024, a pachinko 'autobonker' roguelike) is 85% positive from 1,923 reviews, though critics said it leans on luck over strategy. BALL x PIT (Devolver, Oct 2025) passed 2M copies by Aug 2026.",
+          "url": "https://en.wikipedia.org/wiki/9_Kings",
+          "source_date": "accessed 2026-09-26; Thronefall https://steamdeckhq.com/news/thronefall-has-sold-over-one-million-copies/ ; Ballionaire https://en.wikipedia.org/wiki/Ballionaire ; BALL x PIT https://www.gamespress.com/en-US/Devolver-Digitals-BALL-x-PITs-Final-Free-Update-The-Naturalist-Update-"
+        },
+        {
+          "claim": "The best-reviewed live route choice at junctions in the genre is in a reverse TD, where you steer your own convoy rather than the enemies. It won awards on iOS.",
+          "evidence": "Anomaly: Warzone Earth (PC Apr 2011, iOS Aug 2011): the convoy never stops, and the tactical map pauses the game so you can pick which way it turns at each intersection, changeable at any time. Metacritic scores were iOS 94 and PC 80. It won an Apple Design Award (OS X) in 2011, and Apple named it App Store Game of the Year runner-up for 2011.",
+          "url": "https://en.wikipedia.org/wiki/Anomaly:_Warzone_Earth",
+          "source_date": "accessed 2026-09-26 (game 2011); gameplay detail https://polygonsandpixels.com/2015/02/18/anomaly-warzone-earth-a-reverse-tower-defense-tower-offense/"
+        },
+        {
+          "claim": "Bloons TD 6 does let players reroute enemies live, but only as a gimmick on one map. It is not a core system.",
+          "evidence": "On the Workshop map (Expert, added in v12.0), the 'Track Extensions' gizmo forces bloons into longer lanes for 20 seconds and can be triggered mid-round. The first use is free, and later uses cost $150 more each time plus $100 every 15 rounds. A second gizmo, 'Reverse Motor', changes bloon speed for 30 seconds. BTD6's other map interactables, such as the Dark Dungeons statue and spike torches, add damage and do not change paths.",
+          "url": "https://www.bloonswiki.com/Workshop_(BTD6)",
+          "source_date": "accessed 2026-09-26; Dark Dungeons https://www.bloonswiki.com/Dark_Dungeons"
+        },
+        {
+          "claim": "I searched hard and found no shipped, commercially notable TD whose core loop is flipping junction switches or gates during a wave to reroute enemies. The only close matches are small prototypes and titles where you dig or build the path.",
+          "evidence": "ChangePath (itch.io, Windows demo, in development, Godot) is described only as a TD where you can change enemy paths, with no reviews or date. ReRoad (Nov 2020) has players dig their own paths and is 74% positive from 104 reviews. A 2019 itch mazing/rerouting TD reroutes only between waves. GameRant's 'unique TD' list (Sept 2023) names only Rogue Tower, Isle of Arrows and the reverse TD Tower Escape as games where you control the path.",
+          "url": "https://softanger.itch.io/changepath-demo",
+          "source_date": "accessed 2026-09-26; ReRoad https://store.steampowered.com/app/1304130/ReRoad/ ; https://gamerant.com/best-unique-tower-defense-games/ (2023-09-02)"
+        },
+        {
+          "claim": "The nearest upcoming rival is Train Towers, which lays track in real time during battle. It steers your own tower-train, though, not the enemies, and it has not been released.",
+          "evidence": "Steam page: you place track in front of your train during battle to carve your path, and each carriage is a modular tower. The developer is listed as 'pb', release date TBA, and there are no reviews yet.",
+          "url": "https://store.steampowered.com/app/4424320",
+          "source_date": "accessed 2026-09-26"
+        },
+        {
+          "claim": "Moving towers during a wave is proven on touch screens and monetises well at the top end.",
+          "evidence": "Unstoppable Gorg (Jan 2012) lets you rotate an orbit to move every satellite tower on it while enemy routes change each wave. It scored 85 on Metacritic on iOS against 73 on PC. Arknights builds its play around retreating and redeploying operators mid-wave ('helidropping') using regenerating deployment points. Naavik, citing data.ai, reports $678M lifetime revenue from 17M downloads, about $40 per download.",
+          "url": "https://en.wikipedia.org/wiki/Unstoppable_Gorg",
+          "source_date": "accessed 2026-09-26; Arknights https://naavik.co/deep-dives/arknights-tower-defense-redefined/ (2023-01-05)"
+        },
+        {
+          "claim": "The top-grossing mobile TDs in the US are hero, gacha, merge and RPG hybrids, and none of them use routing as a mechanic.",
+          "evidence": "Sensor Tower's top 5 US TD games by revenue for Q2 2025 (third-party estimates): Arknights (weekly peak over $750K in April), Kingdom Guard (about $450K peak), Watcher of Realms ($260K peak), Rush Royale (about $220K peak, active users 69K rising to 127K) and Raid Rush (about $220K a week).",
+          "url": "https://sensortower.com/blog/2025-q2-unified-top-5-tower%20defense%20games-revenue-us-6012932d241bc16eb85e0db8",
+          "source_date": "2025 Q2 report, accessed 2026-09-26"
+        },
+        {
+          "claim": "Colour-sorting shooter puzzles are the hottest new mobile mechanic right now. Their core mix of matching colours, managing a queue, clearing targets under space pressure, and deterministic rules sits right next to a routing-and-sorting TD.",
+          "evidence": "Pixel Flow! (Loom Games, Aug 2025): matching-colour shooters ride a conveyor into five queue slots. It reached $105M in IAP in about 10 months (AppMagic, via mobilegamer.biz, Jun 17 2026), making it the third hybridcasual puzzle to pass $100M after Color Block Jam ($148M) and Screwdom ($120M). Deconstructor of Fun reports about $550K a day (IAP plus 30-40% from ads) and about 1M DAU by Dec 2025, and says the game is deterministic with no rewarded ads that skip difficulty. A copycat, Color Pixel Shooter, reached $140K a day. The App Store page shows 4.7 from 160K ratings.",
+          "url": "https://mobilegamer.biz/data-digest-pixel-flow-hits-100m-mays-top-games-neverness-to-everness-pokemon-go-more/",
+          "source_date": "2026-06-17; also https://www.deconstructoroffun.com/blog/2026/2/13/pixel-flow-the-publishers-dream (2026-02-13)"
+        },
+        {
+          "claim": "Sort, jam and colour-shooter games fill the top of US puzzle revenue charts. Puzzle is the second-largest mobile genre by IAP.",
+          "evidence": "Sensor Tower's top 5 US puzzle games by revenue for Q4 2025 include Pixel Flow! (about $10K rising to over $2M in the chart period), Magic Sort! (about $1.4M) and Color Block Jam ($1.7M falling to $1.3M), alongside NYT Games and June's Journey. Sensor Tower's State of Gaming 2026, as summarised by a newsletter, says puzzle IAP grew 14% in 2025.",
+          "url": "https://sensortower.com/blog/2025-q4-unified-top-5-puzzle-games-revenue-us-64bc1644e1714cfff1e615fc",
+          "source_date": "Q4 2025 report; summary https://gamedevreports.substack.com/p/sensor-tower-state-of-gaming-2026"
+        },
+        {
+          "claim": "Colour-matching TD is a real category but a small one. The existing games use colour as a resistance or queue rule, not as something you route live.",
+          "evidence": "Color Tower Defence (Jul 2024): red, green and blue enemies resist same-colour towers, and mixed-colour enemies resist two colours at 75% reduction. It has only 13 reviews. Rainbow Rush: Color Defense (Kite Games, iOS) sends colour-matched archers from a queue where the front unit must go first, and is rated 4.6 from 155 ratings. Color Guard on Google Play mixes TD with conveyor belts and ammo colour matching.",
+          "url": "https://store.steampowered.com/app/3064560/Color_Tower_Defence/",
+          "source_date": "accessed 2026-09-26; https://apps.apple.com/us/app/rainbow-rush-color-defense/id6759663771 ; https://play.google.com/store/apps/details?id=co.imba.colorguard"
+        },
+        {
+          "claim": "Flipping switches live to send coloured units to matching destinations is a proven and well-liked mobile verb in train puzzles. Players also complain about the difficulty and the paywalls.",
+          "evidence": "Conduct THIS! (Northplay): tap to start and stop trains and control switches. Its App Store rating is 4.6 from 2.9K ratings, it has Apple Editors' Choice ('as obstacles add up, you'll be frantically tapping'), and it won the IMGA Best Quickplay award. Reviews note that many said it was too hard, and user reviews complain that over half the game now sits behind paywalls. It uses subscriptions ($2.99 and $4.99), $1.99 expansions and a $9.99 level unlock.",
+          "url": "https://apps.apple.com/us/app/conduct-this-train-action/id1151455384",
+          "source_date": "version 4.4.92, 2025-08-31; also https://minireview.io/simulation/conduct-this-train-action"
+        },
+        {
+          "claim": "Routing puzzles win Apple's design editors over and hold their appeal across platforms.",
+          "evidence": "Railbound (Afterburn, Sept 2022) won the 2023 Apple Design Award for Interaction for its tap-and-drag track placement, which includes switches, and for its puzzles about train-car order. It sold 50K on Steam by July 2023 against a break-even of about 30K. Mini Metro, which routes shape-matched passengers, had sold about 6M copies across platforms by June 2023 (PocketGamer.biz). Mini Motorways launched on Apple Arcade in Sept 2019, sold 500K+ on Steam by Dec 2021, and scored 80 to 87 on Metacritic.",
+          "url": "https://en.wikipedia.org/wiki/Railbound",
+          "source_date": "accessed 2026-09-26; https://www.pocketgamer.biz/interview/81643/how-the-mini-metro-developer-beat-the-odds-to-build-a-premium-mobile-games-studio/ (2023-06-01); https://www.vgchartz.com/article/451807/mini-motorways-sales-top-500000-units/ (2021-12-06)"
+        },
+        {
+          "claim": "Live, wave-based routing with switches and signals already works as a core loop in dispatcher simulators, just without combat.",
+          "evidence": "Rail Route (full release Feb 22 2024) has players dispatch trains by setting routes and signals, then automate with sensors and routers. Its 'Rush Hour' mode is described as intense dispatching waves. It is 84% positive from 1,127 reviews.",
+          "url": "https://store.steampowered.com/app/1124180/Rail_Route/",
+          "source_date": "accessed 2026-09-26"
+        },
+        {
+          "claim": "Rhythm TD is thin and commercially unproven. The main hopeful uses music as tower layering rather than as a live input.",
+          "evidence": "In Rhythm Towers (innoloop), each tower adds a layer to the soundtrack. Its demo launched in July 2024 and is 92% positive from only 14 reviews, and the full game is still 'To be announced' on Steam. A B3 preview praised its sound and replayability. Bass Defense (Aug 2024) asks players to press buttons in time with the beat.",
+          "url": "https://store.steampowered.com/app/1561030/Rhythm_Towers/",
+          "source_date": "accessed 2026-09-26; https://bigbossbattle.com/rhythm-towers-preview/ ; https://esportskingdom.gg/other-games/rhythm-based-tower-defense-game-launches-on-steam/"
+        },
+        {
+          "claim": "Lane TD is dominated by the Plants vs Zombies IP, and a reverse TD roguelite that plans routes against a threat heatmap draws only a niche following.",
+          "evidence": "PvZ: Replanted (EA, Oct 23 2025, $19.99) is a remaster of lane-based defence. Its Metascore is 75 against a Metacritic user score of 4.9, with a buggy launch and controversy from the original team. Tower Escape (Feb 2023), a reverse TD with snake-like minion routing and a threat heatmap, is 83% positive from 362 reviews.",
+          "url": "https://en.wikipedia.org/wiki/Plants_vs._Zombies:_Replanted",
+          "source_date": "accessed 2026-09-26; https://store.steampowered.com/app/2009860/Tower_Escape/"
+        }
+      ],
+      "implications": [
+        "The open space is live enemy routing inside a normal tower defence game. Crowded spaces are roguelite and deckbuilder TD (Rogue Tower, Emberward, 9 Kings, Isle of Arrows), mazing done before or between waves (Desktop TD, Fieldrunners, Emberward, TDS), merge and gacha hero TD (Rush Royale, Arknights, Kingdom Guard) and lane TD (PvZ). Only a BTD6 map gimmick (Workshop's 20-second Track Extensions) and itch prototypes (ChangePath, which is in development) let players reroute live. Making 'flip junction switches during a wave' the ONE central twist is distinctive while still being easy to explain.",
+        "Pair the switches with colour or type sorting. Enemies come in a few readable colours or kinds, and each branch ends in a kill zone that suits a matching tower type, so the player's in-wave job becomes 'sort the stream'. That makes a new decision every few seconds: which gate to flip now, which mixed group to split, and whether to overload one zone to save another. It also taps the mobile audience that pushed Pixel Flow! to $105M IAP (AppMagic) and Magic Sort! and Color Block Jam into Sensor Tower's top 5 US puzzle games. The underserved niche is sort-puzzle players who find hardcore TD intimidating, together with TD fans who want more to do during a wave than watch.",
+        "Take the proven verb from adjacent hits. Conduct THIS! (Apple Editors' Choice, 4.6 from 2.9K ratings) uses 'tap to toggle a switch', Anomaly (iOS Metacritic 94, Apple Design Award) uses junction choices while the convoy keeps moving, and Mini Metro/Railbound use colour or shape routing. Railbound's Apple Design Award for tap-and-drag interaction suggests Apple would feature a switch-routing TD with polished interaction.",
+        "Guard against the known failure modes. Conduct THIS! was widely called too hard, so ramp slowly, start with one junction and add them gradually, and offer optional slow-motion or pause-to-plan as Anomaly's tactical map does. Isle of Arrows drew complaints about randomness and no undo, so keep routing deterministic like Pixel Flow and make each switch state visible at a glance with arrows, colour and sound. To stop constant switch-spamming, add a cost such as a short cooldown or a small toll per flip, as BTD6's Workshop escalates the price of each use.",
+        "Mazing games lock the path once a wave starts (TDS dev: 'path is already set'). A game where the path is designed to change mid-wave needs clear previews: an animated flow arrow showing where the next enemy will go, and a visible queue of who is about to reach each junction. These double as the readability layer when sound is muted.",
+        "Treat tower relocation (Unstoppable Gorg, Arknights) and rhythm (Rhythm Towers) as possible secondary flavour, not a second twist. Borrow Rhythm Towers' idea of towers adding music layers, and make switch clicks, gate clacks and sorted-enemy pops satisfying ASMR moments, while keeping the rules centred on routing.",
+        "Monetisation lessons: Pixel Flow earns strongly with restrained ads and no rewarded shortcuts past difficulty, while Conduct THIS! drew backlash for putting over half its content behind paywalls. For iOS, aim for a fair premium or free-to-start model: a core campaign free or one-time purchase, paid map and biome packs that add new junction types, and cosmetics such as switch and track skins, enemy costumes and sound packs. Don't sell power or skips. Isle of Arrows ($5.99, 272 ratings) shows the reach limits of premium-only TD, and Mini Metro's roughly 6M sales show that premium routing games can scale across platforms."
+      ]
+    },
+    {
+      "findings": [
+        {
+          "claim": "BTD6 remains the commercial benchmark for premium mobile TD. It was the 6th-best-selling paid iPhone game in the US in 2025, and its iOS rating is near perfect.",
+          "evidence": "Apple's 2025 top paid iPhone games list, as reported by MacObserver: 1 Minecraft, 2 Balatro, ... 6 Bloons TD 6. The iOS listing shows $6.99, 4.9/5 from 348K ratings, and IAPs including Full Tower Unlock $4.99, Paragon Unlock $4.99 and Monkey Money packs from $1.99 to $11.99.",
+          "url": "https://www.macobserver.com/news/apple-reveals-the-most-downloaded-apps-and-games-of-2025/",
+          "source_date": "2025-12-10 (chart); iOS listing fetched 2026-09"
+        },
+        {
+          "claim": "BTD6's longevity comes from a steady stream of updates and a set of recurring modes, not from the campaign.",
+          "evidence": "Wikipedia counts 56 major updates as of Aug 5, 2026, plus paid DLCs Rogue Legends (Feb 2025) and Frontier Legends (Dec 2025) and a Switch port (Jun 2026). The Steam page promotes Boss Events, Odysseys, Contested Territory, a Content Browser for player-made challenges, 4-player co-op and a cosmetic Trophy Store. Steam reviews: 97% positive of 230,669 all-time and 95% of 1,830 in the last 30 days.",
+          "url": "https://en.wikipedia.org/wiki/Bloons_TD_6",
+          "source_date": "2026-08 (wiki); Steam page fetched 2026-09 https://store.steampowered.com/app/960090/Bloons_TD_6/"
+        },
+        {
+          "claim": "Long-term BTD6 players say restriction-based weekly challenges and long-term goals keep them playing. Players who quit blame repeating the same strategy and the fatigue of 100+ round runs.",
+          "evidence": "In a Steam thread on replayability, players with 2,100 and 370 hours cite weekly challenges with tower restrictions, boss events, odysseys, Paragon unlocks and high-round pushes. A player who left did so after about 60 hours because the tower combos and strategies repeated. Other named burnout causes: long 100+ wave runs and little guidance.",
+          "url": "https://steamcommunity.com/app/960090/discussions/0/686364301854898628/",
+          "source_date": "Nov (year not shown on page)"
+        },
+        {
+          "claim": "Recent positive BTD6 Steam reviews mostly praise how satisfying and low-friction the game feels, more than its depth.",
+          "evidence": "From 100 recent positive reviews (timestamps about Sep 2026), clustered by a summarising tool so counts are approximate: addictive/fun about 35, strategy depth/variety about 18, satisfying popping about 15, relaxing 'half hour here or there' sessions about 11, updates about 8, value about 6, co-op about 4.",
+          "url": "https://store.steampowered.com/appreviews/960090?json=1&filter=recent&review_type=positive&language=english&num_per_page=100&purchase_type=all",
+          "source_date": "2026-09 (Unix 1789787848-1790016835)"
+        },
+        {
+          "claim": "Recent negative BTD6 Steam reviews cluster around monetisation in a paid game, lost progress, late-game lag and a repetitive loop.",
+          "evidence": "From 100 recent negative reviews (approximate tool clustering): too many microtransactions for a paid game about 28; lost progress or account problems about 15; lag and crashes, with multiplayer 'unplayable past round 150-200' and complaints after Update 56, about 14; repetitive grind, including having to replay early waves, about 12; broken co-op about 8.",
+          "url": "https://store.steampowered.com/appreviews/960090?json=1&filter=recent&review_type=negative&language=english&num_per_page=100&purchase_type=all",
+          "source_date": "2026-09 (references Update 56)"
+        },
+        {
+          "claim": "Veteran BTD6 players feel the game has a 'solved' meta. Outside the hardest mode it stops being a challenge, and players default to the same builds.",
+          "evidence": "Dec 2024 thread: a player with 1,250+ hours says every mode on every map except CHIMPS offers no real challenge, and another with 2,727 hours agreed. Apr 2021 thread: a player says only one combo works on the hardest mode (village+alchemist, ninja, mage, heli), while replies note 200+ two-tower combos have beaten it. The variety exists, but players don't discover it without prompts. Mar 2024 thread 'BTD6 is kinda dead from a design point of view' complains that nerfs narrow the viable picks and that late game relies on Paragons.",
+          "url": "https://steamcommunity.com/app/960090/discussions/0/560232608049426404/?l=english",
+          "source_date": "2024-12-16; also 2021-04-11 https://steamcommunity.com/app/960090/discussions/0/3172198151263255524/?l=english and 2024-03-11 https://steamcommunity.com/app/960090/discussions/0/806845425982196789/"
+        },
+        {
+          "claim": "Late-game clutter and slowdown is a long-running BTD6 pain point. Effect toggles don't fully fix it because the load comes from game calculations, not rendering.",
+          "evidence": "Jun 2023 thread asks the developers to stop ultra-high rounds 'playing at 1fps'. Players ask for a way to disable projectiles and effects, but replies say the calculations cause the lag, and that the only workaround is a few very strong towers instead of about 100 weak ones. Mar 2021 thread: severe lag from round 200+, and players stop because the late game gets boring. iOS reviews in 2025 also report late-game crashes.",
+          "url": "https://steamcommunity.com/app/960090/discussions/0/3806153138193895152/",
+          "source_date": "2023-06-25; 2021-03 https://steamcommunity.com/app/960090/discussions/0/3110270484061466863"
+        },
+        {
+          "claim": "Players want to pause and adjust during a wave. BTD6 lacks this, and good TD design practice recommends full time control.",
+          "evidence": "Oct 2022 Steam thread: a player is surprised the 6th game can't pause mid-wave to change targeting or upgrade. The workaround is to quit and restart the round, which doesn't work in co-op. Lars Doucet's Defender's Quest post-mortem recommends pausing while issuing commands, speeds from 0.25x to 4x, complete information, no scrolling or busywork, and avoiding 'lock-and-key' towers.",
+          "url": "https://steamcommunity.com/app/960090/discussions/0/3464983493945419608/",
+          "source_date": "2022-10-28; Doucet 2014-09-23 https://www.gamedeveloper.com/design/optimizing-tower-defense-for-focus-and-thinking---defender-s-quest"
+        },
+        {
+          "claim": "BTD6 matches are long for mobile. Commute players value 10-15 minute missions, offline play and clean pausing.",
+          "evidence": "Old Cynic's review (Jan 2025, updated Sep 2025) calls BTD6 the best mobile TD but says games often run past 30 minutes, so it 'doesn't feel like a casual game'. StrategyGame.org (Jun 2026) says Kingdom Rush missions are a tight 10-15 minutes, BTD6 standard maps 'run long', and argues that 'a tunnel should not end your run'. A CHIMPS game can take over 2 hours (YouTube).",
+          "url": "https://oldcynic.com/bloons-td-6-review-tower-defense",
+          "source_date": "2025-01-20 / 2025-09-29; 2026-06-11 https://strategygame.org/best-ios-tower-defense-games/"
+        },
+        {
+          "claim": "The genre's oldest structural criticism is that players mostly watch. Recent commentary treats it as the main reason classic TD feels dated.",
+          "evidence": "A Medium essay by Arrow Fortress (Jul 2026, seen only as a search snippet because the page returned 403) says TD's core weakness is little in-the-moment agency, with 'more watching than doing', and that roguelites, Mindustry and Arknights emerged in response. A 2009 MMORPG.com thread made the same point: you place towers and then mostly watch, and each map has one optimal solution. Wiltgren (Game Developer, 2015): minimise 'dead time' and maximise 'plan time'.",
+          "url": "https://medium.com/@arrowfortress/the-future-of-tower-defense-a-classic-genre-quietly-becoming-something-else-2d6160378393",
+          "source_date": "2026-07; https://forums.mmorpg.com/discussion/256794/why-tower-defense-games-suck (2009-10); https://www.gamedeveloper.com/design/down-time-vs-dead-time-in-sequential-games (2015-07-01)"
+        },
+        {
+          "claim": "On phones, the finger covers the spot where a tower is being placed, a concrete touch-UX problem.",
+          "evidence": "A mobile player considering BTD6 on Steam says their finger covers where the tower will go. The reply recommends BTD6's 'Drop & Lock' setting: drag to roughly the right place, then nudge the tower by swiping anywhere on the screen.",
+          "url": "https://steamcommunity.com/app/960090/discussions/0/6929409304779853033",
+          "source_date": "2023-10-11"
+        },
+        {
+          "claim": "Portrait, one-handed TD is being claimed in marketing, but current examples execute it poorly or monetise heavily. That leaves room for a quality, fair portrait TD.",
+          "evidence": "Galaxy Defense (Habby) is portrait-only, yet a reviewer says it needs two hands to play comfortably. The same reviewer says stamina stops play until it regenerates (a daily refill costs 60 diamonds), diamonds cost £2.79 to £95.99 with pack sizes that are never quite enough, and the monetisation is 'outright dreadful'. GalaxyTD (Jun 2025) advertises 'vertical screen and one-hand play' but has too few ratings to display, sells packs up to $49.99 and includes loot boxes.",
+          "url": "https://mobigamescenter.substack.com/p/galaxy-defense-fortress-td",
+          "source_date": "undated review; GalaxyTD 2025-06 https://apps.apple.com/app/id6746067679"
+        },
+        {
+          "claim": "Energy and stamina systems in TD specifically punish the key moment: retrying a hard level after a loss.",
+          "evidence": "An App Store review of Tower Defense: Infinite War (Apr 2024) says stamina recharges 1 point per 5 minutes and each attempt costs 5, so the player gets about 4 tries before being locked out. Getting stuck on a hard level means days of waiting or paying. The Arknights review (Aug 2026, 8.2/10) praises auto-deploy for grinding and roguelike modes that don't drain energy, but criticises a 28GB install and a slow early grind.",
+          "url": "https://apps.apple.com/us/app/tower-defense-infinite-war/id868033700",
+          "source_date": "2024-04-03; Arknights 2026-08-18 https://neverplaythis.com/android/reviews/arknights-review-tower-defense-gacha"
+        },
+        {
+          "claim": "Forced ads, especially between waves, are among the most-cited complaints in free TD apps. 'No forced ads' is now used as a selling point.",
+          "evidence": "App Store reviews of Tower Defence TD: ads between waves are 'the worst possible place' short of mid-wave (2017), ad time exceeds play time (2024), and an update turned the app into 'an advertisement space' (2023). Tower War reviewers complain of ads after every match. Core Defender's listing advertises 'No Forced Ads'.",
+          "url": "https://apps.apple.com/us/app/tower-defence-td-defense-games/id417358947?see-all=reviews&platform=iphone",
+          "source_date": "2016-2024 reviews"
+        },
+        {
+          "claim": "Idle and PvP TD hits show that heavy monetisation drives complaints even when the core loop is well liked.",
+          "evidence": "The Tower (4.2/5, 20K ratings) is praised for strategic synergies, optional ads and calm music. It is criticised for timer walls (one lab upgrade takes 1 day 10 hours or 60 gems), five currencies, pay-to-win tournaments and 5-12+ hour runs that drain the battery. Rush Royale (4.5/5, 96K ratings) draws complaints that card-level gaps decide PvP at 4-5K trophies, about stacked battle passes and packs ($10-$40), and about legendaries being inherently better.",
+          "url": "https://apps.apple.com/us/app/the-tower-idle-tower-defense/id1575590830?see-all=reviews",
+          "source_date": "fetched 2026-09; Rush Royale reviews 2021-2025 https://apps.apple.com/us/app/rush-royale-tower-defense-rpg/id1526121033?see-all=reviews"
+        },
+        {
+          "claim": "Premium TD players resent content paywalls on top of the purchase price. Kingdom Rush 5's mobile model is the cautionary example.",
+          "evidence": "On mobile, Kingdom Rush 5 includes only 4 of 12 heroes and 10 of 15 towers, with the rest sold as IAP. A Steam thread puts the total for everything at about $48 on mobile, versus $20 with nothing locked on PC. Pocket Gamer (4.5/5) criticised the 'paywall' on interesting towers and heroes that earlier games unlocked through progression. Steam reviews also cite slow hero levelling, a short campaign, and tower-disabling enemies that make 'money the primary enemy'.",
+          "url": "https://www.pocketgamer.com/kingdom-rush-5-alliance/review/",
+          "source_date": "2024-07-25; https://steamcommunity.com/app/2849080/discussions/0/4515505814160379381 (2024-07-25); https://steamcommunity.com/app/2849080/reviews/?browsefilter=toprated"
+        },
+        {
+          "claim": "BTD6 players accept optional convenience purchases, which they call 'pay not to play'. They push back on real-money-only cosmetics and on features that used to be free.",
+          "evidence": "Oct 2022 thread: most players say the game is 'perfectly playable and balanced' without purchases, and the IAPs are skips rather than advantages. Double Cash was cited at $17.99. Apr 2025 thread: a real-money-only licensed collab hero skin drew complaints such as 'Hero skins should never cost real money'. Others accept Monkey Money, Double Cash and Fast Track, while some resent that Double Cash and Fast Track were free in older games.",
+          "url": "https://steamcommunity.com/app/960090/discussions/0/3485249571291208407/",
+          "source_date": "2022-10-24; 2025-04-25 https://steamcommunity.com/app/960090/discussions/0/596273145166469388"
+        },
+        {
+          "claim": "Players want roguelite variety as the fix for solved builds, but paid DLC for an owned game meets price resistance.",
+          "evidence": "BTD6 Rogue Legends costs $9.99 and adds a roguelike campaign with 85+ Artifacts, Boosts and randomised tile maps (Pocket Gamer, Feb 2025). Its Steam rating is 'Mixed': 45% of 51 reviews on the store page, and 19 positive vs 13 negative in the English review feed. One review says there is 'no world where this content is worth $10', and players asked for regional pricing. TowerWard (Mar 2026) argues that good roguelite TD 'forces real adaptation instead of repeating the same solved build'.",
+          "url": "https://store.steampowered.com/app/3377850/Bloons_TD_6_Rogue_Legends/",
+          "source_date": "fetched 2026-09; https://www.pocketgamer.com/bloons-td-6/new-dlc-rogue-legends/ (2025-02-10); https://towerward.com/blog/best-roguelite-tower-defense-games (2026-03-22)"
+        },
+        {
+          "claim": "The BTD6 franchise is maturing. The parent company reported falling Ninja Kiwi revenue and a shift toward paid DLC and new titles.",
+          "evidence": "MTG's Q4 2024 report (Feb 6, 2025) says Ninja Kiwi revenue fell both year over year and quarter over quarter. BTD6 got only two small updates that quarter while the team focused on the paid DLC, and the studio soft-launched Bloons Card Storm and announced Fightland and Zombie Assault: Resurgence.",
+          "url": "https://news.cision.com/mtg/r/record-q4-with-organic-revenues-up-9--margin-of-27--plarium-deal-set-to-double-group-revenues,c4101496",
+          "source_date": "2025-02-06"
+        },
+        {
+          "claim": "Losing progress on reinstall or device change is a surprisingly common and harsh complaint, even in the top title.",
+          "evidence": "A 2025 iOS BTD6 review says deleting and redownloading the app restarts the game from the beginning. About 15 of 100 recent negative Steam reviews cite lost unlocks, lost DLC or account problems.",
+          "url": "https://apps.apple.com/US/app/id1118115766",
+          "source_date": "2025 reviews; Steam negatives fetched 2026-09"
+        }
+      ],
+      "implications": [
+        "Build the twist around 'plan time' inside the wave. Pace and telegraph it so one thumb is enough: the player makes a few meaningful choices per wave, each with a visible consequence, instead of watching. Avoid tap-spam, because BTD6 fans prize strategy and chill over speed of input.",
+        "Make portrait, one-thumb play a core pillar, since the niche is marketed but poorly executed. Keep controls in the bottom third of the screen. Show the placement ghost above the finger with swipe-to-nudge, as a fix for the finger covering the spot. Use large hit targets and confirm-by-release so towers aren't sold or upgraded by accident.",
+        "Keep levels short and resumable. Aim for a 10-15 minute main level of roughly 20-30 waves. Auto-save at every wave with instant resume. Allow pausing and issuing commands mid-wave, plus 1x/2x/3x speed. Early waves should be brief, with an 'early call' cash bonus so openings never drag.",
+        "Treat readability as a system, not a settings toggle. Give each enemy a distinct shape and colour and a clear status icon. Cap particles and keep a hard budget on on-screen entities. Late-game power should concentrate into fewer, bigger, readable effects rather than hundreds of projectiles. Add a 'calm FX' option and communicate everything through visuals so the game works muted.",
+        "Design against a solved meta from the first session. Show on the loss screen which tower or twist choice would have countered the leak. Offer restriction challenges and a daily seeded modifier, which BTD6 veterans already value. Build tower counters as soft advantages, not one-tower lock-and-key requirements, so several builds can win.",
+        "Monetisation: premium price, or free with a one-time 'full game' unlock. No energy or lives, no forced ads, no PvP power, and never lock core towers behind IAP (Kingdom Rush 5's mistake). Sell new content packs (maps, level lines, roguelite modes) with clear value and regional pricing. Sell cosmetics such as tower skins, projectile and pop effects, and ASMR sound packs, but also make some earnable in-game. Never put formerly free features behind a paywall.",
+        "Return drivers to plan for after the browser slice: weekly restriction challenges, a boss event, per-tower mastery goals similar to Paragon unlocks, a daily seed with a leaderboard, and later co-op. BTD6 players cite these, not the campaign, as why they stay for hundreds of hours.",
+        "Technical trust matters for iOS reviews. Include iCloud or Game Center save from day one, because progress loss is a top complaint. Keep the app small (Arknights' 28GB drew complaints) and full offline play. Performance must stay flat in the late game, so budget simulation cost, not only rendering.",
+        "Make 'satisfying pops' a feature. Recent BTD6 praise is dominated by addictive and satisfying feel plus 'half hour here or there' relaxation. Tactile hit and pop feedback, crisp upgrade moments, and optional ASMR audio match what the core audience says it loves."
+      ]
+    },
+    {
+      "findings": [
+        {
+          "claim": "BTD6's hybrid 'paid up-front plus optional IAP' model is highly profitable, and IAP makes up about half of Ninja Kiwi's revenue, not a small add-on.",
+          "evidence": "BusinessDesk (NZ) reported that Ninja Kiwi made NZ$89.5m revenue and NZ$40.8m net profit for FY2023, a margin of about 46%. A Steam thread quoting the same filing gives the split: digital currencies and in-app goods NZ$42m (~47%, down NZ$4m year on year), game sales NZ$27m (~30%, up NZ$1.5m), and subscriptions making up the remainder, which likely covers the Netflix and Arcade deals. MTG bought the studio in 2021 for about SEK 1.6bn (~US$186m) and named its 'successful combination of paid and in-app purchase models' as a reason.",
+          "url": "https://www.threads.com/@businessdesknz/post/C-QlorDyqYs?hl=en",
+          "source_date": "2024-08-04"
+        },
+        {
+          "claim": "The BTD6 iOS listing shows what a premium TD store looks like: a modest up-front price, then optional unlock-everything and currency IAPs, with very high ratings.",
+          "evidence": "On the US App Store (fetched Sep 2026) the game costs $6.99 and is rated 4.9 from 348K ratings. Top IAPs: Monkey Money $1.99, Pile O' Monkey Money $4.99, Vault $11.99, Full Tower Unlock $4.99, Paragon Unlock $4.99, Knowledge Point $0.99, 5,000 Monkey XP $0.99. Reviewers call it 'not pay to win'. On Steam it has 97% positive from 230,669 reviews, and the listing tells players that purchases fund updates and can be disabled in settings.",
+          "url": "https://apps.apple.com/us/app/bloons-td-6/id1118115766",
+          "source_date": "2026-09 (live listing)"
+        },
+        {
+          "claim": "Seven years after launch, BTD6 is still the #2 paid iOS game in the US, behind only Minecraft.",
+          "evidence": "Sensor Tower estimates for Q3 2025, US iOS top paid: #1 Minecraft (~$1M falling to $847K per charted period, ~3M actives); #2 BTD6 ($106K falling to $63K, downloads 5.8K falling to 3.2K, ~200K active users); #4 Balatro ($60K falling to $35K, ~200K actives). These are third-party estimates.",
+          "url": "https://sensortower.com/blog/2025-q3-ios-top-5-paid%20games-revenue-us-61f43af0afb48b4f71b2ba3f",
+          "source_date": "2025-Q3"
+        },
+        {
+          "claim": "BTD6's prestige cosmetics are earned only through skill. Trophy Store items and trophies cannot be bought with real money or any currency, and players see this as a fair model.",
+          "evidence": "The Trophy Store was added in Update 19.0. Trophies come only from Odysseys, Race placements, Boss Bloons, Contested Territory and a few achievements. Items are cosmetic: hero pets, projectile skins, bloon skins, music. Some also improve visual clarity.",
+          "url": "https://bloons.fandom.com/wiki/Trophy_Store",
+          "source_date": "accessed 2026-09"
+        },
+        {
+          "claim": "BTD6 has moved to paid expansions at about $10, each with a free demo and bonus cosmetics. It sells them through several channels, including its own web shop, which offers extra currency as an incentive.",
+          "evidence": "Rogue Legends (roguelike campaign, launched 4 Feb 2025) costs $9.99 with regional pricing and has a free in-game 'Rogue Legends Preview' quest. It is sold in-game, through the BTD6 Web Shop from 9 Apr 2025 with bonus Monkey Money, and on Steam from 15 Oct 2025. It had a 50% sale limited to the web shop (30 Apr to 5 May 2025). Frontier Legends (western story DLC, 3 Dec 2025) launched at $12.99 and was cut to $9.99 by v56. Both are included free in BTD6+ (Arcade) and BTD6 NETFLIX.",
+          "url": "https://www.bloonswiki.com/Rogue_Legends",
+          "source_date": "accessed 2026-09"
+        },
+        {
+          "claim": "The paid DLC has damaged BTD6's reputation for fair pricing. Players mainly objected to buggy launches and to the pace of paid releases, not to paying at all.",
+          "evidence": "Rogue Legends on Steam: 45% positive from 51 reviews ('Mixed'). A Dec 2025 Steam thread titled 'Another paid DLC?' was mostly critical: players called Frontier Legends a rehash while Rogue Legends still felt unfinished, and said paid cosmetics and DLC were arriving too fast. A minority reported 20+ hours of value. Other threads raised crashes at launch and USD-only pricing in weaker-currency regions.",
+          "url": "https://steamcommunity.com/app/960090/discussions/0/684113461911763893/",
+          "source_date": "2025-12-03"
+        },
+        {
+          "claim": "Charging for something players already had free draws lasting anger, even when the grind to earn it is small.",
+          "evidence": "In Jan 2020, Monkey Knowledge upgrades that players had unlocked by levelling were given a Monkey Money cost. Players said they would accept charges on new knowledge but not on 'what was free to me two days ago', and a thread urged negative Steam reviews.",
+          "url": "https://steamcommunity.com/app/960090/discussions/0/1742265315848334933/",
+          "source_date": "2020-01-24"
+        },
+        {
+          "claim": "BTD6 NETFLIX shows the subscription-edition trade-off: all content is included, but the save is locked to that edition. Netflix has also been removing premium indie games, so a subscription deal is a temporary licence.",
+          "evidence": "The Netflix edition (June 2023) has no IAP and no ads, unlocks Legends by default, gives 50% more Monkey Money, and sells collab cosmetics for in-game currency. Saves cannot move between it and other versions. BTD6 is still listed as of 30 Jun 2026. Netflix removed the Monument Valley trilogy, Hades, Death's Door and Katana ZERO (July 2025), Into the Breach (by July 2025) and Civilization VI (Dec 2025) as it moved to cloud/TV and its own IP.",
+          "url": "https://www.whats-on-netflix.com/news/netflix-games/full-list-mobile-cloud-games-on-netflix/",
+          "source_date": "2026-06-30"
+        },
+        {
+          "claim": "Kingdom Rush 5: Alliance is the main recent example of premium TD players rejecting paywalled towers and heroes on top of an up-front price.",
+          "evidence": "Pocket Gamer's review (4.5/5, 25 Jul 2024) said 'a large number of interesting towers and heroes' were paywalled, more than in earlier entries. The App Store IAPs (Sep 2026) include All Towers $19.99, Mega Tower Bundle $14.99, DLCs at $8.99 each, heroes at $6.99 and single towers at $4.99. The app was listed at $0.99, possibly a sale, with 4.8 from 14K ratings. User reviews complain about paying again after buying the game and suggest challenge-based unlocks instead.",
+          "url": "https://www.pocketgamer.com/kingdom-rush-5-alliance/review/",
+          "source_date": "2024-07-25"
+        },
+        {
+          "claim": "Ironhide, which makes Kingdom Rush, says pure premium is getting harder to sustain. Its answer is IAP that non-payers can ignore, a heavy post-launch content cadence, and a new free-to-play spin-off.",
+          "evidence": "Co-founder Pablo Realini said premium is 'becoming less viable each year'. He said IAP must feel fair and non-payers must be able to finish the game, and the studio ships 'at least twice as much content after launch': Vengeance grew from 15 to 35+ stages. The franchise has 63M+ downloads. The 2025 roadmap had DLC in January (Colossal Dwarfare) and September (Wukong's Journey), a March mini-campaign, and the global launch of Kingdom Rush Battles (multiplayer) on 9 Oct 2025.",
+          "url": "https://www.pocketgamer.biz/ironhide-co-founder-pablo-realini-talks-kingdom-rush-5-and-premiums-place-in-2024/",
+          "source_date": "2024-06-21"
+        },
+        {
+          "claim": "Apple Arcade money is an opaque, shrinking upfront fee plus bonus pool, not a base to build a business on. Big premium TD games still ship an Arcade '+' edition alongside the paid app.",
+          "evidence": "Studios get an upfront fee plus a bonus pool tied to 'qualifying sessions', which one studio called a 'black box'. Bonus payouts have fallen since about Oct 2020 and upfront fees have been cut. 'App Store Greats' titles get no upfront payment. Projects were cancelled and the focus moved to family-friendly licensed IP. Kingdom Rush 5 Alliance TD+ reached Arcade in July 2025 with everything unlockable through play. BTD6+ has included both Legends DLCs free.",
+          "url": "https://mobilegamer.biz/inside-apple-arcade-axed-games-declining-payouts-disillusioned-studios-and-an-uncertain-future/",
+          "source_date": "2024-02-26"
+        },
+        {
+          "claim": "More premium games are launching on mobile, but they are still a small share of downloads and the best sellers earn in the low tens of millions.",
+          "evidence": "AppMagic data, reported by GamesIndustry.biz and summarised by Pocket Tactics: premium mobile releases rose 77% in 2025 to about 750, from 422 in 2024. Premium games took about 4% of mobile game downloads and free-to-play took 96%. Lifetime mobile revenue estimates: Balatro $21.3M from 3.1M downloads, Slay the Spire $13.7M, Human Fall Flat $7.8M, Dead Cells $6.5M.",
+          "url": "https://www.pockettactics.com/premium-mobile-games-increase",
+          "source_date": "2026-07-09"
+        },
+        {
+          "claim": "A premium game at $9.99 can top the charts on mobile, and launching an Apple Arcade '+' version on the same day did not stop that.",
+          "evidence": "Balatro launched at $9.99 and made $550K+ in 5 days from about 71K downloads, roughly $100K a day (AppMagic estimates). It was #1 paid on iOS and Android in the US, UK, Canada, Australia, France and Germany, while Balatro+ was #1 in Arcade's UK chart.",
+          "url": "https://mobilegamer.biz/balatro-mobile-hits-500k-in-five-days-tops-paid-game-charts/",
+          "source_date": "2024-10-01"
+        },
+        {
+          "claim": "Apple's rules explicitly allow a 'free to try, then unlock' premium model and set disclosure rules for it. The US-only link-out rule and loot-box odds disclosure are also in the guidelines.",
+          "evidence": "Guideline 3.1.1: a non-subscription app may offer a free time-based trial using a Non-Consumable IAP at Price Tier 0 named 'XX-day Trial'. Before the trial starts, the app must state its length, what will lock afterwards, and the cost of the full unlock. Paid random items must disclose odds before purchase. 3.1.1(a): only US-storefront apps may add buttons or links to external purchase without an entitlement. Interstitial ads must be clearly labelled and have visible close buttons. I found no verified public conversion data for 'free plus unlock' games. The only related figure is BTD6's own free DLC preview quest, which is a design pattern, not a conversion rate.",
+          "url": "https://developer.apple.com/app-store/review/guidelines/",
+          "source_date": "accessed 2026-09"
+        },
+        {
+          "claim": "The App Store Small Business Program halves Apple's commission for a new studio.",
+          "evidence": "The rate is 15% instead of 30% on paid apps and IAP for developers with at most $1M in proceeds (net of commission) in the prior and current calendar year. New developers qualify, proceeds from associated accounts are combined, and the 30% rate applies to future sales once the threshold is passed.",
+          "url": "https://developer.apple.com/app-store/small-business-program/",
+          "source_date": "accessed 2026-09"
+        },
+        {
+          "claim": "In the US, linking out to a web store currently costs 0% Apple commission, but a court-set fee is coming and Apple has proposed 5% for Small Business Program members.",
+          "evidence": "Timeline: Apr 2025 contempt ruling set a 0% fee on link-outs. 11 Dec 2025, the Ninth Circuit ruled Apple may charge a reasonable, cost-based fee. 29 Apr 2026, the Ninth Circuit lifted the stay. 14 Aug 2026, Justice Kagan denied Apple's stay, so rate-setting before Judge Gonzalez Rogers continues. Apple proposed 15% standard, 10% for partner programs and 5% for SBP members. The Supreme Court will review the contempt finding in its Oct 2026 term. Apple still charges 0% for now.",
+          "url": "https://macdailynews.com/2026/08/14/u-s-supreme-court-clears-path-for-app-store-commission-showdown-as-apple-must-defend-its-rates-in-lower-court/",
+          "source_date": "2026-08-14"
+        },
+        {
+          "claim": "Outside the US, link-outs still need an entitlement and come with fees. In the EU, Apple's alternative terms replace the flat commission with a layered fee.",
+          "evidence": "RevenueCat (updated 20 Feb 2026): in the US, IAP must sit alongside the external option and the link must open a full browser, not a webview. In the EU, Apple charges a 2% initial acquisition fee plus 5–13% service fees, plus a €0.50 Core Technology Fee per install above 1M a year, under the Alternative Terms or the StoreKit External Purchase Link Entitlement. Google's US link programme is 0% now, with 10% (subscriptions) and 20% (other) proposed.",
+          "url": "https://www.revenuecat.com/blog/engineering/app-to-web-purchase-guidelines",
+          "source_date": "2026-02-20"
+        },
+        {
+          "claim": "Direct-to-consumer web shops are now standard for large mobile games, including at BTD6's parent company. Most publishers have not yet changed strategy since the ruling.",
+          "evidence": "A GDC/Appcharge survey (Jan–Feb 2026) put mobile D2C revenue at $17B in 2025, about 15% of $113.3B mobile IAP. 52% of publishers made no significant changes after Epic v Apple and 25% increased D2C investment. Leading adopters report a 35% median revenue uplift. Mavan reports web shops at about 72% of top-grossing games and web payment processing at about 5–10%. In Q2 2025, D2C was 24% of revenue at MTG (Ninja Kiwi's parent), 39% at Stillfront and 25% at Playtika.",
+          "url": "https://www.pocketgamer.biz/report-mobile-game-d2c-revenues-reach-17bn-as-publishers-push-beyond-app-stores/",
+          "source_date": "2026-06-24"
+        },
+        {
+          "claim": "Apple's fee policy could get worse for developers. Apple's new leadership reportedly wants higher App Store margins.",
+          "evidence": "Bloomberg's Gurman (7 Sep 2026): new CEO John Ternus and services chief Eddy Cue are looking for ways to raise App Store margins on roughly $30B a year. Phil Schiller stepped away from the App Store, reportedly over concerns this would upset developers and governments. US App Store commission revenue is reported down 18% since early 2026 because of regulatory changes.",
+          "url": "https://www.macrumors.com/2026/09/07/apple-squeeze-more-revenue-from-app-store/",
+          "source_date": "2026-09-07"
+        },
+        {
+          "claim": "Disruptive or forced ads measurably drive players away, while good-quality opt-in ads do not.",
+          "evidence": "Deloitte and Google AdMob (Jun 2025) surveyed 7,000 gamers in the US, UK, Germany, Japan and Vietnam. One exposure to a disruptive ad feature (hidden close button, forced redirect) raised churn 6–7%. Quitting tripled when these ads appeared on reward screens or end-cards. 52% quit a game entirely after repeated exposure, and casual players were 30–50% more likely to churn. 72% of those exposed to high-quality ads kept playing.",
+          "url": "https://www.prnewswire.com/news-releases/growth-in-mobile-gaming-new-global-study-from-deloitte-and-google-admob-reveals-the-link-between-mobile-ad-engagement-and-gamer-retention-302477095.html",
+          "source_date": "2025-06-10"
+        },
+        {
+          "claim": "The one ad model players reliably accept is optional rewarded ads that never interrupt play, as in Vampire Survivors.",
+          "evidence": "The Vampire Survivors mobile version is free, and its only monetization is optional ads: one for a second life mid-run, and one after death to keep more gold. The game never forces an ad. Poncle said no partner would accept 'non-predatory' monetization, and it launched quickly because 1:1 clones were flooding the stores.",
+          "url": "https://kotaku.com/vampire-survivors-free-iphone-steam-mobile-smartphone-1849955308",
+          "source_date": "2023-01-05"
+        },
+        {
+          "claim": "Battle passes are standard in free-to-play grossing charts, but the premium TD leaders avoid a paid pass on core progression. BTD6 uses free event tracks instead, and Bloons TD Battles 2 sells a VIP subscription.",
+          "evidence": "GameRefinery (Jun 2022, the latest figure I found): about 60% of the top-grossing 20% of mobile games have battle passes. AppMagic (Dec 2025): strategy IAP grew 25.6% to $13.5B, driven mainly by hard-currency bundles. Season passes made up about 11% of revenue only in named hybridcasual examples such as Mob Control. The average strategy transaction is often above $15 on the App Store versus about $7 on Google Play. Bloons TD Battles 2 VIP costs $4.99 for 30 days or $11.99 for 90, and seasonal cosmetics are free through daily quests.",
+          "url": "https://www.pocketgamer.biz/gamerefinery-battle-pass-implementation-in-top-grossing-mobile-games/",
+          "source_date": "2022-06-10"
+        },
+        {
+          "claim": "Paying mobile players are price-sensitive and mostly buy for progression or enjoyment, so discounts and bundles work better than pressure tactics.",
+          "evidence": "Mistplay Spender Report 2024 (via GameDev Reports): purchase motivators are progression (54%) and personal enjoyment (44%). 33% of payers wait for discounts, 25% buy only when they cannot progress, holiday discounts motivate 40%, and limited-time offers 34–41%.",
+          "url": "https://gamedevreports.substack.com/p/mistplay-paying-users-in-mobile-games",
+          "source_date": "2024-03-28"
+        }
+      ],
+      "implications": [
+        "Recommended launch model: a free download with one complete, polished map and the full core loop, then a single non-consumable 'Full Game' unlock at $5.99–7.99. Before the unlock, show exactly what it includes (maps, modes, towers, as Guideline 3.1.1 requires for trials). This avoids the 4%-of-downloads ceiling on paid apps while keeping BTD6-style trust. After buying, the player never meets a paywall on core strategy.",
+        "Never sell towers, heroes or upgrade paths that are part of core strategy combinations. Kingdom Rush 5 shows that paywalling strategic options after an up-front price damages goodwill. Every tower and upgrade should be earnable through play, with at most a cheap 'unlock now' shortcut, like BTD6's $4.99 Full Tower Unlock.",
+        "Keep prestige cosmetics earnable only through skill, following BTD6's Trophy Store: tower skins, projectile trails, enemy pop and hit effects, and ASMR sound packs earned from challenge and boss events. Sell a separate, clearly labelled paid cosmetic line or a $2.99–4.99 'Supporter Pack' so players can pay for style without getting power.",
+        "Keep a challenge mode that is always pure, like CHIMPS: no purchased boosts, continues or starting cash. Any leaderboard or trophy should only be reachable in these conditions so paying never affects fairness.",
+        "Grow revenue through paid expansions at $4.99–9.99, each with a free playable preview level and exclusive cosmetics that carry over. Ship them only when they are stable, since buggy launches drove Rogue Legends to 45% positive. Use regional pricing and pace releases so they do not feel like a cash grab.",
+        "Hard rule: never charge for anything that was previously free, and never cut free rewards after launch. BTD6's 2020 Monkey Knowledge backlash shows this is the fastest way to lose trust.",
+        "No forced interstitial or banner ads, ever. Disruptive ads raise churn 6–7% per exposure and 52% of players quit after repeated exposure. If the free tier uses ads at all, use only optional rewarded ads that never interrupt a wave, such as a second life or double cash at the end of a level, and remove them permanently with any purchase.",
+        "If we add seasons, make them free event tracks of rotating challenge maps with cosmetic rewards, plus an optional paid cosmetic track at about $3–5. Put no power in the pass, and let past season cosmetics return later so players do not feel pressured by fear of missing out.",
+        "Platform economics: enrol in the Small Business Program (15%) from day one. In the US, add a link-out web shop now while it costs 0% (Apple's proposal is 5% for SBP members), with a modest bonus as BTD6's web shop offers. Keep StoreKit IAP as the default path, and do not build forecasts on 0% link-outs lasting.",
+        "Treat Apple Arcade and Netflix as later, optional upfront deals for an all-inclusive '+' edition, not as the business. Payouts are opaque and falling, Netflix removed many premium indies in 2025, and saves are locked to the subscription edition. Balatro and Kingdom Rush 5 show a '+' edition can run alongside the paid version.",
+        "Plan a roadmap to keep players returning: Ironhide aims for about twice the launch content after release, and BTD6 runs weekly bosses, races and odysseys. For our slice, prove that one level can be replayed with many strategy combinations, then commit to regular new maps and challenge events that drive retention without pay-to-win.",
+        "Launch on iOS first. BTD6 and Balatro earn well from a small but dedicated paid audience, and App Store strategy transactions average about twice Google Play's. Use discounts and bundles rather than pressure tactics, because a third of paying players wait for sales."
+      ]
+    },
+    {
+      "findings": [
+        {
+          "claim": "BTD6 is still a top paid iOS app. Its model is a $6.99 premium price plus optional in-app purchases (IAP), and it wins on the sheer breadth of combinations.",
+          "evidence": "US App Store listing (fetched Sept 2026): $6.99, 4.9 stars from about 348K ratings, #3 paid in Action. Top IAPs: Vault O Monkey Money $11.99, 10 Knowledge Points $7.99, Full Tower Unlock $4.99, Paragon Unlock $4.99. The listing claims 26 towers with 3 upgrade paths each, 18 heroes with 20 upgrades each, 70+ maps, 4-player co-op and 100+ meta-upgrades.",
+          "url": "https://apps.apple.com/us/app/bloons-td-6/id1118115766",
+          "source_date": "2026-09 (accessed)"
+        },
+        {
+          "claim": "Ninja Kiwi is very profitable, and in-game currency earns more than upfront game sales.",
+          "evidence": "For the year to 31 Dec 2023: revenue NZ$89.5m, net profit NZ$40.8m. Digital currency and IAP brought in about NZ$42m (down $4m on 2022); game sales brought in NZ$27m (up $1.5m). The full article is paywalled; these figures come from BusinessDesk's own post and the search snippet.",
+          "url": "https://www.threads.com/@businessdesknz/post/C-QlorDyqYs?hl=en",
+          "source_date": "2024-08"
+        },
+        {
+          "claim": "When MTG bought Ninja Kiwi, the studio had very high margins and a large organic audience. The buyer called out the paid-plus-IAP hybrid as a strength.",
+          "evidence": "MTG press release: 2020 gross revenue SEK 337m, adjusted EBITDA SEK 168m (about 50% margin), about 140m lifetime downloads, over 1.1m DAU, 6.2m MAU. Total consideration was up to SEK 1,623m. Game Developer quotes MTG's CEO praising the combination of paid and in-app purchase models.",
+          "url": "https://www.mtg.com/press-releases/mtg-acquires-leading-tower-defense-gaming-studio-and-publisher-ninja-kiwi-the-maker-of-bloons/",
+          "source_date": "2021-03-24"
+        },
+        {
+          "claim": "By 2024 revenue from the ageing BTD6 was sliding, and Ninja Kiwi moved to paid expansions to restart growth.",
+          "evidence": "MTG Q1 2024: Ninja Kiwi revenue down slightly year on year. Q3 2024: down year on year, up quarter on quarter, with three BTD6 updates in the quarter. Q4 2024 (report dated 6 Feb 2025): down both year on year and against Q3, with the studio 'fully focused' on its first major paid DLC.",
+          "url": "https://www.mtg.com/press-releases/record-q4-with-organic-revenues-up-9-margin-of-27-plarium-deal-set-to-double-group-revenues/",
+          "source_date": "2025-02-06"
+        },
+        {
+          "claim": "BTD6 has shipped major updates at a steady rate for eight years and keeps adding platforms and paid 'Legends' DLC.",
+          "evidence": "Wikipedia: 56 major updates as of 5 Aug 2026 (roughly 7 a year since June 2018). Platforms: Apple Arcade (BTD6+, Feb 2022), Netflix (June 2023), Xbox (Sept 2023), Vision Pro (Feb 2024), PS4 (July 2024), Switch (18 June 2026). Paid DLC: Rogue Legends (2025) and Frontier Legends (Dec 2025).",
+          "url": "https://en.wikipedia.org/wiki/Bloons_TD_6",
+          "source_date": "2026-08"
+        },
+        {
+          "claim": "Ninja Kiwi's own replay-focused expansion is a roguelite. The genre leader has validated roguelite runs as the engine for tower defence (TD) replay value.",
+          "evidence": "Rogue Legends (Pocket Gamer, 10 Feb 2025, $9.99): a randomly generated single-player campaign across 10 hand-crafted tile maps with branching routes, up to 60 artifacts, challenge tiles (boss rushes, races, endurance), merchants and campfires, faster rounds with guidance hints, and cosmetic unlocks.",
+          "url": "https://www.pocketgamer.com/bloons-td-6/new-dlc-rogue-legends/",
+          "source_date": "2025-02-10"
+        },
+        {
+          "claim": "A story-and-exploration DLC got a replayability complaint and a price cut. Players value content that replays well over a large world.",
+          "evidence": "Frontier Legends launched on mobile on 4 Dec 2025 at $12.99. It is a western story campaign with a posse, town-building and six new enemy types. In version 56 the price was cut to $9.99 after feedback 'primarily about replayability relative to the overall scale of the world' (Blooncyclopedia).",
+          "url": "https://www.bloonswiki.com/Frontier_Legends",
+          "source_date": "2025-12 / 2026-08"
+        },
+        {
+          "claim": "On US revenue charts, TD is led by free-to-play (F2P) midcore and hybrid games, not by 'pure' TD. BTD6's IAP revenue is mid-pack.",
+          "evidence": "Sensor Tower third-party estimates, weekly peaks. US iOS Q3 2024: Kingdom Guard about $409K, Watcher of Realms $320K, Rush Royale $281K, BTD6 $138K, Primal Conquest about $95K. US unified Q4 2024: Arknights $866K, Watcher of Realms about $605K, Kingdom Guard $595K, Rush Royale $268K, Raid Rush $219K. BTD6 is not in the top 5.",
+          "url": "https://sensortower.com/blog/2024-q3-ios-top-5-tower%20defense%20games-revenue-us-6012932d241bc16eb85e0db8",
+          "source_date": "2024-09 / 2025-01"
+        },
+        {
+          "claim": "In 2025 the US top-grossing TD slots were still hybrid F2P games (4X, RPG gacha, roguelite hybrid-casual), and BTD6 was absent.",
+          "evidence": "Sensor Tower estimates. Q2 2025 US unified: Arknights $750K (April spike), Kingdom Guard $450K, Watcher of Realms $260K, Raid Rush about $220K, Rush Royale about $220K. Q3 2025 US iOS: Raid Rush $210.7K, Watcher of Realms $199.2K, Kingdom Guard $171.6K, Wittle Defender $139.7K, Rush Royale $122K.",
+          "url": "https://sensortower.com/blog/2025-q3-ios-top-5-tower%20defense%20games-revenue-us-6012932d241bc16eb85e0db8",
+          "source_date": "2025-10"
+        },
+        {
+          "claim": "The most-downloaded US iOS TD games are hybrid-casual games and legacy IP.",
+          "evidence": "Sensor Tower US iOS downloads, Q3 2024: TDS - Tower Destiny Survive (SayGames) peaked at 66.9K a week; Plants vs. Zombies 2 at 30-39K a week; Plants vs. Zombies peaked at 40.1K; Rush Royale 16-26K; Bacon's Revenge peaked at 70K in early July, then fell sharply.",
+          "url": "https://sensortower.com/blog/2024-q3-ios-top-5-tower%20defense%20games-units-us-6012932d241bc16eb85e0db8",
+          "source_date": "2024-10"
+        },
+        {
+          "claim": "A single-screen idle TD earns very high revenue per player.",
+          "evidence": "Sensor Tower, US idle games, Q3 2024: The Tower - Idle Tower Defense reached about $275K weekly revenue in the last week of September. Weekly downloads were about 27-31K and active users only about 49-55K (third-party estimates).",
+          "url": "https://sensortower.com/blog/2024-q3-unified-top-5-idler%20games-revenue-us-602ae7fb241bc16eb874f8e1",
+          "source_date": "2024-10"
+        },
+        {
+          "claim": "Rush Royale shows how big F2P PvP merge TD can be; that is the crowded segment.",
+          "evidence": "Released 8 Dec 2020 (IT Territory / MY.GAMES). 50M+ downloads by 2022, described as the most-installed TD strategy game, and $102M revenue in 2022 (MY.GAMES' second-best title). Players merge duplicate units on a 3x5 grid into a new random unit from their deck.",
+          "url": "https://en.wikipedia.org/wiki/Rush_Royale",
+          "source_date": "2022 data"
+        },
+        {
+          "claim": "Even the Bloons brand could not sustain a competitive card spin-off: Bloons Card Storm was stopped for lack of revenue.",
+          "evidence": "F2P card battler launched 28 Oct 2024 on Steam, iOS and Android. On 9 April 2026 Ninja Kiwi ended development after version 6.3, citing 'lack of revenue', and moved the team to BTD6 and Bloons Blitz. Servers stay online.",
+          "url": "https://www.bloonswiki.com/Bloons_Card_Storm",
+          "source_date": "2026-04-09"
+        },
+        {
+          "claim": "Ninja Kiwi's next big bet is next to TD (a survivors-style 'bullet heaven'), F2P with ads, not a BTD7.",
+          "evidence": "Bloons Blitz: the player's hero auto-fires at waves from every direction and recruits monkey teammates as it levels. Revealed 19 Nov 2025, soft-launched in the Philippines 19 May 2026, worldwide release listed for 30 Sept 2026. F2P with IAP and ads.",
+          "url": "https://www.bloonswiki.com/Bloons_Blitz",
+          "source_date": "2026-09"
+        },
+        {
+          "claim": "Kingdom Rush 5, the main premium rival, launched strongly at the same $6.99 price, sells campaign DLC and also appears on Apple Arcade. Its PC footprint is small next to BTD6.",
+          "evidence": "Released 25 July 2024. Ironhide says it reached Top 3 on mobile, was a Steam top seller, won a Pocket Gamer Gold Award and ChinaJoy Best Mobile Game. $6.99 on mobile. The Apple Arcade 'Alliance TD+' has 6.9K ratings. It offers 15 heroes (2 per stage), 17 towers and 22 stages, plus paid campaign DLCs (Colossal Dwarfare, Wukong's Journey, Dragon Wars). Steam: 1,895 reviews (85% positive) against BTD6's 230,669 (97%).",
+          "url": "https://www.ironhidegames.com/News/Details/395",
+          "source_date": "2025-01"
+        },
+        {
+          "claim": "Ironhide also moved into F2P real-time PvP card TD and promised it would not be pay-to-win.",
+          "evidence": "Kingdom Rush Battles went global on 6 Oct 2025 (launch date announced as 9 Oct) with 18 cards, 9 arenas and 26 wave modifiers. Gems buy chests. The developers told GamesHedge that purchases speed progression up but give no advantage.",
+          "url": "https://www.gameshedge.com/interview-ironhide-game-studio-kingdom-rush-battles/",
+          "source_date": "2025-10-01"
+        },
+        {
+          "claim": "On Steam, minimal TD hybrids built around one twist are selling hundreds of thousands to a million copies. Most are not on mobile; Thronefall is the exception.",
+          "evidence": "The King is Watching (Hypnohead/tinyBuild, 21 July 2025): 200K copies within a couple of weeks and 500K+ by March 2026. Its twist is the 'king's gaze': only the grid tiles you watch are productive. It was a D.I.C.E. Strategy/Sim finalist and has no mobile version. 9 Kings (Sad Socket/Hooded Horse, Early Access May 2025): 250K copies in week one and 400K in month one; no mobile version mentioned.",
+          "url": "https://en.wikipedia.org/wiki/The_King_is_Watching",
+          "source_date": "2026-03"
+        },
+        {
+          "claim": "Thronefall's success comes from being minimal, short-session and deep for time-poor adults. It has moved to iOS.",
+          "evidence": "GameDiscover: 315K Steam units by Oct 2023 at about $7, from a 1-3 person team. The developers said players lack the 100 hours for complex games and wanted deep but less time-consuming experiences. Wikipedia: close to 1M copies within a year, iOS release June 2025. Search snippets reported the iOS version as free to try with a $9.99 unlock (unverified).",
+          "url": "https://newsletter.gamediscover.co/p/deep-dive-how-thronefall-went-minimal",
+          "source_date": "2023-10 / 2025-06"
+        },
+        {
+          "claim": "A solo developer's action-heavy TD sold strongly on Steam in its first week (March 2026), helped by a viral stream moment.",
+          "evidence": "Kotaku, 18 Mar 2026: Tangy TD made $31,942 gross from 3,676 copies in 30 hours. It reached about $245K gross from 28,171 copies (2,892 refunded) with a peak of only 795 concurrent players.",
+          "url": "https://kotaku.com/tangy-td-cakez-twitch-steam-pc-indie-success-story-2000679960",
+          "source_date": "2026-03-18"
+        },
+        {
+          "claim": "During Steam's March 2026 TD Fest, indie hybrids sat alongside the big premium franchises in the top sellers.",
+          "evidence": "GameGrin top sellers (fest 9-16 March 2026), in order: The Riftbreaker, Thronefall, Dome Keeper, BTD6, Kingdom Rush 5, Tangy TD, Diplomacy is Not an Option, The King is Watching, Mindustry, Outhold, and more.",
+          "url": "https://www.gamegrin.com/news/steam-tower-defense-fest-2026-top-sellers/",
+          "source_date": "2026-03-13"
+        },
+        {
+          "claim": "Premium indie TD on iOS gets little visibility even when it is acclaimed on PC.",
+          "evidence": "Isle of Arrows (Gridpop): a tile-drawing TD, premium $5.99 with no IAP, has only 272 ratings on the US App Store, against BTD6's about 348K.",
+          "url": "https://apps.apple.com/us/app/isle-of-arrows-tower-defense/id1607942817",
+          "source_date": "2026-09 (accessed)"
+        },
+        {
+          "claim": "Editors see the iOS TD pipeline as thin and old.",
+          "evidence": "Pocket Gamer's best iOS TD list (updated 7 Nov 2025) is led by Pal Go, then Kingdom Rush (2011), Fieldrunners 2, PvZ2, Kingdom Rush Frontiers, Bad North and Fieldrunners HD. The article notes TD games have become less common on the App Store.",
+          "url": "https://www.pocketgamer.com/ios/best-tower-defence-games-ios/",
+          "source_date": "2025-11-07"
+        },
+        {
+          "claim": "Mobile subscription services favour TD, which gives an alternative funding and launch channel.",
+          "evidence": "mobilegamer.biz (Oct 2023, AppMagic data): BTD6 was the 5th most-downloaded Netflix game. The article says TD 'really resonates' on subscription services, and Ironhide had five games on Apple Arcade. BTD6+ and Kingdom Rush 5+ are both on Apple Arcade today.",
+          "url": "https://mobilegamer.biz/as-netflix-game-downloads-hit-80m-heres-a-look-at-its-top-performers-to-date/",
+          "source_date": "2023-10-12"
+        },
+        {
+          "claim": "New mobile TD hits set themselves apart with hybrid systems and a distinctive aesthetic rather than more towers.",
+          "evidence": "GameRefinery: Wittle Defender (Habby, June 2025) mixes TD, roguelite and auto-battle RPG and peaked at #139 grossing on US iOS, below Habby's Archero 2 and Capybara Go. Abandoned Land (Hortor, China, Nov 2025) combines TD with cooldown skill cards and a Chinese folk-horror look, and held download rank #3.",
+          "url": "https://www.gamerefinery.com/mobile-game-market-review-november-2025/",
+          "source_date": "2025-09 / 2025-12"
+        },
+        {
+          "claim": "Critics praise BTD6 for being accessible on the surface but deep underneath, for its characterful towers and for ongoing balance work. The main criticism is its mix of premium price and freemium economy, plus the grind.",
+          "evidence": "Wikipedia's reception section: a New Zealand Game Developers Association secretary called it friendly and accessible but complicated under the surface. PC Gamer praised balance updates that promote varied play. Criticism covers a 'dubious mix of premium and freemium' and long-term impact (Pocket Gamer's Harry Slater).",
+          "url": "https://en.wikipedia.org/wiki/Bloons_TD_6",
+          "source_date": "2026-08"
+        },
+        {
+          "claim": "Ninja Kiwi says it puts gameplay first and treats audiences within one franchise as different.",
+          "evidence": "PocketGamer.biz, 16 June 2026: 75% of resources go to established IP and 25% to new ideas. The studio says it is careful not to assume all Bloons players like the same game types; BTD6 and Battles 2 have quite different player bases.",
+          "url": "https://www.pocketgamer.biz/ninja-kiwi-on-growing-a-portfolio-beyond-its-flagship-franchise/",
+          "source_date": "2026-06-16"
+        },
+        {
+          "claim": "Third-party 'market size' figures for mobile TD disagree with each other and should not appear in a pitch.",
+          "evidence": "SNS Insider gives US$4.75B for 2025 (CAGR 9.41% to $11.68B by 2035). Other report sites cited in search results give about $1.67B for 2025. The gap comes from different methods and genre definitions, for example counting Clash Royale or Clash of Clans as TD.",
+          "url": "https://www.snsinsider.com/reports/mobile-tower-defense-game-market-8567",
+          "source_date": "2025-2026"
+        }
+      ],
+      "implications": [
+        "Stay out of F2P PvP card or merge TD. Rush Royale holds it, Kingdom Rush Battles just entered, and Bloons Card Storm was stopped for 'lack of revenue'. The 4X/RPG hybrids that lead the grossing charts need large user-acquisition budgets. The open lane is a premium-quality, single-player, short-session TD.",
+        "Underserved niche: time-poor adult strategy players, as in 9 Kings ('busy people') and Thronefall ('no 100 hours'). On Steam these players buy minimal, one-twist TD hybrids at 250K-1M copies, but almost none of those games are on iOS. Build for 10-20 minute runs that can be played one-handed in portrait.",
+        "The twist should be one active verb used during the wave, the way The King is Watching's 'gaze' is (500K+ copies). Make it touch-native, so the player is always choosing where to spend a limited in-wave attention or energy resource, not only placing towers between waves. BTD6's in-wave agency is mostly ability buttons, which leaves this space open.",
+        "For replay, use short roguelite runs on one map with branching upgrades, artifacts and modifiers, as in BTD6's own Rogue Legends and in Isle of Arrows and 9 Kings. Avoid scale-heavy story content: Frontier Legends' price cut after replayability complaints shows the risk.",
+        "Keep BTD6's clarity rules: accessible surface and deep underneath, few towers each with multiple upgrade paths and meaningful cross-choices, and enemies whose counters are readable. Critics credit BTD6's longevity to exactly this, plus steady balance patches.",
+        "Monetisation: free to try, then a one-time unlock (about $6.99-$9.99, matching BTD6, Kingdom Rush 5 and the reported Thronefall iOS model). Add paid content packs (about $9.99 campaigns or run modes, the Rogue Legends and KR5 DLC model) and cosmetic skins. Avoid selling power currency; BTD6's premium-plus-freemium mix is its most criticised trait. Ninja Kiwi's 2023 split (NZ$42m IAP against NZ$27m game sales) shows that post-purchase spending can outearn the unlock, so plan cosmetics and packs from day one.",
+        "Discoverability is the biggest risk for a premium TD on iOS (Isle of Arrows has only 272 US ratings). Mitigations: launch on Steam at the same time and enter Steam TD Fest (March). Market through creators and streamers, as Thronefall and Tangy TD did. Pitch to Apple Arcade or Netflix, which already carry BTD6 and Kingdom Rush 5 and where TD performs well.",
+        "A distinctive, cohesive art direction is a real differentiator in a pipeline editors describe as ageing (Pocket Gamer's list is led by 2011-2013 games) and where new hits stand out partly by aesthetic (Abandoned Land's folk horror). Invest in expressive enemies and effects that stay readable with sound off.",
+        "Plan a sustainable content cadence. BTD6 averages about 7 major updates a year; a small team should aim for smaller, frequent drops (new enemy families, modifiers, cosmetic sets) and occasional paid packs, not a promise to match that pace."
+      ]
+    },
+    {
+      "findings": [
+        {
+          "claim": "Interest in strategic thinking has fallen more than any other gamer motivation over the past decade. Players now want shorter planning horizons and decisions with fewer parameters, and this holds for men and women alike.",
+          "evidence": "Quantic Foundry's longitudinal Gamer Motivation Profile data (1.57M gamers, Jun 2015 to Apr 2024, China excluded) shows the average Strategy score dropped from the 50th to the 33rd percentile, meaning 67% of today's gamers care less about strategy than the average 2015 gamer. The change is more than twice the size of the next largest motivation shift, pre-dates COVID, and is 'remarkably consistent' across male and female gamers and across US and non-US players. QF concludes that gamers are more easily cognitively overloaded. Caveat: the sample skews toward core PC/console players (75% male, mean age 24.5, only 34% play on mobile), and casual mobile players are under-represented.",
+          "url": "https://quanticfoundry.com/2024/05/21/strategy-decline/",
+          "source_date": "2024-05-21 (page updated 2025-10-13)"
+        },
+        {
+          "claim": "Strategy appeal barely changes with age, but appeal of competition drops steeply. Older players therefore still like thinking and planning, but not head-to-head conflict.",
+          "evidence": "Quantic Foundry (140k+ gamers) found Competition declines the most with age, from the #1 primary motivation at ages 13-25 to #9 at 36+. The gender gap in Competition largely disappears after 45. Strategy is the most age-stable motivation (age-Strategy correlation r=.06 per the 2024 follow-up), and men score higher than women on Strategy at every age.",
+          "url": "https://quanticfoundry.com/2016/02/10/gamer-generation/",
+          "source_date": "2016-02-10"
+        },
+        {
+          "claim": "Gender differences in motivation are real but smaller than age differences. Women over-index on Completion, Design, Fantasy and Story; men over-index on Competition, Challenge, Excitement and Strategy.",
+          "evidence": "Quantic Foundry (US n=51,283): the largest gender gap, in Competition, is d=.33, which still means about 87% overlap between men and women. Age explains about 3x as much variance in Competition as gender. Age correlates negatively with Excitement (-.28) and Challenge (-.21) but only -.05 with Strategy and Completion.",
+          "url": "https://quanticfoundry.com/2015/08/28/gender-differences-in-gaming/",
+          "source_date": "2015-08-28"
+        },
+        {
+          "claim": "When a strategy game offers a non-military path to victory, women and older players strongly prefer it.",
+          "evidence": "In a Quantic Foundry 4X survey (n=892 valid responses), men were 3x more likely than women to seek military conquest, and women were 3x more likely than men to pursue cultural victory. The average age of science/culture-victory players was 28 versus 25 for military/economic players. Military-focused players scored higher on Destruction, Excitement, Competition and Power.",
+          "url": "https://quanticfoundry.com/2016/03/02/4x-strategy/",
+          "source_date": "2016-03-02"
+        },
+        {
+          "claim": "The genres with the most women are puzzle and farm/nurture genres, while combat genres have almost none. Tower defence was not measured as its own genre.",
+          "evidence": "Quantic Foundry data (270k+ gamers) on the female share of each genre's audience: Match-3 about 69%, Family/Farm Sim about 60%, Casual Puzzle about 42%, Atmospheric Exploration about 41%, compared with FPS 7.2%, Tactical Shooter 4.3% and Sports 2%. Tower defence is not listed. The data is older (2017), but the gradient is consistent with Sensor Tower's 2026 finding that men dominate strategy and women dominate puzzle.",
+          "url": "https://www.gamedeveloper.com/business/beyond-50-50-breaking-down-the-percentage-of-female-gamers-by-genre",
+          "source_date": "2017-01"
+        },
+        {
+          "claim": "Quantic Foundry's current model defines a 'calm' and 'cozy' pole of player preference. It describes pausable, predictable, low-stimulation play with no weapons or gore.",
+          "evidence": "The Gamer Motivation Model v3 reference sheet (2M+ gamers) defines low Excitement as Calm: turn-based or pausable, relaxed, predictable, low visual stimulation. Low Destruction is defined as Cozy: enduring familiarity, no weapons or gore, typically G/PG. The Mastery-Achievement cluster is described as cool-headed, long-term play that makes plans and watches cities or farms grow.",
+          "url": "https://quanticfoundry.com/wp-content/uploads/2026/09/Gamer-Motivation-Model-Reference-v3.pdf",
+          "source_date": "2026-09"
+        },
+        {
+          "claim": "On mobile in 2025, strategy and puzzle were the two fastest-growing revenue genres and hybridcasual was the only segment with meaningful in-app purchase growth. The casual audience is older than PC/console and skews female in puzzle.",
+          "evidence": "Sensor Tower State of Gaming 2026 (summarised by GameDev Reports): mobile strategy made $20.2B and puzzle $14.4B, the 'strongest growth'. Hybridcasual in-app revenue grew +20% YoY, and top hybridcasual titles have overtaken the top-25 casual games on D7 retention. 60% of casual/hypercasual players are over 35. Women make up a larger share in puzzle, lifestyle and casino; men dominate strategy, sports and shooters.",
+          "url": "https://gamedevreports.substack.com/p/sensor-tower-state-of-gaming-2026",
+          "source_date": "2026-02"
+        },
+        {
+          "claim": "Sort, screw and block hybridcasual puzzles are the fastest-growing part of an otherwise flat casual market. However, the space is crowded and saturated.",
+          "evidence": "AppMagic H1 2026 (via GameDev Reports): casual in-app revenue was about $11B, flat. Puzzle made $4.9B, including hybridcasual puzzles at about $600M. Sort-puzzle revenue rose +229% YoY and downloads +56%. More than 2,000 block puzzles launched in H1'26 (+89% YoY). Match-3 made $2.5B, flat. Merge-2 made $1.3B (+74%). Gamigion adds that none of 120 new Match-3 releases passed $100K per month.",
+          "url": "https://gamedevreports.substack.com/p/appmagic-mobile-casual-games-in-h1",
+          "source_date": "2026-07/08"
+        },
+        {
+          "claim": "Screw and sort puzzles were already growing fast in 2025, while strategy led overall mobile in-app revenue.",
+          "evidence": "Mobilegamer.biz data digest: AppMagic data shows screw-puzzle revenue reached $27M in Q1 2025, almost 4x the same quarter a year earlier. Wool Sort passed 4M downloads, and Rollic's Screw Jam leads the subgenre's in-app revenue. Sensor Tower Q4 2024 data shows strategy had the highest in-app revenue at $4.8B (+27% YoY).",
+          "url": "https://mobilegamer.biz/data-digest-sensor-tower-highlights-applovin-max-stats-puzzle-genre-insights-financials-investments-and-more/",
+          "source_date": "2025-05-28"
+        },
+        {
+          "claim": "Sort and jam hybridcasual puzzles now sit among the top-grossing US puzzle games next to established brands.",
+          "evidence": "Sensor Tower's Q4 2025 US top-5 puzzle games by revenue are Pixel Flow! (above $2M, 457K downloads), NYT Games, Magic Sort! (about $1.4M, 958K+ active users), Color Block Jam (Rollic, $1.3-1.7M) and June's Journey.",
+          "url": "https://sensortower.com/blog/2025-q4-unified-top-5-puzzle-games-revenue-us-64bc1644e1714cfff1e615fc",
+          "source_date": "2025 Q4 (published early 2026)"
+        },
+        {
+          "claim": "The top-grossing mobile tower defence games are midcore, combat or gacha titles. None of them target the cozy or puzzle audience.",
+          "evidence": "Sensor Tower's Q2 2025 US Android top-5 tower defence games: Arknights (peak about $527K per week), Kingdom Guard: Tower Defense (about $192K per week), Watcher of Realms (about $155K per week), Raid Rush TD ($75-85K per week) and Galaxy Defense: Fortress TD (about $102K per week, launched April 2025). All five use war, fantasy-combat or sci-fi themes.",
+          "url": "https://sensortower.com/blog/2025-q2-android-top-5-tower%20defense%20games-revenue-us-6012932d241bc16eb85e0db8",
+          "source_date": "2025 Q2"
+        },
+        {
+          "claim": "'Cozy' has become a major commercial positioning on Steam. Surveyed players say they play to de-stress and at their own pace, and few want challenge.",
+          "evidence": "A GameDiscoverCo analysis (reported by Outlook Respawn) found that the share of $100K+ revenue Steam games describing themselves as 'cozy' rose from 0.4% in 2022 to 3.1% in 2025 (+675%). Sago's 2025 omnibus survey (US, UK, FR, ES, DE) found 53% play to switch off from stress, 52% value playing at their own pace, and 51% say it calms them and improves their mood. Only 10-17% cite challenge as a draw.",
+          "url": "https://respawn.outlookindia.com/gaming/gaming-news/steam-vibe-shift-why-cozy-is-the-most-dominant-keyword-of-2026",
+          "source_date": "2026-02-16 (Sago survey: https://sago.com/en/resources/insights/the-rise-of-cozy-gaming-across-borders/, 2025-09-12)"
+        },
+        {
+          "claim": "Cozy tower defence is thinly supplied, mostly on PC, and has no strong mobile or portrait entrant.",
+          "evidence": "The itch.io 'cozy' + 'tower defense' tag lists 78 results, and none of the top 10 mention mobile or portrait play. Dampf - The Cozy Tower Defense (Steam, March 2024) has only 13 reviews (76% positive); its core cozy feature is that the player decides when the next wave starts. CozyWorld's September 2026 list of cozy tower defence games can only name about six titles, mostly on PC, plus the ageing Plants vs. Zombies.",
+          "url": "https://itch.io/games/tag-cozy/tag-tower-defense",
+          "source_date": "accessed 2026-09 (Dampf: https://store.steampowered.com/app/2529290/Dampf__The_Cozy_Tower_Defense/; list: https://cozyworld.games/blog/best-cozy-tower-defense-games/)"
+        },
+        {
+          "claim": "Accessible, low-time-commitment tower defence and strategy hybrids can sell well to casual players.",
+          "evidence": "Thronefall, a minimalist strategy/tower defence game by a two-person studio, was designed for time-constrained, casual-accessible play. It sold just under 1M copies in about a year, was released on iOS in June 2025, and its IP was acquired by Mythwright in December 2025.",
+          "url": "https://en.wikipedia.org/wiki/Thronefall",
+          "source_date": "accessed 2026-09"
+        },
+        {
+          "claim": "Older US players are a large, mobile-first puzzle audience that plays to keep their minds sharp and to relax. Boomer women out-play Boomer men.",
+          "evidence": "ESA 2026: 212.3M Americans play weekly, the average age is 37, 80% play on mobile, and puzzle is the top mobile genre (66%). Adults cite stress relief (78%) and mental stimulation (79%). Kotaku's coverage of ESA 2026: 84% of Boomer and Silent Generation players regularly play on mobile, 74% play puzzle games, and 32% of people aged 81-90 play. ESA 2025: older players' motivations are relaxing or passing time (77%) and keeping minds sharp (65%). 52% of Boomer women play versus 46-47% of Boomer men.",
+          "url": "https://www.theesa.com/two-thirds-of-americans-play-video-games-every-week-according-tonew-report-from-the-entertainment-software-association/",
+          "source_date": "2026-06-03 (also https://kotaku.com/esa-essential-facts-survey-gaming-demographics-mobile-boomers-2000701941 and https://www.theesa.com/annual-esa-study-reveals-video-games-universal-appeal-across-generations/, 2025-06-03)"
+        },
+        {
+          "claim": "Matching and puzzle audiences are about three-quarters women and mostly over 35. Players over 50 are the most engaged per day.",
+          "evidence": "Udonis compiled Facebook Gaming, GameAnalytics and App Annie data: women are 75% of US matching-puzzle and word players, 74% in the UK, 66% in Japan and 73% in South Korea. The majority are 35+, and players over 50 spend the most daily time (about 17.6 minutes). This is a secondary compilation of 2021-22 data.",
+          "url": "https://www.blog.udonis.co/mobile-marketing/mobile-games/puzzle-games-report",
+          "source_date": "2023-12-20"
+        },
+        {
+          "claim": "US parents are broadly positive about games and often play with their children. They also actively restrict which game types their children can play.",
+          "evidence": "Marist Poll (June 2025, n=876 parents of children under 18): 48% say games are mostly positive and 15% mostly negative. 65% restrict game types and 66% set time limits. Top concerns are online safety (20%), lack of physical activity (18%), screen time (15%) and violent or inappropriate content (13%). 27% play with their children daily and 38% weekly. ESA 2025: 82% of parents who game play with their kids, 52% weekly, and 70% prefer their kids play games rather than use social media.",
+          "url": "https://maristpoll.marist.edu/polls/parents-and-video-games-july-2025/",
+          "source_date": "2025-07"
+        },
+        {
+          "claim": "Parents object to in-game spending and gambling-like mechanics such as loot boxes.",
+          "evidence": "A Ygam/Mumsnet survey of more than 1,000 UK parents of 7-17 year-olds: 78% are concerned about screen time, 35% say their child spends money on in-game purchases, and 52% have seen gambling-style mechanics such as loot boxes in their child's games.",
+          "url": "https://ygam.org/news/new-mumsnet-survey-reveals-parents-call-for-education-on-video-gaming-in-schools/",
+          "source_date": "2024-07-17"
+        },
+        {
+          "claim": "Young children's gaming time has jumped, and most of it happens on phones and tablets. Ages 5-8 are a large mobile-gaming cohort.",
+          "evidence": "Common Sense Census 2025 (2024 data): children aged 0-8 average 38 minutes of gaming per day, up 65% since 2020, of which 21 minutes is on smartphones or tablets. Ages 5-8 average 1 hour 4 minutes per day, 34 minutes of it on smartphones or tablets. 51% of children 8 and under have their own mobile device.",
+          "url": "https://www.commonsensemedia.org/sites/default/files/research/report/2025-common-sense-census-web-2.pdf",
+          "source_date": "2025-02-26"
+        },
+        {
+          "claim": "Bloons TD 6 is non-violent, but parent guides flag its in-app purchases and note it can be too complex for younger children. This leaves room for a family and co-play tower defence game.",
+          "evidence": "Zift's parent guide lists Bloons TD 6 as rated 9+, $4.99 upfront with in-app purchases from $0.99 to $17.99, and advises parents to password-protect purchases. It says the fast-paced, complex play may confuse younger children and suits older kids better.",
+          "url": "https://wezift.com/parent-portal/apps/bloons-td-6/",
+          "source_date": "undated (accessed 2026-09)"
+        },
+        {
+          "claim": "iOS returns on ad spend are much stronger than Android's for casual games, and strategy and kids games perform especially well on iOS.",
+          "evidence": "Liftoff/Singular 2025 Casual Gaming Apps Report: average D30 return on ad spend (ROAS) for casual games is 47% on iOS versus 15% on Android. On iOS, sports reaches 80%, kids 68% and strategy 60% (Android: 21%, 8% and 27%). Some genres have about 10x higher cost per install on iOS. Roughly 50% of casual installs come from ads shown in hypercasual and puzzle games.",
+          "url": "https://liftoff.ai/blog/highlights-2025-casual-gaming-apps-report/",
+          "source_date": "2025-07-28"
+        },
+        {
+          "claim": "Phones are mostly used portrait and often one-handed, and mobile game sessions are short and frequent.",
+          "evidence": "Hoober/UXmatters field study (1,333 observations, 2013, older but foundational): 49% of users hold the phone one-handed, 36% cradle it and 15% use two hands. 67% of one-handed users touch with the right thumb, and 90% of two-handed use is in portrait. GameAnalytics 2025 benchmarks (cited by Udonis): the median mobile session is 5-6 minutes (8-9 minutes in top games), with about 4 app opens per day.",
+          "url": "https://www.uxmatters.com/mt/archives/2013/02/how-do-users-really-hold-mobile-devices.php",
+          "source_date": "2013-02 (session data: https://www.blog.udonis.co/mobile-marketing/mobile-games/modern-mobile-gamer, 2026)"
+        },
+        {
+          "claim": "Royal Match shows that polish, simplicity and a season pass can win the adult casual puzzle audience without complex meta-systems.",
+          "evidence": "Naavik deep dive: Royal Match succeeded by obsessing over simplicity, a smooth board and no loading screens, and dropped the decoration layer. Its Royal Pass (June 2021) is estimated to have added +31% revenue and Endless Treasure +20%. It charges the highest extra-move prices in the genre, and events are always overlapping. Revenue per download doubled year on year.",
+          "url": "https://naavik.co/deep-dives/royal-match/",
+          "source_date": "2022-05"
+        },
+        {
+          "claim": "Games built around 'satisfying' ASMR-style feedback have been a long-running mobile trend, and relaxing casual sims can still break out.",
+          "evidence": "Apptopia (2021, dated): the number of mobile games with 'ASMR' in their title or description rose for 13 straight quarters, reaching 405 in Q2 2021 (+72.3% YoY). All top-10 ASMR titles were hypercasual; for example, Sushi Roll 3D had 14.3M downloads in Q2 2021. A 2025 example: Insightrackr reports the cooking sim Cookingdom passed 10M downloads in April 2025 (+1,200% month on month, #9 by downloads), monetising mainly through ads.",
+          "url": "https://apptopia.com/en/insights/asmr-mobile-games-increase-13-consecutive-quarters/",
+          "source_date": "2021-07-14 (Cookingdom: https://blog.insightrackr.com/en/docs/Apr25TopGames, 2025-05)"
+        }
+      ],
+      "implications": [
+        "Target niche: adult puzzle players aged 30-55, mostly women, including lapsed strategy fans whose attention is now shorter. They play sort and jam puzzles to 'keep their mind sharp' and relax, but avoid tower defence because every top-grossing tower defence game is war- or gacha-themed and male-skewed. Parents who co-play with 6-10 year-olds, and 50+ mobile puzzle players, are secondary audiences reached by the same design choices. Research showed no strong portrait-mode, mobile, cozy tower defence game.",
+        "The central twist should borrow the most satisfying verb in the fastest-growing puzzle subgenre (sorting, matching or routing by colour) and make it the in-wave tower defence decision. Example: during a wave, the player flips path switches or gates so colour-coded creatures reach the matching tower. This gives short-horizon, few-parameter decisions every few seconds, which fits Quantic Foundry's finding that strategy appeal has declined. Tower placement and upgrades supply the long-term planning.",
+        "Make the game non-violent and non-adversarial. Enemies should be messes, pests or sleepy creatures that get sorted, tidied, washed or tucked in rather than killed; players 'win' by protecting a nurturing goal, similar to a cultural victory in 4X. This makes it Quantic Foundry's 'cozy' pole, suits all ages, and reaches both women and older players, who prefer non-confrontational wins.",
+        "Build in the 'calm' pole: pause at any time, let the player start the next wave, offer a speed toggle, keep enemy behaviour predictable, and add a no-fail or relaxed mode. Also offer a harder optional mode, because some audiences vary widely in how much strategy they want.",
+        "Design for portrait and one thumb: tappable targets at the bottom of the screen, big hit areas, and a vertically winding path. Keep each wave to 30-90 seconds and each level to 3-6 minutes so a level fits a 5-6 minute median session, with a mid-level save.",
+        "Treat ASMR and 'satisfying' feedback as core design: pops, squishes, snaps when a colour set is completed, chains of combos, and a tidy board after each wave. Every signal must also be readable with sound muted, using colour plus shape, which also covers colour-blind players and older eyes.",
+        "Monetisation should fit a family and adult-women audience and avoid loot boxes and gambling-style mechanics (52% of UK parents have seen them and object). Recommended model: free first world, then a one-time 'full game' unlock or premium level packs, cosmetic tower and creature skins, and an optional season or 'garden pass' with visible rewards. Offer ads only as opt-in rewarded ads, or remove them entirely for a kids-safe build. iOS D30 ROAS is 60% for strategy and 68% for kids casual games, which supports an iOS-first launch.",
+        "Market it as a satisfying puzzle-defence game, not as 'strategy', because women and older players under-index on strategy as a label. App Store creatives should show the sort/route twist in the first 3 seconds, as sort and jam puzzle ads do, since about half of casual installs come from ads in puzzle and hypercasual games.",
+        "Risk: hybridcasual puzzles are saturated (more than 2,000 block puzzles launched in H1 2026, and none of 120 new Match-3 games passed $100K per month). The differentiator must be real tower defence depth: tower synergies, upgrade paths and replayable strategies. The game must not reduce to another sort level with a tower defence skin.",
+        "Retention hooks to prototype: a daily 'tidy challenge' with a fixed seed, star or mastery goals per level to satisfy Completion motivation, a collectable creature journal to satisfy Completion and Design, and cosmetic customisation of the garden or home to satisfy Design, which women over-index on."
+      ]
+    }
+  ],
+  "synthesis": {
+    "niches": [
+      {
+        "audience": "Adults who play sort, jam and colour puzzles (roughly 30-55, mostly women, iPhone-first). They play to relax and to 'keep the mind sharp', but have never tried tower defence.",
+        "why_underserved": "Every top-grossing US tower defence game (TD) has a combat, war or gacha theme: Arknights, Kingdom Guard, Watcher of Realms, Raid Rush and Galaxy Defense. Nothing in the genre is pitched at these players. Meanwhile their own genre is filling with shallow clones: more than 2,000 block puzzles launched in H1 2026, and none of 120 new Match-3 games passed $100K a month. Routing by colour and shape, with fixed rules, is a verb they already know, and real TD depth would set a game apart from those clones. Critical caveat: this audience is used to free-to-play (F2P) games with ads, 3-minute levels and hybridcasual monetisation. A free-to-try premium TD will convert only a fraction of them. Treat them as the group that widens reach and marketing, not as the core payers. That sort-puzzle players will cross over to TD is a hypothesis to test, not a finding.",
+        "evidence_urls": [
+          "https://mobilegamer.biz/data-digest-pixel-flow-hits-100m-mays-top-games-neverness-to-everness-pokemon-go-more/",
+          "https://sensortower.com/blog/2025-q4-unified-top-5-puzzle-games-revenue-us-64bc1644e1714cfff1e615fc",
+          "https://gamedevreports.substack.com/p/appmagic-mobile-casual-games-in-h1",
+          "https://sensortower.com/blog/2025-q2-android-top-5-tower%20defense%20games-revenue-us-6012932d241bc16eb85e0db8",
+          "https://www.blog.udonis.co/mobile-marketing/mobile-games/puzzle-games-report",
+          "https://www.gamedeveloper.com/business/beyond-50-50-breaking-down-the-percentage-of-female-gamers-by-genre",
+          "https://www.theesa.com/two-thirds-of-americans-play-video-games-every-week-according-tonew-report-from-the-entertainment-software-association/"
+        ],
+        "size_signal": "Pixel Flow! made $105M from in-app purchases (IAP) in about 10 months, and Color Block Jam $148M. Sort-puzzle revenue grew 229% year on year (AppMagic, H1 2026). Puzzle is the top mobile genre in the US at 66% (ESA 2026). About 75% of US matching-puzzle players are women, and most are over 35."
+      },
+      {
+        "audience": "Time-poor and lapsed adult strategy players (roughly 25-45) who 'like the idea of strategy more than the reality' and want deep but short sessions on a phone.",
+        "why_underserved": "The minimal one-twist TD hybrids these players buy are almost all PC-only: Thronefall (about 1M), The King is Watching (500K+) and 9 Kings (400K in its first month). Only Thronefall has reached iOS (June 2025). BTD6 rounds often run past 30 minutes, and Kingdom Rush is the only mobile reference for 10-15 minute missions. Quantic Foundry shows strategy appetite shifting toward shorter planning horizons. Strategy appeal holds steady with age while appetite for competition drops sharply, so single-player, non-PvP decisions with short horizons suit this group. Caveat: they are proven payers on Steam, but nobody has measured how well they convert on iOS. Their absence from iOS may partly reflect developers doubting iOS returns.",
+        "evidence_urls": [
+          "https://newsletter.gamediscover.co/p/deep-dive-how-thronefall-went-minimal",
+          "https://en.wikipedia.org/wiki/The_King_is_Watching",
+          "https://www.pocketgamer.biz/interview/68638/indie-spotlight-plausible-concept-on-bad-north/",
+          "https://quanticfoundry.com/2024/05/21/strategy-decline/",
+          "https://quanticfoundry.com/2016/02/10/gamer-generation/",
+          "https://oldcynic.com/bloons-td-6-review-tower-defense"
+        ],
+        "size_signal": "Thronefall sold 315K units in 2 months and about 1M in a year. The King is Watching passed 500K by March 2026. Quantic Foundry: the average Strategy motivation fell from the 50th to the 33rd percentile between 2015 and 2024."
+      },
+      {
+        "audience": "Cozy, calm players who want low-stress, non-violent strategy they can pause and play at their own pace.",
+        "why_underserved": "Cozy TD is scarce and mostly on PC. itch.io lists 78 cozy + TD results with no mobile or portrait focus, a September 2026 list can name only about 6 titles, and the one commercial example, Dampf, has just 13 reviews. Honest caveat: thin supply may signal weak demand as much as opportunity. Only 10-17% of cozy players cite challenge as a draw, which clashes with TD's fail states. Serve them through the theme (enemies are cheered up, not killed), pause anywhere, player-started waves and a Relaxed mode, but do not make them the only target.",
+        "evidence_urls": [
+          "https://itch.io/games/tag-cozy/tag-tower-defense",
+          "https://respawn.outlookindia.com/gaming/gaming-news/steam-vibe-shift-why-cozy-is-the-most-dominant-keyword-of-2026",
+          "https://quanticfoundry.com/wp-content/uploads/2026/09/Gamer-Motivation-Model-Reference-v3.pdf",
+          "https://quanticfoundry.com/2016/03/02/4x-strategy/",
+          "https://store.steampowered.com/app/2529290/Dampf__The_Cozy_Tower_Defense/"
+        ],
+        "size_signal": "The share of $100K+ Steam games calling themselves 'cozy' rose from 0.4% in 2022 to 3.1% in 2025. In Sago's 2025 survey, 53% play to switch off from stress and 52% value playing at their own pace. In 4X games, women are 3x more likely than men to pursue non-military victories."
+      },
+      {
+        "audience": "Parents who play with 6-10 year-olds, and players over 50 who want non-violent, mentally stimulating games without loot boxes.",
+        "why_underserved": "BTD6 is non-violent, but parent guides flag its in-app purchases and say it is complex for younger children. The hybridcasual puzzles these households play are ad-heavy, and 52% of UK parents have seen loot-box mechanics in their child's games and object to them. A model with no ads, no currency and directly priced cosmetics, plus colour-and-shape readability, serves them without a separate build. Caveat: targeting under-13s directly brings in Kids Category rules, and local co-op is out of scope for the slice. Treat them as a secondary audience reached through design choices, not a marketing target.",
+        "evidence_urls": [
+          "https://maristpoll.marist.edu/polls/parents-and-video-games-july-2025/",
+          "https://ygam.org/news/new-mumsnet-survey-reveals-parents-call-for-education-on-video-gaming-in-schools/",
+          "https://www.commonsensemedia.org/sites/default/files/research/report/2025-common-sense-census-web-2.pdf",
+          "https://wezift.com/parent-portal/apps/bloons-td-6/",
+          "https://www.theesa.com/two-thirds-of-americans-play-video-games-every-week-according-tonew-report-from-the-entertainment-software-association/"
+        ],
+        "size_signal": "27% of US parents play games with their children daily and 38% weekly (Marist 2025). Children aged 5-8 average 34 minutes a day of phone and tablet gaming. 84% of Boomer and older players play on mobile, and 74% play puzzle games (ESA 2026)."
+      },
+      {
+        "audience": "Lapsed or fatigued BTD6 and Kingdom Rush players who find the meta solved and want more to do during a wave.",
+        "why_underserved": "Veterans say every BTD6 mode except CHIMPS is trivial and that builds repeat. Runs of 100+ rounds cause burnout, and the game cannot be paused mid-wave to act. In-wave agency is mostly ability buttons, and the only live-reroute feature is a gimmick on a single map (the Workshop map's Track Extensions). A TD whose core in-wave verb is routing gives them new decisions without leaving the genre. Caveat: they judge against 26 towers and 70+ maps, so the slice must prove depth per tower and replayable combinations. They are a smaller, harsher audience.",
+        "evidence_urls": [
+          "https://steamcommunity.com/app/960090/discussions/0/560232608049426404/?l=english",
+          "https://steamcommunity.com/app/960090/discussions/0/686364301854898628/",
+          "https://steamcommunity.com/app/960090/discussions/0/3464983493945419608/",
+          "https://medium.com/@arrowfortress/the-future-of-tower-defense-a-classic-genre-quietly-becoming-something-else-2d6160378393",
+          "https://sensortower.com/blog/2025-q3-ios-top-5-paid%20games-revenue-us-61f43af0afb48b4f71b2ba3f",
+          "https://www.bloonswiki.com/Workshop_(BTD6)"
+        ],
+        "size_signal": "BTD6 was still #2 US iOS paid game in Q3 2025, with about 200K active users (Sensor Tower estimate). It had 1.1M daily active users in 2021 (MTG). 97% of its 230K Steam reviews are positive."
+      }
+    ],
+    "twists": [
+      {
+        "name": "Live junction gates that sort a mixed stream of enemies into kill zones (the candidate evaluated in depth)",
+        "in_wave_decisions": "Every few seconds the player decides:\n- which way each gate points for the next group of enemies;\n- how to split a mixed group when its members cannot all reach their best lane;\n- whether to overload a full zone or send enemies into a weaker one;\n- whether to send a dangerous enemy down the long loop, where more towers hit it, or down the short channel to spare a weak zone;\n- how to answer enemies that interact with gates (one that jams a gate for a few seconds, one that splits at a junction).\nBetween waves it shapes placement: which tower family owns which channel, and whether to buy gate upgrades (faster swing, one auto-sort rule) instead of towers.",
+        "novelty": "High within TD. No shipped, notable TD makes live junction switching its core loop:\n- BTD6 has it only as a 20-second gizmo on one map.\n- Mazing games fix the route once a wave starts (TDS developer: the path is already calculated).\n- ChangePath is an itch.io demo with no reviews.\n- Train Towers steers your own train, not the enemies.\nThe verb itself is proven in adjacent hits: Conduct THIS! (Apple Editors' Choice), Anomaly (iOS Metacritic 94, Apple Design Award), Railbound (Apple Design Award for Interaction) and Mini Metro (about 6M sales). Colour sorting is the hottest mobile puzzle verb (Pixel Flow, $105M). It is simple to explain ('tap a gate, steer the colours') and gives the strongest 3-second App Store or video hook of the six candidates.",
+        "risks": "1. Lock-and-key: if each colour maps to exactly one tower and resists everything else, the game becomes a sort puzzle with a TD skin and one right answer per enemy. Doucet warns against this. Use soft counters (roughly 1.5x damage against the favoured family, 0.6x against the disfavoured one) so misrouting is costly but not fatal.\n2. Frantic tapping: Conduct THIS! was widely called too hard. Start with one gate, allow planning while paused, send enemies in groups, and use a per-gate cooldown of about 1s rather than a fee per flip. A fee taxes the core verb; it suits a gimmick like the Workshop map, not a primary mechanic.\n3. The twist and the towers crowding each other out: towers can become secondary, or gates can become pointless once towers are strong. Tune so routing quality changes the outcome at every stage, and give late waves new routing problems, not just more hit points.\n4. Solvability: fixed rules can produce one best sequence, which hurts replay. Mixed groups, zones that fill up and several workable tower-to-lane assignments keep more than one solution.\n5. Late-wave tap overload: sell limited gate automation as an upgrade, like Rail Route's sensors, so tapping stays manageable. Keep manual override so the twist never disappears.\n6. Map constraint: branching channels need portrait space. Keep 2-3 gates and 3-4 channels on one screen.\n7. Positioning: it could read as a kids' sort game to strategy players. Test the art direction with both groups.",
+        "evidence_urls": [
+          "https://www.bloonswiki.com/Workshop_(BTD6)",
+          "https://steamcommunity.com/app/2392280/discussions/0/4633736089165683926/",
+          "https://softanger.itch.io/changepath-demo",
+          "https://store.steampowered.com/app/4424320",
+          "https://en.wikipedia.org/wiki/Anomaly:_Warzone_Earth",
+          "https://apps.apple.com/us/app/conduct-this-train-action/id1151455384",
+          "https://en.wikipedia.org/wiki/Railbound",
+          "https://mobilegamer.biz/data-digest-pixel-flow-hits-100m-mays-top-games-neverness-to-everness-pokemon-go-more/",
+          "https://store.steampowered.com/app/1124180/Rail_Route/",
+          "https://www.gamedeveloper.com/design/optimizing-tower-defense-for-focus-and-thinking---defender-s-quest"
+        ]
+      },
+      {
+        "name": "Attention lens (drag a spotlight that strengthens the towers under it)",
+        "in_wave_decisions": "Where to park or sweep a limited focus that raises fire rate or unlocks a tower's special attack while watched, and when to leave a zone unattended.",
+        "novelty": "Medium. This is essentially The King is Watching's 'gaze' (500K+ copies, though that game is a kingdom builder, not TD) applied to TD. BTD6's area buffs and ability buttons already cover part of the same ground.",
+        "risks": "On a phone the finger covers the zone being boosted, the same occlusion complaint BTD6 players already raise about tower placement. It tends toward a degenerate 'park it on the chokepoint' strategy. Steam-literate players would see it as derivative. Continuous dragging suits two hands, not one-thumb portrait play. It is weak as a still screenshot.",
+        "evidence_urls": [
+          "https://en.wikipedia.org/wiki/The_King_is_Watching",
+          "https://steamcommunity.com/app/960090/discussions/0/6929409304779853033"
+        ]
+      },
+      {
+        "name": "Live path drawing (lay and re-lay a limited supply of track tiles mid-wave)",
+        "in_wave_decisions": "Where to extend or cut the route while enemies are moving, spending a limited tile budget between lengthening their exposure and protecting a zone.",
+        "novelty": "Medium-high. Mazing is mature but done before or between waves (Desktop TD, Fieldrunners, and Emberward's 'build a maze before the battle begins'). Mini Motorways proves real-time route drawing works, but without combat.",
+        "risks": "The hardest candidate to polish in a slice: pathfinding edge cases, exploitable mazes, drag precision and finger occlusion on a 375px screen. A route that changes shape is harder to read at a glance than a flipped gate. Emberward (97% positive) and Rogue Tower already own the path-building flavour, and Isle of Arrows players complained about randomness and having no undo.",
+        "evidence_urls": [
+          "https://en.wikipedia.org/wiki/Desktop_Tower_Defense",
+          "https://store.steampowered.com/app/2459550/Emberward/",
+          "https://www.gamedeveloper.com/audio/-i-mini-motorways-i-and-the-delicate-art-of-marrying-complexity-and-minimalism",
+          "https://www.148apps.com/isle-of-arrows/isle-of-arrows-tower-defense-review/",
+          "https://store.steampowered.com/app/1843760/Rogue_Tower/"
+        ]
+      },
+      {
+        "name": "Mid-wave redeploy (lift a tower and drop it on another pad after a short downtime)",
+        "in_wave_decisions": "Which tower to pull from a quiet zone to reinforce a busy one, accepting that it stops firing while it moves.",
+        "novelty": "Low-medium. Arknights has built its play around redeploying units mid-wave at huge scale ($678M lifetime revenue). Unstoppable Gorg's rotating orbit is the premium precedent.",
+        "risks": "Closely associated with Arknights and gacha games. Dragging competes with the placement gesture, and the style rewards heavy micro-management, which tires casual and cozy players. It is less legible in a 3-second clip, and relocation risks dissolving placement strategy, which is TD's main planning layer.",
+        "evidence_urls": [
+          "https://naavik.co/deep-dives/arknights-tower-defense-redefined/",
+          "https://en.wikipedia.org/wiki/Unstoppable_Gorg"
+        ]
+      },
+      {
+        "name": "Rhythm-synced towers (tap on the beat to power up volleys; each tower adds a music layer)",
+        "in_wave_decisions": "When to spend taps powering up a tower in time with the beat.",
+        "novelty": "Medium, but commercially unproven. The Rhythm Towers demo has 14 reviews and the full game has no release date. Bass Defense is obscure.",
+        "risks": "Fails the brief's requirement to read clearly with sound off, and many phone players play muted. It creates accessibility problems for hearing-impaired players and those without a strong sense of rhythm, and it turns decisions into timing execution rather than strategy. Better used as flavour: tune tower hits and pops to a musical scale.",
+        "evidence_urls": [
+          "https://store.steampowered.com/app/1561030/Rhythm_Towers/",
+          "https://esportskingdom.gg/other-games/rhythm-based-tower-defense-game-launches-on-steam/"
+        ]
+      },
+      {
+        "name": "Tower retuning (tap a tower to cycle its colour or ammo to match incoming enemies)",
+        "in_wave_decisions": "Which towers to retune for the next group of enemies, given a short delay each time.",
+        "novelty": "Low-medium. Colour-resistance TD already exists (Color Tower Defence, 13 reviews), as do colour-queue archers (Rainbow Rush) and conveyor-ammo colour matching (Color Guard).",
+        "risks": "It is the same colour-matching decision as sorting, but without the spatial flow, so it is less satisfying to watch and harder to read: many small tower states instead of a few large gates. It pushes hard toward lock-and-key counters, and its tap targets are many small towers rather than a few big gates, which is worse for one-thumb portrait play.",
+        "evidence_urls": [
+          "https://store.steampowered.com/app/3064560/Color_Tower_Defence/",
+          "https://apps.apple.com/us/app/rainbow-rush-color-defense/id6759663771",
+          "https://play.google.com/store/apps/details?id=co.imba.colorguard"
+        ]
+      }
+    ],
+    "recommended_concept": "RECOMMENDATION: a portrait, one-thumb 'puzzle-defence' game with a working title such as 'Gloom & Bloom' (the name needs a trademark check).\n\nAUDIENCE\n- Primary: adults who like the idea of strategy but bounce off war/gacha TD and 30-minute BTD6 rounds. This is where niche 1 (sort-puzzle players) and niche 2 (time-poor, lapsed strategy players) overlap.\n- Served on the side through the theme and the monetisation model: cozy players and families.\n- Kept engaged through a hard 'Flow' mode: BTD6 veterans.\n- Market it as a satisfying puzzle-defence game rather than 'strategy', because women and older players under-index on strategy as a label.\n\nTHEME\n- Setting: a canal garden lit by lanterns at dusk.\n- Enemies: grumpy little rain-cloud creatures ('Mopes') drift down a winding canal toward a sleeping village's lily pond.\n- Towers: garden keepers cheer them up with chimes, bells and mist.\n- Defeat: each cheered Mope bursts into a bloom in its family's colour (petals, fireflies, paper lanterns). The blooms settle on the banks, so the drab canal visibly flowers over the course of the level. This progress is visible and makes a shareable end-of-level picture.\n- Losses: each enemy that gets through wilts a lily in the pond, so lives are something you can see.\n- Why this theme:\n  - It is non-violent, which suits the 3x preference for non-military wins among women and older players, and the concerns parents raise.\n  - It suits ASMR audio: water, wooden gate clacks and chimes tuned to a pentatonic scale.\n  - It looks nothing like the war and gacha art that dominates the grossing chart.\n- Art direction: prefer a refined paper-cut or risograph look with a dusk palette over saccharine cuteness, so adult strategy players do not dismiss it as a kids' game. Apple Design Award winners reward charm and craft, not graphical fidelity.\n\nTHE ONE TWIST\n- Tapping a wooden sluice gate at a junction flips it live, steering each group of Mopes into the channel whose towers suit it.\n- Three enemy families, each with its own shape, colour and behaviour, e.g. blue drop = fast, amber block = armoured, magenta star = splits into two when cheered.\n- Towers are soft counters, not immunities.\n- Constraints that make gate flipping a decision rather than a reflex:\n  - a per-gate cooldown of about 1s;\n  - enemies arrive in mixed groups;\n  - channels differ in length;\n  - kill zones fill up and saturate;\n  - later enemies jam a gate or split at it.\n- Some tower pads sit where channels run close together, so one tower can cover two lanes. This ties placement to routing.\n- Gate upgrades (faster swing, one auto-sort rule) compete with towers for money, which keeps tapping manageable as waves get denser.\n\nWHY THIS TWIST, JUDGED AGAINST THE OTHERS\n- It is the only candidate that is genuinely open in shipped TD: the BTD6 Workshop gimmick is on one map only, mazing games fix the route once a wave starts, and ChangePath is an unreviewed demo.\n- Its verb is proven on iPhone: Conduct THIS!, Anomaly, Railbound and Mini Metro.\n- It borrows the fastest-growing puzzle verb, sorting.\n- It uses discrete taps, so there are no drag-precision or finger-occlusion problems. The lens and path-drawing twists fail here.\n- It stays readable muted through gate arrows, water flow and lane tints. The rhythm twist fails here.\n- It sells in a 3-second App Store clip.\n- It targets the genre's main criticism ('more watching than doing') and BTD6 pain points: no mid-wave action and solved builds.\n\nCritically, the junction twist wins only if it is built with soft counters and throughput pressure. As a pure colour-to-tower match, it collapses into another sort puzzle in a saturated market.\n\nSLICE SCOPE\n- Length: one level of about 20 waves, 12-15 minutes, with an autosave after every wave.\n- Towers: four (a fast single-target tower, a heavy tower that cracks armour, a splash-and-slow mist tower, and a long-range support tower).\n  - Each has 2 upgrade paths of 3 tiers.\n  - Only one path can reach tier 3.\n- Enemies: 6-7 types, including a boss that splits at gates.\n- Map: 2-3 gates and 3-4 channels on one portrait screen.\n- Time controls: pause any time, with gate flipping allowed while paused in Standard mode, plus 1x and 2x speed.\n- Modes:\n  - Standard.\n  - Flow: hard, with no flipping while paused and no auto-sort.\n  - Relaxed.\n- Gate dock: a row of buttons in the bottom thumb zone mirrors every gate, showing its direction and icons for the next arrivals.\n\nKILL CRITERIA FOR THE PROTOTYPE\nRework the constraints before adding content if any of these happen:\n- players do not use gates unprompted by wave 3;\n- wins depend on towers alone;\n- routing becomes a single forced answer;\n- testers describe it as frantic.\n\nUnverified assumptions:\n- that sort-puzzle players will cross over to TD;\n- how well free-to-try converts on iOS.\n\nTest both before committing to an iOS build.",
+    "monetisation_plan": "MODEL: free to try, then a one-time unlock\n- The free download includes:\n  - the first waterway: the browser-slice level plus 2-3 short intro levels;\n  - all four towers and all upgrade paths within that waterway;\n  - no ads.\n- A single non-consumable 'Full Garden' unlock costs $6.99 (test $5.99-7.99). It opens:\n  - all launch waterways;\n  - Flow (challenge) mode;\n  - the daily seeded challenge;\n  - Relaxed mode.\n- The unlock screen lists exactly what the purchase adds, as Guideline 3.1.1 requires for trial-style offers.\n- Rationale:\n  - BTD6 ($6.99, 4.9 stars from 348K ratings) and Balatro ($9.99, #2 US paid in 2025) show that paying $7-10 once is accepted.\n  - Paid apps get only about 4% of mobile downloads.\n  - Isle of Arrows ($5.99, 272 ratings) shows how little reach a paid-only indie TD gets.\n  - Thronefall's iOS port is free to try.\n  - No verified conversion data exists for free-plus-unlock games, so measure it in soft launch.\n\nAFTER THE UNLOCK: optional spending, never power\n1. Waterway expansions at $4.99-9.99 every 4-6 months.\n   - Each adds a new junction mechanic (turntable, one-way valve, timed lock), 1-2 enemy families and a free playable preview level.\n   - Ship them only when stable: Rogue Legends sits at 45% positive after a buggy launch and a charge of rushed paid releases.\n   - Use regional pricing.\n2. Directly priced cosmetics at $1.99-3.99, sold for real money with no intermediate currency and no loot boxes:\n   - bloom sets (what Mopes turn into: cherry petals, paper lanterns, fireflies, snow);\n   - keeper (tower) skins;\n   - canal and gate themes;\n   - ASMR sound packs.\n3. Prestige cosmetics earned only through skill, following BTD6's Trophy Store: rewards from Flow mode, weekly restriction challenges and boss events.\n4. An optional $2.99-4.99 Supporter Pack at launch for players who simply want to pay.\n5. Later, only once retention is proven:\n   - a free seasonal event track with cosmetic rewards;\n   - an optional paid cosmetic track at $3-5;\n   - past cosmetics return later, so there is no fear-of-missing-out pressure.\n\nHARD RULES (each backed by the findings)\n- No energy, stamina or lives timers. They lock players out of retries at exactly the wrong moment.\n- No forced, interstitial or banner ads. One disruptive ad raises churn 6-7%, and 52% of players quit after repeated exposure.\n- If a free-tier ad is ever tested, make it a single opt-in rewarded ad at the end of a level only, removed permanently by any purchase.\n- Never sell towers, upgrade paths, boosts or starting cash. Kingdom Rush 5's paywalled towers drew backlash, and 'microtransactions in a paid game' is the top cluster in BTD6's negative reviews.\n- Never charge for anything that was previously free (BTD6's 2020 Monkey Knowledge backlash).\n- No loot boxes, which parents object to. Keep Flow mode and leaderboards pure: no purchased advantages.\n- iCloud save from day one, because lost progress is a top complaint in reviews.\n\nPLATFORM ECONOMICS\n- Join the App Store Small Business Program for 15% commission from day one.\n- Keep StoreKit IAP as the default purchase path.\n- A US link-out web shop is an optional later experiment. It is 0% now, Apple has proposed 5% for Small Business Program members, and Apple leadership reportedly wants higher margins, so do not forecast on it.\n- Treat Apple Arcade as a possible later upfront deal for an all-inclusive '+' edition, run alongside the paid app, as Balatro and Kingdom Rush 5 do. Do not treat it as the business: payouts are opaque and falling.\n- Avoid depending on Netflix, which removed many premium indies in 2025.\n\nDISCOVERY (the biggest risk)\n- Release on Steam at the same time as iOS and enter Steam TD Fest in March.\n- Market through creators and streamers, as Thronefall and Tangy TD did.\n- Aim for App Store editorial features through Apple Design Award-style craft: per-action haptics, a distinctive art style and snappy controls.\n- Use portrait screenshots in which frame 1 shows a finger flipping a gate as the coloured stream splits.\n- iOS paid installs cost about $1.41 each, so do not rely on paid user acquisition.\n\nWHY PLAYERS RETURN\n- 12-15 minute levels that fit a session.\n- A daily seeded challenge and a weekly restriction challenge.\n- Star and mastery goals on each level.\n- A bloom journal to collect, and a garden that visibly grows.\n- A steady cadence of new waterways.\n\nEXPECTATIONS\nPlan for a modest long tail. After seven years and huge amounts of content, BTD6 earns about $60-106K per Sensor Tower reporting period from paid iOS sales. Do not quote third-party 'market size' figures; they disagree by about 3x.",
+    "design_lessons": [
+      "Keep the surface accessible and the depth underneath: a few towers, each with distinct upgrade forks, soft counters and synergy with other towers. BTD6 is praised for exactly this. Depth per tower matters more than tower count.",
+      "Avoid lock-and-key counters. Sending an enemy down the wrong channel should cost efficiency, not guarantee it gets through, so several builds and routing styles can win. This follows Doucet's Defender's Quest lessons and answers BTD6 veterans' complaints about a solved meta.",
+      "Maximise planning time and minimise time spent just watching. Give the player a handful of meaningful in-wave choices per wave, each with a visible consequence, and avoid tap-spam. Conduct THIS! was widely called too hard; Anomaly-style planning while paused fixes that.",
+      "Teach through play:\n- first tower within about 10s, first enemy defeated by about 20s, first wave cleared by about 60s;\n- one new idea per wave for the first 4-5 waves, the TD equivalent of Color Block Jam's intro levels;\n- at most two contextual prompts and no walls of text.",
+      "Telegraph the twist completely:\n- each gate shows its current direction with a big arrow and visible water flow;\n- each gate previews its next 2-3 arrivals as icons;\n- routing is fully deterministic.\nThis is also the readability layer when sound is muted.",
+      "Treat readability as a system:\n- every enemy family has a unique silhouette, colour and behaviour, never colour alone (Apple HIG);\n- use a colour-blind-safe trio of hues;\n- set budgets for entities and particles;\n- late-game power should concentrate into fewer, bigger effects;\n- bloom debris sits on a quieter visual layer than live enemies.",
+      "Tie placement to routing:\n- put some tower pads where two channels run close, so a tower can cover both lanes;\n- give channels different lengths, so choosing a route means trading exposure against speed.",
+      "Keep tapping manageable as waves densify. Make limited gate automation a paid upgrade that competes with towers for money (for example one auto-sort rule per gate, as with Rail Route's sensors), and keep manual override so the twist never disappears.",
+      "Shape sessions for phones:\n- waves of 30-60s and a level of 12-15 minutes;\n- autosave after every wave, with instant resume;\n- the player starts each wave, with an early-call bonus;\n- pause anywhere, 1x and 2x speed.",
+      "Design for portrait and one thumb:\n- controls in the bottom third, with touch targets of at least 44pt;\n- a gate dock of buttons in the thumb zone mirrors every gate;\n- the placement ghost is offset above the finger, with nudge and confirm-on-release.\nThe core verb should need no drag precision, unlike Galaxy Defense, which is marketed as portrait but needs two hands.",
+      "Layer the feedback ('juice') and ASMR so each event lands at once in sight, sound and touch:\n- each material gets its own sound, with 3-5 variants and small pitch changes (Unpacking's foley approach);\n- tower hits are tuned to a musical scale over a calm music bed (Mini Motorways);\n- haptics are sparing and optional: placement, upgrade, wave cleared, enemy getting through.",
+      "Make consequences readable:\n- floating markers show where enemies got through;\n- the loss screen shows which gate decision or tower choice would have stopped them.\nThis turns failure into a wish to try a different strategy.",
+      "Build replay into one map:\n- several workable ways to assign tower families to channels;\n- star and mastery goals;\n- restriction challenges and daily seeded modifiers.\nBTD6 veterans say weekly challenges, not the campaign, keep them playing.",
+      "Offer three difficulty levels:\n- Relaxed, for calm players;\n- Standard;\n- a pure Flow challenge with no flipping while paused and no purchases, like BTD6's CHIMPS mode.",
+      "Make progress visible: the garden blooms as you play, and an end-of-level picture of the garden gives players something to share, as Mini Motorways players shared their cities.",
+      "Win featuring with a distinctive handmade art direction rather than fidelity. Avoid saccharine cuteness so adult strategy players take the game seriously.",
+      "Budget simulation cost as well as rendering, so late waves hold their frame rate on older iPhones. BTD6's late-game lag comes from calculations, not graphics.",
+      "Prototype metrics to track:\n- time to first tower;\n- share of players who clear wave 1 without help;\n- whether players use a gate unprompted by wave 3;\n- whether routing quality measurably changes the outcome;\n- whether a busy wave stays readable at 375px wide with sound muted;\n- whether players start a second run with a different build."
+    ],
+    "pain_points_to_solve": [
+      "TD's 'more watching than doing' problem: little in-wave agency beyond ability buttons.",
+      "Long rounds: BTD6 games often run 30+ minutes, CHIMPS runs can take 2+ hours, and 100+ round runs cause burnout.",
+      "No way to pause mid-wave and act in BTD6. Pausing and issuing commands should be standard.",
+      "Solved meta and repeated builds. The variety exists, but players do not discover it without prompts.",
+      "Late-game clutter and slowdown from too many projectiles and entities.",
+      "On phones the finger covers the placement spot, and 'one-handed' portrait TD games often need two hands in practice.",
+      "Paywalled towers and heroes on top of the purchase price: Kingdom Rush 5 on mobile costs about $48 with everything unlocked, against about $20 on PC.",
+      "Microtransactions and currency inside a paid game (the top cluster in BTD6's negative reviews), and charging for things that used to be free.",
+      "Energy and stamina systems that lock players out of retrying after a loss.",
+      "Forced ads between waves and after matches. Disruptive ads measurably drive churn.",
+      "Loot boxes and gambling-style mechanics that parents object to.",
+      "Lost progress on reinstall or device change because there is no reliable cloud save.",
+      "Buggy paid DLC launches, prices only in US dollars, and paid content released too quickly.",
+      "Real-time switching games that feel too hard (Conduct THIS!) and randomness with no undo (Isle of Arrows).",
+      "Complexity that confuses younger or newer players, with little guidance on what to try next.",
+      "Very large installs (Arknights is about 28GB) and games that need a connection instead of working fully offline.",
+      "Poor discoverability for premium indie TD on iOS (Isle of Arrows has 272 ratings against BTD6's roughly 348K)."
+    ],
+    "key_links": [
+      {
+        "title": "Bloons TD 6 - US App Store listing",
+        "url": "https://apps.apple.com/us/app/bloons-td-6/id1118115766",
+        "why": "Benchmark for price ($6.99), IAPs and ratings for premium TD on iOS."
+      },
+      {
+        "title": "BusinessDesk: Ninja Kiwi FY2023 revenue",
+        "url": "https://www.threads.com/@businessdesknz/post/C-QlorDyqYs?hl=en",
+        "why": "In-app spending (NZ$42m) outearned game sales (NZ$27m), so post-purchase content matters."
+      },
+      {
+        "title": "Sensor Tower: US Android top-5 TD revenue, Q2 2025",
+        "url": "https://sensortower.com/blog/2025-q2-android-top-5-tower%20defense%20games-revenue-us-6012932d241bc16eb85e0db8",
+        "why": "All top-grossing TD games are combat or gacha themed, which leaves the cozy and puzzle audience unserved."
+      },
+      {
+        "title": "GameDiscover: How Thronefall went minimal",
+        "url": "https://newsletter.gamediscover.co/p/deep-dive-how-thronefall-went-minimal",
+        "why": "Evidence that minimal, short-session TD for time-poor adults sells."
+      },
+      {
+        "title": "The King is Watching (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/The_King_is_Watching",
+        "why": "A single in-wave verb as the twist sold 500K+ copies. It is also the precedent for the attention-lens twist."
+      },
+      {
+        "title": "Isle of Arrows - App Store",
+        "url": "https://apps.apple.com/us/app/isle-of-arrows-tower-defense/id1607942817",
+        "why": "Shows how little reach a paid-only indie TD gets on iOS: 272 ratings."
+      },
+      {
+        "title": "Quantic Foundry: The decline of strategy",
+        "url": "https://quanticfoundry.com/2024/05/21/strategy-decline/",
+        "why": "Players now prefer shorter planning horizons, which supports short-horizon in-wave decisions."
+      },
+      {
+        "title": "mobilegamer.biz: Pixel Flow hits $100M",
+        "url": "https://mobilegamer.biz/data-digest-pixel-flow-hits-100m-mays-top-games-neverness-to-everness-pokemon-go-more/",
+        "why": "Colour-sorting shooters are the hottest mobile puzzle verb, and the game uses fixed rules with no rewarded skips."
+      },
+      {
+        "title": "Sensor Tower: US top-5 puzzle revenue, Q4 2025",
+        "url": "https://sensortower.com/blog/2025-q4-unified-top-5-puzzle-games-revenue-us-64bc1644e1714cfff1e615fc",
+        "why": "Sort and jam puzzles sit at the top of the US puzzle revenue chart."
+      },
+      {
+        "title": "GameDev Reports: AppMagic casual games H1 2026",
+        "url": "https://gamedevreports.substack.com/p/appmagic-mobile-casual-games-in-h1",
+        "why": "Shows sort puzzles growing fast but saturated, so real TD depth has to be the differentiator."
+      },
+      {
+        "title": "itch.io cozy + tower defence tag",
+        "url": "https://itch.io/games/tag-cozy/tag-tower-defense",
+        "why": "Cozy TD is scarce and mostly on PC, with no mobile or portrait entrant."
+      },
+      {
+        "title": "Bloons Wiki: Workshop map (BTD6)",
+        "url": "https://www.bloonswiki.com/Workshop_(BTD6)",
+        "why": "The only live rerouting in BTD6 is a one-map gimmick, which confirms the novelty of the junction twist."
+      },
+      {
+        "title": "ChangePath demo (itch.io)",
+        "url": "https://softanger.itch.io/changepath-demo",
+        "why": "The nearest rival for live rerouting is an unreviewed prototype."
+      },
+      {
+        "title": "Anomaly: Warzone Earth (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Anomaly:_Warzone_Earth",
+        "why": "Live junction choices with a pause-to-plan map won an Apple Design Award and iOS Metacritic 94."
+      },
+      {
+        "title": "Conduct THIS! - App Store",
+        "url": "https://apps.apple.com/us/app/conduct-this-train-action/id1151455384",
+        "why": "The tap-to-switch verb is proven on iPhone. Warns about difficulty and paywall backlash."
+      },
+      {
+        "title": "Railbound (Wikipedia)",
+        "url": "https://en.wikipedia.org/wiki/Railbound",
+        "why": "A routing puzzle with switches won Apple's Design Award for Interaction, so Apple may feature this kind of play."
+      },
+      {
+        "title": "Rail Route - Steam",
+        "url": "https://store.steampowered.com/app/1124180/Rail_Route/",
+        "why": "Live dispatching in waves, with automation through sensors: a model for gate-automation upgrades."
+      },
+      {
+        "title": "Doucet: Optimizing TD for focus and thinking",
+        "url": "https://www.gamedeveloper.com/design/optimizing-tower-defense-for-focus-and-thinking---defender-s-quest",
+        "why": "Recommends pausing while giving commands, time controls, full information and no lock-and-key towers."
+      },
+      {
+        "title": "Steam: BTD6 veterans on the solved meta",
+        "url": "https://steamcommunity.com/app/960090/discussions/0/560232608049426404/?l=english",
+        "why": "Veterans report every mode but CHIMPS is trivial and builds repeat. Replay variety must be designed in."
+      },
+      {
+        "title": "Pocket Gamer: Kingdom Rush 5 review",
+        "url": "https://www.pocketgamer.com/kingdom-rush-5-alliance/review/",
+        "why": "Cautionary example of paywalling towers and heroes on top of a purchase price."
+      },
+      {
+        "title": "App Store Review Guidelines",
+        "url": "https://developer.apple.com/app-store/review/guidelines/",
+        "why": "Guideline 3.1.1 sets the disclosure rules for free-trial unlocks and loot-box odds."
+      },
+      {
+        "title": "BTD6 Trophy Store",
+        "url": "https://bloons.fandom.com/wiki/Trophy_Store",
+        "why": "Prestige cosmetics earned only through skill, a model players see as fair."
+      },
+      {
+        "title": "Pocket Tactics: premium mobile games increase",
+        "url": "https://www.pockettactics.com/premium-mobile-games-increase",
+        "why": "Premium games take only about 4% of mobile downloads, which argues for free-to-try."
+      },
+      {
+        "title": "Game Developer: the audio of Unpacking",
+        "url": "https://www.gamedeveloper.com/marketing/auditory-tales-from-the-making-of-zen-puzzler-unpacking",
+        "why": "Blueprint for ASMR sound effects that vary by material and keep variety cheap to produce."
+      },
+      {
+        "title": "Apple HIG: Designing for games",
+        "url": "https://developer.apple.com/tutorials/data/design/human-interface-guidelines/designing-for-games.json",
+        "why": "Teach through play, 44pt touch targets, never rely on colour alone, and options for motion and sound."
+      }
+    ]
+  }
+}

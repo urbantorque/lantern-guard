@@ -1,0 +1,17 @@
+{
+  "relaxed:balanced + routing": "f792630fcbe0752bc2ede6b5432420c322bcd6027bae7469bcfeaaf57564093c",
+  "relaxed:balanced, no routing": "dd12cd9d4e1c4791994cae4c4dde0a44c72657caa4bed085705240d5bb2c5fed",
+  "relaxed:sparks + bells + routing": "e0904d9ef09dbac6077f4d99492b6bc6e1d5ece770c80316c881364648412e87",
+  "relaxed:garden economy + routing": "1789e8f0f2719c44ac7f66a965addd39ff9071cda447010fc4f632a372193598",
+  "relaxed:careful sorter, beams": "98e5e551cdfcb70c41a2278ce9274b55779b9b2da8260db38b5500d733b88eb7",
+  "standard:balanced + routing": "cb8fda3f042a87d5bf077524302bb5708c280a7c7e8da5c8a564c7d4540fd8e3",
+  "standard:balanced, no routing": "f31ff96e5c60ed9abed53d7c290b53b5ff0d0904f1965a4ad0a38a26ea5cd81c",
+  "standard:sparks + bells + routing": "efaf0827fef2d18aff3773688546b381ba496faf37fa6d0a4fcef48d72373e61",
+  "standard:garden economy + routing": "2794b67ee6f23e5d7800721862ec01e3f8de47db5786401dca00d9331b193eb5",
+  "standard:careful sorter, beams": "48f65180b21f5f9af2b09948e8cb81ff7c8d9eff4ee686b9f53aff90eaf68bc4",
+  "nightfall:balanced + routing": "76d933816a7bce5700a246e5452e3ebba6e7d4f6a14ab2894b190421607c2715",
+  "nightfall:balanced, no routing": "7b16c0c8aa4089b3737923b7fca345576c2ba518f69f028ee222d9561ed66711",
+  "nightfall:sparks + bells + routing": "ad300cfcd7a7d3a223b16203eff705320f207089f480a636709f2d0b60092600",
+  "nightfall:garden economy + routing": "795feeaad53ab1b5286d7b3f6792c03317bf11bb6824e57f0f3a472e8375e615",
+  "nightfall:careful sorter, beams": "d4cdd5ace5318dd41a03886c84081c3ef1ec00822094de8d1ff32c666a7f9eea"
+}

@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#081319" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="description" content="Lanternlocks: flip the canal locks, sort the grumpy Mopes, keep the Great Lantern lit. A cozy puzzle-defence prototype." />
+    <title>Lanternlocks</title>
+    <link rel="icon" href="./icon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <div id="app">
+      <main id="stage" aria-label="Lanternlocks">
+        <header id="hud">
+          <div class="stat stat-light" title="Light: Mopes that reach the Great Lantern dim it">
+            <span class="stat-ic" id="ic-light"></span><b id="lives">25</b><span class="sr-only"> light</span>
+          </div>
+          <div class="stat stat-glow" title="Glow: spend it on keepers and upgrades">
+            <span class="stat-ic" id="ic-glow"></span><b id="glow">320</b><span class="sr-only"> glow</span>
+          </div>
+          <div class="stat stat-wave"><span class="lbl">Wave</span><b id="wave">0</b><span class="of">/25</span></div>
+          <div class="hud-btns">
+            <button id="btn-speed" class="hud-btn" aria-label="Game speed: 1x">1x</button>
+            <button id="btn-pause" class="hud-btn" aria-label="Pause"></button>
+          </div>
+        </header>
+        <section id="field">
+          <canvas id="cv" tabindex="0" role="application" aria-roledescription="canal map" aria-label="Canal map" aria-describedby="map-help"></canvas>
+          <p id="map-help" class="sr-only">Tap pads to build keepers and lock gates to steer Mopes. With a keyboard: arrow keys move between pads and locks, Enter selects or flips, 1 to 6 builds on a selected pad, H opens charms for a lock.</p>
+          <div id="paused-chip" role="status" hidden></div>
+          <div id="msgs">
+            <div id="banner" role="status" aria-live="polite"></div>
+            <div id="toast" role="status" aria-live="polite"></div>
+          </div>
+        </section>
+        <footer id="dock">
+          <div id="planbar">
+            <div id="next-preview"></div>
+            <button id="btn-charms" class="plan-btn" aria-label="Lock charms"></button>
+            <button id="btn-go" class="go"><span class="go-ic"></span><span class="go-txt">Start wave 1</span></button>
+          </div>
+          <div id="tray" aria-label="Keepers"></div>
+          <div id="canal-progress" role="status" hidden></div>
+          <div id="gates" aria-label="Lock gates"></div>
+          <div id="sheet" hidden></div>
+        </footer>
+      </main>
+      <div id="overlay" hidden></div>
+      <p id="sr-live" class="sr-only" aria-live="polite"></p>
+    </div>
+    <script type="module" src="./src/main.ts"></script>
+  </body>
+</html>
