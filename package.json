@@ -14,6 +14,7 @@
     "test:growth": "tsx scripts/growth-test.ts",
     "test:guard": "tsx scripts/guard-test.ts",
     "test:journey": "tsx scripts/journey-test.ts",
+    "test:refinement": "tsx scripts/refinement-test.ts",
     "balance:journey": "tsx scripts/journey-balance.ts",
     "balance:growth": "tsx scripts/growth-balance.ts",
     "balance:guard": "tsx scripts/guard-balance.ts",
@@ -21,7 +22,7 @@
     "balance:reedbank": "tsx scripts/waterway-balance.ts",
     "ios:sync": "npm run build && cap sync ios",
     "ios:open": "cap open ios",
-    "check": "npm run typecheck && npm test && npm run test:release && npm run test:growth && npm run test:guard && npm run test:journey && npm run test:integrity",
+    "check": "npm run typecheck && npm test && npm run test:release && npm run test:growth && npm run test:guard && npm run test:journey && npm run test:refinement && npm run test:integrity",
     "qa:fixtures": "tsx scripts/qa-fixtures.ts"
   },
   "type": "module",

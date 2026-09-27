@@ -1,3 +1,4 @@
+import refinementFixtures from './refinement-fixtures.json'
 import fixtures from './fixtures.json'
 import growthFixtures from './growth-fixtures.json'
 import guardFixtures from './guard-fixtures.json'
@@ -16,7 +17,7 @@ const backup = () => {
 document.querySelectorAll<HTMLButtonElement>('[data-fixture]').forEach(b => b.onclick = () => {
   backup()
   saveSettings({ ...loadSettings(), muted: true })
-  const all: Record<string, unknown> = { ...fixtures, ...growthFixtures, ...guardFixtures, ...journeyFixtures, ...continuityFixtures }
+  const all: Record<string, unknown> = { ...fixtures, ...growthFixtures, ...guardFixtures, ...journeyFixtures, ...continuityFixtures, ...refinementFixtures }
   const snapshot = all[b.dataset.fixture!] as SaveSnapshot
   selectSlot(snapshot.challenge.id ? 'challenge' : 'campaign')
   clearRun()

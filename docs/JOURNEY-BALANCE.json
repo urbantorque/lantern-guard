@@ -61,24 +61,24 @@
       "leaks": {
         "veil": 4
       },
-      "flips": 224,
+      "flips": 223,
       "towers": "wick31 wick31 cracker21 cracker21 owl31 cracker21 beam12 owl31 beam12 bell31 beam12 bell31 owl21 wick31 wick31 beam12 wick31 owl21 wick31 beam12",
-      "minutes": 23.9,
+      "minutes": 24.1,
       "waveLeaks": {},
       "spent": 7720,
       "margin": {
         "26": 95,
         "27": 43,
         "28": 24,
-        "29": 57,
-        "30": 48,
-        "31": 13,
-        "32": 31,
+        "29": 59,
+        "30": 40,
+        "31": 18,
+        "32": 34,
         "33": 13
       },
       "richLeak": 0,
-      "bank": 505,
-      "earned": 21267,
+      "bank": 539,
+      "earned": 21252,
       "gloom": "-"
     },
     "frozen": {
@@ -158,16 +158,16 @@
       "margin": {
         "26": 107,
         "27": 89,
-        "28": 81,
+        "28": 80,
         "29": 102,
         "30": 90,
-        "31": 43,
-        "32": 58,
-        "33": 47
+        "31": 48,
+        "32": 57,
+        "33": 53
       },
       "richLeak": 0,
-      "bank": 358,
-      "earned": 20478,
+      "bank": 357,
+      "earned": 20486,
       "gloom": "-"
     },
     "frozen": {
@@ -243,13 +243,13 @@
         "28": 93,
         "29": 99,
         "30": 97,
-        "31": 83,
+        "31": 86,
         "32": 94,
         "33": 96
       },
       "richLeak": 0,
       "bank": 915,
-      "earned": 19256,
+      "earned": 19268,
       "gloom": "-"
     },
     "frozen": {
@@ -321,7 +321,7 @@
       "leaks": {
         "veil": 10
       },
-      "flips": 206,
+      "flips": 210,
       "towers": "wick31 wick31 cracker21 cracker21 owl31 cracker21 beam12 owl31 beam12 bell31 beam12 bell31 owl21 wick31 wick31 beam12 wick31 owl21 wick31 beam12",
       "minutes": 23.4,
       "waveLeaks": {},
@@ -331,14 +331,14 @@
         "27": 48,
         "28": 35,
         "29": 70,
-        "30": 49,
-        "31": 11,
-        "32": 31,
-        "33": 13
+        "30": 48,
+        "31": 19,
+        "32": 28,
+        "33": 21
       },
       "richLeak": 0,
-      "bank": 466,
-      "earned": 21245,
+      "bank": 505,
+      "earned": 21197,
       "gloom": "-"
     },
     "frozen": {
@@ -410,24 +410,24 @@
       "leaks": {
         "veil": 10
       },
-      "flips": 136,
+      "flips": 134,
       "towers": "wick31 wick31 cracker21 cracker21 owl31 beam12 beam12 owl21 beam12 beam12 beam12 beam12 owl21 beam12 beam12 beam12 beam12 owl21 beam12 beam12",
-      "minutes": 19.7,
+      "minutes": 19.8,
       "waveLeaks": {},
       "spent": 6780,
       "margin": {
         "26": 107,
         "27": 89,
-        "28": 81,
+        "28": 80,
         "29": 102,
-        "30": 91,
-        "31": 42,
-        "32": 58,
-        "33": 47
+        "30": 96,
+        "31": 48,
+        "32": 57,
+        "33": 53
       },
       "richLeak": 0,
-      "bank": 311,
-      "earned": 20496,
+      "bank": 347,
+      "earned": 20522,
       "gloom": "-"
     },
     "frozen": {
@@ -503,9 +503,9 @@
         "28": 93,
         "29": 99,
         "30": 97,
-        "31": 83,
+        "31": 86,
         "32": 94,
-        "33": 96
+        "33": 95
       },
       "richLeak": 0,
       "bank": 832,
@@ -634,24 +634,24 @@
       "leaks": {
         "veil": 6
       },
-      "flips": 155,
-      "towers": "wick31 wick31 cracker21 cracker21 owl31 beam12 beam12 owl31 beam12 beam12 beam12 beam12 owl21 beam12 beam12 beam12 beam12 owl21 beam12 beam12",
-      "minutes": 20.7,
+      "flips": 157,
+      "towers": "wick31 wick31 cracker21 cracker21 owl31 beam12 beam12 owl21 beam12 beam12 beam12 beam12 owl21 beam12 beam12 beam12 beam12 owl21 beam12 beam12",
+      "minutes": 20.8,
       "waveLeaks": {},
-      "spent": 7540,
+      "spent": 6780,
       "margin": {
         "26": 111,
         "27": 87,
         "28": 79,
         "29": 102,
         "30": 87,
-        "31": 38,
+        "31": 45,
         "32": 57,
-        "33": 31
+        "33": 29
       },
       "richLeak": 0,
       "bank": 322,
-      "earned": 20827,
+      "earned": 20655,
       "gloom": "-"
     },
     "frozen": {
@@ -717,19 +717,19 @@
       "maxLives": 15,
       "leaks": {},
       "flips": 116,
-      "towers": "wick13 wick13 cracker11 cracker11 owl11 beam13 beam13 owl11 bell11 bell11 beam13 beam13 owl11 beam13 beam02 beam01 beam01 owl11 beam01 beam01",
-      "minutes": 23.8,
+      "towers": "wick13 wick13 cracker11 cracker11 owl11 beam13 beam13 owl11 bell11 bell11 beam13 beam13 owl11 beam13 beam01 beam01 beam01 owl11 beam01 beam01",
+      "minutes": 23.9,
       "waveLeaks": {},
-      "spent": 6600,
+      "spent": 6240,
       "margin": {
         "26": 135,
         "27": 96,
         "28": 91,
         "29": 98,
         "30": 97,
-        "31": 82,
+        "31": 83,
         "32": 91,
-        "33": 83
+        "33": 80
       },
       "richLeak": 0,
       "bank": 200,
@@ -857,24 +857,24 @@
       "leaks": {
         "veil": 6
       },
-      "flips": 189,
+      "flips": 191,
       "towers": "wick31 wick31 cracker21 cracker21 owl31 beam12 beam12 owl31 beam12 beam12 beam12 beam12 owl21 beam12 beam12 beam12 beam12 owl21 beam12 beam12",
-      "minutes": 21.3,
+      "minutes": 21.6,
       "waveLeaks": {},
       "spent": 7540,
       "margin": {
         "26": 110,
         "27": 86,
-        "28": 77,
+        "28": 79,
         "29": 101,
-        "30": 77,
-        "31": 40,
+        "30": 49,
+        "31": 46,
         "32": 57,
-        "33": 28
+        "33": 2
       },
       "richLeak": 0,
-      "bank": 407,
-      "earned": 21010,
+      "bank": 314,
+      "earned": 20929,
       "gloom": "-"
     },
     "frozen": {
@@ -939,24 +939,24 @@
       "lives": 15,
       "maxLives": 15,
       "leaks": {},
-      "flips": 120,
-      "towers": "wick13 wick13 cracker11 cracker11 owl11 beam13 beam13 owl11 bell11 bell11 beam13 beam13 owl11 beam13 beam02 beam01 beam01 owl11 beam01 beam01",
+      "flips": 118,
+      "towers": "wick13 wick13 cracker11 cracker11 owl11 beam13 beam13 owl11 bell11 bell11 beam13 beam13 owl11 beam13 beam01 beam01 beam01 owl11 beam01 beam01",
       "minutes": 24,
       "waveLeaks": {},
-      "spent": 6600,
+      "spent": 6240,
       "margin": {
         "26": 135,
         "27": 96,
         "28": 91,
         "29": 98,
         "30": 97,
-        "31": 82,
+        "31": 83,
         "32": 91,
-        "33": 83
+        "33": 80
       },
       "richLeak": 0,
       "bank": 961,
-      "earned": 19328,
+      "earned": 19304,
       "gloom": "-"
     },
     "frozen": {

@@ -1,5 +1,7 @@
 # Next three refinement priorities
 
+The subsequent approved batch adds planning relocation, clearer upgrade specialisations and versioned Harbour encounters. See [defence refinements and verification](DEFENCE-REFINEMENTS.md). The existing balance matrix now reflects those encounters.
+
 Status: the approved follow-on roadmap is now implemented: guided placement and factual loss feedback, separate campaign/challenge saves, planning retries, eight Harbour waves with the existing defence, an optional Ember guardian, and current-rule challenges. See [journey implementation and evidence](JOURNEY.md). Observed newcomer/retention testing and physical iPhone validation remain outstanding. The recommendations below preserve the original acceptance targets.
 
 ## 1. Make the board clear and make routing earn its place

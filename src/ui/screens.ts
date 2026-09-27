@@ -188,7 +188,7 @@ export class Screens {
     const save = loadRun('campaign')
     const challengeSave = loadRun('challenge')
     const name = save?.challenge.id ? (offerFor(save.challenge.id)?.name ?? 'Challenge') : save ? DIFFICULTY[save.difficulty].name : ''
-    const nextWave = save ? save.wave + (save.v === 2 && (save.over || save.waveAlive.length) ? 0 : 1) : 1
+    const nextWave = save ? save.wave + (save.v === 2 && (save.over || save.enemies.length || save.spawners.length) ? 0 : 1) : 1
     this.show(
       `<div class="card title-card simple-title">
         <canvas class="key-art" aria-hidden="true"></canvas>
@@ -625,6 +625,7 @@ export class Screens {
         ${row('waves', 'Grow the same defence', 'Start at Lantern bend. Before wave 6 the upper canal opens; before wave 11 the west inlet opens. Your towers and upgrades stay in place. New tower choices arrive a few at a time.')}
         ${row('swap', guard ? 'Plan your routes' : 'Steer with the locks', guard ? 'Between waves, tap a lock to compare both routes and the towers covering them. Your choice stays set. During combat, tap to switch quickly; hold a lock or pause to compare routes.' : 'Tap a lock, or its button at the bottom, to send Mopes down the other channel. Flowing water and the arrow show where they will go.')}
         ${row('flower', 'Long loops or short runs', guard ? 'Long loops give towers more firing time. Short routes mark Mopes with a gold ring: double glow when defeated, double light lost if they escape, wherever they finish. The bonus never stacks. The bridge reveals Veils; the mill cracks armour.' : 'Long loops give more firing time. Defeats on short runs pay double glow; any Mope that took one costs double light on escape. The bridge reveals Veils; the mill cracks shells.')}
+        ${guard && !this.app.sim.isChallenge ? row('swap', 'Move between waves', 'Select a tower, open Manage, then Move. Choose an empty pad to preview its reach and confirm for 25 glow. Upgrades and progress stay with it. Cancel is free; you can switch Harbour and Canal views while choosing.') : ''}
         ${row('sparkle', 'Combine your towers', 'Moonbell slows groups for Cracker bursts. Lamp Owl reveals hidden targets for nearby attackers. Select a tower to see shared coverage. Matching a Mope’s colour and symbol also deals 1.5× damage.')}
         ${!guard ? row('star', 'Charms', 'Charms make a lock always send one kind of Mope the same way, whatever the arrow says. Open them from the Charms button, or press and hold a lock.') : ''}
         ${row('heart', 'Keep the lantern lit', 'Mopes that reach the Great Lantern dim it. When the light runs out, the night is lost.')}

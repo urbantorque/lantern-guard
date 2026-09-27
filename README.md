@@ -10,6 +10,7 @@ New nights use one growing canal: Lantern bend first, the upper canal before wav
 - Research: [docs/research.json](docs/research.json) (raw findings with sources)
 - Balance results: [docs/balance-matrix.txt](docs/balance-matrix.txt) (full nights) and [docs/tides-matrix.txt](docs/tides-matrix.txt) (daily tides and weekly nights)
 - Path to the App Store: [docs/IOS-PLAN.md](docs/IOS-PLAN.md)
+- Planning relocation, tower specialisations and Harbour encounters: [docs/DEFENCE-REFINEMENTS.md](docs/DEFENCE-REFINEMENTS.md)
 - Next three refinement priorities: [docs/NEXT-PRIORITIES.md](docs/NEXT-PRIORITIES.md)
 - Proposed title and routing direction: [docs/POSITIONING-AND-ROUTING.md](docs/POSITIONING-AND-ROUTING.md)
 
@@ -37,6 +38,7 @@ Other scripts:
 | `npm run balance:growth` | 36 growing-canal nights across 6 strategies, 3 modes and 2 seeds |
 | `npm run balance:guard` | 44 Lantern Guard nights across 11 strategies, Standard/Nightfall and 2 seeds |
 | `npm run test:guard` | Versioned rules, route rewards, support interactions, save continuity and planning-only wins |
+| `npm run test:refinement` | Relocation resources/timers, destination auras, Warden phases, legacy Harbour rules and upgrade previews |
 | `npm run test:journey` | Separate saves, migrations, retry credit, Harbour continuity, guardian behaviour and current challenges |
 | `npm run balance:journey` | 12 guardian/difficulty/strategy openings, Harbour continuations with and without new investment, plus current daily/weekly checks |
 | `npm run balance:reedbank` | 48 nights across 8 strategies, 3 modes and 2 seeds |
@@ -52,7 +54,7 @@ Other scripts:
    - Short routes mark enemies with a gold ring: **double glow** when defeated, **double light lost** if they escape. Both effects follow them downstream; the bonus never stacks. The **Lantern bridge** reveals hidden Veils; the **Mill wheel** cracks armour.
 3. **Combine towers.** Moonbell slows groups for repeated Cracker bursts. Lamp Owl reveals targets for nearby attackers. Selecting a tower highlights the water it reaches and links to support partners sharing that water.
 4. **Use your towers' strengths.** Each keeper deals ×1.5 damage to Mopes with its colour and symbol. Sight and heavy attacks give alternatives to routing every enemy through a landmark.
-5. **Upgrade.** Tap a keeper. It has two paths: one can reach tier 3, the other stops at tier 1. **Manage** opens targeting and selling; the main panel shows upgrades and numerical benefits.
+5. **Upgrade.** Tap a keeper. It has two paths: one can reach tier 3, the other stops at tier 1. **Manage** opens targeting, moving and selling; the main panel explains each path and its upgrade effects. Between waves in an ordinary Guard night, **Move** previews a new empty pad before confirming for 25 glow. Upgrades and progress stay with the tower.
 6. **Pause any time** to plan. Nightfall allows building while paused, but live route changes require time to run. Call waves early for bonus glow. New threats and the final boss get a manual planning break. The game autosaves, even mid-wave.
 7. **Tides.** After your first night, Collection offers a daily tide (waves 15 to 25 of a seeded remix, built from a 4,700-glow bank) and a weekly night (the whole canal under one rule). Everyone gets the same ones; results can be shared as text.
 8. **Bloom journal.** Every Mope you cheer up is counted. Milestones mark each kind, and play earns bloom sets that change what the banks grow. At the end of a night you can share a postcard of the canal.

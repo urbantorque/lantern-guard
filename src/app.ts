@@ -5,6 +5,7 @@ import { canUpgrade, CHARM_COST, CHARM_ORDER, DIFFICULTY, ENEMIES, TOWER_ORDER, 
 import { CANAL_STAGES, KEEPER_HELP, KEEPER_ROLE, KEEPER_WAVE } from './game/canal-growth'
 import { comboHint, routeCoverage } from './game/route-plan'
 import { leakAdvice } from './game/feedback'
+import { wardenStatus } from './game/harbour'
 import {
   BLOOM_SETS,
   clearRun,
@@ -29,7 +30,7 @@ import {
   type SessionExtras,
   type Settings,
 } from './game/progress'
-import { DT, FINAL_WAVE, Sim, type Challenge, type GateState, type SimEvent, type Tower } from './game/sim'
+import { DT, FINAL_WAVE, RELOCATE_COST, Sim, type Challenge, type GateState, type SimEvent, type Tower } from './game/sim'
 import { offerFor, type ChallengeOffer } from './game/tides'
 import { asBloomStyle } from './render/blooms'
 import { resetEnemySprites } from './render/enemies'
@@ -39,7 +40,7 @@ import { incoming, Renderer, setHaptics, type Selection, type ViewState } from '
 import { PAD_R, towerPortrait } from './render/towers'
 import { clearIconCache, enemyIcon, towerIcon } from './ui/assets'
 import { icon } from './ui/icons'
-import { upgradeSummary } from './ui/upgrade'
+import { PATH_ROLE, upgradeSummary } from './ui/upgrade'
 import { isKeyboardMode, Screens } from './ui/screens'
 
 const $ = <T extends HTMLElement = HTMLElement>(id: string) => document.getElementById(id) as T
@@ -143,12 +144,16 @@ export class App {
     zone.className = 'zone-switch'
     zone.hidden = true
     zone.onclick = () => {
-      this.closeSheet()
+      if (!this.view.moving) this.closeSheet()
+      else this.view.moving.destination = null
       this.renderer.setHarbourView(!this.renderer.harbourView)
       this.cursor = -1
       this.refreshHud(true)
+      this.refreshDock(true)
     }
     $('field').appendChild(zone)
+    $('move-cancel').onclick = () => this.cancelMove()
+    $('move-confirm').onclick = () => this.confirmMove()
     const learn = document.createElement('div')
     learn.id = 'learn-bar'
     learn.hidden = true
@@ -512,6 +517,7 @@ export class App {
           // the wave note already introduces the boss; only announce it when it did not
           if (!ev.boss || this.noteWave === this.sim.wave) break
           if (ev.type === 'gloom') this.banner('Old Gloom rises', 'It splits in two at the Lower Lock.', 3600)
+          else if (ev.type === 'warden') this.banner('The Harbour Warden', this.sim.challenge.harbourEncounters ? 'Watch its signal and clear the linked escorts.' : 'It launches Skiffs and surges at half health.', 3600)
           else this.banner('Gloomtoad!', 'It jams any lock it sits on.', 2400)
           break
       }
@@ -556,7 +562,7 @@ export class App {
       this.sheetKey = ''
     }
     if ((this.persistPending && performance.now() - this.lastPersist > 1500) || (this.mode === 'play' && !this.paused && performance.now() - this.lastPersist > 5000)) this.persist(true)
-    if (this.mode === 'play' && this.settings.autoStart && !this.paused && !this.sim.lastLeak && this.sheetMode === 'none' && !this.sim.expansionPlanning && !this.sim.guardPlanning && this.sim.canStartWave() && !this.sim.waveActive && this.sim.wave > 0) {
+    if (this.mode === 'play' && this.settings.autoStart && !this.view.moving && !this.paused && !this.sim.lastLeak && this.sheetMode === 'none' && !this.sim.expansionPlanning && !this.sim.guardPlanning && this.sim.canStartWave() && !this.sim.waveActive && this.sim.wave > 0) {
       this.autoTimer += dt
       if (this.autoTimer > 1.4) {
         this.autoTimer = 0
@@ -619,6 +625,7 @@ export class App {
   // ------------------------------------------------------------------ actions
 
   startWave() {
+    if (this.view.moving) return
     if (this.mode !== 'play' || this.sim.over) return
     if (this.sim.canStartWave()) saveCheckpoint(this.sim, this.renderer.exportBlooms())
     const early = this.sim.earlyBonus()
@@ -635,6 +642,55 @@ export class App {
       if (this.paused) this.setPaused(false)
       this.updateCoach()
     }
+  }
+
+  private beginMove(tower: Tower) {
+    if (!this.sim.canRelocate(tower)) return
+    if (this.sim.glow < RELOCATE_COST) { this.toast(`Moving costs ${RELOCATE_COST} glow.`); return }
+    this.closeSheet()
+    this.view.armed = null
+    this.view.hint = null
+    this.view.moving = { tower, destination: null, fromHarbour: this.renderer.harbourView }
+    this.clearMessages()
+    this.refreshDock(true)
+    this.refreshHud(true)
+    if (isKeyboardMode()) { this.cursor = -1; $('cv').focus() }
+  }
+
+  private previewMove(index: number) {
+    const moving = this.view.moving
+    if (!moving) return
+    if (!this.sim.padAvailable(index) || this.sim.pads[index]?.tower) {
+      moving.destination = null
+      this.refreshDock(true)
+      this.toast('Choose an empty stone pad. Your tower stays put until you confirm.')
+      return
+    }
+    moving.destination = index
+    sound.tap()
+    this.refreshDock(true)
+  }
+
+  private cancelMove() {
+    const tower = this.view.moving?.tower
+    if (this.view.moving) this.renderer.setHarbourView(this.view.moving.fromHarbour)
+    this.view.moving = undefined
+    if (tower) this.select({ kind: 'tower', tower })
+    this.refreshDock(true)
+    this.refreshHud(true)
+  }
+
+  private confirmMove() {
+    const moving = this.view.moving
+    if (!moving || moving.destination === null) return
+    if (!this.sim.relocate(moving.tower, moving.destination)) { this.toast('That move is no longer available. Choose another empty pad.'); return }
+    this.view.moving = undefined
+    this.select({ kind: 'tower', tower: moving.tower })
+    sound.tap()
+    this.toast(`${moving.tower.def.name} moved. Upgrades and progress kept.`, 2200)
+    this.persist(true)
+    this.refreshDock(true)
+    this.refreshHud(true)
   }
 
   cycleSpeed() {
@@ -791,6 +847,7 @@ export class App {
   }
 
   select(sel: Selection) {
+    this.view.moving = undefined
     this.view.selection = sel
     this.view.routeDir = undefined
     if (!sel || sel.kind !== 'pad') this.view.preview = null
@@ -837,6 +894,7 @@ export class App {
   }
 
   closeSheet() {
+    this.view.moving = undefined
     this.view.selection = null
     this.view.preview = null
     this.view.upgradeRange = undefined
@@ -861,7 +919,7 @@ export class App {
       const r = cv.getBoundingClientRect()
       const w = this.renderer.toWorld(e.clientX - r.left, e.clientY - r.top)
       const hit = this.mode === 'play' ? this.renderer.pick(this.sim, w.x, w.y) : null
-      if (hit?.kind === 'gate' && (this.sim.charmsAllowed || this.sim.challenge.guard)) {
+      if (!this.view.moving && hit?.kind === 'gate' && (this.sim.charmsAllowed || this.sim.challenge.guard)) {
         this.pressGate = hit.gate
         this.pressTimer = LONG_PRESS
       }
@@ -966,6 +1024,7 @@ export class App {
     } else if (k === 'p') this.setPaused(!this.paused, !this.paused)
     else if (k === 'f') this.cycleSpeed()
     else if (k === 'escape') {
+      if (this.view.moving) { this.cancelMove(); return }
       this.view.armed = null
       this.closeSheet()
     }
@@ -1002,6 +1061,7 @@ export class App {
       }
       const [dx, dy] = dirs[k]
       const cur = targets[this.cursor]
+      if (!cur) { this.cursor = 0; return }
       let best = -1
       let bestScore = Infinity
       targets.forEach((t, i) => {
@@ -1023,6 +1083,11 @@ export class App {
     if ((k === 'enter' || k === ' ') && this.cursor >= 0) {
       e.preventDefault()
       const t = targets[this.cursor]
+      if (!t) return
+      if (this.view.moving) {
+        if (t.kind === 'pad') this.previewMove(t.index)
+        return
+      }
       this.sheetOpener = $('cv')
       if (t.kind === 'gate') this.chooseGate(t.gate)
       else {
@@ -1046,6 +1111,11 @@ export class App {
     if (this.mode !== 'play') return
     const w = this.renderer.toWorld(cx, cy)
     const sel = this.renderer.pick(this.sim, w.x, w.y)
+    if (this.view.moving) {
+      if (sel?.kind === 'pad') this.previewMove(sel.index)
+      else if (sel?.kind === 'tower') this.previewMove(sel.tower.pad)
+      return
+    }
     if (!sel) {
       this.view.armed = null
       this.closeSheet()
@@ -1073,6 +1143,7 @@ export class App {
   }
 
   private trayTap(id: TowerId, pointer: string) {
+    if (this.view.moving) return
     sound.unlock()
     const sel = this.view.selection
     if (sel?.kind === 'pad') {
@@ -1223,10 +1294,10 @@ export class App {
       b.innerHTML = icon(this.paused ? 'play' : 'pause')
       b.setAttribute('aria-label', this.paused ? 'Resume' : 'Pause')
       b.disabled = !!sim.over
-      $('paused-chip').hidden = !(this.paused && this.mode === 'play' && !this.screens.isOpen() && this.sheetMode === 'none')
+      $('paused-chip').hidden = sim.challenge.harbour === 1 || !!this.view.moving || !(this.paused && this.mode === 'play' && !this.screens.isOpen() && this.sheetMode === 'none')
     })
     const go = $<HTMLButtonElement>('btn-go')
-    const can = sim.canStartWave() && this.mode === 'play'
+    const can = sim.canStartWave() && this.mode === 'play' && !this.view.moving
     const early = sim.waveActive ? sim.earlyBonus() : 0
     const goKey = `${can}|${sim.wave}|${early}|${sim.waveActive}|${!this.coach.started}|${this.coach.built}|${sim.waveOffset}`
     set('go', goKey, () => {
@@ -1283,7 +1354,7 @@ export class App {
       b.addEventListener('click', () => {
         const d = ENEMIES[b.dataset.id as EnemyId]
         sound.tap()
-        this.toast(`${d.name}: ${d.tip}`, 3600)
+        this.toast(`${d.name}: ${d.id === 'warden' && this.sim.challenge.harbourEncounters ? 'Signals four Skiffs at 70% health. Linked escorts reduce damage by 40%. Clear them with bursts; it surges at 35%.' : d.tip}`, 4600)
       }),
     )
     this.fitPreview(el, list)
@@ -1312,6 +1383,16 @@ export class App {
 
   private refreshDock(force: boolean) {
     const sim = this.sim
+    const moving = this.view.moving
+    $('dock').classList.toggle('moving-tower', !!moving)
+    $('move-bar').hidden = !moving
+    if (moving) {
+      const ready = moving.destination !== null
+      $('move-help').textContent = ready
+        ? `${moving.tower.def.name}: bright water shows its new reach. Confirm for ${RELOCATE_COST} glow.`
+        : `Move ${moving.tower.def.name}: tap an empty pad to preview. Upgrades stay with it.`
+      $<HTMLButtonElement>('move-confirm').disabled = !ready || sim.glow < RELOCATE_COST
+    }
     sim.gates.forEach((g, i) => {
       const b = this.gateBtns[i]
       if (!b) return
@@ -1375,7 +1456,7 @@ export class App {
         2: 'Routes stay set. Tap the Lower Lock to compare your tower coverage.',
         3: 'Moonbell slows groups. Pair it with an attacking tower on the same bend.',
         5: 'Armour next: Cracker bursts and heavy upgrades crack shells.',
-        6: 'Upper canal open. Your original towers still guard the lantern.',
+        6: 'Upper canal open. Select a tower → Manage → Move to reposition it for 25 glow.',
         8: 'Hidden enemies next: pair a Lamp Owl with your damage towers.',
         10: 'Boss next: Gloomtoad jams the lock beside it. Set your route first.',
         11: 'West inlet open. Hidden enemies from here skip the Lantern bridge.',
@@ -1384,7 +1465,7 @@ export class App {
         25: 'Old Gloom splits at the Lower Lock. Cover BOTH branches before starting.',
       }
       const tip = sim.challenge.guard && !sim.waveActive ? advice[sim.wave + 1] : undefined
-      const text = sim.challenge.harbour ? (!sim.waveActive && !sim.over ? sim.waveDef(sim.wave + 1).note ?? 'Harbour kept · your towers stay' : 'Lantern Harbour · your original canal remains defended') : tip ?? `${stage.name} · ${stage.next}`
+      const text = wardenStatus(sim) ?? (sim.challenge.harbour ? (!sim.waveActive && !sim.over ? sim.waveDef(sim.wave + 1).note ?? 'Harbour kept · your towers stay' : 'Lantern Harbour · your original canal remains defended') : tip ?? `${stage.name} · ${stage.next}`)
       progress.classList.toggle('planning-tip', !!tip || !!sim.challenge.harbour && !sim.waveActive)
       if (progress.textContent !== text) progress.textContent = text
     }
@@ -1550,7 +1631,7 @@ export class App {
           const up = p.tiers[tier]
           btn = `<button class="up-btn" data-path="${path}" data-focuskey="up${path}" aria-label="Upgrade to ${up.name}, ${up.cost} glow. ${up.desc}"><b>${up.name}</b><span class="desc">${up.desc}</span><span class="price">${up.cost}<small>${upgradeSummary(t.id, t.a, t.b, path, (id, a, b) => this.sim.towerStats(id, a, b))}</small></span></button>`
         }
-        return `<div class="path"><div class="path-head"><span>${p.name}</span><span class="pips" role="img" aria-label="Tier ${tier} of 3">${pips}</span></div>${btn}</div>`
+        return `<div class="path"><div class="path-head"><span>${p.name}</span><span class="pips" role="img" aria-label="Tier ${tier} of 3">${pips}</span></div><div class="path-role">${PATH_ROLE[t.id][path]}</div>${btn}</div>`
       })
       .join('')
     const canTarget = def.kind !== 'pulse' && def.kind !== 'garden'
@@ -1564,6 +1645,7 @@ export class App {
       </div>
       <div class="sh-row">
         ${canTarget ? `<button class="pill-btn" data-act="prio" data-focuskey="prio" aria-label="Targeting: ${PRIORITY_LABEL[t.priority]}. Tap to change.">${icon('crosshair')} ${PRIORITY_LABEL[t.priority]}</button>` : ''}
+        ${this.sim.challenge.guard && !this.sim.isChallenge ? `<button class="pill-btn" data-act="move" data-focuskey="move">Move · ${RELOCATE_COST}</button>` : ''}
         <button class="pill-btn sell" data-act="sell" data-focuskey="sell"></button>
       </div>
       <div class="paths">${paths}</div><p class="combo-note">${comboHint(this.sim, t)}</p>${lockNote}`
@@ -1576,6 +1658,7 @@ export class App {
       button.setAttribute('aria-expanded', String(open))
       this.view.upgradeRange = undefined
     })
+    el.querySelector('[data-act="move"]')?.addEventListener('click', () => this.beginMove(t))
     el.querySelector('[data-act="sell"]')!.addEventListener('click', () => this.sell(t))
     el.querySelector('[data-act="prio"]')?.addEventListener('click', () => {
       t.priority = PRIORITY_NEXT[t.priority]
@@ -1608,6 +1691,11 @@ export class App {
     const sub = `${sim.challenge.guardian === 'ember' && t.id === 'cracker' ? 'Ember bursts · weaker impact, lingering fire' : t.def.role} · ${what}`
     const subEl = el.querySelector('.sh-sub')
     if (subEl && (force || subEl.textContent !== sub)) subEl.textContent = sub
+    const move = el.querySelector<HTMLButtonElement>('[data-act="move"]')
+    if (move) {
+      move.disabled = !sim.canRelocate(t) || sim.glow < RELOCATE_COST
+      move.textContent = sim.waveActive ? 'Move between waves' : `Move · ${RELOCATE_COST} glow`
+    }
     const sell = el.querySelector('[data-act="sell"]') as HTMLElement | null
     const armed = this.sellArmed?.uid === t.uid
     const v = `${sim.sellValue(t)}|${armed}`

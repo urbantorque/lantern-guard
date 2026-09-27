@@ -1,5 +1,7 @@
 # Lantern Guard: continuous journeys
 
+Follow-up: [defence refinements](DEFENCE-REFINEMENTS.md) adds relocation and versioned Harbour encounters. The original Harbour behaviour below remains in older saves; the linked balance matrix has been rerun against the follow-up encounters.
+
 Implemented 27 September 2026. The first 25 waves keep their existing layout, tower prices, upgrade paths and Guard rules. Original saved games remain on their original rules; the 15 original replay comparisons still match exactly.
 
 ## What changed

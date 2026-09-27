@@ -2281,6 +2281,18 @@ html.reduce-motion .stat-light.hurt {
 #learn-bar button { flex:none; min-height:44px; padding:8px; }
 .zone-switch { position:absolute; z-index:4; top:8px; right:8px; max-width:calc(100% - 16px); min-height:44px; padding:8px 12px; border:1px solid #8ba8a766; border-radius:22px; background:#10252eef; color:#f7e8ba; font-size:13px; }
 .zone-switch[hidden] { display:none; }
+#move-bar { padding:10px; border:1px solid var(--amber); border-radius:12px; background:var(--panel); }
+#move-bar[hidden] { display:none; }
+#move-bar p { margin:0 0 8px; font-size:13px; line-height:1.4; }
+#move-bar > div { display:flex; justify-content:flex-end; gap:8px; }
+#move-bar button { min-height:44px; }
+#move-confirm { color:var(--amber); }
+#dock.moving-tower #tray, #dock.moving-tower #planbar, #dock.moving-tower #gates, #dock.moving-tower #canal-progress, #dock.moving-tower #learn-bar { display:none; }
+.tower-sheet .sh-row { flex-wrap:wrap; }
+.path-role { color:var(--amber); font-size:12px; line-height:1.3; padding:1px 4px 3px; }
+.tower-sheet .up-btn .price { flex-wrap:wrap; }
+.tower-sheet .up-btn small { margin-left:0; text-align:left; line-height:1.3; }
+.big-text .path-role { font-size:14px; }
 .title-play .resume-btn { flex-direction:column; gap:5px; padding:12px; }
 .resume-btn > span { display:flex; gap:8px; align-items:center; }
 .resume-btn small { font-size:12px; line-height:1.5; font-weight:400; }

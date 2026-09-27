@@ -71,6 +71,7 @@ export function validSnapshot(s: unknown): s is SaveSnapshot {
   if (s.challenge.expanding !== undefined && (s.challenge.expanding !== 1 || s.v !== 2 || s.challenge.waterway !== undefined || s.challenge.id !== undefined || s.challenge.tide !== undefined || !integer(s.canalStage, 0, 2))) return false
   if (s.challenge.guard !== undefined && (s.challenge.guard !== 1 || (s.challenge.expanding !== 1 && typeof s.challenge.id !== 'string') || s.challenge.waterway !== undefined)) return false
   if (s.challenge.harbour !== undefined && (s.challenge.harbour !== 1 || s.challenge.guard !== 1 || s.challenge.expanding !== 1 || s.wave < 25 || s.canalStage !== 2)) return false
+  if (s.challenge.harbourEncounters !== undefined && (s.challenge.harbourEncounters !== 1 || s.challenge.harbour !== 1)) return false
   if (s.challenge.guardian !== undefined && (s.challenge.guardian !== 'ember' || s.challenge.guard !== 1 || s.challenge.id !== undefined)) return false
   const maxPads = LEVEL.pads.length + (s.challenge.harbour ? HARBOUR_PADS.length : 0)
   if (!Array.isArray(s.towers) || s.towers.length > maxPads || !Array.isArray(s.gates) || s.gates.length !== 2) return false
@@ -125,6 +126,8 @@ export function validSnapshot(s: unknown): s is SaveSnapshot {
   if (!(s.spawners as unknown[]).every(p => object(p) && integer(p.wave, 1, 10000) && integer(p.group, 0, 100) && number(p.t) && integer(p.spawned))) return false
   if (!(s.waveAlive as unknown[]).every(v => Array.isArray(v) && integer(v[0], 1, 10000) && integer(v[1]))) return false
   for (const e of s.enemies as Record<string, unknown>[]) {
+    if (e.escortOf !== undefined && (!integer(e.escortOf, 1) || e.type !== 'skiff' || s.challenge.harbourEncounters !== 1)) return false
+    if (e.signalT !== undefined && (!number(e.signalT, 0, 2.4) || e.type !== 'warden' || s.challenge.harbourEncounters !== 1)) return false
     for (const key of ['shell', 'maxShell', 'seenT', 'phase', 'spawnCd', 'speedBase', 'slowT', 'slowF', 'stunT', 'burnT', 'burnDps', 'brittleT', 'visScale', 'reward', 'age']) if (!number(e[key])) return false
     for (const key of ['revealedPerm', 'split']) if (typeof e[key] !== 'boolean') return false
     for (const key of ['rich', 'shrouded', 'owlSeen']) if (e[key] !== undefined && typeof e[key] !== 'boolean') return false

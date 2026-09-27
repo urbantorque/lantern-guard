@@ -28,12 +28,15 @@ import {
 import { buildLevel, type BuiltLevel, type GateDef, type Segment } from './level'
 import { tideWave, type TideSpec } from './tides'
 import { freeplayWave, WAVES, type Group, type WaveDef } from './waves'
-import { harbourLevel, HARBOUR_END, HARBOUR_WAVES } from './harbour'
+import { harbourLevel, HARBOUR_END, HARBOUR_WAVES, HARBOUR_WAVES_V2, wardenEscorts, WARDEN_GUARD_TAKEN } from './harbour'
 
 export const DT = 1 / 60
 export const FINAL_WAVE = WAVES.length
+export const RELOCATE_COST = 25
 
 export interface Enemy {
+  escortOf?: number
+  signalT?: number
   uid: number
   def: EnemyDef
   hp: number
@@ -193,6 +196,8 @@ export type SimEvent =
 
 /** Rules a night is played under. Plain nights use {}; tides and weekly nights set several. */
 export interface Challenge {
+  /** Authored Harbour encounters, fixed when this chapter opens. */
+  harbourEncounters?: 1
   /** Optional second chapter, entered from a completed growing canal. */
   harbour?: 1
   guardian?: 'ember'
@@ -283,6 +288,8 @@ export interface SavedGate {
 
 /** A Mope on the water, as saved in v2. */
 export interface SavedEnemy {
+  escortOf?: number
+  signalT?: number
   uid: number
   type: EnemyId
   seg: string
@@ -550,7 +557,7 @@ export class Sim {
   }
 
   waveDef(n: number): WaveDef {
-    if (this.challenge.harbour && n > FINAL_WAVE && n <= HARBOUR_END) return HARBOUR_WAVES[n - FINAL_WAVE - 1]
+    if (this.challenge.harbour && n > FINAL_WAVE && n <= HARBOUR_END) return (this.challenge.harbourEncounters ? HARBOUR_WAVES_V2 : HARBOUR_WAVES)[n - FINAL_WAVE - 1]
     const tide = this.challenge.tide
     if (tide && n > tide.from && n <= FINAL_WAVE) return tideWave(tide, n)
     if ((this.challenge.expanding || this.challenge.guard) && n <= FINAL_WAVE) {
@@ -594,7 +601,7 @@ export class Sim {
 
   continueHarbour(): boolean {
     if (!this.challenge.guard || !this.challenge.expanding || this.challenge.harbour || this.isChallenge || this.over !== 'won' || this.freeplay || this.wave !== FINAL_WAVE) return false
-    this.challenge = { ...this.challenge, harbour: 1 }
+    this.challenge = { ...this.challenge, harbour: 1, harbourEncounters: 1 }
     this.over = null
     this.won = false
     this.revealCanal(2)
@@ -610,6 +617,34 @@ export class Sim {
     if (!canUpgrade(t.a, t.b, path)) return null
     const tier = path === 0 ? t.a : t.b
     return t.def.paths[path].tiers[tier].cost
+  }
+
+  canRelocate(t: Tower): boolean {
+    return !!this.challenge.guard && !this.isChallenge && !this.over && !this.waveActive && this.towers.includes(t)
+  }
+
+  /** Preview destination support without moving or resetting the tower. */
+  rangeAt(t: Tower, x: number, y: number): number {
+    if (t.id === 'garden') return t.stats.range
+    let bonus = 0
+    for (const other of this.towers) {
+      if (other !== t && other.id === 'owl' && dist2(x, y, other.x, other.y) <= other.stats.range ** 2) bonus = Math.max(bonus, other.stats.auraRange)
+    }
+    return t.stats.range * (1 + bonus)
+  }
+
+  /** Moving never rebuilds: timers, income, upgrades, credit and sell value stay attached. */
+  relocate(t: Tower, padIndex: number): boolean {
+    const pad = this.pads[padIndex]
+    if (!this.canRelocate(t) || !pad || pad.tower || !this.padAvailable(padIndex) || this.glow < RELOCATE_COST) return false
+    this.glow -= RELOCATE_COST
+    this.pads[t.pad].tower = null
+    pad.tower = t
+    t.pad = padIndex
+    t.x = pad.x
+    t.y = pad.y
+    this.recomputeAuras()
+    return true
   }
 
   effRange(t: Tower): number {
@@ -991,6 +1026,31 @@ export class Sim {
     return g.state
   }
 
+  private updateWarden(e: Enemy, dt: number) {
+    if (e.phase === 0 && e.hp <= e.maxHp * .7) {
+      e.phase = 1
+      e.signalT = 2.4
+      this.events.push({ t: 'phase', x: e.x, y: e.y })
+    } else if (e.phase === 1) {
+      e.signalT = Math.max(0, (e.signalT ?? 0) - dt)
+      if (e.signalT === 0) {
+        e.phase = 2
+        for (let i = 0; i < 4; i++) {
+          const escort = this.spawnEnemy('skiff', e.seg, Math.max(0, e.s + 22 + i * 22), e.wave)
+          this.inherit(escort, e)
+          escort.escortOf = e.uid
+          // Escorts travel in formation until their armour breaks and they accelerate away.
+          escort.speedBase = e.speedBase * 1.1
+        }
+        this.events.push({ t: 'phase', x: e.x, y: e.y })
+      }
+    } else if (e.phase === 2 && e.hp <= e.maxHp * .35) {
+      e.phase = 3
+      e.speedBase *= 1.3
+      this.events.push({ t: 'phase', x: e.x, y: e.y })
+    }
+  }
+
   private updateEnemies(dt: number) {
     const pos = { x: 0, y: 0, tx: 0, ty: 0 }
     const gardens = this.towers.filter((t) => t.id === 'garden' && t.stats.gardenSlow > 0)
@@ -1046,7 +1106,8 @@ export class Sim {
         if (dist2(e.x, e.y, gd.x, gd.y) < gd.stats.range * gd.stats.range) slow = Math.max(slow, gd.stats.gardenSlow)
       }
       if (e.def.boss) slow *= 0.5
-      if (e.def.id === 'warden' && e.phase === 0 && e.hp < e.maxHp * .5) {
+      if (e.def.id === 'warden' && this.challenge.harbourEncounters) this.updateWarden(e, dt)
+      if (e.def.id === 'warden' && !this.challenge.harbourEncounters && e.phase === 0 && e.hp < e.maxHp * .5) {
         e.phase = 1
         e.speedBase *= 1.3
         this.events.push({ t: 'phase', x: e.x, y: e.y })
@@ -1175,6 +1236,7 @@ export class Sim {
     if (!e.alive || amount <= 0) return false
     if (e.brittleT > 0) amount += continuous ? amount * 0.25 : 1
     if (src && src.def.family === e.def.family) amount *= FAMILY_BONUS
+    if (e.def.id === 'warden' && wardenEscorts(this, e).length) amount *= WARDEN_GUARD_TAKEN
     if (e.shell > 0) {
       if (!heavy) {
         // light hits only chip shells: a soft counter, never an immunity
@@ -1742,6 +1804,8 @@ export class Sim {
           revealedPerm: e.revealedPerm,
           seenT: e.seenT,
           phase: e.phase,
+          ...(e.escortOf !== undefined ? { escortOf: e.escortOf } : {}),
+          ...(e.signalT !== undefined ? { signalT: e.signalT } : {}),
           spawnCd: e.spawnCd,
           speedBase: e.speedBase,
           slowT: e.slowT,
@@ -1878,6 +1942,8 @@ export class Sim {
       e.revealedPerm = se.revealedPerm
       e.seenT = se.seenT
       e.phase = se.phase
+      if (se.escortOf !== undefined) e.escortOf = se.escortOf
+      if (se.signalT !== undefined) e.signalT = se.signalT
       e.spawnCd = se.spawnCd
       e.speedBase = se.speedBase
       e.slowT = se.slowT

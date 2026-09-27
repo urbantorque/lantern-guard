@@ -6,6 +6,7 @@ import { WORLD_H, WORLD_W, type Segment } from '../game/level'
 import type { Enemy, GateState, Proj, Sim, SimEvent, Tower } from '../game/sim'
 import { routeCoverage, towerPartners } from '../game/route-plan'
 import { CANAL_STAGES } from '../game/canal-growth'
+import { wardenEscorts } from '../game/harbour'
 import { BANK_W, BG_PAD_X, BG_PAD_Y, bridgeGeo, CANAL_W, layoutDecor, millGeo, renderBackground, type BridgeGeo, type Decor, type MillGeo } from './bg'
 import { BLOOM_FAMS, bloomColor, clearBloomColors, famIndex, paintBloom, type BloomStyle } from './blooms'
 import { drawEnemy, drawEnemyIcon, ENEMY_VIS, setEnemySpriteScale } from './enemies'
@@ -20,6 +21,7 @@ export type Selection =
   | null
 
 export interface ViewState {
+  moving?: { tower: Tower; destination: number | null; fromHarbour: boolean }
   feedbackRoute?: string
   routeDir?: 0 | 1
   upgradeRange?: number
@@ -739,8 +741,8 @@ export class Renderer {
         drawPad(ctx, p.x, p.y, 'occupied', t, p.tower.def.hue, Math.max(p.tower.a, p.tower.b))
         continue
       }
-      const sel = view.selection?.kind === 'pad' && view.selection.index === i
-      const armed = view.armed !== null
+      const sel = view.moving?.destination === i || view.selection?.kind === 'pad' && view.selection.index === i
+      const armed = view.armed !== null || !!view.moving
       drawPad(ctx, p.x, p.y, sel ? 'selected' : armed ? 'buildable' : 'empty', t)
       if (t < this.revealUntil && this.newPads.includes(i)) {
         ctx.strokeStyle = withAlpha(P.amberHi, this.settings.reduceMotion ? 0.8 : 0.6 + Math.sin(t * 4) * 0.3)
@@ -754,6 +756,27 @@ export class Renderer {
     for (const g of sim.gates) if (sim.gateAvailable(g)) this.drawGateBase(ctx, sim, g, dt)
     this.drawLandmarks(ctx, sim, 'under')
 
+    if (sim.challenge.harbourEncounters) {
+      for (const boss of sim.enemies) {
+        if (!boss.alive || boss.def.id !== 'warden') continue
+        const escorts = wardenEscorts(sim, boss)
+        if (boss.phase !== 1 && !escorts.length) continue
+        ctx.save()
+        ctx.strokeStyle = P.ice
+        ctx.fillStyle = withAlpha(P.ice, .12)
+        ctx.lineWidth = 3
+        if (boss.phase === 1) ctx.setLineDash([8, 6])
+        ctx.beginPath()
+        ctx.ellipse(boss.x, boss.y, boss.def.radius + 12, boss.def.radius + 4, 0, 0, TAU)
+        ctx.fill(); ctx.stroke()
+        ctx.setLineDash([])
+        for (const escort of escorts) {
+          ctx.beginPath(); ctx.moveTo(boss.x, boss.y); ctx.lineTo(escort.x, escort.y); ctx.stroke()
+          ctx.beginPath(); ctx.arc(escort.x, escort.y, escort.def.radius + 5, 0, TAU); ctx.stroke()
+        }
+        ctx.restore()
+      }
+    }
     // depth-sorted towers and Mopes
     const list: ({ y: number; t: Tower } | { y: number; e: Enemy })[] = []
     for (const tw of sim.towers) list.push({ y: tw.y, t: tw })
@@ -801,6 +824,13 @@ export class Renderer {
         if (sim.challenge.guard) this.drawStatus(ctx, item.e)
         if (item.e.def.id === 'gloom' && item.e.def.splitAtGate) this.drawShroud(ctx, item.e, t)
       }
+    }
+    if (view.moving?.destination != null) {
+      const p = sim.pads[view.moving.destination]
+      const tw = view.moving.tower
+      ctx.globalAlpha = .65
+      drawTower(ctx, p.x, p.y, { id: tw.id, a: tw.a, b: tw.b, angle: tw.angle, since: 9, age: 9, upAge: 9, t, seed: tw.uid })
+      ctx.globalAlpha = 1
     }
     // build preview ghost
     if (view.selection?.kind === 'pad' && view.preview) {
@@ -1329,10 +1359,14 @@ export class Renderer {
       }
       ctx.stroke()
     }
+    if (view.moving?.destination != null) {
+      const p = sim.pads[view.moving.destination]
+      ring(p.x, p.y, sim.rangeAt(view.moving.tower, p.x, p.y), P.cream)
+    }
     if (sel?.kind === 'tower' && sel.tower) {
       const tw = sel.tower
       ring(tw.x, tw.y, sim.effRange(tw), tw.def.hue)
-      const key = `${sim.seed}:${sim.canalStage}:${tw.uid}|${sim.towers.map(t => `${t.uid}:${t.id}:${t.a}:${t.b}:${sim.effRange(t)}`).join(',')}`
+      const key = `${sim.seed}:${sim.canalStage}:${tw.uid}|${sim.towers.map(t => `${t.uid}:${t.pad}:${t.id}:${t.a}:${t.b}:${sim.effRange(t)}`).join(',')}`
       if (key !== this.partnerKey) { this.partnerKey = key; this.partners = towerPartners(sim, tw) }
       ctx.strokeStyle = withAlpha(P.lime, 0.8)
       ctx.lineWidth = 2.5
@@ -1368,7 +1402,7 @@ export class Renderer {
     if (view.selection?.kind !== 'gate' || !sim.challenge.guard) return
     const g = view.selection.gate
     const dir = view.routeDir ?? sim.gateEffectiveDir(g)
-    const key = `${sim.seed}:${sim.canalStage}:${g.def.id}:${dir}|${sim.gates.map(g => sim.gateEffectiveDir(g)).join(',')}|${sim.towers.map(t => `${t.uid}:${t.id}:${t.a}:${t.b}:${sim.effRange(t)}`).join(',')}`
+    const key = `${sim.seed}:${sim.canalStage}:${g.def.id}:${dir}|${sim.gates.map(g => sim.gateEffectiveDir(g)).join(',')}|${sim.towers.map(t => `${t.uid}:${t.pad}:${t.id}:${t.a}:${t.b}:${sim.effRange(t)}`).join(',')}`
     if (key !== this.routeKey) { this.routeKey = key; this.routePlan = routeCoverage(sim, g, dir) }
     const plan = this.routePlan!
     ctx.save()

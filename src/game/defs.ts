@@ -176,14 +176,14 @@ export const TOWERS: Record<TowerId, TowerDef> = {
         tiers: [
           { name: 'Deep Toll', cost: 110, desc: 'Slows much harder.', apply: (s) => { s.slow = 0.5 } },
           { name: 'Ringing Hit', cost: 240, desc: 'Each toll deals 1 damage.', apply: (s) => { s.damage = 1 } },
-          { name: 'Stillbell', cost: 650, desc: 'Every third toll freezes Mopes in place.', apply: (s) => { s.stunEvery = 3; s.stunDur = 1.1; s.damage = 2 } },
+          { name: 'Stillbell', cost: 650, desc: 'Every third toll stuns groups. Bosses resist stuns.', apply: (s) => { s.stunEvery = 3; s.stunDur = 1.1; s.damage = 2 } },
         ],
       },
       {
         name: 'Chime',
         tiers: [
           { name: 'Wide Chime', cost: 100, desc: 'Larger toll radius.', apply: (s) => { s.range += 35 } },
-          { name: 'Resonance', cost: 260, desc: 'Tolled Mopes take +1 from every hit.', apply: (s) => { s.brittle = true } },
+          { name: 'Resonance', cost: 260, desc: 'Tolled enemies take +1 per hit; beams and burns deal +25%.', apply: (s) => { s.brittle = true } },
           { name: 'Bellwether', cost: 700, desc: 'Tolls strip Veils for good.', apply: (s) => { s.revealPerm = true; s.slowDur += 0.8; s.range += 15 } },
         ],
       },
@@ -242,7 +242,7 @@ export const TOWERS: Record<TowerId, TowerDef> = {
         tiers: [
           { name: 'Keen Eyes', cost: 140, desc: 'Sees much further.', apply: (s) => { s.range += 50 } },
           { name: 'Night Watch', cost: 300, desc: 'Keepers in sight get +15% range.', apply: (s) => { s.auraRange = 0.15 } },
-          { name: 'Parliament', cost: 720, desc: 'Keepers in sight act 30% faster.', apply: (s) => { s.auraRate = 0.3; s.auraRange = 0.15 } },
+          { name: 'Parliament', cost: 720, desc: 'Nearby attacking towers act 30% faster.', apply: (s) => { s.auraRate = 0.3; s.auraRange = 0.15 } },
         ],
       },
     ],
@@ -319,7 +319,7 @@ export interface EnemyDef {
 
 export const ENEMIES: Record<EnemyId, EnemyDef> = {
   skiff: { id: 'skiff', family: 'coral', name: 'Skiff', hp: 7, shell: 8, speed: 50, reward: 12, weight: 2, radius: 17, tip: 'Accelerates after its armour breaks. Pair heavy hits with Moonbell slows.' },
-  warden: { id: 'warden', family: 'lilac', name: 'Harbour Warden', hp: 1700, shell: 80, speed: 24, reward: 700, weight: 999, radius: 45, boss: true, spawn: { type: 'skiff', every: 5 }, tip: 'Launches Skiffs and surges at half health. Keep heavy towers firing along a long route.' },
+  warden: { id: 'warden', family: 'lilac', name: 'Harbour Warden', hp: 1700, shell: 80, speed: 24, reward: 700, weight: 999, radius: 45, boss: true, spawn: { type: 'skiff', every: 5 }, tip: 'Launches Skiffs and accelerates as its health falls. Keep heavy towers firing along a long route.' },
   drip: { id: 'drip', family: 'amber', name: 'Drip', hp: 2, speed: 58, reward: 3, weight: 1, radius: 12, tip: 'A small, grumpy Mope. Easy to cheer up.' },
   skitter: { id: 'skitter', family: 'ice', name: 'Skitter', hp: 3, speed: 118, reward: 4, weight: 1, radius: 11, tip: 'Fast. Keep it on the long loops.' },
   shell: { id: 'shell', family: 'coral', name: 'Shellback', hp: 2, speed: 44, reward: 8, weight: 2, radius: 16, shell: 8, tip: 'Sparks only chip its shell. The Mill wheel, fireworks, beams and hot wax crack it.' },
