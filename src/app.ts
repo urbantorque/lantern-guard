@@ -1,5 +1,6 @@
 import { compactNext, nextCompactVariant, PLOTS } from './game/compact'
 import { FINAL_PERK, LATE_TOWERS, PREPARATIONS, nextMilestone } from './game/depth'
+import { incomePayback } from './game/balance'
 import { BATTLE_PLANS, type BattlePlanId } from './game/battle-plans'
 import { gardensStatus } from './game/gardens'
 import { GUARDIANS, guardianUnlocked, signatureFor, towerName, type GuardianId } from './game/guardians'
@@ -229,7 +230,7 @@ export class App {
     const watch = Number.isSafeInteger(progress.watchIndex) && progress.watchIndex! >= 0 ? progress.watchIndex! : 0
     progress.watchIndex = watch + 1
     saveProgress(progress)
-    this.sim = new Sim(difficulty, { compact: 1, plans: 1, depth: 1, variant: nextCompactVariant(watch), guard: 1, ...(this.settings.guardian && guardianUnlocked(this.settings.guardian, progress.feats) ? { guardian: this.settings.guardian } : {}) }, 7 + watch * 997)
+    this.sim = new Sim(difficulty, { compact: 1, plans: 1, depth: 1, balance: 1, variant: nextCompactVariant(watch), guard: 1, ...(this.settings.guardian && guardianUnlocked(this.settings.guardian, progress.feats) ? { guardian: this.settings.guardian } : {}) }, 7 + watch * 997)
     this.startRun()
     this.persist(true)
   }
@@ -1458,7 +1459,7 @@ export class App {
       b.addEventListener('click', () => {
         const d = ENEMIES[b.dataset.id as EnemyId]
         sound.tap()
-        this.toast(`${d.name}: ${d.id === 'warden' && (this.sim.challenge.harbourEncounters || this.sim.challenge.compact) ? 'Signals four Skiffs at 70% health. Linked escorts reduce damage by 40%. Clear them with bursts; it surges at 35%.' : d.tip}`, 4600)
+        this.toast(`${d.name}: ${d.id === 'warden' && (this.sim.challenge.harbourEncounters || this.sim.challenge.compact) ? 'Calls four armoured escorts at 70% health. They protect it until separated. Speeds up at 35%.' : d.tip}${d.boss && sim.challenge.balance ? ' Bosses have no colour weakness.' : ''}`, 4600)
       }),
     )
     this.fitPreview(el, list)
@@ -1772,14 +1773,15 @@ export class App {
         else if (!canUpgrade(t.a, t.b, path)) btn = `<div class="up-btn locked"><b>${p.tiers[tier].name}</b><span class="desc">Locked: your other path is above level 1.</span><span class="price">${icon('lock')}</span></div>`
         else {
           const up = p.tiers[tier]
-          const description = upgradeDescription(t.id, t.a, t.b, path, (id, a, b) => this.sim.towerStats(id, a, b, t.refinement))
+          let description = upgradeDescription(t.id, t.a, t.b, path, (id, a, b) => this.sim.towerStats(id, a, b, t.refinement))
+          if (t.id === 'garden' && path === 0 && !this.sim.freeplay) description += ' ' + incomePayback(up.cost, t.stats.income, this.sim.towerStats(t.id, t.a + 1, t.b, t.refinement).income, this.sim.finalWave - this.sim.wave + Number(this.sim.waveActive))
           btn = `<button class="up-btn" data-path="${path}" data-focuskey="up${path}" aria-label="Upgrade to ${up.name}, ${up.cost} glow. ${description}"><b>${up.name}</b><span class="desc">${description}</span><span class="price">${up.cost}<small>${upgradeSummary(t.id, t.a, t.b, path, (id, a, b) => this.sim.towerStats(id, a, b, t.refinement), this.sim.challenge.guardian)}</small></span></button>`
         }
         return `<div class="path"><div class="path-head"><span>${p.name}</span><span class="pips" role="img" aria-label="Level ${tier} of 3">${pips}</span></div><div class="path-role">${PATH_ROLE[t.id][path]}</div>${btn}</div>`
       })
       .join('')
-    const refinement = this.sim.challenge.compact && Math.max(t.a, t.b) === 3 ? this.sim.refinements[t.refinement ?? 0] : undefined
-    const refinementRow = refinement ? `<button class="refine-btn" data-refine data-focuskey="refine"><b>${refinement.name} · ${refinement.cost} glow</b><span>${refinementSummary(t.id, t.stats, this.sim.towerStats(t.id, t.a, t.b, (t.refinement ?? 0) + 1), this.sim.challenge.guardian)}${t.refinement === 3 ? ' ' + FINAL_PERK[t.id] : ''}${this.sim.planningWave < refinement.wave ? ' Available after wave ' + (refinement.wave - 1 - this.sim.waveOffset) + '.' : ''}</span></button>` : this.sim.challenge.compact && t.refinement ? `<p class="combo-note">Level ${3 + t.refinement} · complete</p>` : ''
+    const refinement = this.sim.challenge.compact && Math.max(t.a, t.b) === 3 ? this.sim.refinementOffer(t) : undefined
+    const refinementRow = refinement ? `<button class="refine-btn" data-refine data-focuskey="refine"><b>${refinement.name} · ${refinement.cost} glow</b><span>${refinementSummary(t.id, t.stats, this.sim.towerStats(t.id, t.a, t.b, (t.refinement ?? 0) + 1), this.sim.challenge.guardian)}${t.refinement === 3 ? ' ' + FINAL_PERK[t.id] : ''}${t.id === 'garden' && !this.sim.freeplay ? ' ' + incomePayback(refinement.cost, t.stats.income, this.sim.towerStats(t.id, t.a, t.b, (t.refinement ?? 0) + 1).income, this.sim.finalWave - this.sim.wave + Number(this.sim.waveActive)) : ''}${this.sim.planningWave < refinement.wave ? ' Available after wave ' + (refinement.wave - 1 - this.sim.waveOffset) + '.' : ''}</span></button>` : this.sim.challenge.compact && t.refinement ? `<p class="combo-note">Level ${3 + t.refinement} · complete</p>` : ''
     const plan = this.sim.battlePlans.map(id => BATTLE_PLANS[id]).find(p => p.tower === t.id)
     const planNote = plan ? `<p class="battle-plan-note"><b>${plan.name}</b> · ${plan.benefit} ${plan.tradeoff}</p>` : ''
     const canTarget = def.kind !== 'pulse' && def.kind !== 'garden'
@@ -1810,6 +1812,7 @@ export class App {
     el.querySelector('[data-act="sell"]')!.addEventListener('click', () => this.sell(t))
     el.querySelector('[data-act="prio"]')?.addEventListener('click', () => {
       t.priority = PRIORITY_NEXT[t.priority]
+      t.beamTargets = []
       sound.tap()
       this.persist()
     })
@@ -1842,7 +1845,7 @@ export class App {
     if (t.def.kind === 'pulse') what = `${stat(t, 'slowed')} slowed`
     else if (t.def.kind === 'garden') what = `${stat(t, 'earned')} glow earned · ${t.stats.income} a wave`
     else if (t.id === 'owl') what = `${t.pops} defeated · ${stat(t, 'spotted')} Veils spotted`
-    const sub = `${sim.challenge.guardian === 'ember' && t.id === 'cracker' ? 'Leaves fire · weaker explosions' : sim.challenge.guardian === 'reed' && t.id === 'wick' ? 'Bouncing shots · weaker hits' : sim.challenge.guardian === 'tide' && t.id === 'bell' ? 'Stronger slow · slower attacks' : t.def.role} · ${what}`
+    const sub = `${sim.challenge.guardian === 'ember' && t.id === 'cracker' ? 'Leaves fire · weaker explosions' : sim.challenge.guardian === 'reed' && t.id === 'wick' ? 'Bouncing shots · weaker hits' : sim.challenge.guardian === 'tide' && t.id === 'bell' ? 'Stronger slow · slower attacks' : t.id === 'beam' && t.stats.beams > 1 ? 'Two separate beams' : t.def.role} · ${what}`
     const subEl = el.querySelector('.sh-sub')
     if (subEl && (force || subEl.textContent !== sub)) subEl.textContent = sub
     const refine = el.querySelector<HTMLButtonElement>('[data-refine]')

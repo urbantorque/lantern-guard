@@ -8,6 +8,8 @@ New games use one compact board for 40 waves. Start with four building plots, bu
 
 See [late towers, wave supplies and guardian progress](docs/DEFENCE-DEPTH.md), [replay choices and player text](docs/REPLAY-AND-CLARITY.md) and [compact progression and balance](docs/COMPACT-WATCHES.md). Existing saves retain their maps and rules; choose **New game** for the latest additions. The [native build handoff](docs/IOS-BUILD.md) describes the remaining iPhone release work.
 
+The latest [combat and menu pass](docs/BALANCE-AND-PRESENTATION.md) fixes Lighthouse double targeting, limits piercing, removes boss colour bonuses and improves the late specialists. Gardens have separate refinement prices and show their income payback. New games and new challenges use these rules; saved runs continue under their original balance.
+
 - Design, niche, twist, monetisation and the iOS plan: [docs/DESIGN.md](docs/DESIGN.md)
 - Research: [docs/research.json](docs/research.json) (raw findings with sources)
 - Balance results: [docs/balance-matrix.txt](docs/balance-matrix.txt) (full nights) and [docs/tides-matrix.txt](docs/tides-matrix.txt) (daily tides and weekly nights)
@@ -42,6 +44,8 @@ Other scripts:
 | `npm run balance:compact` | 54 controlled compact-watch strategy/difficulty/layout comparisons |
 | `npm run test:replay` | Stone Weir, battle-plan tradeoffs, save compatibility and accurate upgrade copy |
 | `npm run test:depth` | Late towers, levels 6/7, one-wave supplies, guardian progress and short challenges |
+| `npm run test:balance` | Lighthouse targeting, boss health/colour rules, all tower refinements, income payback and 80 controlled damage comparisons |
+| `npm run balance:towers` | 64 strategy/map/difficulty runs; add `-- --legacy` to regenerate the before-change comparison |
 | `npm run balance:depth` | 41 campaign/challenge comparisons; focused follow-up: `npx tsx scripts/depth-focused-balance.ts` |
 | `npm run balance:replay` | 44 map/guardian/plan comparisons; add `-- --stone-weir` for 8 additional strategy checks |
 | `npm run balance:growth` | 36 growing-canal nights across 6 strategies, 3 modes and 2 seeds |
@@ -64,7 +68,7 @@ Other scripts:
    - Long loops give towers more firing time.
    - Short routes pay the same glow as long loops. Choose their utility when it helps your defence. The **Lantern bridge** reveals hidden Veils; the **Mill wheel** cracks armour.
 3. **Combine towers.** Moonbell slows groups for repeated Cracker bursts. Lamp Owl reveals targets for nearby attackers. Selecting a tower highlights the water it reaches and links to support partners sharing that water.
-4. **Use your towers' strengths.** Each keeper deals ×1.5 damage to Mopes with its colour and symbol. Sight and heavy attacks give alternatives to routing every enemy through a landmark.
+4. **Use your towers' strengths.** Each tower deals ×1.5 damage to ordinary enemies with its colour and symbol. Bosses have no colour weakness in new games. Sight and heavy attacks give alternatives to routing every enemy through a landmark.
 5. **Upgrade and expand your build space.** Tap a dashed + plot between waves to see its clearing cost. Tap a keeper. It has two paths: one can reach tier 3, the other stops at tier 1. On compact watches, tier-three towers gain paid level 4 after wave 15 and level 5 after wave 25. **Manage** opens targeting, moving and selling; the main panel explains each path and its upgrade effects. Between waves in an ordinary Guard night, **Move** previews a new empty pad before confirming for 25 glow. Upgrades and progress stay with the tower.
 6. **Pause any time** to plan. Nightfall allows building while paused, but live route changes require time to run. Call waves early for bonus glow. New threats and the final boss get a manual planning break. The game autosaves, even mid-wave.
 7. **Tides.** Collection offers two ten-wave challenges with a starting defence to improve. The daily uses campaign waves 11–20 and a total starting budget of 4,200 glow; the weekly uses waves 21–30 and 8,500 glow, ending with the Warden. Starting towers come out of that budget. Everyone gets the same map, towers and arrival pattern. Your campaign stays saved separately.
@@ -77,6 +81,8 @@ Accessibility and assists live in Settings: a colour-safe palette, larger text, 
 New tower choices arrive before their wave: Wickling and Cracker at the start, Moonbell at 3, Glow Garden and Lamp Owl at 6, and Lighthouse at 7. On compact watches the board stays fixed; additional plots become available to buy after waves 5, 10, 15 and 20. Older saves and challenges retain their own tower timing and map rules. Newly launched daily/weekly challenges use Lantern Guard routing and support rules; previously saved challenges retain their original rules and IDs.
 
 New games also offer levels 6 and 7 after waves 30 and 35. Each level 7 tower gains a final perk. Storm Reed arrives at wave 16, Dusk Ballista at wave 26. Buy optional oil, a net or a ward between waves once per five-wave interval. These activate automatically for the next wave and expire when it ends. Guardian records count cleared waves across games toward cosmetic frames, pennants and festival lanterns.
+
+Garden levels 4–7 cost 180, 220, 140 and 120 glow in new games. Their panels compare the extra income with the price and remaining waves. Combat tower refinement prices remain 700, 1,250, 1,800 and 2,600 glow.
 
 Keyboard: `1`–`8` keepers · `Q`/`E` flip locks · `Space` or `N` start or call a wave · `C` charms · `P` pause · `F` speed · `Esc` close.
 

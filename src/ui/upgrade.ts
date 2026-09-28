@@ -9,7 +9,7 @@ export const PATH_ROLE: Record<TowerId, [string, string]> = {
   wick: ['More shots', 'Range & armour damage'],
   cracker: ['Larger explosions', 'Tracking rockets'],
   bell: ['Stronger slows & stuns', 'Range & extra damage'],
-  beam: ['Damage & piercing', 'Range & two targets'],
+  beam: ['Stronger, piercing beam', 'Two targets & hidden enemies'],
   owl: ['More attack damage', 'Help nearby towers'],
   garden: ['More glow each wave', 'Attacks & bonus glow'],
   storm: ['More lightning jumps', 'Damage & armour breaking'],
@@ -18,7 +18,14 @@ export const PATH_ROLE: Record<TowerId, [string, string]> = {
 
 export function upgradeDescription(id: TowerId, a: number, b: number, path: 0 | 1, statsFor: typeof computeStats): string {
   const tier = path === 0 ? a : b
+  const before = statsFor(id, a, b)
   const after = statsFor(id, a + (path === 0 ? 1 : 0), b + (path === 1 ? 1 : 0))
+  const fmt = (n: number) => Number(n.toFixed(1))
+  if (id === 'beam' && path === 0 && tier === 0) return `Beam damage: ${fmt(before.damage)} → ${fmt(after.damage)} per second.`
+  if (id === 'beam' && path === 0 && tier === 1) return after.pierce > 1 ? 'Hits the target and 2 enemies along the beam. Extra hits deal half damage.' : 'The beam hits every enemy in its path.'
+  if (id === 'beam' && path === 0 && tier === 2) return `Beam damage rises to ${fmt(after.damage)} per second. Hits also burn enemies.`
+  if (id === 'beam' && path === 1 && tier === 2) return `Two beams, ${fmt(after.damage)} damage/sec each. Each hits a different enemy.`
+  if (id === 'cracker' && path === 1 && tier === 2) return `Fires three${after.damage > before.damage ? ' stronger' : ''} rockets at once.`
   if (id === 'garden' && path === 0) return `Earns ${after.income} glow after each wave.${after.lifePerWave ? ' Restores 1 light too.' : ''}`
   if (id === 'garden' && path === 1 && tier !== 1) return `${tier === 2 ? 'Slows nearby enemies. ' : ''}Defeated enemies in range drop ${Math.round(after.lure * 100)}% more glow.`
   if (id === 'bell' && path === 0 && tier === 0) return `Slows enemies by ${Math.round(after.slow * 100)}%.`
@@ -41,7 +48,7 @@ export function upgradeSummary(id: TowerId, a: number, b: number, path: 0 | 1, s
   const before = statsFor(id, a, b)
   const after = statsFor(id, a + (path === 0 ? 1 : 0), b + (path === 1 ? 1 : 0))
   const changes: string[] = []
-  if (after.beamLine && !before.beamLine) changes.push('Pierces a whole line')
+  if (after.beamLine && !before.beamLine) changes.push(after.pierce > 1 ? 'Up to 3 targets · extra hits 50%' : 'Pierces a whole line')
   if (after.beams !== before.beams) changes.push(`${after.beams} beam targets`)
   if (after.stunEvery !== before.stunEvery) changes.push(`Stuns groups every ${after.stunEvery} tolls`)
   if (after.brittle && !before.brittle) changes.push('Hits +1; beams +25%')

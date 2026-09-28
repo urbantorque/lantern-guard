@@ -9,7 +9,7 @@ export function leakAdvice(sim: Sim): string {
   const lower = /l([01])/.exec(leak.route)
   const branch = lower ? sim.gates[1].def.labels[Number(lower[1])] : 'the final channel'
   const problem = leak.hidden ? 'still hidden' : leak.armoured ? 'with armour intact' : 'with health left'
-  const suggestion = leak.hidden ? 'Cover that water with an Owl and an attacking tower.' : leak.armoured ? 'Build a Cracker or Lighthouse along that route.' : 'Upgrade towers covering that route.'
+  const suggestion = leak.hidden ? 'Add an Owl beside towers covering that route.' : leak.armoured ? 'Add heavy damage there: Hot Wax Wicklings, Crackers or a Lighthouse.' : 'Upgrade towers covering that route.'
   return `${ENEMIES[leak.enemy].name} escaped via ${branch}, ${problem}. ${suggestion}`
 }
 

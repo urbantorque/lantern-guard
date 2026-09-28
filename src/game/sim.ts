@@ -1,5 +1,6 @@
 import { compactLevel, compactWave, COMPACT_END, STARTER_PLOTS, PLOTS, REFINEMENTS, refineStats } from './compact'
 import { LATE_REFINEMENTS, LATE_TOWERS, PREPARATIONS, lateRefine, encounterWave, preparationCost, netDamage, type Preparation, type PreparationId } from './depth'
+import { balanceTower, BEAM_SECONDARY_DAMAGE, GARDEN_REFINEMENT_COSTS, NIGHTFALL_LATE_BOSS_HEALTH } from './balance'
 import { gardensLevel, GARDENS_END, GARDENS_WAVES } from './gardens'
 import type { GuardianId } from './guardians'
 import { BATTLE_PLANS, PLAN_ROUNDS, applyBattlePlans, type BattlePlanId } from './battle-plans'
@@ -207,6 +208,8 @@ export type SimEvent =
 
 /** Rules a night is played under. Plain nights use {}; tides and weekly nights set several. */
 export interface Challenge {
+  /** Bounded beam piercing, neutral boss colours and revised late tower roles. */
+  balance?: 1
   skirmish?: { from: number; to: number; glow: number; seed: number }
   /** Extra towers, preparations and later upgrades. Old saves retain their rules. */
   depth?: 1
@@ -711,6 +714,7 @@ export class Sim {
       // A garden competes with a damage tower for a scarce plot; its return is deliberately slower.
       if (id === 'garden') { stats.income = Math.round(stats.income * .8); stats.lure *= .5 }
       if (id === 'beam') stats.damage *= .85
+      if (this.challenge.balance) balanceTower(stats, id, b)
       if (id === 'bell' && this.challenge.guardian === 'tide') { stats.slow = Math.min(.75, stats.slow + .15); stats.interval *= 1.25 }
       refineStats(stats, this.challenge.depth ? Math.min(2, refinement) : refinement)
       if (this.challenge.depth) lateRefine(stats, id, refinement)
@@ -720,8 +724,13 @@ export class Sim {
   }
 
   refinementCost(t: Tower): number | null {
-    const next = this.refinements[t.refinement ?? 0]
+    const next = this.refinementOffer(t)
     return this.challenge.compact && next && Math.max(t.a, t.b) === 3 && this.planningWave >= next.wave ? next.cost : null
+  }
+
+  refinementOffer(t: Tower) {
+    const rank = t.refinement ?? 0, next = this.refinements[rank]
+    return next && { ...next, cost: this.challenge.balance && t.id === 'garden' ? GARDEN_REFINEMENT_COSTS[rank] : next.cost }
   }
 
   get refinements() { return this.challenge.depth ? [...REFINEMENTS, ...LATE_REFINEMENTS] : [...REFINEMENTS] }
@@ -1056,7 +1065,8 @@ export class Sim {
     // Keep Nightfall's ordinary late enemies tougher than Standard after their opening ramp.
     const lateRate = this.challenge.guard && this.difficulty === 'nightfall' ? 0.25 : d.late
     const late = def.boss ? 1 + Math.max(0, lw - 10) * d.bossLate : 1 + deep * lateRate + deep * deep * d.late2
-    const hp = def.hp * ramp * late * (this.challenge.compact && def.id === 'bloomheart' ? .7 : 1) * (this.freeplay ? 1 + (this.wave - (this.challenge.compact ? COMPACT_END : FINAL_WAVE)) * 0.06 : 1)
+    const bossHealth = this.challenge.balance && this.difficulty === 'nightfall' && (type === 'warden' || type === 'bloomheart') ? NIGHTFALL_LATE_BOSS_HEALTH : 1
+    const hp = def.hp * ramp * late * bossHealth * (this.challenge.compact && def.id === 'bloomheart' ? .7 : 1) * (this.freeplay ? 1 + (this.wave - (this.challenge.compact ? COMPACT_END : FINAL_WAVE)) * 0.06 : 1)
     const shell = (def.shell ?? 0) * ramp * late * (this.challenge.thick ?? 1)
     const e: Enemy = {
       uid: this.uid++,
@@ -1437,7 +1447,7 @@ export class Sim {
     if (!e.alive || amount <= 0) return false
     const before = Math.max(0, e.hp) + Math.max(0, e.shell)
     if (e.brittleT > 0) amount += continuous ? amount * 0.25 : 1
-    if (src && src.def.family === e.def.family) amount *= FAMILY_BONUS
+    if (src && src.def.family === e.def.family && !(this.challenge.balance && e.def.boss)) amount *= FAMILY_BONUS
     if (e.def.id === 'warden' && wardenEscorts(this, e).length) amount *= WARDEN_GUARD_TAKEN
     if (e.shell > 0) {
       if (!heavy) {
@@ -1720,7 +1730,7 @@ export class Sim {
           let firing = false
           for (let i = 0; i < s.beams; i++) {
             let tg = t.beamTargets[i]
-            if (tg && (!tg.alive || dist2(t.x, t.y, tg.x, tg.y) > (range + tg.def.radius) ** 2 || !this.canSee(tg, s.detect))) tg = null
+            if (tg && (!tg.alive || dist2(t.x, t.y, tg.x, tg.y) > (range + tg.def.radius) ** 2 || !this.canSee(tg, s.detect) || !!this.challenge.balance && i > 0 && tg === t.beamTargets[0])) tg = null
             if (!tg) tg = this.pickTarget(t, range, i === 1 ? t.beamTargets[0] : null)
             t.beamTargets[i] = tg
             if (!tg) continue
@@ -1731,13 +1741,17 @@ export class Sim {
               const ang = Math.atan2(tg.y - t.y, tg.x - t.x)
               const ex = t.x + Math.cos(ang) * range
               const ey = t.y + Math.sin(ang) * range
-              for (const e of this.near((t.x + ex) / 2, (t.y + ey) / 2, range / 2 + 10, tmpC)) {
+              const candidates = this.near((t.x + ex) / 2, (t.y + ey) / 2, range / 2 + 10, tmpC)
+              const hits = this.challenge.balance ? [tg, ...candidates.filter(e => e !== tg && this.canSee(e, s.detect) && segDist2(e.x, e.y, t.x, t.y, ex, ey) < (e.def.radius + 12) ** 2)
+                .sort((a, b) => dist2(t.x, t.y, a.x, a.y) - dist2(t.x, t.y, b.x, b.y) || a.uid - b.uid).slice(0, s.pierce - 1)] : candidates
+              for (const e of hits) {
                 if (!this.canSee(e, s.detect)) continue
                 if (segDist2(e.x, e.y, t.x, t.y, ex, ey) < (e.def.radius + 12) ** 2) {
-                  this.damage(e, dmg, true, t, true)
+                  const fraction = this.challenge.balance && e !== tg ? BEAM_SECONDARY_DAMAGE : 1
+                  this.damage(e, dmg * fraction, true, t, true)
                   if (s.burn > 0 && e.alive) {
                     e.burnT = s.burnDur
-                    e.burnDps = Math.max(e.burnDps, s.burn)
+                    e.burnDps = Math.max(e.burnDps, s.burn * fraction)
                   }
                 }
               }

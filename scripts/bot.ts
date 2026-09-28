@@ -29,6 +29,8 @@ export interface BotOpts {
   early?: boolean
   freezeAt?: number
   maxTowers?: number
+  /** Keep build capacity for explicitly requested specialists that unlock later. */
+  reserveLate?: boolean
   /** Send weak Mopes down rich channels for extra glow. */
   greed?: boolean
 }
@@ -359,7 +361,8 @@ function spend(sim: Sim, o: BotOpts) {
       if (!sim.challenge.compact) continue
     }
     const nonEco = sim.towers.filter((t) => t.id !== 'garden').length
-    const target = Math.min(o.maxTowers ?? 14, 2 + Math.floor(sim.wave * 0.55))
+    const reserved = o.reserveLate ? (['storm', 'ballista'] as const).filter(id => o.mix[id] && !sim.keeperAllowed(id)).length : 0
+    const target = Math.min((o.maxTowers ?? 14) - reserved, 2 + Math.floor(sim.wave * 0.55))
     const wantType = chooseType(sim, o)
     const n = needs(sim)
     const urgent = (n.shell > 0 && !sim.towers.some((t) => t.stats.heavy)) || (n.veil > 0 && !sim.towers.some((t) => t.id === 'owl' || t.stats.detect))
@@ -404,7 +407,7 @@ function spend(sim: Sim, o: BotOpts) {
       const refinable = sim.towers.filter(t => sim.refinementCost(t) !== null).sort((a, b) => (a.id === 'garden' ? 1 : 0) - (b.id === 'garden' ? 1 : 0))
       if (refinable.some(t => sim.refine(t))) continue
     }
-    if (!pick && sim.pads.some((p, i) => !p.tower && (!sim.challenge.compact || sim.padAvailable(i)))) {
+    if (!pick && (!reserved || nonEco < target) && sim.pads.some((p, i) => !p.tower && (!sim.challenge.compact || sim.padAvailable(i)))) {
       if (sim.glow < TOWERS[wantType].cost) return
       const pad = bestPad(sim, wantType, sim.wave + 1)
       if (pad >= 0) sim.build(pad, wantType)

@@ -16,10 +16,10 @@ export const KEEPER_ROLE: Record<TowerId, string> = {
 }
 export const KEEPER_HELP: Record<TowerId, string> = {
   wick: 'Fast, cheap shots. Weak against armour.',
-  cracker: 'Hits groups and breaks armour.',
+  cracker: 'Hits groups and breaks armour. Needs help with bosses.',
   bell: 'Slows enemies so other towers can fire longer.',
   owl: 'Reveals hidden enemies for nearby towers.',
-  beam: 'Steady damage against armour and bosses.',
+  beam: 'Steady damage against armour. Needs support against crowds.',
   garden: 'Earns glow after each wave. Cannot attack at first.',
   storm: 'Lightning jumps through crowds. Weak against armour at first.',
   ballista: 'Slow, heavy bolts target the strongest enemy. Needs help with crowds.',

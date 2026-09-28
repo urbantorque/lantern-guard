@@ -81,5 +81,6 @@ export function comboHint(sim: Sim, tower: Tower): string {
   if (owl && !tower.stats.detect) return 'Lamp Owl covers the same water and reveals hidden targets for this tower.'
   if (bell) return `Moonbell covers the same water: more time for ${tower.id === 'cracker' ? 'crowd bursts' : 'attacks'}.`
   return tower.id === 'cracker' ? 'Pair with Moonbell on the same bend for more bursts against slowed groups.'
+    : tower.stats.detect ? 'Pair with Moonbell to keep enemies in range longer.'
     : 'Pair with Moonbell for more firing time, or Lamp Owl to reveal hidden targets.'
 }

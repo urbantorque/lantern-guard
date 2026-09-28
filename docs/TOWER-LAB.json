@@ -1,0 +1,722 @@
+[
+  {
+    "revised": false,
+    "id": "wick",
+    "path": 0,
+    "group": "boss",
+    "cost": 1120,
+    "damage": 570,
+    "damagePer100Glow": 50.89
+  },
+  {
+    "revised": false,
+    "id": "wick",
+    "path": 0,
+    "group": "crowd",
+    "cost": 1120,
+    "damage": 1140,
+    "damagePer100Glow": 101.79
+  },
+  {
+    "revised": false,
+    "id": "wick",
+    "path": 0,
+    "group": "armour",
+    "cost": 1120,
+    "damage": 257,
+    "damagePer100Glow": 22.9
+  },
+  {
+    "revised": false,
+    "id": "wick",
+    "path": 0,
+    "group": "hidden",
+    "cost": 1120,
+    "damage": 0,
+    "damagePer100Glow": 0
+  },
+  {
+    "revised": false,
+    "id": "wick",
+    "path": 1,
+    "group": "boss",
+    "cost": 1200,
+    "damage": 256,
+    "damagePer100Glow": 21.33
+  },
+  {
+    "revised": false,
+    "id": "wick",
+    "path": 1,
+    "group": "crowd",
+    "cost": 1200,
+    "damage": 1536,
+    "damagePer100Glow": 128
+  },
+  {
+    "revised": false,
+    "id": "wick",
+    "path": 1,
+    "group": "armour",
+    "cost": 1200,
+    "damage": 1280,
+    "damagePer100Glow": 106.67
+  },
+  {
+    "revised": false,
+    "id": "wick",
+    "path": 1,
+    "group": "hidden",
+    "cost": 1200,
+    "damage": 1280,
+    "damagePer100Glow": 106.67
+  },
+  {
+    "revised": false,
+    "id": "cracker",
+    "path": 0,
+    "group": "boss",
+    "cost": 1540,
+    "damage": 253,
+    "damagePer100Glow": 16.45
+  },
+  {
+    "revised": false,
+    "id": "cracker",
+    "path": 0,
+    "group": "crowd",
+    "cost": 1540,
+    "damage": 1750,
+    "damagePer100Glow": 113.61
+  },
+  {
+    "revised": false,
+    "id": "cracker",
+    "path": 0,
+    "group": "armour",
+    "cost": 1540,
+    "damage": 2242,
+    "damagePer100Glow": 145.56
+  },
+  {
+    "revised": false,
+    "id": "cracker",
+    "path": 0,
+    "group": "hidden",
+    "cost": 1540,
+    "damage": 0,
+    "damagePer100Glow": 0
+  },
+  {
+    "revised": false,
+    "id": "cracker",
+    "path": 1,
+    "group": "boss",
+    "cost": 1540,
+    "damage": 94,
+    "damagePer100Glow": 6.08
+  },
+  {
+    "revised": false,
+    "id": "cracker",
+    "path": 1,
+    "group": "crowd",
+    "cost": 1540,
+    "damage": 1122,
+    "damagePer100Glow": 72.83
+  },
+  {
+    "revised": false,
+    "id": "cracker",
+    "path": 1,
+    "group": "armour",
+    "cost": 1540,
+    "damage": 1446,
+    "damagePer100Glow": 93.87
+  },
+  {
+    "revised": false,
+    "id": "cracker",
+    "path": 1,
+    "group": "hidden",
+    "cost": 1540,
+    "damage": 654,
+    "damagePer100Glow": 42.48
+  },
+  {
+    "revised": false,
+    "id": "beam",
+    "path": 0,
+    "group": "boss",
+    "cost": 2270,
+    "damage": 845,
+    "damagePer100Glow": 37.22
+  },
+  {
+    "revised": false,
+    "id": "beam",
+    "path": 0,
+    "group": "crowd",
+    "cost": 2270,
+    "damage": 4225,
+    "damagePer100Glow": 186.11
+  },
+  {
+    "revised": false,
+    "id": "beam",
+    "path": 0,
+    "group": "armour",
+    "cost": 2270,
+    "damage": 2950,
+    "damagePer100Glow": 129.94
+  },
+  {
+    "revised": false,
+    "id": "beam",
+    "path": 0,
+    "group": "hidden",
+    "cost": 2270,
+    "damage": 2360,
+    "damagePer100Glow": 103.95
+  },
+  {
+    "revised": false,
+    "id": "beam",
+    "path": 1,
+    "group": "boss",
+    "cost": 2040,
+    "damage": 510,
+    "damagePer100Glow": 25
+  },
+  {
+    "revised": false,
+    "id": "beam",
+    "path": 1,
+    "group": "crowd",
+    "cost": 2040,
+    "damage": 1020,
+    "damagePer100Glow": 50
+  },
+  {
+    "revised": false,
+    "id": "beam",
+    "path": 1,
+    "group": "armour",
+    "cost": 2040,
+    "damage": 680,
+    "damagePer100Glow": 33.33
+  },
+  {
+    "revised": false,
+    "id": "beam",
+    "path": 1,
+    "group": "hidden",
+    "cost": 2040,
+    "damage": 680,
+    "damagePer100Glow": 33.33
+  },
+  {
+    "revised": false,
+    "id": "storm",
+    "path": 0,
+    "group": "boss",
+    "cost": 2230,
+    "damage": 96,
+    "damagePer100Glow": 4.3
+  },
+  {
+    "revised": false,
+    "id": "storm",
+    "path": 0,
+    "group": "crowd",
+    "cost": 2230,
+    "damage": 672,
+    "damagePer100Glow": 30.13
+  },
+  {
+    "revised": false,
+    "id": "storm",
+    "path": 0,
+    "group": "armour",
+    "cost": 2230,
+    "damage": 168,
+    "damagePer100Glow": 7.53
+  },
+  {
+    "revised": false,
+    "id": "storm",
+    "path": 0,
+    "group": "hidden",
+    "cost": 2230,
+    "damage": 0,
+    "damagePer100Glow": 0
+  },
+  {
+    "revised": false,
+    "id": "storm",
+    "path": 1,
+    "group": "boss",
+    "cost": 2450,
+    "damage": 117,
+    "damagePer100Glow": 4.78
+  },
+  {
+    "revised": false,
+    "id": "storm",
+    "path": 1,
+    "group": "crowd",
+    "cost": 2450,
+    "damage": 468,
+    "damagePer100Glow": 19.1
+  },
+  {
+    "revised": false,
+    "id": "storm",
+    "path": 1,
+    "group": "armour",
+    "cost": 2450,
+    "damage": 468,
+    "damagePer100Glow": 19.1
+  },
+  {
+    "revised": false,
+    "id": "storm",
+    "path": 1,
+    "group": "hidden",
+    "cost": 2450,
+    "damage": 468,
+    "damagePer100Glow": 19.1
+  },
+  {
+    "revised": false,
+    "id": "ballista",
+    "path": 0,
+    "group": "boss",
+    "cost": 3270,
+    "damage": 967,
+    "damagePer100Glow": 29.58
+  },
+  {
+    "revised": false,
+    "id": "ballista",
+    "path": 0,
+    "group": "crowd",
+    "cost": 3270,
+    "damage": 967,
+    "damagePer100Glow": 29.58
+  },
+  {
+    "revised": false,
+    "id": "ballista",
+    "path": 0,
+    "group": "armour",
+    "cost": 3270,
+    "damage": 967,
+    "damagePer100Glow": 29.57
+  },
+  {
+    "revised": false,
+    "id": "ballista",
+    "path": 0,
+    "group": "hidden",
+    "cost": 3270,
+    "damage": 967,
+    "damagePer100Glow": 29.57
+  },
+  {
+    "revised": false,
+    "id": "ballista",
+    "path": 1,
+    "group": "boss",
+    "cost": 3040,
+    "damage": 624,
+    "damagePer100Glow": 20.53
+  },
+  {
+    "revised": false,
+    "id": "ballista",
+    "path": 1,
+    "group": "crowd",
+    "cost": 3040,
+    "damage": 624,
+    "damagePer100Glow": 20.53
+  },
+  {
+    "revised": false,
+    "id": "ballista",
+    "path": 1,
+    "group": "armour",
+    "cost": 3040,
+    "damage": 624,
+    "damagePer100Glow": 20.53
+  },
+  {
+    "revised": false,
+    "id": "ballista",
+    "path": 1,
+    "group": "hidden",
+    "cost": 3040,
+    "damage": 624,
+    "damagePer100Glow": 20.53
+  },
+  {
+    "revised": true,
+    "id": "wick",
+    "path": 0,
+    "group": "boss",
+    "cost": 1120,
+    "damage": 570,
+    "damagePer100Glow": 50.89
+  },
+  {
+    "revised": true,
+    "id": "wick",
+    "path": 0,
+    "group": "crowd",
+    "cost": 1120,
+    "damage": 1140,
+    "damagePer100Glow": 101.79
+  },
+  {
+    "revised": true,
+    "id": "wick",
+    "path": 0,
+    "group": "armour",
+    "cost": 1120,
+    "damage": 257,
+    "damagePer100Glow": 22.9
+  },
+  {
+    "revised": true,
+    "id": "wick",
+    "path": 0,
+    "group": "hidden",
+    "cost": 1120,
+    "damage": 0,
+    "damagePer100Glow": 0
+  },
+  {
+    "revised": true,
+    "id": "wick",
+    "path": 1,
+    "group": "boss",
+    "cost": 1200,
+    "damage": 256,
+    "damagePer100Glow": 21.33
+  },
+  {
+    "revised": true,
+    "id": "wick",
+    "path": 1,
+    "group": "crowd",
+    "cost": 1200,
+    "damage": 1536,
+    "damagePer100Glow": 128
+  },
+  {
+    "revised": true,
+    "id": "wick",
+    "path": 1,
+    "group": "armour",
+    "cost": 1200,
+    "damage": 1280,
+    "damagePer100Glow": 106.67
+  },
+  {
+    "revised": true,
+    "id": "wick",
+    "path": 1,
+    "group": "hidden",
+    "cost": 1200,
+    "damage": 1280,
+    "damagePer100Glow": 106.67
+  },
+  {
+    "revised": true,
+    "id": "cracker",
+    "path": 0,
+    "group": "boss",
+    "cost": 1540,
+    "damage": 253,
+    "damagePer100Glow": 16.45
+  },
+  {
+    "revised": true,
+    "id": "cracker",
+    "path": 0,
+    "group": "crowd",
+    "cost": 1540,
+    "damage": 1750,
+    "damagePer100Glow": 113.61
+  },
+  {
+    "revised": true,
+    "id": "cracker",
+    "path": 0,
+    "group": "armour",
+    "cost": 1540,
+    "damage": 2242,
+    "damagePer100Glow": 145.56
+  },
+  {
+    "revised": true,
+    "id": "cracker",
+    "path": 0,
+    "group": "hidden",
+    "cost": 1540,
+    "damage": 0,
+    "damagePer100Glow": 0
+  },
+  {
+    "revised": true,
+    "id": "cracker",
+    "path": 1,
+    "group": "boss",
+    "cost": 1540,
+    "damage": 202,
+    "damagePer100Glow": 13.09
+  },
+  {
+    "revised": true,
+    "id": "cracker",
+    "path": 1,
+    "group": "crowd",
+    "cost": 1540,
+    "damage": 2418,
+    "damagePer100Glow": 156.99
+  },
+  {
+    "revised": true,
+    "id": "cracker",
+    "path": 1,
+    "group": "armour",
+    "cost": 1540,
+    "damage": 3390,
+    "damagePer100Glow": 220.1
+  },
+  {
+    "revised": true,
+    "id": "cracker",
+    "path": 1,
+    "group": "hidden",
+    "cost": 1540,
+    "damage": 1410,
+    "damagePer100Glow": 91.58
+  },
+  {
+    "revised": true,
+    "id": "beam",
+    "path": 0,
+    "group": "boss",
+    "cost": 2270,
+    "damage": 590,
+    "damagePer100Glow": 25.99
+  },
+  {
+    "revised": true,
+    "id": "beam",
+    "path": 0,
+    "group": "crowd",
+    "cost": 2270,
+    "damage": 1690,
+    "damagePer100Glow": 74.44
+  },
+  {
+    "revised": true,
+    "id": "beam",
+    "path": 0,
+    "group": "armour",
+    "cost": 2270,
+    "damage": 1180,
+    "damagePer100Glow": 51.98
+  },
+  {
+    "revised": true,
+    "id": "beam",
+    "path": 0,
+    "group": "hidden",
+    "cost": 2270,
+    "damage": 1180,
+    "damagePer100Glow": 51.98
+  },
+  {
+    "revised": true,
+    "id": "beam",
+    "path": 1,
+    "group": "boss",
+    "cost": 2040,
+    "damage": 442,
+    "damagePer100Glow": 21.67
+  },
+  {
+    "revised": true,
+    "id": "beam",
+    "path": 1,
+    "group": "crowd",
+    "cost": 2040,
+    "damage": 1326,
+    "damagePer100Glow": 65
+  },
+  {
+    "revised": true,
+    "id": "beam",
+    "path": 1,
+    "group": "armour",
+    "cost": 2040,
+    "damage": 884,
+    "damagePer100Glow": 43.33
+  },
+  {
+    "revised": true,
+    "id": "beam",
+    "path": 1,
+    "group": "hidden",
+    "cost": 2040,
+    "damage": 884,
+    "damagePer100Glow": 43.33
+  },
+  {
+    "revised": true,
+    "id": "storm",
+    "path": 0,
+    "group": "boss",
+    "cost": 2230,
+    "damage": 112,
+    "damagePer100Glow": 5.02
+  },
+  {
+    "revised": true,
+    "id": "storm",
+    "path": 0,
+    "group": "crowd",
+    "cost": 2230,
+    "damage": 784,
+    "damagePer100Glow": 35.16
+  },
+  {
+    "revised": true,
+    "id": "storm",
+    "path": 0,
+    "group": "armour",
+    "cost": 2230,
+    "damage": 196,
+    "damagePer100Glow": 8.79
+  },
+  {
+    "revised": true,
+    "id": "storm",
+    "path": 0,
+    "group": "hidden",
+    "cost": 2230,
+    "damage": 0,
+    "damagePer100Glow": 0
+  },
+  {
+    "revised": true,
+    "id": "storm",
+    "path": 1,
+    "group": "boss",
+    "cost": 2450,
+    "damage": 130,
+    "damagePer100Glow": 5.31
+  },
+  {
+    "revised": true,
+    "id": "storm",
+    "path": 1,
+    "group": "crowd",
+    "cost": 2450,
+    "damage": 520,
+    "damagePer100Glow": 21.22
+  },
+  {
+    "revised": true,
+    "id": "storm",
+    "path": 1,
+    "group": "armour",
+    "cost": 2450,
+    "damage": 520,
+    "damagePer100Glow": 21.22
+  },
+  {
+    "revised": true,
+    "id": "storm",
+    "path": 1,
+    "group": "hidden",
+    "cost": 2450,
+    "damage": 520,
+    "damagePer100Glow": 21.22
+  },
+  {
+    "revised": true,
+    "id": "ballista",
+    "path": 0,
+    "group": "boss",
+    "cost": 3270,
+    "damage": 1168,
+    "damagePer100Glow": 35.73
+  },
+  {
+    "revised": true,
+    "id": "ballista",
+    "path": 0,
+    "group": "crowd",
+    "cost": 3270,
+    "damage": 1168,
+    "damagePer100Glow": 35.72
+  },
+  {
+    "revised": true,
+    "id": "ballista",
+    "path": 0,
+    "group": "armour",
+    "cost": 3270,
+    "damage": 1168,
+    "damagePer100Glow": 35.72
+  },
+  {
+    "revised": true,
+    "id": "ballista",
+    "path": 0,
+    "group": "hidden",
+    "cost": 3270,
+    "damage": 1168,
+    "damagePer100Glow": 35.72
+  },
+  {
+    "revised": true,
+    "id": "ballista",
+    "path": 1,
+    "group": "boss",
+    "cost": 3040,
+    "damage": 868,
+    "damagePer100Glow": 28.55
+  },
+  {
+    "revised": true,
+    "id": "ballista",
+    "path": 1,
+    "group": "crowd",
+    "cost": 3040,
+    "damage": 868,
+    "damagePer100Glow": 28.55
+  },
+  {
+    "revised": true,
+    "id": "ballista",
+    "path": 1,
+    "group": "armour",
+    "cost": 3040,
+    "damage": 868,
+    "damagePer100Glow": 28.55
+  },
+  {
+    "revised": true,
+    "id": "ballista",
+    "path": 1,
+    "group": "hidden",
+    "cost": 3040,
+    "damage": 868,
+    "damagePer100Glow": 28.55
+  }
+]

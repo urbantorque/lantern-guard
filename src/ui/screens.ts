@@ -31,12 +31,12 @@ const COUNTER_TIP: Record<EnemyId, string> = {
   skitter: 'Moonbells slow Skitters, and the long loops give your keepers more time. Keep Skitters off the short runs.',
   shell: 'Crackers, Lighthouses and Hot Wax Wicklings crack armour. The Mill run is another option when your towers cover it.',
   veil: 'Put a Lamp Owl where it shares water with your damage towers. The Lantern bridge also reveals Veils, but west-entry enemies skip it.',
-  bloat: 'Lighthouses melt Bloats, and each one bursts into three Drips, so keep something quick behind them.',
-  wisp: 'Cracker bursts cheer up whole Wisp swarms at once.',
-  mender: 'Set a keeper to Strong so it cheers up Menders before they heal the crowd.',
+  bloat: 'Bloats split into three Drips. Keep fast-firing towers behind your heavy damage.',
+  wisp: 'Cracker explosions can clear several Wisps at once.',
+  mender: 'Use Strong targeting to hit Menders before they heal the group.',
   vshell: 'Pair a Lamp Owl with Crackers or a Lighthouse to handle hidden armour. The bridge and mill also help.',
-  toad: 'Gloomtoads jam locks. Set both locks to the long loops before one arrives, and put a Lighthouse on its path.',
-  gloom: 'Old Gloom splits at the Lower Lock, so both lower channels need a Lighthouse or Candelabra.',
+  toad: 'Gloomtoads jam nearby locks. Set the route before one arrives, then upgrade towers along it.',
+  gloom: 'Old Gloom splits at the Lower Lock. Both lower routes need upgraded damage towers.',
 }
 
 const TWIST_SHORT: Record<Twist, string> = { none: '', swift: 'Swift current', thick: 'Thick shells', tidal: 'Tidal locks', sluice: 'Sluice night' }
@@ -186,6 +186,7 @@ export class Screens {
     this.returnKeys.push(null)
     this.el.hidden = false
     this.el.innerHTML = html
+    this.el.classList.toggle('menu-screen', this.app.mode === 'title')
     this.el.scrollTop = 0
     document.getElementById('stage')!.inert = true
     const heading = this.el.querySelector('h1, h2')
@@ -223,11 +224,11 @@ export class Screens {
     const nextWave = save ? save.wave + (save.v === 2 && (save.over || save.enemies.length || save.spawners.length) ? 0 : 1) : 1
     this.show(
       `<div class="card title-card simple-title">
-        <canvas class="key-art" aria-hidden="true"></canvas>
         <div class="logo"><canvas id="logo-cv" width="128" height="128" aria-hidden="true"></canvas><h1 translate="no" aria-label="Lantern Guard: Tower Defense">Lantern <em>Guard</em><span class="title-genre">Tower Defense</span></h1></div>
-        <p class="tagline">Defend the lantern.<br>Hold out for 40 waves.</p>
+        <canvas class="key-art" aria-hidden="true"></canvas>
         <div class="title-play stack">
-          <button class="big-btn primary resume-btn" data-act="${save ? 'continue' : 'play'}"><span>${icon('play')} ${save ? 'Continue' : 'Play'}</span>${save ? `<small>${name} · ${save.challenge.compact ? WATCH_NAMES[save.challenge.variant ?? 0] : save.challenge.gardens ? 'Gardens' : save.challenge.harbour ? 'Harbour' : 'Canal'} · wave ${nextWave}${save.v === 2 && save.over ? (save.won ? ' complete' : ' · review') : ''}<br>${save.towers.length} ${save.towers.length === 1 ? 'tower' : 'towers'} · ${save.lives} light</small>` : ''}</button>
+          ${save ? `<p class="saved-defence">${save.challenge.compact ? WATCH_NAMES[save.challenge.variant ?? 0] : save.challenge.gardens ? 'Gardens' : save.challenge.harbour ? 'Harbour' : 'Canal'} <span>${name} · ${save.v === 2 && save.over ? save.won ? 'Complete' : 'Defeated' : `Wave ${nextWave}`}</span></p>` : '<p class="title-intro">Build your defence. Hold out for 40 waves.</p>'}
+          <button class="big-btn primary resume-btn" data-act="${save ? 'continue' : 'play'}"><span>${icon('play')} ${save ? save.v === 2 && save.over ? 'View defence' : 'Continue' : 'Play'}</span></button>
           ${challengeSave ? `<button class="title-quiet" data-act="continue-challenge">Resume challenge · wave ${Math.max(1, challengeSave.wave - (challengeSave.challenge.skirmish?.from ?? challengeSave.challenge.tide?.from ?? 0) + Number(challengeSave.v === 2 && !challengeSave.over && !challengeSave.enemies.length && !challengeSave.spawners.length))}</button>` : ''}
           ${save ? '<button class="title-quiet" data-act="night">New game</button>' : ''}
         </div>
@@ -261,7 +262,6 @@ export class Screens {
       <h3>Difficulty</h3>
       <div class="difficulty-options" role="group" aria-label="Difficulty">${(Object.keys(DIFFICULTY) as Difficulty[]).map(d => `<button data-mode="${d}" aria-pressed="${d === this.difficulty}">${DIFFICULTY[d].name}</button>`).join('')}</div>
       <p class="difficulty-detail" aria-live="polite">${DIFFICULTY[this.difficulty].desc}</p>
-      <p class="new-game-note">Buy more space. Keep your towers for all 40 waves.</p>
       <div class="stack gap-top"><button class="big-btn primary" data-act="start">Start game</button><button class="big-btn" data-act="back">Back</button></div></div>`, () => this.chooseNight(replace))
     this.on('[data-mode]', b => {
       const d = b.dataset.mode as Difficulty
@@ -280,14 +280,14 @@ export class Screens {
   private collection() {
     const p = loadProgress()
     const tides = p.runs >= 1 || Object.keys(loadChallenges()).length > 0
-    this.show(`<div class="card"><h2>Collection</h2><p>Your unlocks and achievements.</p>
+    this.show(`<div class="card"><h2>Collection</h2>
       <div class="stack">
         <button class="big-btn" data-act="journal">${icon('book')} Bloom journal <small>${Math.floor(journalTotal(p)).toLocaleString('en')} blooms</small></button>
-        <button class="big-btn" data-act="feats">${icon('star')} Feats <small>${Object.values(p.feats).filter(Boolean).length}/${FEATS.length}</small></button>
-        <button class="big-btn" data-act="guardians">${icon('sparkle')} Guardians <small>${Object.keys(GUARDIANS).filter(id => guardianUnlocked(id as GuardianId, p.feats)).length}/4 unlocked · each changes a tower</small></button>
+        <button class="big-btn" data-act="feats">${icon('star')} Achievements <small>${Object.values(p.feats).filter(Boolean).length}/${FEATS.length}</small></button>
+        <button class="big-btn" data-act="guardians">${icon('sparkle')} Guardians <small>${Object.keys(GUARDIANS).filter(id => guardianUnlocked(id as GuardianId, p.feats)).length}/4 unlocked</small></button>
         <section class="settlement-card"><h3>Your settlement · ${p.settlement ?? 0}/4 restored</h3><p>${restorationPreview(p)}</p>${RESTORATIONS.slice(0, p.settlement ?? 0).map(r => `<p>✓ ${r.reward}</p>`).join('')}${p.feats['early-bird'] ? '<p>✓ Village bunting earned.</p>' : ''}</section>
         ${p.harbourWins ? `<p>Lantern Harbour kept ${p.harbourWins} ${p.harbourWins === 1 ? 'time' : 'times'}.</p>` : ''}
-        ${tides ? `<button class="big-btn" data-act="tides">${icon('calendar')} Daily tides &amp; weekly nights</button>` : ''}
+        ${tides ? `<button class="big-btn" data-act="tides">${icon('calendar')} Daily &amp; weekly challenges</button>` : ''}
         <button class="big-btn" data-act="back">Back</button>
       </div></div>`, () => this.collection())
     this.on('[data-act="journal"]', () => this.bloomJournal('mopes'))
@@ -340,8 +340,8 @@ export class Screens {
   /** The daily tide and the weekly night: what they ask, how you did, and a way to share it. */
   tides() {
     const now = new Date()
-    const daily = compactChallenge(now, 'daily')
-    const weekly = compactChallenge(now, 'weekly')
+    const daily = compactChallenge(now, 'daily', true)
+    const weekly = compactChallenge(now, 'weekly', true)
     const results = loadChallenges()
     const save = loadRun('challenge')
     const block = (o: ChallengeOffer, sum: string, play: string) => {
@@ -350,7 +350,7 @@ export class Screens {
       return `<section class="tide" aria-labelledby="tide-${o.kind}">
         <div class="tide-head">
           <span class="m-ic">${icon(o.kind === 'daily' ? 'calendar' : 'moon')}</span>
-          <div><h3 id="tide-${o.kind}">${o.name}</h3><span>${o.kind === 'daily' ? 'Daily tide' : 'Weekly night'}, ${o.when}</span></div>
+          <div><h3 id="tide-${o.kind}">${o.name}</h3><span>${o.kind === 'daily' ? 'Daily' : 'Weekly'} challenge · ${o.when}</span></div>
         </div>
         <p class="tide-sum">${sum}</p>
         <ul class="tide-rules">${o.rules.map((t) => `<li>${icon(t.startsWith('Tidal') ? 'waves' : t.startsWith('Only') || t.startsWith('No') || t.startsWith('Lean') || t.startsWith('Fixed') ? 'lock' : 'lightning')}<span>${t}</span></li>`).join('')}</ul>
@@ -364,7 +364,7 @@ export class Screens {
     // the last seven tides, oldest first: kept, lost, or not played
     const days = Array.from({ length: 7 }, (_, i) => {
       const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 6 + i)
-      const r = results[`daily:${dayKey(d)}:compact1`] ?? results[`daily:${dayKey(d)}:guard1`] ?? results[`daily:${dayKey(d)}`]
+      const r = results[`daily:${dayKey(d)}:compact2`] ?? results[`daily:${dayKey(d)}:compact1`] ?? results[`daily:${dayKey(d)}:guard1`] ?? results[`daily:${dayKey(d)}`]
       const name = d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })
       const state = r?.won ? 'kept' : r ? 'lost' : 'none'
       const label = `${name}: ${r?.won ? 'tide kept' : r ? 'played, lantern went out' : 'not played'}`
@@ -372,11 +372,11 @@ export class Screens {
     }).join('')
     this.show(
       `<div class="card">
-        <h2>Tides</h2>
+        <h2>Challenges</h2>
         <p>Short challenges with a starting defence to improve. Everyone gets the same map, towers and budget.</p>
-        ${block(daily, 'Improve a small defence and hold ten waves. Your campaign stays saved.', "Play today's tide")}
+        ${block(daily, 'Improve a small defence and survive 10 waves. Your main game stays saved.', 'Play daily challenge')}
         <ol class="week-strip" aria-label="The last seven daily tides">${days}</ol>
-        ${block(weekly, 'A stronger starting defence and ten later waves, ending with the Warden.', "Play this week's night")}
+        ${block(weekly, 'Hold 10 later waves. Defeat the Warden in the final wave.', 'Play weekly challenge')}
         <div class="stack gap-top"><button class="big-btn" data-act="done">Back</button></div>
       </div>`,
       () => this.tides(),
@@ -384,7 +384,7 @@ export class Screens {
     const offers = new Map([daily, weekly].map((o) => [o.id, o]))
     this.on('[data-play]', (b) => {
       const o = offers.get(b.dataset.play!)!
-      if (save) this.confirm(o.kind === 'daily' ? "Start today's tide?" : "Start this week's night?", 'Your previous challenge will be replaced. Your canal defence stays saved.', 'Start', () => this.app.newChallenge(o.challenge))
+      if (save) this.confirm('Start this challenge?', 'This replaces your saved challenge. Your main game stays saved.', 'Start', () => this.app.newChallenge(o.challenge))
       else this.app.newChallenge(o.challenge)
     })
     this.el.querySelectorAll<HTMLElement>('[data-share]').forEach((b) =>
@@ -684,6 +684,7 @@ export class Screens {
         ${row('flower', 'Long loops or short runs', compactWatch ? 'Long routes give towers more time to attack. The bridge reveals hidden enemies. The mill breaks armour. Both routes pay the same glow.' : guard ? 'Long loops give towers more firing time. Short routes mark Mopes with a gold ring: double glow when defeated, double light lost if they escape, wherever they finish. The bonus never stacks. The bridge reveals Veils; the mill cracks armour.' : 'Long loops give more firing time. Defeats on short runs pay double glow; any Mope that took one costs double light on escape. The bridge reveals Veils; the mill cracks shells.')}
         ${guard && !this.app.sim.isChallenge ? row('swap', 'Move between waves', 'Tap a tower, then Manage → Move. Moving costs 25 glow. Its upgrades stay with it.') : ''}
         ${row('sparkle', 'Combine your towers', 'Place a Moonbell near a Cracker to slow enemies inside its explosions. Place an Owl near attacking towers to help them hit hidden enemies.')}
+        ${this.app.sim.challenge.balance ? row('star', 'Colour match', 'Towers deal 50% more damage to ordinary enemies with the same colour and symbol. Bosses have no colour weakness.') : ''}
         ${!guard ? row('star', 'Charms', 'Charms make a lock always send one kind of Mope the same way, whatever the arrow says. Open them from the Charms button, or press and hold a lock.') : ''}
         ${row('heart', 'Keep the lantern lit', 'Mopes that reach the Great Lantern dim it. When the light runs out, the night is lost.')}
         ${guard ? row('eye', 'Enemy status', 'An eye icon means a hidden enemy is revealed. A coral ring shows armour. A blue ring means the enemy is slowed.') : ''}
@@ -731,8 +732,8 @@ export class Screens {
     const prog = loadProgress()
     this.show(
       `<div class="card">
-        <h2>Feats</h2>
-        <p>Different ways to win the same night. Each one asks for a new strategy.</p>
+        <h2>Achievements</h2>
+        <p>Goals to try across your games.</p>
         <div class="feats">${FEATS.map((f) => `<div class="feat ${prog.feats[f.id] ? 'done' : ''}">${icon('star')}<div><b>${f.name}</b> <span>${f.desc}</span></div><span class="sr-only">${prog.feats[f.id] ? 'Earned' : 'Not earned yet'}</span></div>`).join('')}</div>
         <div class="stack"><button class="big-btn primary" data-act="done">Back</button></div>
       </div>`,
@@ -789,11 +790,10 @@ export class Screens {
     let heading: string
     let body: string
     if (offer) {
-      const daily = offer.kind === 'daily'
-      heading = won ? (daily ? 'The tide is kept' : `Dawn: ${offer.name} kept`) : 'The lantern went out'
+      heading = won ? 'Challenge complete' : 'The lantern went out'
       body = won
         ? `${offer.name}, ${offer.when}. You kept ${sim.lives} of ${sim.maxLives} light.`
-        : `${offer.name}, ${offer.when}. You held ${held} of ${sim.finalWave - sim.waveOffset} ${daily ? 'tide waves' : 'waves'}.`
+        : `${offer.name}, ${offer.when}. You cleared ${held} of ${sim.finalWave - sim.waveOffset} waves.`
       if (record) body += record.improved ? (record.best.tries > 1 ? ' A new best.' : '') : ` Your best: ${resultLine(record.best).toLowerCase()}.`
     } else {
       heading = freeplay ? 'The long night ends' : won ? (sim.challenge.gardens ? 'Water Gardens is in bloom' : sim.challenge.harbour ? 'Lantern Harbour is safe' : 'Dawn: the lantern burns bright') : 'The lantern went out'
@@ -830,15 +830,15 @@ export class Screens {
         <div class="stack">${buttons}</div>
         ${guardianChoice}
         <div class="stats">
-          <div><b>${st.pops}</b><span>Mopes cheered up</span></div>
+          <div><b>${st.pops}</b><span>Enemies stopped</span></div>
           <div><b>${sim.lives}/${sim.maxLives}</b><span>Light left</span></div>
           <div><b>${st.flips}</b><span>Lock flips</span></div>
-          <div><b>${st.built}</b><span>Keepers built</span></div>
+          <div><b>${st.built}</b><span>Towers built</span></div>
           <div><b>${st.glowEarned}</b><span>Glow earned</span></div>
-          <div><b>${mins}:${String(secs).padStart(2, '0')}</b><span>Night length</span></div>
+          <div><b>${mins}:${String(secs).padStart(2, '0')}</b><span>Time played</span></div>
         </div>
         ${tip}${next}${sim.challenge.depth && !sim.isChallenge ? `<p class="battle-plan-note">${guardianNextGoal(progress, sim.challenge.guardian ?? 'lantern')}</p>` : bloomGoal}${featsHtml}
-        <h3>Tonight's canal</h3>
+        <h3>Your defence</h3>
         <figure class="postcard">
           <div class="pc-frame" role="img" aria-label="A picture of the canal as the night ended: the banks in bloom, your keepers and the Great Lantern."></div>
           <button class="big-btn" data-act="postcard" disabled>${icon('image')} Share picture</button>
@@ -998,7 +998,7 @@ function drawKeyArt(ctx: CanvasRenderingContext2D, W: number, H: number, t: numb
   drawTower(ctx, 0, 0, { id: 'wick', a: 2, b: 0, angle: 0.3, since: (t % 0.6) * 1, age: 9, upAge: 9, t, seed: 3 })
   ctx.restore()
   ctx.save()
-  ctx.translate(318, 148)
+  ctx.translate(318, 122)
   ctx.scale(0.55, 0.55)
   drawTower(ctx, 0, 0, { id: 'beam', a: 1, b: 0, angle: -2.4, since: 9, age: 9, upAge: 9, t, seed: 5 })
   ctx.restore()

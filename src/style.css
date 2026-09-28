@@ -26,7 +26,8 @@
   --pink: #ff8fb8;
   --r-panel: 14px;
   --r-btn: 12px;
-  --font: 'Fredoka Variable', 'Fredoka', ui-rounded, 'SF Pro Rounded', system-ui, sans-serif;
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --font-display: 'Fredoka Variable', ui-rounded, system-ui, sans-serif;
   --safe-t: env(safe-area-inset-top, 0px);
   --safe-b: env(safe-area-inset-bottom, 0px);
   --safe-l: env(safe-area-inset-left, 0px);
@@ -1039,6 +1040,7 @@ input:focus-visible {
   flex: none;
 }
 .logo h1 {
+  font-family: var(--font-display);
   margin: 0;
   font-size: clamp(30px, 10vw, 40px);
   font-weight: 650;
@@ -2218,16 +2220,19 @@ html.reduce-motion .stat-light.hurt {
 .tw-btn .tw-role { display:block; min-height:26px; margin:2px 0 4px; color:var(--text-2); font-size:11px; line-height:1.15; text-align:center; }
 #canal-progress { color:var(--text-2); font-size:11px; line-height:1.3; text-align:center; padding:0 2px 2px; text-wrap:balance; }
 #canal-progress[hidden] { display:none; }
-.simple-title { max-width:440px; padding-bottom:22px; }
-.simple-title .key-art { height:132px; margin-bottom:0; }
-.simple-title .logo { margin-top:8px; }
-.simple-title .logo h1 { font-size:clamp(24px, 7.8vw, 34px); }
-.simple-title .tagline { margin:12px auto 22px; max-width:28ch; line-height:1.5; }
-.title-play { gap:4px; }
-.title-play .primary { min-height:56px; font-size:19px; justify-content:center; }
+#overlay.menu-screen { background:var(--night0); backdrop-filter:none; -webkit-backdrop-filter:none; }
+.simple-title { max-width:392px; padding:12px 6px; border:0; border-radius:0; background:transparent; box-shadow:none; }
+.simple-title .key-art { height:auto; aspect-ratio:400/150; margin:26px 0 24px; border-radius:14px; }
+.simple-title .logo { margin:0; justify-content:center; gap:12px; }
+.simple-title .logo canvas { width:48px; }
+.title-play { gap:8px; }
+.title-play .primary { min-height:56px; font-size:18px; justify-content:center; background:var(--amber); box-shadow:none; border:0; border-radius:12px; }
+.card .saved-defence { display:flex; justify-content:space-between; align-items:baseline; gap:8px; margin:0 2px 6px; font-size:14px; color:var(--text); }
+.saved-defence span { color:var(--text-2); font-size:12px; text-align:right; }
+.card .title-intro { font-size:15px; text-align:center; margin:0 0 12px; }
 .title-quiet { min-height:44px; background:transparent; color:var(--text-2); border:0; font-size:14px; }
-.title-links { display:flex; justify-content:space-between; gap:4px; border-top:1px solid var(--line); margin-top:16px; padding-top:12px; }
-.title-links button { display:flex; gap:5px; align-items:center; justify-content:center; flex:1; min-height:44px; padding:6px 2px; background:transparent; border:0; color:var(--text-2); font-size:13px; }
+.title-links { display:flex; justify-content:space-between; gap:4px; margin-top:24px; padding-top:12px; }
+.title-links button { display:flex; gap:6px; align-items:center; justify-content:center; flex:1; min-height:44px; padding:6px 2px; background:transparent; border:0; color:var(--text-2); font-size:13px; }
 .title-links .ic { width:16px; height:16px; }
 .title-quiet:hover, .title-links button:hover { color:var(--text); }
 .mode[aria-pressed="true"] { border-color:var(--amber); }
@@ -2238,11 +2243,12 @@ html.reduce-motion .stat-light.hurt {
 }
 .big-text .tw-btn .tw-role { font-size:12px; min-height:28px; }
 .big-text #canal-progress { font-size:12px; }
-@media (max-height:680px) { .simple-title .key-art { height:84px; } .simple-title .tagline { margin-bottom:12px; } }
+@media (max-height:680px) { .simple-title .key-art { margin:16px 0; max-height:104px; } .title-links { margin-top:12px; } }
+@media (max-height:720px) { .simple-title .title-play { margin-top:24px; } }
 
 /* Route planning stays on the board, with two explicit choices. */
-.title-genre { display:block; font-size:14px; font-weight:450; letter-spacing:.07em; margin-top:7px; color:var(--text-2); }
-.simple-title .logo h1 { white-space:nowrap; font-size:clamp(22px, 7vw, 31px); }
+.title-genre { display:block; font-family:var(--font); font-size:12px; font-weight:450; letter-spacing:.045em; margin-top:8px; color:var(--text-2); }
+.simple-title .logo h1 { white-space:nowrap; font-size:clamp(25px, 7.4vw, 33px); font-weight:560; line-height:1.12; }
 #canal-progress.planning-tip { order:-3; color:var(--text); font-size:12px; padding:4px 6px; }
 #sheet.route-sheet { padding:10px; }
 #dock.route-planning #sheet { position:static; order:1; flex:none; width:100%; max-height:min(44vh, 340px); box-shadow:none; }

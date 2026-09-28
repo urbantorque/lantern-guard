@@ -73,9 +73,10 @@ export function validSnapshot(s: unknown): s is SaveSnapshot {
   if (s.challenge.keepers !== undefined && (!Array.isArray(s.challenge.keepers) || !s.challenge.keepers.every(v => typeof v === 'string' && Object.hasOwn(TOWERS, v)))) return false
   if (s.challenge.compact !== undefined && (s.challenge.compact !== 1 || s.v !== 2 || s.challenge.guard !== 1 || !integer(s.challenge.variant, 0, s.challenge.plans === 1 || s.challenge.depth === 1 ? 3 : 2) || ['expanding', 'waterway', 'harbour', 'gardens', 'harbourEncounters', 'tide', ...(s.challenge.skirmish ? [] : ['id'])].some(k => (s.challenge as Record<string, unknown>)[k] !== undefined))) return false
   if (s.challenge.depth !== undefined && (s.challenge.depth !== 1 || s.challenge.compact !== 1 || s.challenge.guard !== 1 || s.v !== 2)) return false
+  if (s.challenge.balance !== undefined && (s.challenge.balance !== 1 || s.challenge.depth !== 1)) return false
   if (s.challenge.skirmish !== undefined) {
     const q = s.challenge.skirmish
-    if (!object(q) || !s.challenge.depth || typeof s.challenge.id !== 'string' || !s.challenge.id.endsWith(':compact1') || ![10, 20].includes(q.from as number) || q.to !== Number(q.from) + 10 || q.glow !== (q.from === 10 ? 4200 : 8500) || !integer(q.seed, 0, 4294967295) || s.seed !== q.seed || s.wave < Number(q.from) || s.wave > Number(q.to) || s.freeplay || s.challenge.tide || s.challenge.plans || s.challenge.guardian) return false
+    if (!object(q) || !s.challenge.depth || typeof s.challenge.id !== 'string' || !s.challenge.id.endsWith(s.challenge.balance ? ':compact2' : ':compact1') || ![10, 20].includes(q.from as number) || q.to !== Number(q.from) + 10 || q.glow !== (q.from === 10 ? 4200 : 8500) || !integer(q.seed, 0, 4294967295) || s.seed !== q.seed || s.wave < Number(q.from) || s.wave > Number(q.to) || s.freeplay || s.challenge.tide || s.challenge.plans || s.challenge.guardian) return false
   }
   if (s.challenge.depth) {
     if (!integer(s.preparationRound, 0, 35) || s.preparationRound % 5 !== 0 || s.preparationRound > s.wave) return false

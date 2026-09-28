@@ -2,6 +2,7 @@ import compactFixtures from './compact-fixtures.json'
 import replayFixtures from './replay-fixtures.json'
 import depthFixtures from './depth-fixtures.json'
 import depthBusy from './depth-busy.json'
+import balanceFixtures from './balance-fixtures.json'
 import gardensFixtures from './gardens-fixtures.json'
 import { sound } from '../src/core/audio'
 import refinementFixtures from './refinement-fixtures.json'
@@ -24,11 +25,11 @@ const backup = () => {
 document.querySelectorAll<HTMLButtonElement>('[data-fixture]').forEach(b => b.onclick = () => {
   backup()
   saveSettings({ ...loadSettings(), muted: true })
-  const all: Record<string, unknown> = { ...fixtures, ...growthFixtures, ...guardFixtures, ...journeyFixtures, ...continuityFixtures, ...refinementFixtures, ...gardensFixtures, ...compactFixtures, ...replayFixtures, ...depthFixtures, ...depthBusy }
+  const all: Record<string, unknown> = { ...fixtures, ...growthFixtures, ...guardFixtures, ...journeyFixtures, ...continuityFixtures, ...refinementFixtures, ...gardensFixtures, ...compactFixtures, ...replayFixtures, ...depthFixtures, ...depthBusy, ...balanceFixtures }
   const snapshot = all[b.dataset.fixture!] as SaveSnapshot
   selectSlot(snapshot.challenge.id ? 'challenge' : 'campaign')
   clearRun()
-  if (b.dataset.fixture?.startsWith('replay-') || b.dataset.fixture?.startsWith('depth-')) {
+  if (b.dataset.fixture?.startsWith('replay-') || b.dataset.fixture?.startsWith('depth-') || b.dataset.fixture?.startsWith('balance-')) {
     const progress = JSON.parse(localStorage.getItem('lanternlocks.progress.v1') ?? '{}')
     localStorage.setItem('lanternlocks.progress.v1', JSON.stringify({ ...progress, watchIndex: 1, feats: { ...progress.feats, crowned: true, groundskeeper: true, 'full-bloom': true } }))
     localStorage.setItem('lanternlocks.coach.v1', JSON.stringify({ tutorialDone: true, built: true, started: true, upgraded: true, flipped: true, charmSeen: true }))
