@@ -1,5 +1,6 @@
 import { easeOutBack, TAU } from '../core/math'
 import { TOWERS, type TowerId } from '../game/defs'
+import { signatureFor, type GuardianId } from '../game/guardians'
 import { drawGlyph } from './glyphs'
 import { FAMILY_COLOR, glowSprite, mix, P, withAlpha } from './palette'
 
@@ -11,6 +12,7 @@ import { FAMILY_COLOR, glowSprite, mix, P, withAlpha } from './palette'
  */
 
 export interface TowerLook {
+  guardian?: GuardianId
   id: TowerId
   a: number
   b: number
@@ -334,6 +336,26 @@ export function drawTower(ctx: CanvasRenderingContext2D, x: number, y: number, L
     case 'garden':
       drawGarden(ctx, L)
       break
+  }
+  if (signatureFor(L.id, L.guardian)) {
+    // Broad, quiet silhouette changes remain legible at phone size.
+    ctx.lineWidth = 3.5; ctx.lineCap = 'round'
+    if (L.guardian === 'ember') {
+      for (const side of [-1, 1]) {
+        ctx.fillStyle = '#ff864f'; ctx.beginPath()
+        ctx.moveTo(side * 20, -5); ctx.quadraticCurveTo(side * 36, -14, side * 23, -31)
+        ctx.quadraticCurveTo(side * 14, -13, side * 20, -5); ctx.fill()
+      }
+    } else if (L.guardian === 'reed') {
+      ctx.strokeStyle = '#9ed589'
+      for (const side of [-1, 1]) {
+        ctx.beginPath(); ctx.moveTo(side * 15, 0); ctx.quadraticCurveTo(side * 28, -17, side * 21, -38); ctx.stroke()
+        ctx.fillStyle = '#d3e6a4'; ctx.fillRect(side * 21 - 3, -37, 6, 12)
+      }
+    } else {
+      ctx.strokeStyle = '#7bdef1'
+      for (const offset of [0, 8]) { ctx.beginPath(); ctx.moveTo(-27, offset - 9); ctx.bezierCurveTo(-10, offset - 20, 10, offset + 2, 27, offset - 9); ctx.stroke() }
+    }
   }
   ctx.restore()
   if (upK > 0) glow(ctx, x, y - 24, 72, keeperHue(L.id), upK * 0.75)
@@ -1317,7 +1339,7 @@ function extent(id: TowerId, a: number, b: number): [number, number] {
   }
 }
 /** Render a tower portrait to a canvas for UI buttons. */
-export function towerPortrait(id: TowerId, size: number, dpr: number, a = 0, b = 0): HTMLCanvasElement {
+export function towerPortrait(id: TowerId, size: number, dpr: number, a = 0, b = 0, guardian?: GuardianId): HTMLCanvasElement {
   const c = document.createElement('canvas')
   c.width = c.height = Math.round(size * dpr)
   const ctx = c.getContext('2d')!
@@ -1327,6 +1349,6 @@ export function towerPortrait(id: TowerId, size: number, dpr: number, a = 0, b =
   const f = Math.max(84, top + 22, half * 2 + 6)
   const k = size / f
   ctx.scale(k, k)
-  drawTower(ctx, f / 2, f - 18, { id, a, b, angle: -Math.PI / 2 - 0.5, since: 9, age: 9, upAge: 9, t: 1.2, seed: 1 })
+  drawTower(ctx, f / 2, f - 18, { id, a, b, guardian, angle: -Math.PI / 2 - 0.5, since: 9, age: 9, upAge: 9, t: 1.2, seed: 1 })
   return c
 }

@@ -839,6 +839,7 @@ export class Renderer {
         if (!up || up.upT !== tw.upT) this.upAt.set(tw, { upT: tw.upT, at: sim.time - tw.upT < 0.5 ? t : -99 })
         drawTower(ctx, tw.x, tw.y, {
           id: tw.id,
+          guardian: sim.challenge.guardian,
           a: tw.a,
           b: tw.b,
           angle: tw.angle,
@@ -865,14 +866,14 @@ export class Renderer {
       const p = sim.pads[view.moving.destination]
       const tw = view.moving.tower
       ctx.globalAlpha = .65
-      drawTower(ctx, p.x, p.y, { id: tw.id, a: tw.a, b: tw.b, angle: tw.angle, since: 9, age: 9, upAge: 9, t, seed: tw.uid })
+      drawTower(ctx, p.x, p.y, { id: tw.id, guardian: sim.challenge.guardian, a: tw.a, b: tw.b, angle: tw.angle, since: 9, age: 9, upAge: 9, t, seed: tw.uid })
       ctx.globalAlpha = 1
     }
     // build preview ghost
     if (view.selection?.kind === 'pad' && view.preview) {
       const p = sim.pads[view.selection.index]
       ctx.globalAlpha = 0.55 + Math.sin(t * 5) * 0.1
-      drawTower(ctx, p.x, p.y, { id: view.preview, a: 0, b: 0, angle: -1.2, since: 9, age: 9, upAge: 9, t, seed: 1 })
+      drawTower(ctx, p.x, p.y, { id: view.preview, guardian: sim.challenge.guardian, a: 0, b: 0, angle: -1.2, since: 9, age: 9, upAge: 9, t, seed: 1 })
       ctx.globalAlpha = 1
     }
 
@@ -1372,7 +1373,7 @@ export class Renderer {
     ctx.restore()
     if (!open && label) {
       const q = seg.line.at(110, { x: 0, y: 0, tx: 0, ty: 0 })
-      const label = `Sluice opens wave ${src.openWave}`
+      const label = `Side inlet · wave ${src.openWave}`
       const fs = this.fontPx(15 * this.fx.textScale)
       ctx.font = `600 ${fs}px ${FONT}`
       ctx.textAlign = 'center'
@@ -2103,7 +2104,7 @@ export class Renderer {
     for (const g of sim.gates) if (sim.gateAvailable(g)) this.drawGateBase(ctx, sim, g, 0)
     this.drawLandmarks(ctx, sim, 'under')
     for (const tw of [...sim.towers].sort((a, b) => a.y - b.y)) {
-      drawTower(ctx, tw.x, tw.y, { id: tw.id, a: tw.a, b: tw.b, angle: tw.angle, since: 9, age: 9, upAge: 9, t: this.time, seed: tw.uid })
+      drawTower(ctx, tw.x, tw.y, { id: tw.id, guardian: sim.challenge.guardian, a: tw.a, b: tw.b, angle: tw.angle, since: 9, age: 9, upAge: 9, t: this.time, seed: tw.uid })
     }
     this.drawLandmarks(ctx, sim, 'over')
     for (const g of sim.gates) if (sim.gateAvailable(g)) this.drawGateTop(ctx, sim, g)

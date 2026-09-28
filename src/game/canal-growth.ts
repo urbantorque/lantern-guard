@@ -14,12 +14,12 @@ export const KEEPER_ROLE: Record<TowerId, string> = {
   owl: 'Sees hidden', beam: 'Heavy beam', garden: 'Earns glow',
 }
 export const KEEPER_HELP: Record<TowerId, string> = {
-  wick: 'Quick, low-cost shots. Good for ordinary Mopes.',
-  cracker: 'Explosive bursts hit groups and crack armour.',
-  bell: 'Slows nearby groups so your other towers get more shots.',
-  owl: 'Reveals hidden Mopes so nearby towers can hit them.',
-  beam: 'A steady, heavy beam for big, armoured Mopes.',
-  garden: 'Earns extra glow each wave. Starts without an attack.',
+  wick: 'Fast, cheap shots. Weak against armour.',
+  cracker: 'Hits groups and breaks armour.',
+  bell: 'Slows enemies so other towers can fire longer.',
+  owl: 'Reveals hidden enemies for nearby towers.',
+  beam: 'Steady damage against armour and bosses.',
+  garden: 'Earns glow after each wave. Cannot attack at first.',
 }
 
 export const stageForWave = (wave: number) => wave >= 11 ? 2 : wave >= 6 ? 1 : 0

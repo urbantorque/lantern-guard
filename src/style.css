@@ -2309,6 +2309,44 @@ html.reduce-motion .stat-light.hurt {
 .guardian-break button[aria-pressed="true"] { border-color:var(--amber); background:#334035; }
 .settlement-card p { font-size:14px; }
 
+/* New-game choices use the existing tower art and stay readable on narrow phones. */
+.next-map { display:flex; align-items:center; gap:16px; padding:12px; border:1px solid var(--line); border-radius:16px; background:var(--panel-2); margin:14px 0; }
+.next-map img { border-radius:10px; flex:none; }
+.next-map .eyebrow { color:var(--text-2); font-size:12px; }
+.card .next-map h3 { margin:4px 0; }
+.card .next-map p { margin:0; font-size:14px; line-height:1.4; }
+.hero-select { display:flex; align-items:center; gap:12px; width:100%; min-height:76px; padding:10px; border:1px solid var(--line-2); border-radius:14px; background:var(--panel-2); text-align:left; }
+.hero-select > span:first-of-type { flex:1; min-width:0; }
+.hero-select small { display:block; color:var(--text-2); margin-top:4px; }
+.hero-select > span:last-child { color:var(--amber-hi); font-size:13px; }
+.big-btn.guardian-card, .big-btn.battle-plan { flex-direction:row; align-items:center; text-align:left; gap:12px; }
+.guardian-card img, .battle-plan img { flex:none; }
+.guardian-card > span, .battle-plan > span { min-width:0; flex:1; }
+.guardian-card b, .battle-plan b { display:block; }
+.guardian-card em { display:block; font-size:13px; font-style:normal; color:var(--amber-hi); margin:4px 0; }
+.guardian-card.primary em { color:#513b19; }
+.guardian-picker > [data-act="back"] { position:sticky; bottom:0; width:100%; background:var(--panel-2); }
+.guardian-card .unlock-note { margin-top:8px; color:var(--amber-hi); }
+.big-btn.guardian-card:disabled { opacity:.78; }
+.big-btn.battle-plan small { display:block; font-size:14px; font-weight:400; line-height:1.4; margin-top:5px; }
+.battle-plan-card > [data-act="back"] { position:sticky; bottom:0; width:100%; margin-top:12px; background:var(--panel-2); }
+.big-btn.battle-plan .plan-tradeoff { color:#ecc1a6; }
+.new-game-card .mode { padding:12px; }
+.difficulty-options { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; }
+.difficulty-options button { min-height:46px; padding:8px 4px; border-radius:10px; border:1px solid var(--line-2); background:var(--panel-2); font-size:14px; }
+.difficulty-options button[aria-pressed="true"] { border-color:var(--amber); background:#443c29; color:var(--amber-hi); }
+.card .difficulty-detail { font-size:14px; line-height:1.4; min-height:40px; margin:12px 0; }
+.card .new-game-note { font-size:13px; }
+#btn-battle-plan { order:-4; min-height:44px; width:100%; padding:8px 12px; background:#2b443b; border:1px solid #8bb697; border-radius:10px; color:#eef4d7; font-size:13px; line-height:1.25; }
+#btn-battle-plan[hidden] { display:none; }
+.battle-plan-note { padding:8px 12px; margin:6px 0; border-left:3px solid var(--amber); font-size:12px; line-height:1.4; color:var(--text-2); }
+@media (max-width:360px) {
+  .next-map { gap:10px; padding:8px; }
+  .next-map img { width:68px; height:80px; }
+  .big-btn.guardian-card, .big-btn.battle-plan { gap:8px; padding:12px; }
+  .guardian-card img, .battle-plan img { width:44px; height:44px; }
+}
+
 /* Paid plots and late refinements use the same compact action sheet. */
 .plot-note { margin:8px 4px 14px; color:var(--text-2); font-size:13px; line-height:1.45; }
 .refine-btn { display:flex; flex-direction:column; width:100%; gap:4px; min-height:52px; margin:8px 0 4px; padding:10px; border:1px solid var(--amber); border-radius:10px; background:#28382f; color:var(--text); text-align:left; }

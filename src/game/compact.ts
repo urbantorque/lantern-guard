@@ -6,7 +6,16 @@ import { GARDENS_WAVES } from './gardens'
 
 /** A separate rules version: published growing-canal saves keep their exact geometry and economy. */
 export const COMPACT_END = 40
-export const WATCH_NAMES = ['Millpond', 'Reed Crossing', 'Lantern Reach'] as const
+export const WATCH_NAMES = ['Millpond', 'Reed Crossing', 'Lantern Reach', 'Stone Weir'] as const
+export const WATCH_HELP = [
+  'Two loops meet in the middle. Build near the bends to cover both routes.',
+  'The side stream joins near the top. Your first towers can cover both entrances.',
+  'The bridge and mill change sides. Check your tower range before choosing a route.',
+  'The side stream skips the upper loop. Guard the lower bank.',
+] as const
+export function nextCompactVariant(watch = 0) {
+  return [0, 3, 1, 2][Number.isSafeInteger(watch) && watch >= 0 ? watch % 4 : 0]
+}
 export const STARTER_PLOTS = [0, 3, 6, 10] as const
 export const PLOTS = [
   { wave: 1, cost: 0 }, { wave: 6, cost: 140 }, { wave: 11, cost: 220 },
@@ -59,6 +68,24 @@ export function compactLevel(variant = 0): LevelDef {
       gate.lockedDir = gate.lockedDir === 0 ? 1 : 0
     }
   }
+  if (variant === 3) {
+    const points: Record<string, [number, number][]> = {
+      n0: [[520, 20], [520, 175]],
+      w1: [[520, 175], [320, 90], [85, 80], [65, 330], [230, 355], [325, 365]],
+      e1: [[520, 175], [640, 270], [585, 360], [325, 365]],
+      m1: [[325, 365], [270, 400], [210, 475]],
+      w2: [[210, 475], [80, 600], [175, 720], [355, 700]],
+      e2: [[210, 475], [370, 485], [620, 475], [660, 635], [570, 710], [355, 700]],
+      h: [[355, 700], [355, 760]],
+      inlet: [[20, 400], [100, 420], [210, 475]],
+    }
+    for (const segment of level.segments) segment.pts = points[segment.id].map(([x, y]) => ({ x, y }))
+    level.segments.find(s => s.id === 'inlet')!.next = { gate: 'lower' }
+    Object.assign(level.gates[0], { x: 520, y: 175 })
+    Object.assign(level.gates[1], { x: 210, y: 475 })
+    level.pads = [[390, 35], [610, 160], [170, 220], [405, 270], [55, 495], [650, 390], [165, 605], [365, 570], [555, 595], [55, 735], [275, 785], [435, 785]].map(([x, y]) => ({ x, y }))
+    level.home = { x: 355, y: 790 }
+  }
   // Starting plots cover the default long loops as well as their meeting points.
   ;[level.pads[0], level.pads[2]] = [level.pads[2], level.pads[0]]
   ;[level.pads[6], level.pads[7]] = [level.pads[7], level.pads[6]]
@@ -66,25 +93,25 @@ export function compactLevel(variant = 0): LevelDef {
 }
 
 const NOTES: Record<number, string> = {
-  1: 'Build on a stone circle. Keep Mopes from reaching the Great Lantern.',
-  2: 'The Upper Lock is ready. The outer loop gives more firing time; the bridge reveals hidden Mopes. Both pay the same glow.',
-  3: 'Moonbell is ready. Slow a group beside your damage towers.',
-  4: 'Tap a tower to upgrade it. Stronger towers make the most of your four starting plots.',
+  1: 'Tap a stone circle to build. Stop enemies reaching the lantern.',
+  2: 'Tap the Upper Lock to change the route. The long loop gives towers more time to attack.',
+  3: 'Moonbells are ready. Build one beside an attacking tower to slow enemies.',
+  4: 'Tap a tower to upgrade its damage or range.',
   5: 'Shellbacks arrive. The Lower Lock is ready: the mill cracks armour, but its route is shorter.',
-  6: 'Two plots can now be cleared with glow. Invest in more space, or upgrade the towers you have. Owls and Glow Gardens are also ready.',
+  6: 'Tap a + to buy more building space. Owls and Glow Gardens are now available.',
   7: 'Lighthouses are ready. Heavy beams help against large, armoured Mopes.',
-  8: 'Hidden Veils arrive. Use Owl sight beside damage towers, or send them over the Lantern bridge.',
+  8: 'Hidden enemies arrive. Build an Owl near your towers or use the bridge route.',
   10: 'Gloomtoad can jam a nearby lock. Plan your coverage before it arrives.',
-  11: 'The side inlet opens on this same board. Two more plots are available; check the incoming preview.',
-  13: 'Mixed crowds. A Moonbell beside a Cracker holds groups inside the bursts.',
-  16: 'Mastery upgrades are ready for tier-three towers. Veiled Shells need both sight and heavy hits.',
-  21: 'The last two plots are available. Space is limited: refine your strongest towers and their support.',
+  11: 'Enemies now enter from the side too. Two more building plots are available.',
+  13: 'Use a Moonbell to slow groups where a Cracker can hit them.',
+  16: 'Level 4 upgrades are ready. Use an Owl beside an armour-breaking tower against Veiled Shells.',
+  21: 'The last two building plots are available. Keep upgrading your towers.',
   25: 'Old Gloom splits at the Lower Lock. Cover both branches. Your watch continues after this battle.',
-  26: 'Ascendant upgrades are ready. Skiffs speed up when their armour breaks: pair heavy hits with slowing.',
-  30: 'The Warden signals escorts at 70% health. Clear the linked Skiffs to remove its guard. It surges at 35%.',
+  26: 'Level 5 upgrades are ready. Skiffs speed up when their armour breaks. Use Moonbells to slow them.',
+  30: 'The Warden calls four escorts. Defeat them to remove its shield.',
   31: 'Reedlings grow a shell at the central meeting point. Catch them early, or prepare heavy hits downstream.',
-  35: 'The garden procession. Crowds and armour arrive together. The next five waves test your finished defence.',
-  40: 'Bloomheart signals two healing pulses. Clear nearby crowds inside its ring before the countdown ends.',
+  35: 'Five waves left. Prepare for large groups of armoured enemies.',
+  40: 'Bloomheart heals enemies inside its ring. Defeat them before the timer ends.',
 }
 
 /** Stable authored groups, with later entrance schedules varied by layout. Restore uses the same indices. */
@@ -104,8 +131,8 @@ export function compactWave(n: number, variant: number, seed: number): WaveDef {
 }
 
 export const REFINEMENTS = [
-  { wave: 16, cost: 700, name: 'Mastery' },
-  { wave: 26, cost: 1250, name: 'Ascendant' },
+  { wave: 16, cost: 700, name: 'Level 4' },
+  { wave: 26, cost: 1250, name: 'Level 5' },
 ] as const
 export function refinementHelp(id: TowerId) {
   return id === 'beam' ? '+20% beam damage and +8% reach per rank.' : id === 'garden' ? '+20% wave income and +8% reach per rank.'
@@ -124,9 +151,9 @@ export function refineStats(stats: TowerStats, rank: number) {
 export function compactNext(wave: number): string {
   const next = [
     [5, 'After wave 5 · 2 new plots'], [10, 'After wave 10 · side inlet + 2 plots'],
-    [15, 'After wave 15 · Mastery + 2 plots'], [20, 'After wave 20 · final 2 plots'],
-    [25, 'After wave 25 · Ascendant upgrades + Skiffs'], [30, 'Wave 30 · the Warden'],
-    [35, 'Wave 35 · garden procession'], [40, 'Wave 40 · Bloomheart'],
+    [15, 'After wave 15 · level 4 + 2 plots'], [20, 'After wave 20 · final 2 plots'],
+    [25, 'After wave 25 · level 5 + Skiffs'], [30, 'Wave 30 · the Warden'],
+    [35, 'Wave 35 · armoured crowds'], [40, 'Wave 40 · Bloomheart'],
   ] as const
-  return next.find(([at]) => wave < at)?.[1] ?? 'Final watch · defeat Bloomheart'
+  return next.find(([at]) => wave < at)?.[1] ?? 'Defeat Bloomheart to win'
 }

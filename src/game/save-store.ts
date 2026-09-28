@@ -1,4 +1,5 @@
 import { compactLevel, PLOTS, STARTER_PLOTS, REFINEMENTS } from './compact'
+import { BATTLE_PLANS, type BattlePlanId } from './battle-plans'
 import { gardensLevel, GARDENS_PADS } from './gardens'
 import { WATERWAYS } from './waterways'
 import { DIFFICULTY, TOWERS, ENEMIES, CHARMS } from './defs'
@@ -69,7 +70,13 @@ export function validSnapshot(s: unknown): s is SaveSnapshot {
   for (const key of ['lockedGates', 'noGarden', 'noCharms']) if (s.challenge[key] !== undefined && typeof s.challenge[key] !== 'boolean') return false
   if (s.challenge.id !== undefined && typeof s.challenge.id !== 'string') return false
   if (s.challenge.keepers !== undefined && (!Array.isArray(s.challenge.keepers) || !s.challenge.keepers.every(v => typeof v === 'string' && Object.hasOwn(TOWERS, v)))) return false
-  if (s.challenge.compact !== undefined && (s.challenge.compact !== 1 || s.v !== 2 || s.challenge.guard !== 1 || !integer(s.challenge.variant, 0, 2) || ['expanding', 'waterway', 'harbour', 'gardens', 'harbourEncounters', 'id', 'tide'].some(k => (s.challenge as Record<string, unknown>)[k] !== undefined))) return false
+  if (s.challenge.compact !== undefined && (s.challenge.compact !== 1 || s.v !== 2 || s.challenge.guard !== 1 || !integer(s.challenge.variant, 0, s.challenge.plans === 1 ? 3 : 2) || ['expanding', 'waterway', 'harbour', 'gardens', 'harbourEncounters', 'id', 'tide'].some(k => (s.challenge as Record<string, unknown>)[k] !== undefined))) return false
+  if (s.challenge.plans !== undefined && (s.challenge.plans !== 1 || s.challenge.compact !== 1)) return false
+  if (s.challenge.plans) {
+    if (!Array.isArray(s.battlePlans) || s.battlePlans.length > 2 || !s.battlePlans.every(id => typeof id === 'string' && Object.hasOwn(BATTLE_PLANS, id))) return false
+    const rounds = s.battlePlans.map(id => BATTLE_PLANS[id as BattlePlanId].wave)
+    if (new Set(rounds).size !== rounds.length || rounds.some(wave => wave > (s.wave as number) - (s.over === 'lost' ? 1 : 0)) || rounds.some((wave, i) => wave !== [10, 20][i])) return false
+  } else if (s.battlePlans !== undefined) return false
   if (s.challenge.variant !== undefined && !s.challenge.compact) return false
   if (s.challenge.compact) {
     if (!Array.isArray(s.plots) || s.plots.length > PLOTS.length || new Set(s.plots).size !== s.plots.length || !s.plots.every(p => integer(p, 0, PLOTS.length - 1) && PLOTS[p].wave <= (s.wave as number) + 1) || !STARTER_PLOTS.every(p => (s.plots as number[]).includes(p))) return false

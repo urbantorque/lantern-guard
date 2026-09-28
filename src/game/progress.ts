@@ -206,8 +206,8 @@ export interface RunSummary {
 }
 
 export const FEATS: Feat[] = [
-  { id: 'groundskeeper', name: 'Groundskeeper', desc: 'Clear three building plots in one compact watch.', test: r => (r.stats.plotsUnlocked ?? 0) >= 3 },
-  { id: 'reedkeeper', name: 'Canal Keeper', desc: 'Complete a canal watch with the lantern still lit.', test: r => r.won && (r.compact === 1 || r.expanding === 1 || r.waterway === 'reedbank') },
+  { id: 'groundskeeper', name: 'Groundskeeper', desc: 'Buy 3 building plots in one game.', test: r => (r.stats.plotsUnlocked ?? 0) >= 3 },
+  { id: 'reedkeeper', name: 'Canal Keeper', desc: 'Complete the game with light remaining.', test: r => r.won && (r.compact === 1 || r.expanding === 1 || r.waterway === 'reedbank') },
   { id: 'first-light', name: 'First Light', desc: 'Win on any mode.', test: (r) => r.won },
   { id: 'lamplighter', name: 'Lamplighter', desc: 'Win on Standard.', test: (r) => r.won && r.difficulty !== 'relaxed' },
   { id: 'long-night', name: 'Long Night', desc: 'Win on Nightfall.', test: (r) => r.won && r.difficulty === 'nightfall' },
@@ -218,7 +218,7 @@ export const FEATS: Feat[] = [
   { id: 'no-gardens', name: 'Lean Lanterns', desc: 'Win without building a Glow Garden.', test: (r) => r.won && !r.towerTypes.includes('garden') },
   { id: 'early-bird', name: 'Early Bird', desc: 'Call 10 waves early in one run.', test: (r) => r.stats.earlyCalls >= 10 },
   { id: 'full-bloom', name: 'Full Bloom', desc: 'Cheer up 1,200 Mopes in one run.', test: (r) => r.stats.pops >= 1200 },
-  { id: 'crowned', name: 'Crowned', desc: 'Buy any tier-three upgrade.', test: (r) => r.stats.maxTier >= 3 },
+  { id: 'crowned', name: 'Crowned', desc: 'Buy a level 3 tower upgrade.', test: (r) => r.stats.maxTier >= 3 },
 ]
 
 export const RESTORATIONS = [
@@ -250,9 +250,9 @@ export function creditMilestones(sim: Sim): { feats: string[]; restorations: str
 /** Only one optional goal is surfaced; early onboarding stays focused on the board. */
 export function masteryGoal(sim: Sim, p: Progress): string | null {
   if (!sim.challenge.guard || sim.isChallenge || sim.wave < 6) return null
-  if (sim.challenge.compact && !p.feats.groundskeeper) return `Optional · Clear ${Math.min(3, sim.stats.plotsUnlocked ?? 0)}/3 plots → Tide Keeper`
-  if (!p.feats.crowned) return 'Optional · Crowned: buy a tier-three upgrade → Ember Keeper'
-  if (!p.feats['full-bloom']) return `Optional · Full Bloom: ${Math.min(1200, sim.stats.pops)}/1,200 cheered → Reed Keeper`
+  if (sim.challenge.compact && !p.feats.groundskeeper) return `Unlock Tide Keeper · Buy plots: ${Math.min(3, sim.stats.plotsUnlocked ?? 0)}/3`
+  if (!p.feats.crowned) return 'Unlock Ember Keeper · Buy a level 3 upgrade'
+  if (!p.feats['full-bloom']) return `Unlock Reed Keeper · Defeat enemies: ${Math.min(1200, sim.stats.pops)}/1,200`
   if (!p.feats['early-bird'] && !sim.challenge.harbour && !sim.challenge.compact) return `Optional · Early Bird: ${Math.min(10, sim.stats.earlyCalls)}/10 early calls → village bunting`
   return null
 }
@@ -386,7 +386,7 @@ export const BLOOM_SETS: BloomSet[] = [
   { id: 'lily', name: 'Lantern lilies', desc: "Pointed lilies in lantern gold, each with a heart in its Mope's colour.", unlock: 'Win a night on Standard.', earned: (p) => (p.wins.standard ?? 0) + (p.wins.nightfall ?? 0) > 0 },
   { id: 'pearl', name: 'Tide pearls', desc: 'Clusters of sea-glass beads in blues and greens.', unlock: 'Keep the lantern lit through 3 daily tides.', earned: (_p, c) => tidesKept(c) >= 3 },
   { id: 'moss', name: 'Starmoss', desc: 'Soft moss dotted with tiny star flowers.', unlock: 'Cheer up 5,000 Mopes in all.', earned: (p) => journalTotal(p) >= 5000 },
-  { id: 'reed', name: 'Reed lanterns', desc: 'Slender reeds tipped with warm lantern seeds.', unlock: 'Win all 25 waves of the growing canal.', earned: p => !!p.feats.reedkeeper },
+  { id: 'reed', name: 'Reed lanterns', desc: 'Slender reeds tipped with warm lantern seeds.', unlock: 'Complete the main game.', earned: p => !!p.feats.reedkeeper },
   { id: 'moon', name: 'Moonpetals', desc: "Pale silver petals that keep a hint of each Mope's colour.", unlock: 'Win a night on Nightfall.', earned: (p) => (p.wins.nightfall ?? 0) > 0 },
 ]
 

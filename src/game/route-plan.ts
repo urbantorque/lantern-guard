@@ -68,16 +68,16 @@ export function towerPartners(sim: Sim, tower: Tower): Tower[] {
 
 export function comboHint(sim: Sim, tower: Tower): string {
   const partners = towerPartners(sim, tower)
-  if (tower.id === 'garden') return `Earns ${tower.stats.income} glow each wave. Keep damage towers on the water around it.`
+  if (tower.id === 'garden') return `Earns ${tower.stats.income} glow each wave. Keep attacking towers nearby.`
   if (tower.id === 'bell') return partners.length
-    ? `Shared water with ${TOWERS[partners[0].id].name}: slowed enemies stay under fire longer.`
-    : 'Build an attacking tower covering the same water to make each slow count.'
+    ? `Slows enemies in range of ${TOWERS[partners[0].id].name}.`
+    : 'Build an attacking tower nearby to hit slowed enemies.'
   if (tower.id === 'owl') return partners.length
-    ? `Shared water with ${TOWERS[partners[0].id].name}: the Owl reveals hidden targets for both.`
-    : 'Pair with an attacking tower covering the same water to hit hidden enemies together.'
+    ? `Reveals hidden enemies for ${TOWERS[partners[0].id].name}.`
+    : 'Build an attacking tower nearby to hit enemies the Owl reveals.'
   const owl = partners.find(t => t.id === 'owl')
   const bell = partners.find(t => t.id === 'bell')
-  if (bell?.stats.brittle) return 'Resonance on shared water: tolled enemies take extra damage from each hit.'
+  if (bell?.stats.brittle) return 'The nearby Moonbell makes enemies take extra damage.'
   if (owl && !tower.stats.detect) return 'Lamp Owl covers the same water and reveals hidden targets for this tower.'
   if (bell) return `Moonbell covers the same water: more time for ${tower.id === 'cracker' ? 'crowd bursts' : 'attacks'}.`
   return tower.id === 'cracker' ? 'Pair with Moonbell on the same bend for more bursts against slowed groups.'

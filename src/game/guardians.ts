@@ -1,10 +1,15 @@
-import type { TowerId } from './defs'
+import { TOWERS, type TowerId } from './defs'
 
 export type GuardianId = 'lantern' | 'ember' | 'reed' | 'tide'
-export const GUARDIANS: Record<GuardianId, { name: string; description: string; tower?: TowerId; feat?: string; unlock: string }> = {
-  lantern: { name: 'Lantern Keeper', description: 'Familiar tower abilities, with full impact damage.', unlock: 'Always available' },
-  ember: { name: 'Ember Keeper', tower: 'cracker', feat: 'crowned', description: 'Crackers trade 40% of impact damage for lingering ground fire. Overlapping fire does not stack.', unlock: 'Buy any tier-three upgrade' },
-  reed: { name: 'Reed Keeper', tower: 'wick', feat: 'full-bloom', description: 'Wickling sparks trade 25% damage for one bounce to a nearby second enemy.', unlock: 'Cheer 1,200 Mopes in one defence' },
-  tide: { name: 'Tide Keeper', tower: 'bell', feat: 'groundskeeper', description: 'Moonbells slow by 15 percentage points more, but toll 25% slower. For compact watches.', unlock: 'Clear three building plots in one compact watch' },
+export const GUARDIANS: Record<GuardianId, { name: string; description: string; tower?: TowerId; signature?: string; role: string; feat?: string; unlock: string }> = {
+  lantern: { name: 'Lantern Keeper', role: 'Original towers', description: 'Use the original towers. A good place to start.', unlock: 'Always available' },
+  ember: { name: 'Ember Keeper', tower: 'cracker', signature: 'Ember Cracker', role: 'Leaves fire', feat: 'crowned', description: 'Crackers leave fire on the ground, but their explosions deal 40% less damage.', unlock: 'Buy a level 3 tower upgrade' },
+  reed: { name: 'Reed Keeper', tower: 'wick', signature: 'Reed Wick', role: 'Bouncing shots', feat: 'full-bloom', description: 'Wickling shots bounce to a second enemy, but each hit deals 25% less damage.', unlock: 'Defeat 1,200 enemies in one game' },
+  tide: { name: 'Tide Keeper', tower: 'bell', signature: 'Tide Bell', role: 'Stronger slows', feat: 'groundskeeper', description: 'Moonbells slow enemies more, but take 25% longer between attacks.', unlock: 'Buy 3 building plots in one game' },
 }
 export const guardianUnlocked = (id: GuardianId, feats: Record<string, boolean>) => !GUARDIANS[id].feat || !!feats[GUARDIANS[id].feat!]
+export function signatureFor(id: TowerId, guardian?: GuardianId) {
+  const g = GUARDIANS[guardian ?? 'lantern']
+  return g.tower === id ? g : undefined
+}
+export const towerName = (id: TowerId, guardian?: GuardianId) => signatureFor(id, guardian)?.signature ?? TOWERS[id].name

@@ -4,9 +4,9 @@ A lantern-lit tower defence game for phones. Build your towers, grow your defenc
 
 A browser game with a Capacitor iOS project, designed portrait-first for iPhone. It also plays on desktop.
 
-New ordinary watches use one compact board for 40 waves. Start with four cleared plots, buy more space after waves 5, 10, 15 and 20, and refine tier-three towers into Mastery and Ascendant ranks. Short routes reveal hidden enemies or crack armour; all routes pay the same glow. Three layouts rotate automatically between watches. Clear three plots to earn Tide Keeper, alongside the existing Ember and Reed guardian sidegrades.
+New games use one compact board for 40 waves. Start with four building plots, buy more space after waves 5, 10, 15 and 20, and upgrade established towers to levels 4 and 5. Four maps rotate automatically, including Stone Weir. Choose an earned guardian before starting, then choose optional battle plans after waves 10 and 20 to change how your towers work. Each plan has a benefit and a drawback. Routes pay the same glow; shorter branches reveal hidden enemies or break armour.
 
-See [compact rules, progression and balance evidence](docs/COMPACT-WATCHES.md). Existing growing-canal, Harbour and Gardens saves retain their original maps and rules; choose **New compact watch** on the title screen to use the new version. The [native build handoff](docs/IOS-BUILD.md) describes the remaining iPhone release work.
+See [replay choices and player text](docs/REPLAY-AND-CLARITY.md) and [compact progression and balance](docs/COMPACT-WATCHES.md). Existing saves retain their maps and rules; choose **New game** to get battle plans and the four-map rotation. The [native build handoff](docs/IOS-BUILD.md) describes the remaining iPhone release work.
 
 - Design, niche, twist, monetisation and the iOS plan: [docs/DESIGN.md](docs/DESIGN.md)
 - Research: [docs/research.json](docs/research.json) (raw findings with sources)
@@ -40,6 +40,8 @@ Other scripts:
 | `npm run check` | All simulation, campaign, compact-watch and save checks, plus 15 exact original replay comparisons |
 | `npm run test:compact` | Fixed geometry, paid plots, refinements, guardian unlocks, save validation and 40-wave continuity |
 | `npm run balance:compact` | 54 controlled compact-watch strategy/difficulty/layout comparisons |
+| `npm run test:replay` | Stone Weir, battle-plan tradeoffs, save compatibility and accurate upgrade copy |
+| `npm run balance:replay` | 44 map/guardian/plan comparisons; add `-- --stone-weir` for 8 additional strategy checks |
 | `npm run balance:growth` | 36 growing-canal nights across 6 strategies, 3 modes and 2 seeds |
 | `npm run balance:guard` | 44 Lantern Guard nights across 11 strategies, Standard/Nightfall and 2 seeds |
 | `npm run test:guard` | Versioned rules, route rewards, support interactions, save continuity and planning-only wins |
@@ -61,12 +63,12 @@ Other scripts:
    - Short routes pay the same glow as long loops. Choose their utility when it helps your defence. The **Lantern bridge** reveals hidden Veils; the **Mill wheel** cracks armour.
 3. **Combine towers.** Moonbell slows groups for repeated Cracker bursts. Lamp Owl reveals targets for nearby attackers. Selecting a tower highlights the water it reaches and links to support partners sharing that water.
 4. **Use your towers' strengths.** Each keeper deals ×1.5 damage to Mopes with its colour and symbol. Sight and heavy attacks give alternatives to routing every enemy through a landmark.
-5. **Upgrade and expand your build space.** Tap a dashed + plot between waves to see its clearing cost. Tap a keeper. It has two paths: one can reach tier 3, the other stops at tier 1. On compact watches, tier-three towers gain paid Mastery after wave 15 and Ascendant after wave 25. **Manage** opens targeting, moving and selling; the main panel explains each path and its upgrade effects. Between waves in an ordinary Guard night, **Move** previews a new empty pad before confirming for 25 glow. Upgrades and progress stay with the tower.
+5. **Upgrade and expand your build space.** Tap a dashed + plot between waves to see its clearing cost. Tap a keeper. It has two paths: one can reach tier 3, the other stops at tier 1. On compact watches, tier-three towers gain paid level 4 after wave 15 and level 5 after wave 25. **Manage** opens targeting, moving and selling; the main panel explains each path and its upgrade effects. Between waves in an ordinary Guard night, **Move** previews a new empty pad before confirming for 25 glow. Upgrades and progress stay with the tower.
 6. **Pause any time** to plan. Nightfall allows building while paused, but live route changes require time to run. Call waves early for bonus glow. New threats and the final boss get a manual planning break. The game autosaves, even mid-wave.
 7. **Tides.** After your first night, Collection offers a daily tide (waves 15 to 25 of a seeded remix, built from a 4,700-glow bank) and a weekly night (the whole canal under one rule). Everyone gets the same ones; results can be shared as text.
 8. **Bloom journal.** Every Mope you cheer up is counted. Milestones mark each kind, and play earns bloom sets that change what the banks grow. At the end of a night you can share a postcard of the canal.
 9. **Keep your defence.** Campaign and challenge nights have independent saves. On Relaxed and Standard, defeat offers a return to the last planning break with the exact towers, glow and light. Nightfall, scored challenges and free play retain their original loss rules.
-10. **Replay.** Finish the 40-wave watch or continue into free play. Each new watch rotates the layout. Collection offers earned guardians: Ember changes Cracker bursts, Reed gives Wicklings a weaker bouncing spark, and Tide gives Moonbells a stronger slow with slower tolls. Challenges use the default guardian. Older saves still continue into their original Harbour and Gardens chapters.
+10. **Replay.** Finish the 40-wave watch or continue into free play. Each new game rotates the map and offers battle plans after waves 10 and 20. Choose earned guardians before starting: Ember changes Cracker bursts, Reed gives Wicklings a weaker bouncing spark, and Tide gives Moonbells a stronger slow with slower tolls. Challenges use the default guardian. Older saves still continue into their original Harbour and Gardens chapters.
 
 Accessibility and assists live in Settings: a colour-safe palette, larger text, a left-hand dock, and *Slow at the locks*. **Settings > Playtest data** summarises this device's play log against the iOS plan's validation goals and exports it as JSON. Nothing leaves the device unless you copy or save it.
 

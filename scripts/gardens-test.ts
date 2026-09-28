@@ -104,7 +104,7 @@ enemies.forEach(e => { e.slowT = 2; e.slowF = .5 })
 combat.projs = [{ ...projectile, kind: 'firework', bounced: undefined, alive: true, tower: cracker, dmg: 5, splash: 90, sx: enemies[1].x, sy: enemies[1].y, ex: enemies[1].x, ey: enemies[1].y, t: 0, dur: DT, cluster: 0, hit: [] }]
 combat.step(DT)
 assert.equal(combat.waveReports[0].slowSplashHits, 3)
-assert.match(waveHighlight(combat, 34), /3 splash hits/)
+assert.match(waveHighlight(combat, 34), /3 explosions hit enemies slowed by Moonbells/)
 exact(combat, 30)
 console.log('PASS Reed bounce hits only one second target, cannot repeat after resume, and wave reports count actual damage/slow-splash hits')
 

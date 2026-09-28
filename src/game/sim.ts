@@ -1,6 +1,7 @@
 import { compactLevel, compactWave, COMPACT_END, STARTER_PLOTS, PLOTS, REFINEMENTS, refineStats } from './compact'
 import { gardensLevel, GARDENS_END, GARDENS_WAVES } from './gardens'
 import type { GuardianId } from './guardians'
+import { BATTLE_PLANS, PLAN_ROUNDS, applyBattlePlans, type BattlePlanId } from './battle-plans'
 import { waterwayLevel, REEDBANK_WAVES, type WaterwayId } from './waterways'
 import { CANAL_STAGES, growingCanal, KEEPER_WAVE, stageForWave } from './canal-growth'
 import { dist2, Rng } from '../core/math'
@@ -205,6 +206,8 @@ export type SimEvent =
 export interface Challenge {
   /** Fixed mobile board and paid plots. Versioned independently from legacy campaigns. */
   compact?: 1
+  /** Run-specific tower choices, introduced with Stone Weir. */
+  plans?: 1
   variant?: number
   /** Authored Harbour encounters, fixed when this chapter opens. */
   harbourEncounters?: 1
@@ -367,6 +370,7 @@ export interface SaveSnapshotV1 extends SnapshotBase {
 
 /** Full save, valid at any moment including mid-wave. Restores to an identical simulation. */
 export interface SaveSnapshotV2 extends SnapshotBase {
+  battlePlans?: BattlePlanId[]
   plots?: number[]
   waveReports?: WaveReport[]
   lastLeak?: LeakReport | null
@@ -417,6 +421,7 @@ export class Sim {
   wave = 0
   canalStage = 0
   plots = new Set<number>(STARTER_PLOTS)
+  battlePlans: BattlePlanId[] = []
   time = 0
   enemies: Enemy[] = []
   towers: Tower[] = []
@@ -540,6 +545,19 @@ export class Sim {
     return true
   }
 
+  get pendingPlan(): number | null {
+    if (!this.challenge.plans || this.waveActive || this.over) return null
+    return PLAN_ROUNDS.find(wave => this.wave >= wave && !this.battlePlans.some(id => BATTLE_PLANS[id].wave === wave)) ?? null
+  }
+
+  chooseBattlePlan(id: BattlePlanId): boolean {
+    if (!Object.hasOwn(BATTLE_PLANS, id) || BATTLE_PLANS[id].wave !== this.pendingPlan) return false
+    this.battlePlans.push(id)
+    for (const tower of this.towers) tower.stats = this.towerStats(tower.id, tower.a, tower.b, tower.refinement)
+    this.recomputeAuras()
+    return true
+  }
+
   gateAvailable(g: GateState): boolean {
     return g.def.outs.every(id => this.level.segs.has(id))
   }
@@ -639,6 +657,7 @@ export class Sim {
       if (id === 'beam') stats.damage *= .85
       if (id === 'bell' && this.challenge.guardian === 'tide') { stats.slow = Math.min(.75, stats.slow + .15); stats.interval *= 1.25 }
       refineStats(stats, refinement)
+      if (this.challenge.plans) applyBattlePlans(stats, id, this.battlePlans)
     }
     return stats
   }
@@ -660,7 +679,7 @@ export class Sim {
   }
 
   get guardPlanning(): boolean {
-    return !!this.challenge.guard && !this.waveActive && (!!this.challenge.harbour || [8, 10, 16, 25].includes(this.wave + 1))
+    return !!this.challenge.guard && !this.waveActive && (!!this.pendingPlan || !!this.challenge.harbour || [8, 10, 16, 25].includes(this.wave + 1))
   }
 
   get finalWave() { return this.challenge.compact ? COMPACT_END : this.challenge.gardens ? GARDENS_END : this.challenge.harbour ? HARBOUR_END : FINAL_WAVE }
@@ -1883,6 +1902,7 @@ export class Sim {
       ...(this.challenge.guard ? { waveReports: this.waveReports.map(r => ({ ...r, damage: { ...r.damage } })), embers: this.embers.map(p => ({ ...p })), lastLeak: this.lastLeak && { ...this.lastLeak } } : {}),
       ...(this.challenge.expanding ? { canalStage: this.canalStage } : {}),
       ...(this.challenge.compact ? { plots: [...this.plots] } : {}),
+      ...(this.challenge.plans ? { battlePlans: [...this.battlePlans] } : {}),
       difficulty: this.difficulty,
       challenge: { ...this.challenge },
       wave: this.wave,
@@ -1973,6 +1993,7 @@ export class Sim {
     const sim = new Sim(snap.difficulty, snap.challenge, snap.seed)
     const full = snap.v === 2 ? snap : null
     sim.wave = snap.wave
+    if (snap.challenge.plans && full?.battlePlans) sim.battlePlans = [...full.battlePlans]
     if (snap.challenge.compact && full?.plots) sim.plots = new Set(full.plots)
     if (snap.challenge.expanding && full) sim.revealCanal(full.canalStage ?? stageForWave(snap.wave))
     sim.glow = snap.glow
