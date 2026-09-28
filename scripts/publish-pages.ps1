@@ -87,8 +87,16 @@ try {
     if ($createPages) {
         $configurationPath = Join-Path $artifactDirectory 'pages-config.json'
         '{"build_type":"legacy","source":{"branch":"gh-pages","path":"/"}}' | Set-Content -LiteralPath $configurationPath -Encoding ASCII
-        $created = Invoke-GitHub -GhArguments @('api', '--method', 'POST', "repos/$Repository/pages", '--input', $configurationPath)
-        if ($created.ExitCode -ne 0) { throw $created.Output }
+        $created = Invoke-GitHub -GhArguments @('api', '--silent', '--method', 'POST', "repos/$Repository/pages", '--input', $configurationPath)
+        if ($created.ExitCode -ne 0) {
+            # The service can create the site even when the CLI cannot read its response.
+            $confirmation = Invoke-GitHub -GhArguments @('api', "repos/$Repository/pages")
+            if ($confirmation.ExitCode -ne 0) { throw $created.Output }
+            $confirmedSite = $confirmation.Output | ConvertFrom-Json
+            if ($confirmedSite.build_type -ne 'legacy' -or $confirmedSite.source.branch -ne 'gh-pages' -or $confirmedSite.source.path -ne '/') {
+                throw $created.Output
+            }
+        }
     }
 
     $published = Invoke-GitHub -GhArguments @('api', "repos/$Repository/pages")
