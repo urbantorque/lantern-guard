@@ -803,7 +803,7 @@ export class Renderer {
       ctx.font = `700 ${this.fontPx(22)}px ${FONT}`; ctx.textAlign = 'center'; ctx.fillStyle = P.cream
       ctx.strokeStyle = '#10242a'; ctx.lineWidth = 6
       const warning = `Heal in ${Math.ceil(boss.signalT!)}`
-      ctx.strokeText(warning, boss.x, boss.y - 164); ctx.fillText(warning, boss.x, boss.y - 82); ctx.restore()
+      ctx.strokeText(warning, boss.x, boss.y - 164); ctx.fillText(warning, boss.x, boss.y - 164); ctx.restore()
     }
     // depth-sorted towers and Mopes
     const list: ({ y: number; t: Tower } | { y: number; e: Enemy })[] = []
