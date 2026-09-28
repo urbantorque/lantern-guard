@@ -2298,3 +2298,13 @@ html.reduce-motion .stat-light.hurt {
 .resume-btn small { font-size:12px; line-height:1.5; font-weight:400; }
 .big-btn[data-guardian], .big-btn[data-act="harbour"], .big-btn[data-act="retry"] { flex-direction:column; align-items:flex-start; gap:6px; text-align:left; }
 .big-btn[data-guardian] small, .big-btn[data-act="harbour"] small, .big-btn[data-act="retry"] small { font-size:13px; font-weight:400; line-height:1.4; }
+
+/* Continuation controls stay outside tower sheets and preserve comfortable touch targets. */
+.overview-switch { right:auto; left:8px; }
+#btn-zone { max-width:calc(100% - 126px); }
+#mastery-goal { color:var(--text-2); font-size:11px; line-height:1.35; text-align:center; padding:2px 8px; }
+#mastery-goal[hidden] { display:none; }
+.guardian-break, .settlement-card { margin:16px 0; padding:12px; border:1px solid var(--line-2); border-radius:12px; }
+.guardian-break summary { cursor:pointer; min-height:44px; display:flex; align-items:center; color:var(--amber); }
+.guardian-break button[aria-pressed="true"] { border-color:var(--amber); background:#334035; }
+.settlement-card p { font-size:14px; }

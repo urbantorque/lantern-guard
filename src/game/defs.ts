@@ -5,7 +5,7 @@
 
 export type TowerId = 'wick' | 'cracker' | 'bell' | 'beam' | 'owl' | 'garden'
 export type Priority = 'first' | 'last' | 'strong' | 'close'
-export type EnemyId = 'drip' | 'skitter' | 'shell' | 'veil' | 'bloat' | 'wisp' | 'mender' | 'vshell' | 'toad' | 'gloom' | 'skiff' | 'warden'
+export type EnemyId = 'drip' | 'skitter' | 'shell' | 'veil' | 'bloat' | 'wisp' | 'mender' | 'vshell' | 'toad' | 'gloom' | 'skiff' | 'warden' | 'reedling' | 'bloomheart'
 export type CharmTrait = 'shell' | 'veil' | 'swift' | 'heavy'
 export type Family = 'amber' | 'coral' | 'ice' | 'lime' | 'lilac' | 'gold' | 'pink'
 
@@ -318,6 +318,8 @@ export interface EnemyDef {
 }
 
 export const ENEMIES: Record<EnemyId, EnemyDef> = {
+  reedling: { id: 'reedling', family: 'amber', name: 'Reedling', hp: 22, speed: 58, reward: 13, weight: 3, radius: 17, tip: 'Grows one shell at the Water Gardens meeting point. Catch it early with Wicklings, or use heavy hits after the merge.' },
+  bloomheart: { id: 'bloomheart', family: 'lilac', name: 'Bloomheart', hp: 3300, shell: 100, speed: 27, reward: 900, weight: 999, radius: 46, boss: true, tip: 'At 70% and 35% health, signals a healing pulse for 3 seconds. Clear nearby ordinary Mopes before it lands. Never heals itself.' },
   skiff: { id: 'skiff', family: 'coral', name: 'Skiff', hp: 7, shell: 8, speed: 50, reward: 12, weight: 2, radius: 17, tip: 'Accelerates after its armour breaks. Pair heavy hits with Moonbell slows.' },
   warden: { id: 'warden', family: 'lilac', name: 'Harbour Warden', hp: 1700, shell: 80, speed: 24, reward: 700, weight: 999, radius: 45, boss: true, spawn: { type: 'skiff', every: 5 }, tip: 'Launches Skiffs and accelerates as its health falls. Keep heavy towers firing along a long route.' },
   drip: { id: 'drip', family: 'amber', name: 'Drip', hp: 2, speed: 58, reward: 3, weight: 1, radius: 12, tip: 'A small, grumpy Mope. Easy to cheer up.' },

@@ -1,3 +1,5 @@
+import { gardensLevel, GARDENS_END, GARDENS_WAVES } from './gardens'
+import type { GuardianId } from './guardians'
 import { waterwayLevel, REEDBANK_WAVES, type WaterwayId } from './waterways'
 import { CANAL_STAGES, growingCanal, KEEPER_WAVE, stageForWave } from './canal-growth'
 import { dist2, Rng } from '../core/math'
@@ -120,6 +122,7 @@ export interface Tower {
 export type ProjKind = 'spark' | 'feather' | 'firework' | 'rocket' | 'moth' | 'mini'
 
 export interface Proj {
+  bounced?: boolean
   kind: ProjKind
   x: number
   y: number
@@ -163,6 +166,8 @@ export interface GateState {
 
 export type SimEvent =
   | { t: 'pop'; x: number; y: number; tx: number; ty: number; size: number; enemy: EnemyId; family: string; reward: number; lured: boolean; boss: boolean }
+  | { t: 'combo'; x: number; y: number; count: number }
+  | { t: 'bounce'; x: number; y: number; tx: number; ty: number }
   | { t: 'crack'; x: number; y: number }
   | { t: 'clink'; x: number; y: number }
   | { t: 'hit'; x: number; y: number; kind: ProjKind | 'beam' | 'toll' | 'burn'; hue: string }
@@ -200,7 +205,8 @@ export interface Challenge {
   harbourEncounters?: 1
   /** Optional second chapter, entered from a completed growing canal. */
   harbour?: 1
-  guardian?: 'ember'
+  gardens?: 1
+  guardian?: 'ember' | 'reed'
   /** Lantern Guard rules. Opt-in for new growing nights; older saves keep their balance. */
   guard?: 1
   /** Versioned growing canal; absent on legacy saves and challenge nights. */
@@ -354,6 +360,7 @@ export interface SaveSnapshotV1 extends SnapshotBase {
 
 /** Full save, valid at any moment including mid-wave. Restores to an identical simulation. */
 export interface SaveSnapshotV2 extends SnapshotBase {
+  waveReports?: WaveReport[]
   lastLeak?: LeakReport | null
   embers?: EmberPatch[]
   v: 2
@@ -374,6 +381,7 @@ export interface SaveSnapshotV2 extends SnapshotBase {
 }
 
 export type SaveSnapshot = SaveSnapshotV1 | SaveSnapshotV2
+export interface WaveReport { wave: number; slowSplashHits: number; damage: Partial<Record<TowerId, number>> }
 export interface EmberPatch { x: number; y: number; radius: number; life: number; dps: number; tower: number }
 export interface LeakReport { enemy: EnemyId; route: string; hidden: boolean; armoured: boolean; wave: number; light: number }
 
@@ -404,6 +412,7 @@ export class Sim {
   enemies: Enemy[] = []
   towers: Tower[] = []
   projs: Proj[] = []
+  waveReports: WaveReport[] = []
   embers: EmberPatch[] = []
   lastLeak: LeakReport | null = null
   gates: GateState[]
@@ -512,7 +521,8 @@ export class Sim {
   private revealCanal(stage: number) {
     this.canalStage = stage
     const base = growingCanal(stage, !!this.challenge.guard)
-    this.level = buildLevel(this.challenge.harbour ? harbourLevel(base) : base)
+    const harbour = this.challenge.harbour ? harbourLevel(base) : base
+    this.level = buildLevel(this.challenge.gardens ? gardensLevel(harbour) : harbour)
     while (this.pads.length < this.level.def.pads.length) this.pads.push({ ...this.level.def.pads[this.pads.length], tower: null })
     this.gates.forEach((g, i) => { g.def = this.level.def.gates[i] })
     this.recomputeRoutes()
@@ -557,6 +567,7 @@ export class Sim {
   }
 
   waveDef(n: number): WaveDef {
+    if (this.challenge.gardens && n > HARBOUR_END && n <= GARDENS_END) return GARDENS_WAVES[n - HARBOUR_END - 1]
     if (this.challenge.harbour && n > FINAL_WAVE && n <= HARBOUR_END) return (this.challenge.harbourEncounters ? HARBOUR_WAVES_V2 : HARBOUR_WAVES)[n - FINAL_WAVE - 1]
     const tide = this.challenge.tide
     if (tide && n > tide.from && n <= FINAL_WAVE) return tideWave(tide, n)
@@ -597,7 +608,7 @@ export class Sim {
     return !!this.challenge.guard && !this.waveActive && (!!this.challenge.harbour || [8, 10, 16, 25].includes(this.wave + 1))
   }
 
-  get finalWave() { return this.challenge.harbour ? HARBOUR_END : FINAL_WAVE }
+  get finalWave() { return this.challenge.gardens ? GARDENS_END : this.challenge.harbour ? HARBOUR_END : FINAL_WAVE }
 
   continueHarbour(): boolean {
     if (!this.challenge.guard || !this.challenge.expanding || this.challenge.harbour || this.isChallenge || this.over !== 'won' || this.freeplay || this.wave !== FINAL_WAVE) return false
@@ -606,6 +617,31 @@ export class Sim {
     this.won = false
     this.revealCanal(2)
     this.events.push({ t: 'expand', stage: 3 })
+    return true
+  }
+
+  get guardianBreak(): boolean {
+    return !!this.challenge.guard && !!this.challenge.expanding && !this.isChallenge && this.over === 'won' && !this.freeplay && !this.waveActive
+  }
+
+  /** Unlock eligibility is checked by the profile layer before calling this rule action. */
+  changeGuardian(id: GuardianId): boolean {
+    if (!this.guardianBreak || !['lantern', 'ember', 'reed'].includes(id)) return false
+    this.challenge = { ...this.challenge }
+    if (id === 'lantern') delete this.challenge.guardian
+    else this.challenge.guardian = id
+    // Finished-wave projectiles and ground fire must not leak the previous guardian into a chapter.
+    this.projs = []; this.embers = []
+    return true
+  }
+
+  continueGardens(): boolean {
+    if (!this.challenge.guard || !this.challenge.harbour || this.challenge.gardens || this.isChallenge || this.over !== 'won' || this.freeplay || this.wave !== HARBOUR_END) return false
+    this.challenge = { ...this.challenge, gardens: 1 }
+    this.over = null; this.won = false
+    this.revealCanal(2)
+    this.openSources.add('west')
+    this.events.push({ t: 'expand', stage: 4 })
     return true
   }
 
@@ -789,6 +825,7 @@ export class Sim {
       this.events.push({ t: 'income', x: this.level.def.home.x, y: this.level.def.home.y - 60, amount: early })
     }
     this.wave++
+    if (this.challenge.guard) this.waveReports.push({ wave: this.wave, slowSplashHits: 0, damage: {} })
     if (this.wave > this.finalWave) this.freeplay = true
     const def = this.waveDef(this.wave)
     for (const src of this.level.def.sources) {
@@ -1096,6 +1133,19 @@ export class Sim {
           for (let i = 0; i < (half ? 2 : 3); i++) this.inherit(this.spawnEnemy('bloat', e.seg, Math.max(0, e.s - 30 - i * 26), e.wave), e)
         }
       }
+      if (e.def.id === 'bloomheart') {
+        if ((e.phase === 0 && e.hp <= e.maxHp * .7) || (e.phase === 2 && e.hp <= e.maxHp * .35)) {
+          e.phase++; e.signalT = 3
+          this.events.push({ t: 'phase', x: e.x, y: e.y })
+        } else if (e.phase === 1 || e.phase === 3) {
+          e.signalT = Math.max(0, (e.signalT ?? 0) - dt)
+          if (!e.signalT) {
+            for (const other of this.enemies) if (other.alive && !other.def.boss && dist2(e.x, e.y, other.x, other.y) <= 160 ** 2) other.hp = Math.min(other.maxHp, other.hp + other.maxHp * .5)
+            e.phase++
+            this.events.push({ t: 'phase', x: e.x, y: e.y })
+          }
+        }
+      }
       // speed
       let slow = 0
       if (e.slowT > 0) {
@@ -1138,6 +1188,9 @@ export class Sim {
         if ('seg' in nx) {
           e.seg = this.level.segs.get(nx.seg)!
           e.s = over
+          if (e.def.id === 'reedling' && e.phase === 0 && nx.seg === 'garden-merge') {
+            e.phase = 1; e.shell = e.maxShell = 16 * this.hpMul
+          }
           if (e.seg.bonus > 1) e.rich = true
         } else {
           const g = this.gates.find((q) => q.def.id === nx.gate)!
@@ -1234,6 +1287,7 @@ export class Sim {
   /** Apply damage; returns true if any damage landed. */
   damage(e: Enemy, amount: number, heavy: boolean, src: Tower | null, continuous = false): boolean {
     if (!e.alive || amount <= 0) return false
+    const before = Math.max(0, e.hp) + Math.max(0, e.shell)
     if (e.brittleT > 0) amount += continuous ? amount * 0.25 : 1
     if (src && src.def.family === e.def.family) amount *= FAMILY_BONUS
     if (e.def.id === 'warden' && wardenEscorts(this, e).length) amount *= WARDEN_GUARD_TAKEN
@@ -1258,13 +1312,20 @@ export class Sim {
       e.hitT = 0.07
       e.lastFlash = this.time
     }
-    if (amount <= 0) return true
+    if (amount <= 0) { this.reportDamage(e, src, before); return true }
     // Old Gloom's shroud: only a sliver lands before the split, and never enough to stop it
     if (e.shrouded) amount = Math.min(amount * (this.challenge.guard ? 0.45 : SHROUD_TAKEN), Math.max(0, e.hp - e.maxHp * SHROUD_FLOOR))
     if (src && this.challenge.guard) src.damageDealt = (src.damageDealt ?? 0) + Math.min(e.hp, amount)
     e.hp -= amount
+    this.reportDamage(e, src, before)
     if (e.hp <= 0.0001) this.kill(e, src)
     return true
+  }
+
+  private reportDamage(e: Enemy, src: Tower | null, before: number) {
+    if (!src) return
+    const report = this.waveReports.find(r => r.wave === e.wave)
+    if (report) report.damage[src.id] = (report.damage[src.id] ?? 0) + Math.max(0, before - Math.max(0, e.hp) - Math.max(0, e.shell))
   }
 
   private kill(e: Enemy, src: Tower | null) {
@@ -1548,7 +1609,8 @@ export class Sim {
       vy: Math.sin(ang) * speed,
       speed,
       target,
-      dmg: s.damage,
+      ...(kind === 'spark' && this.challenge.guardian === 'reed' ? { bounced: false } : {}),
+      dmg: s.damage * (kind === 'spark' && this.challenge.guardian === 'reed' ? .75 : 1),
       pierce: s.pierce,
       heavy: s.heavy,
       detect: s.detect || kind === 'feather' || kind === 'moth',
@@ -1621,6 +1683,16 @@ export class Sim {
         p.hit.push(e.uid)
         const landed = this.damage(e, p.dmg, p.heavy, p.tower)
         if (landed) this.events.push({ t: 'hit', x: e.x, y: e.y, kind: p.kind, hue: p.tower.def.hue })
+        if (landed && p.bounced === false) {
+          p.bounced = true
+          const other = this.enemies.filter(o => o.alive && !p.hit.includes(o.uid) && this.canSee(o, p.detect) && dist2(e.x, e.y, o.x, o.y) <= 110 ** 2)
+            .sort((a, b) => dist2(e.x, e.y, a.x, a.y) - dist2(e.x, e.y, b.x, b.y) || a.uid - b.uid)[0]
+          if (other) {
+            p.hit.push(other.uid)
+            this.damage(other, p.dmg, p.heavy, p.tower)
+            this.events.push({ t: 'bounce', x: e.x, y: e.y, tx: other.x, ty: other.y })
+          }
+        }
         p.pierce--
         if (p.pierce <= 0 || !landed) {
           p.alive = false
@@ -1639,14 +1711,22 @@ export class Sim {
       if (this.embers.length > 48) this.embers.shift()
     }
     this.events.push({ t: 'boom', x, y, r, big: p.cluster > 0 })
+    let combo = 0
     for (const e of [...this.near(x, y, r, tmpC)]) {
       if (!this.canSee(e, p.detect)) continue
-      this.damage(e, p.dmg * (ember ? .6 : 1), true, p.tower)
+      const slowed = e.slowT > 0
+      const landed = this.damage(e, p.dmg * (ember ? .6 : 1), true, p.tower)
+      if (landed && slowed && this.challenge.guard) {
+        const report = this.waveReports.find(r => r.wave === e.wave)
+        if (report) report.slowSplashHits++
+        combo++
+      }
       if (p.burn > 0 && e.alive) {
         e.burnT = p.burnDur
         e.burnDps = Math.max(e.burnDps, p.burn)
       }
     }
+    if (combo >= 2 && p.kind !== 'mini') this.events.push({ t: 'combo', x, y, count: combo })
     if (p.cluster > 0 && p.kind !== 'mini') {
       for (let i = 0; i < p.cluster; i++) {
         const a = (i / p.cluster) * Math.PI * 2 + this.rand(-0.3, 0.3)
@@ -1709,6 +1789,7 @@ export class Sim {
         if (this.lives > before) this.events.push({ t: 'life', amount: this.lives - before })
       }
       this.events.push({ t: 'waveEnd', n: w, bonus, income })
+      this.waveReports = this.waveReports.filter(r => r.wave === w || this.wavesPending.has(r.wave))
     }
     if (cleared && this.challenge.expanding && !this.waveActive) {
       const next = stageForWave(this.wave + 1)
@@ -1742,7 +1823,7 @@ export class Sim {
     const alive = (e: Enemy | null) => (e && e.alive ? e.uid : 0)
     return {
       v: 2,
-      ...(this.challenge.guard ? { embers: this.embers.map(p => ({ ...p })), lastLeak: this.lastLeak && { ...this.lastLeak } } : {}),
+      ...(this.challenge.guard ? { waveReports: this.waveReports.map(r => ({ ...r, damage: { ...r.damage } })), embers: this.embers.map(p => ({ ...p })), lastLeak: this.lastLeak && { ...this.lastLeak } } : {}),
       ...(this.challenge.expanding ? { canalStage: this.canalStage } : {}),
       difficulty: this.difficulty,
       challenge: { ...this.challenge },
@@ -1840,6 +1921,7 @@ export class Sim {
     sim.stats = { ...sim.stats, ...JSON.parse(JSON.stringify(snap.stats)) }
     sim.stats.cheered ??= {}
     if (full) {
+      sim.waveReports = full.waveReports?.map(r => ({ ...r, damage: { ...r.damage } })) ?? []
       sim.embers = full.embers?.map(p => ({ ...p })) ?? []
       sim.lastLeak = full.lastLeak ? { ...full.lastLeak } : null
       sim.over = full.over

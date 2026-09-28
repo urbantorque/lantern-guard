@@ -1,3 +1,4 @@
+import { gardensLevel, GARDENS_PADS } from './gardens'
 import { WATERWAYS } from './waterways'
 import { DIFFICULTY, TOWERS, ENEMIES, CHARMS } from './defs'
 import { LEVEL } from './level'
@@ -72,8 +73,9 @@ export function validSnapshot(s: unknown): s is SaveSnapshot {
   if (s.challenge.guard !== undefined && (s.challenge.guard !== 1 || (s.challenge.expanding !== 1 && typeof s.challenge.id !== 'string') || s.challenge.waterway !== undefined)) return false
   if (s.challenge.harbour !== undefined && (s.challenge.harbour !== 1 || s.challenge.guard !== 1 || s.challenge.expanding !== 1 || s.wave < 25 || s.canalStage !== 2)) return false
   if (s.challenge.harbourEncounters !== undefined && (s.challenge.harbourEncounters !== 1 || s.challenge.harbour !== 1)) return false
-  if (s.challenge.guardian !== undefined && (s.challenge.guardian !== 'ember' || s.challenge.guard !== 1 || s.challenge.id !== undefined)) return false
-  const maxPads = LEVEL.pads.length + (s.challenge.harbour ? HARBOUR_PADS.length : 0)
+  if (s.challenge.guardian !== undefined && (!['ember', 'reed'].includes(String(s.challenge.guardian)) || s.challenge.guard !== 1 || s.challenge.id !== undefined)) return false
+  if (s.challenge.gardens !== undefined && (s.challenge.gardens !== 1 || s.challenge.harbour !== 1 || s.wave < 33)) return false
+  const maxPads = LEVEL.pads.length + (s.challenge.harbour ? HARBOUR_PADS.length : 0) + (s.challenge.gardens ? GARDENS_PADS.length : 0)
   if (!Array.isArray(s.towers) || s.towers.length > maxPads || !Array.isArray(s.gates) || s.gates.length !== 2) return false
   const pads = new Set<number>()
   for (const t of s.towers) {
@@ -117,7 +119,9 @@ export function validSnapshot(s: unknown): s is SaveSnapshot {
     if (s.towers.some(t => !available.includes((t as { pad: number }).pad) && !(harbour && (t as { pad: number }).pad >= LEVEL.pads.length))) return false
   }
   const base = s.challenge.expanding ? growingCanal(s.canalStage as number) : LEVEL
-  const segments = new Set((s.challenge.harbour ? harbourLevel(base) : base).segments.map(seg => seg.id))
+  const harbour = s.challenge.harbour ? harbourLevel(base) : base
+  const segments = new Set((s.challenge.gardens ? gardensLevel(harbour) : harbour).segments.map(seg => seg.id))
+  if (s.waveReports !== undefined && (!s.challenge.guard || !Array.isArray(s.waveReports) || s.waveReports.length > 100 || !s.waveReports.every(r => object(r) && integer(r.wave, 1, 10000) && integer(r.slowSplashHits) && object(r.damage) && Object.entries(r.damage).every(([id, value]) => Object.hasOwn(TOWERS, id) && number(value, 0))))) return false
   if (s.embers !== undefined && (!Array.isArray(s.embers) || s.embers.length > 48 || !s.embers.every(p => object(p) && number(p.x) && number(p.y) && number(p.radius, 0, 1000) && number(p.life, 0, 3) && number(p.dps, 0) && integer(p.tower, 1)))) return false
   if (s.lastLeak !== undefined && s.lastLeak !== null && (!object(s.lastLeak) || !Object.hasOwn(ENEMIES, String(s.lastLeak.enemy)) || typeof s.lastLeak.route !== 'string' || typeof s.lastLeak.hidden !== 'boolean' || typeof s.lastLeak.armoured !== 'boolean' || !integer(s.lastLeak.wave, 1) || !number(s.lastLeak.light, 0))) return false
   if (!(s.openSources as unknown[]).every(id => ['north', 'west'].includes(String(id)))) return false
@@ -127,13 +131,15 @@ export function validSnapshot(s: unknown): s is SaveSnapshot {
   if (!(s.waveAlive as unknown[]).every(v => Array.isArray(v) && integer(v[0], 1, 10000) && integer(v[1]))) return false
   for (const e of s.enemies as Record<string, unknown>[]) {
     if (e.escortOf !== undefined && (!integer(e.escortOf, 1) || e.type !== 'skiff' || s.challenge.harbourEncounters !== 1)) return false
-    if (e.signalT !== undefined && (!number(e.signalT, 0, 2.4) || e.type !== 'warden' || s.challenge.harbourEncounters !== 1)) return false
+    if (e.signalT !== undefined && !((e.type === 'warden' && s.challenge.harbourEncounters === 1 && number(e.signalT, 0, 2.4)) || (e.type === 'bloomheart' && s.challenge.gardens === 1 && number(e.signalT, 0, 3)))) return false
+    if (['reedling', 'bloomheart'].includes(String(e.type)) && s.challenge.gardens !== 1) return false
     for (const key of ['shell', 'maxShell', 'seenT', 'phase', 'spawnCd', 'speedBase', 'slowT', 'slowF', 'stunT', 'burnT', 'burnDps', 'brittleT', 'visScale', 'reward', 'age']) if (!number(e[key])) return false
     for (const key of ['revealedPerm', 'split']) if (typeof e[key] !== 'boolean') return false
     for (const key of ['rich', 'shrouded', 'owlSeen']) if (e[key] !== undefined && typeof e[key] !== 'boolean') return false
     if (typeof e.route !== 'string' || typeof e.lastGate !== 'string') return false
   }
   for (const p of s.projs as Record<string, unknown>[]) {
+    if (p.bounced !== undefined && (typeof p.bounced !== 'boolean' || p.kind !== 'spark' || s.challenge.guardian !== 'reed')) return false
     for (const key of ['vx', 'vy', 'speed', 'target', 'dmg', 'pierce', 'splash', 'burn', 'burnDur', 'cluster', 'life', 'sx', 'sy', 'ex', 'ey', 't', 'dur']) if (!number(p[key])) return false
     for (const key of ['heavy', 'detect', 'brittleBonus']) if (typeof p[key] !== 'boolean') return false
     if (!['spark', 'feather', 'firework', 'rocket', 'moth', 'mini'].includes(String(p.kind)) || !(p.hit as unknown[]).every((v: unknown) => integer(v))) return false

@@ -8,7 +8,7 @@ import { ENEMY_MARK, glowSprite, mix, P, withAlpha } from './palette'
 export const ENEMY_VIS = 1.3
 
 /** Animation loop length (seconds) per Mope; 8 baked frames cover one loop. */
-const PERIOD: Record<EnemyId, number> = { drip: 1.57, skitter: 0.29, shell: 1.57, veil: 1.05, bloat: 1.26, wisp: 0.8, mender: 1.96, vshell: 1.57, toad: 2.86, gloom: 2.6, skiff: 1.57, warden: 2.6 }
+const PERIOD: Record<EnemyId, number> = { drip: 1.57, skitter: 0.29, shell: 1.57, veil: 1.05, bloat: 1.26, wisp: 0.8, mender: 1.96, vshell: 1.57, toad: 2.86, gloom: 2.6, skiff: 1.57, warden: 2.6, reedling: 1.57, bloomheart: 2.6 }
 const FRAMES = 8
 
 const GLYPH_INK = '#13212a'
@@ -256,6 +256,20 @@ function drawBody(ctx: CanvasRenderingContext2D, e: Enemy, t: number, flash: boo
   ctx.lineJoin = 'round'
 
   switch (id) {
+    case 'reedling':
+    case 'bloomheart': {
+      const big = id === 'bloomheart'
+      ctx.beginPath(); ctx.ellipse(x, y, r * .85, r, 0, 0, TAU); inkFill(ctx, x, y, r, flash)
+      logRim(x, y, r * .85, r)
+      ctx.strokeStyle = mark; ctx.lineWidth = big ? 5 : 3; ctx.stroke()
+      ctx.fillStyle = big ? P.pink : P.lime
+      for (let i = -1; i <= 1; i++) {
+        ctx.beginPath(); ctx.ellipse(x + i * r * .4, y - r * .72, r * .27, r * .62, i * .65, 0, TAU); ctx.fill()
+      }
+      eyes(ctx, x, y + r * .06, r * .33, r * .17, lookX, lookY, blink)
+      if (glyph) drawGlyph(ctx, e.def.family, x, y + r * .57, r * .16, mark)
+      break
+    }
     case 'skiff':
     case 'warden': {
       const big = id === 'warden'
@@ -1221,7 +1235,7 @@ interface Sprite {
   used: number
 }
 
-const ID_IX: Record<EnemyId, number> = { drip: 0, skitter: 1, shell: 2, veil: 3, bloat: 4, wisp: 5, mender: 6, vshell: 7, toad: 8, gloom: 9, skiff: 10, warden: 11 }
+const ID_IX: Record<EnemyId, number> = { drip: 0, skitter: 1, shell: 2, veil: 3, bloat: 4, wisp: 5, mender: 6, vshell: 7, toad: 8, gloom: 9, skiff: 10, warden: 11, reedling: 12, bloomheart: 13 }
 /** Canvas memory budget for baked frames (iOS WebKit caps total canvas memory). */
 const SPRITE_BUDGET = 32 * 1024 * 1024
 

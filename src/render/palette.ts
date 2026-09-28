@@ -60,6 +60,8 @@ export const ENEMY_MARK: Record<string, string> = {
   gloom: P.lilac,
   skiff: P.coral,
   warden: P.lilac,
+  reedling: P.amber,
+  bloomheart: P.lilac,
 }
 
 // ------------------------------------------------------------------ colour-vision-safe palette
@@ -73,7 +75,7 @@ const STANDARD: Record<FamilyKey, string> = { amber: P.amber, coral: P.coral, ic
  * or better against the night. The glyphs still carry the family either way.
  */
 const CLEAR: Record<FamilyKey, string> = { amber: '#dcae12', coral: '#ec7462', ice: '#58c0dc', lime: '#9cff8c', lilac: '#9a7cfb', pink: '#fde6fc' }
-const MOPE_FAMILY: Record<string, FamilyKey> = { drip: 'amber', skitter: 'ice', shell: 'coral', veil: 'lime', bloat: 'lilac', wisp: 'coral', mender: 'pink', vshell: 'lime', toad: 'lilac', gloom: 'lilac', skiff: 'coral', warden: 'lilac' }
+const MOPE_FAMILY: Record<string, FamilyKey> = { drip: 'amber', skitter: 'ice', shell: 'coral', veil: 'lime', bloat: 'lilac', wisp: 'coral', mender: 'pink', vshell: 'lime', toad: 'lilac', gloom: 'lilac', skiff: 'coral', warden: 'lilac', reedling: 'amber', bloomheart: 'lilac' }
 
 export type PaletteMode = 'standard' | 'clear'
 let paletteMode: PaletteMode = 'standard'

@@ -299,6 +299,16 @@ function beaconCrown(ctx: CanvasRenderingContext2D, x: number, top: number, w: n
 }
 
 export function drawTower(ctx: CanvasRenderingContext2D, x: number, y: number, L: TowerLook) {
+  // Broad pennants distinguish specialised paths even when portrait details are small.
+  if (Math.max(L.a, L.b) >= 2) {
+    ctx.save(); ctx.strokeStyle = '#e6d6ad'; ctx.fillStyle = keeperHue(L.id); ctx.lineWidth = 3
+    ctx.beginPath(); ctx.moveTo(x - 28, y + 2); ctx.lineTo(x - 28, y - 47); ctx.stroke()
+    ctx.beginPath(); ctx.moveTo(x - 28, y - 47); ctx.lineTo(x - 9, y - 47)
+    if (L.b > L.a) { ctx.lineTo(x - 16, y - 39); ctx.lineTo(x - 9, y - 31) } else ctx.lineTo(x - 9, y - 31)
+    ctx.lineTo(x - 28, y - 31); ctx.closePath(); ctx.fill()
+    if (Math.max(L.a, L.b) === 3) { ctx.fillStyle = P.cream; ctx.fillRect(x - 26, y - 43, 12, 4) }
+    ctx.restore()
+  }
   const pop = L.age < 0.4 ? easeOutBack(L.age / 0.4) : 1
   const upK = L.upAge < 0.35 ? Math.sin((L.upAge / 0.35) * Math.PI) : 0
   const kick = L.since < 0.12 ? 1 - L.since / 0.12 : 0

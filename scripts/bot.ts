@@ -81,6 +81,7 @@ function segWeights(sim: Sim, wave: number): Map<string, number> {
   const add = (id: string, v: number) => { if (sim.level.segs.has(id)) w.set(id, (w.get(id) ?? 0) + v) }
   const west = wave >= 11
   add('n0', 1)
+  if (sim.challenge.gardens) { add('garden-west', .9); add('garden-east', .9); add('garden-merge', 1.8); add('harbour', 1.4) }
   const up = sim.gates[0]
   const lo = sim.gates[1]
   const upLocked = sim.wave < up.def.unlockWave && wave < up.def.unlockWave

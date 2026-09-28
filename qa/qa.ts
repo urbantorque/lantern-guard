@@ -1,3 +1,5 @@
+import gardensFixtures from './gardens-fixtures.json'
+import { sound } from '../src/core/audio'
 import refinementFixtures from './refinement-fixtures.json'
 import fixtures from './fixtures.json'
 import growthFixtures from './growth-fixtures.json'
@@ -10,6 +12,7 @@ import { selectSlot } from '../src/game/save-store'
 import { Renderer } from '../src/render/renderer'
 
 if (!import.meta.env.DEV) throw new Error('QA fixtures require the development server')
+sound.settings.muted = true
 const backupKey = 'qa.original-test-data'
 const backup = () => {
   if (!localStorage.getItem(backupKey)) localStorage.setItem(backupKey, JSON.stringify(Object.fromEntries(Object.keys(localStorage).filter(k => k.startsWith('lanternlocks.')).map(k => [k, localStorage.getItem(k)]))))
@@ -17,7 +20,7 @@ const backup = () => {
 document.querySelectorAll<HTMLButtonElement>('[data-fixture]').forEach(b => b.onclick = () => {
   backup()
   saveSettings({ ...loadSettings(), muted: true })
-  const all: Record<string, unknown> = { ...fixtures, ...growthFixtures, ...guardFixtures, ...journeyFixtures, ...continuityFixtures, ...refinementFixtures }
+  const all: Record<string, unknown> = { ...fixtures, ...growthFixtures, ...guardFixtures, ...journeyFixtures, ...continuityFixtures, ...refinementFixtures, ...gardensFixtures }
   const snapshot = all[b.dataset.fixture!] as SaveSnapshot
   selectSlot(snapshot.challenge.id ? 'challenge' : 'campaign')
   clearRun()
@@ -35,12 +38,12 @@ document.querySelector<HTMLButtonElement>('#restore')!.onclick = () => {
   localStorage.removeItem(backupKey)
   location.assign('/')
 }
-document.querySelector<HTMLButtonElement>('#benchmark')!.onclick = () => {
-  const button = document.querySelector<HTMLButtonElement>('#benchmark')!
+function benchmark(button: HTMLButtonElement, snapshot: SaveSnapshot) {
   button.disabled = true
-  const sim = Sim.restore(fixtures.reedbank as SaveSnapshot)
+  const sim = Sim.restore(snapshot)
   const renderer = new Renderer(document.querySelector<HTMLCanvasElement>('#bench')!)
   renderer.attach(sim)
+  if (sim.challenge.gardens) renderer.setZone('gardens')
   renderer.resize(375, 560, Math.min(2, devicePixelRatio))
   const costs: number[] = []
   const result = document.querySelector<HTMLOutputElement>('#result')!
@@ -60,3 +63,6 @@ document.querySelector<HTMLButtonElement>('#benchmark')!.onclick = () => {
   result.textContent = 'Measuring 300 late-wave frames...'
   requestAnimationFrame(frame)
 }
+
+document.querySelector<HTMLButtonElement>('#benchmark')!.onclick = () => benchmark(document.querySelector<HTMLButtonElement>('#benchmark')!, fixtures.reedbank as SaveSnapshot)
+document.querySelector<HTMLButtonElement>('#benchmark-gardens')!.onclick = () => benchmark(document.querySelector<HTMLButtonElement>('#benchmark-gardens')!, gardensFixtures['gardens-busy'] as SaveSnapshot)

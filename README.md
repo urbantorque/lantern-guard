@@ -11,6 +11,7 @@ New nights use one growing canal: Lantern bend first, the upper canal before wav
 - Balance results: [docs/balance-matrix.txt](docs/balance-matrix.txt) (full nights) and [docs/tides-matrix.txt](docs/tides-matrix.txt) (daily tides and weekly nights)
 - Path to the App Store: [docs/IOS-PLAN.md](docs/IOS-PLAN.md)
 - Planning relocation, tower specialisations and Harbour encounters: [docs/DEFENCE-REFINEMENTS.md](docs/DEFENCE-REFINEMENTS.md)
+- Water Gardens (waves 34–39), permanent settlement restoration, mastery and chapter guardian changes: [docs/WATER-GARDENS.md](docs/WATER-GARDENS.md)
 - Next three refinement priorities: [docs/NEXT-PRIORITIES.md](docs/NEXT-PRIORITIES.md)
 - Proposed title and routing direction: [docs/POSITIONING-AND-ROUTING.md](docs/POSITIONING-AND-ROUTING.md)
 
@@ -40,6 +41,8 @@ Other scripts:
 | `npm run test:guard` | Versioned rules, route rewards, support interactions, save continuity and planning-only wins |
 | `npm run test:refinement` | Relocation resources/timers, destination auras, Warden phases, legacy Harbour rules and upgrade previews |
 | `npm run test:journey` | Separate saves, migrations, retry credit, Harbour continuity, guardian behaviour and current challenges |
+| `npm run test:gardens` | Chapter continuity, boss signals, Reed bounces, mastery, restoration and save validation |
+| `npm run balance:gardens` | 18 guardian/difficulty/strategy journeys, including Gardens with and without further investment |
 | `npm run balance:journey` | 12 guardian/difficulty/strategy openings, Harbour continuations with and without new investment, plus current daily/weekly checks |
 | `npm run balance:reedbank` | 48 nights across 8 strategies, 3 modes and 2 seeds |
 | `npm run ios:sync` | Build and copy the offline game into the Xcode project |

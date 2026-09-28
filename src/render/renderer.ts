@@ -1,3 +1,4 @@
+import { drawSettlement } from './settlement'
 import { platformHaptic } from '../core/platform'
 import { spring, TAU, vrand } from '../core/math'
 import { sound } from '../core/audio'
@@ -20,8 +21,10 @@ export type Selection =
   | { kind: 'gate'; gate: GateState }
   | null
 
+export type MapZone = 'canal' | 'harbour' | 'gardens' | 'overview'
+
 export interface ViewState {
-  moving?: { tower: Tower; destination: number | null; fromHarbour: boolean }
+  moving?: { tower: Tower; destination: number | null; fromZone: MapZone }
   feedbackRoute?: string
   routeDir?: 0 | 1
   upgradeRange?: number
@@ -97,9 +100,13 @@ const cellKey = (x: number, y: number) => Math.floor(x / BLOOM_CELL) * 1000 + Ma
 const FIREWORK_COLS = [P.coral, P.amberHi, P.ice, P.lime, P.lilac, P.gold, P.pink]
 
 export class Renderer {
-  harbourView = false
-  setHarbourView(on: boolean) {
-    this.harbourView = on
+  zone: MapZone = 'canal'
+  settlement = 0
+  bunting = false
+  private comboUntil = 0
+  setHarbourView(on: boolean) { this.setZone(on ? 'harbour' : 'canal') }
+  setZone(zone: MapZone) {
+    this.zone = zone
     if (this.w && this.h) this.resize(this.w, this.h, this.dpr)
   }
   cv: HTMLCanvasElement
@@ -158,10 +165,10 @@ export class Renderer {
   }
 
   attach(sim: Sim, preserveBlooms = false) {
-    if (!sim.challenge.harbour) this.harbourView = false
+    if (!sim.challenge.harbour) this.zone = 'canal'
     this.routeKey = ''
     this.partnerKey = ''
-    this.newPads = preserveBlooms && sim.challenge.harbour ? [18, 19, 20, 21] : preserveBlooms && sim.challenge.expanding && sim.canalStage > 0
+    this.newPads = preserveBlooms && sim.challenge.gardens ? [22, 23, 24, 25] : preserveBlooms && sim.challenge.harbour ? [18, 19, 20, 21] : preserveBlooms && sim.challenge.expanding && sim.canalStage > 0
       ? CANAL_STAGES[sim.canalStage].pads.filter(p => !(CANAL_STAGES[sim.canalStage - 1].pads as readonly number[]).includes(p)) : []
     this.revealUntil = this.time + 5
     if (this.levelBuilt !== sim.level) {
@@ -205,10 +212,14 @@ export class Renderer {
     this.cv.style.width = w + 'px'
     this.cv.style.height = h + 'px'
     // keepers on the top pads reach ~80 units above them: keep that headroom on screen
-    const bounds = this.harbourView ? { x: 0, y: -475, w: 720, h: 830 } : this.levelBuilt?.def.bounds ?? { x: 0, y: -36, w: WORLD_W, h: WORLD_H + 36 }
-    this.scale = Math.min(w / bounds.w, h / bounds.h)
+    const top = this.levelBuilt?.segs.has('garden-merge') ? -1020 : -475
+    const bounds = this.zone === 'overview' ? { x: -20, y: top, w: 760, h: WORLD_H + 30 - top }
+      : this.zone === 'gardens' ? { x: 0, y: -1020, w: 720, h: 750 }
+      : this.zone === 'harbour' ? { x: 0, y: -475, w: 720, h: 830 } : this.levelBuilt?.def.bounds ?? { x: 0, y: -36, w: WORLD_W, h: WORLD_H + 36 }
+    const mapTop = this.zone === 'gardens' || this.zone === 'overview' ? 52 : 0
+    this.scale = Math.min(w / bounds.w, Math.max(1, h - mapTop) / bounds.h)
     this.ox = (w - bounds.w * this.scale) / 2 - bounds.x * this.scale
-    this.oy = (h - bounds.h * this.scale) / 2 - bounds.y * this.scale
+    this.oy = mapTop + (h - mapTop - bounds.h * this.scale) / 2 - bounds.y * this.scale
     this.fx.textScale = Math.max(1, Math.min(1.9, 0.62 / this.scale))
     this.fx.minText = this.minText / this.scale
     setEnemySpriteScale(this.scale * dpr)
@@ -461,6 +472,13 @@ export class Renderer {
           sound.swoosh()
           sound.crack()
           break
+        case 'combo':
+          fx.ring(ev.x, ev.y, 48, P.ice, .45, 3)
+          if (this.time >= this.comboUntil) { fx.text(ev.x, ev.y - 42, 'Slow + splash', P.ice, 20, 1.1); this.comboUntil = this.time + 4 }
+          break
+        case 'bounce':
+          for (let i = 0; i < 6; i++) { const k = i / 5; fx.add({ kind: 'spark', x: ev.x + (ev.tx - ev.x) * k, y: ev.y + (ev.ty - ev.y) * k, life: .23, size: 4, color: P.lime }) }
+          break
         case 'phase':
           fx.flash(ev.x, ev.y, 120, P.pale, 0.6)
           fx.ring(ev.x, ev.y, 150, P.pale, 1, 6)
@@ -552,7 +570,7 @@ export class Renderer {
 
   /** True where a bloom would sit on water, a stone bank, a pad or a landmark. */
   private bloomBlocked(x: number, y: number) {
-    if (x < 6 || y < (this.levelBuilt?.segs.has('harbour') ? -450 : 6) || x > WORLD_W - 6 || y > WORLD_H - 6) return true
+    if (x < 6 || y < (this.levelBuilt?.segs.has('garden-merge') ? -950 : this.levelBuilt?.segs.has('harbour') ? -450 : 6) || x > WORLD_W - 6 || y > WORLD_H - 6) return true
     const lvl = this.levelBuilt
     if (!lvl) return true
     for (const seg of lvl.segs.values()) if (seg.line.distanceTo(x, y) < BANK_W / 2 - 1) return true
@@ -704,6 +722,8 @@ export class Renderer {
     ctx.scale(this.scale, this.scale)
     ctx.drawImage(this.bg!, -BG_PAD_X, -BG_PAD_Y, WORLD_W + BG_PAD_X * 2, WORLD_H + BG_PAD_Y * 2)
     if (sim.challenge.harbour) this.drawHarbour(ctx, sim)
+    if (sim.challenge.gardens) this.drawGardens(ctx, sim)
+    if (sim.challenge.guard) drawSettlement(ctx, this.settlement, this.bunting, !!sim.challenge.harbour, !!sim.challenge.gardens)
 
     this.drawFlow(ctx, sim, dt)
     ctx.drawImage(this.bloomCv!, 0, 0, WORLD_W, WORLD_H)
@@ -776,6 +796,14 @@ export class Renderer {
         }
         ctx.restore()
       }
+    }
+    for (const boss of sim.enemies) if (boss.alive && boss.def.id === 'bloomheart' && (boss.signalT ?? 0) > 0) {
+      ctx.save(); ctx.strokeStyle = P.pink; ctx.fillStyle = withAlpha(P.pink, .08); ctx.lineWidth = 4
+      ctx.setLineDash([12, 8]); ctx.beginPath(); ctx.arc(boss.x, boss.y, 160, 0, TAU); ctx.fill(); ctx.stroke(); ctx.setLineDash([])
+      ctx.font = `700 ${this.fontPx(22)}px ${FONT}`; ctx.textAlign = 'center'; ctx.fillStyle = P.cream
+      ctx.strokeStyle = '#10242a'; ctx.lineWidth = 6
+      const warning = `Heal in ${Math.ceil(boss.signalT!)}`
+      ctx.strokeText(warning, boss.x, boss.y - 164); ctx.fillText(warning, boss.x, boss.y - 82); ctx.restore()
     }
     // depth-sorted towers and Mopes
     const list: ({ y: number; t: Tower } | { y: number; e: Enemy })[] = []
@@ -866,7 +894,7 @@ export class Renderer {
     }
     if (view.paused) {
       // a clear paused state: the map dims and cools, with a soft vignette
-      const shadeTop = sim.challenge.harbour ? -600 : -BG_PAD_Y
+      const shadeTop = sim.challenge.gardens ? -1100 : sim.challenge.harbour ? -600 : -BG_PAD_Y
       const shadeHeight = WORLD_H + BG_PAD_Y - shadeTop
       ctx.fillStyle = 'rgba(6,14,24,0.34)'
       ctx.fillRect(-BG_PAD_X, shadeTop, WORLD_W + BG_PAD_X * 2, shadeHeight)
@@ -875,6 +903,14 @@ export class Renderer {
       vg.addColorStop(1, 'rgba(8,20,30,0.45)')
       ctx.fillStyle = vg
       ctx.fillRect(-BG_PAD_X, shadeTop, WORLD_W + BG_PAD_X * 2, shadeHeight)
+    }
+    if (this.zone === 'overview') {
+      ctx.save()
+      ctx.fillStyle = P.cream; ctx.strokeStyle = '#10242a'; ctx.lineWidth = 6 / this.scale
+      ctx.font = `600 ${14 / this.scale}px ${FONT}`; ctx.textAlign = 'center'
+      const labels: [string, number, number][] = [...(sim.challenge.gardens ? [['Gardens', -715, sim.enemies.filter(e => e.y < -440).length] as [string, number, number]] : []), ['Harbour', -230, sim.enemies.filter(e => e.y >= -440 && e.y < 0).length], ['Canal', 435, sim.enemies.filter(e => e.y >= 0).length]]
+      for (const [name, y, count] of labels) { const label = name + (count ? ' · ' + count : ''); ctx.strokeText(label, 360, y); ctx.fillText(label, 360, y) }
+      ctx.restore()
     }
     // the sim only updates beamIntensity while stepping, so silence the hum when it is not
     sound.beam(view.paused || sim.over ? 0 : sim.beamIntensity)
@@ -900,6 +936,25 @@ export class Renderer {
       ctx.beginPath(); ctx.ellipse(e.x, e.y + r * .5, r, 5, 0, 0, TAU); ctx.stroke()
       ctx.beginPath(); ctx.moveTo(e.x - 3, e.y + r * .5 - 4); ctx.lineTo(e.x - 3, e.y + r * .5 + 4); ctx.moveTo(e.x + 3, e.y + r * .5 - 4); ctx.lineTo(e.x + 3, e.y + r * .5 + 4); ctx.stroke()
     }
+    ctx.restore()
+  }
+
+  private drawGardens(ctx: CanvasRenderingContext2D, sim: Sim) {
+    ctx.save(); ctx.fillStyle = '#18322e'; ctx.fillRect(-120, -1100, 960, 670)
+    for (const [x, y] of [[82, -660], [625, -665]]) {
+      ctx.fillStyle = '#244c48'; ctx.beginPath(); ctx.ellipse(x, y, 68, 95, -.2, 0, TAU); ctx.fill()
+      ctx.strokeStyle = '#608979'; ctx.lineWidth = 7; ctx.stroke()
+    }
+    for (const id of ['garden-west', 'garden-east', 'garden-merge']) {
+      const seg = sim.level.segs.get(id)!
+      ctx.lineCap = 'round'; ctx.lineJoin = 'round'
+      for (const [width, color] of [[90, '#38544b'], [70, '#648278'], [56, '#28545b']] as const) {
+        ctx.lineWidth = width; ctx.strokeStyle = color; ctx.beginPath()
+        seg.line.pts.forEach((p, i) => i ? ctx.lineTo(p.x, p.y) : ctx.moveTo(p.x, p.y)); ctx.stroke()
+      }
+    }
+    ctx.font = `600 ${this.fontPx(18)}px ${FONT}`; ctx.fillStyle = '#d7e9ce'; ctx.textAlign = 'center'
+    if (this.zone !== 'overview') { ctx.fillText('West garden', 115, -983); ctx.fillText('East garden', 605, -983) }
     ctx.restore()
   }
 
@@ -2018,7 +2073,7 @@ export class Renderer {
     ctx.fillStyle = P.night0
     ctx.fillRect(0, 0, W, H)
     // the whole canal fits above the caption; the painted countryside fills the sides
-    const top = sim.challenge.harbour ? -480 : 0
+    const top = sim.challenge.gardens ? -1030 : sim.challenge.harbour ? -480 : 0
     const k = (H - BAND - 24) / (WORLD_H - top)
     const ox = (W - WORLD_W * k) / 2
     const oy = 18 - top * k
@@ -2028,6 +2083,8 @@ export class Renderer {
     const bg = renderBackground(this.levelBuilt!, this.decor, k)
     ctx.drawImage(bg, -BG_PAD_X, -BG_PAD_Y, WORLD_W + BG_PAD_X * 2, WORLD_H + BG_PAD_Y * 2)
     if (sim.challenge.harbour) this.drawHarbour(ctx, sim)
+    if (sim.challenge.gardens) this.drawGardens(ctx, sim)
+    if (sim.challenge.guard) drawSettlement(ctx, this.settlement, this.bunting, !!sim.challenge.harbour, !!sim.challenge.gardens)
     for (const b of this.blooms) paintBloom(ctx, b, this.bloomStyle, true)
     this.drawSluice(ctx, sim, false)
     for (const [i, p] of sim.pads.entries()) {

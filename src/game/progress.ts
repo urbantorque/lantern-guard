@@ -86,7 +86,7 @@ export function loadCheckpoint() {
 // ------------------------------------------------------------------ settings
 
 export interface Settings {
-  guardian?: 'ember'
+  guardian?: 'ember' | 'reed'
   sfx: number
   music: number
   ambience: number
@@ -131,6 +131,7 @@ export const DEFAULT_SETTINGS: Settings = {
 
 export function loadSettings(): Settings {
   const s = read<Settings & { v?: number }>(KEY_SETTINGS, { ...DEFAULT_SETTINGS, v: 2 })
+  if (!['ember', 'reed'].includes(String(s.guardian))) delete s.guardian
   // v1 stored the device's Reduce Motion as a fixed choice; go back to following the device once
   if (s.v !== 2) {
     s.reduceMotion = null
@@ -157,6 +158,8 @@ export const saveCoach = (c: Coach) => write(KEY_COACH, c)
 // ------------------------------------------------------------------ progress + feats
 
 export interface Progress {
+  settlement?: number
+  gardensWins?: number
   harbourWins?: number
   waterways: Partial<Record<WaterwayId, { wins: Partial<Record<Difficulty, number>>; best: Partial<Record<Difficulty, number>> }>>
   wins: Partial<Record<Difficulty, number>>
@@ -173,6 +176,9 @@ export function loadProgress(): Progress {
   const p = read<Progress>(KEY_PROGRESS, { waterways: {}, wins: {}, best: {}, feats: {}, runs: 0, bloomsTotal: 0, bestFreeplay: {}, journal: {} })
   p.waterways ??= {}
   p.waterways.wickwater ??= { wins: { ...p.wins }, best: { ...p.best } }
+  // Existing accomplishments also restore the settlement for returning players.
+  const best = Math.max(0, ...Object.values(p.best).map(n => n ?? 0))
+  p.settlement = Math.max(p.settlement ?? 0, p.gardensWins ? 4 : p.harbourWins ? 3 : best >= 12 || p.feats.reedkeeper ? 2 : best >= 6 ? 1 : 0)
   return p
 }
 export const saveProgress = (p: Progress) => write(KEY_PROGRESS, p)
@@ -211,6 +217,40 @@ export const FEATS: Feat[] = [
   { id: 'crowned', name: 'Crowned', desc: 'Buy any tier-three upgrade.', test: (r) => r.stats.maxTier >= 3 },
 ]
 
+export const RESTORATIONS = [
+  { wave: 5, name: 'Windows aglow', reward: 'The canal homes light up.', next: 'Hold wave 5 to light the canal homes.' },
+  { wave: 11, name: 'Neighbours return', reward: 'The west footbridge is repaired and villagers return.', next: 'Hold wave 11 to restore the west footbridge.' },
+  { wave: 33, name: 'Lantern flotilla', reward: 'The harbour docks reopen with lantern boats.', next: 'Defeat the Harbour Warden to reopen the docks.' },
+  { wave: 39, name: 'Gardens in bloom', reward: 'Water lilies return to the garden pools.', next: 'Defeat Bloomheart to restore the water lilies.' },
+]
+export const restorationPreview = (p: Progress) => RESTORATIONS[p.settlement ?? 0]?.next ?? 'Your settlement is fully restored.'
+
+/** Monotonic unlocks: retries, resumes and chapter changes cannot revoke or double-award them. */
+export function creditMilestones(sim: Sim): { feats: string[]; restorations: string[] } {
+  const earned = { feats: [] as string[], restorations: [] as string[] }
+  if (!sim.challenge.guard || sim.isChallenge) return earned
+  const p = loadProgress()
+  const tests: Record<string, boolean> = { crowned: sim.stats.maxTier >= 3, 'full-bloom': sim.stats.pops >= 1200, 'early-bird': sim.stats.earlyCalls >= 10 }
+  for (const [id, passed] of Object.entries(tests)) if (passed && !p.feats[id]) { p.feats[id] = true; earned.feats.push(id) }
+  const held = Math.min(sim.wave - (sim.over === 'lost' || sim.waveActive ? 1 : 0), ...[...sim.wavesPending].map(w => w - 1))
+  for (let i = p.settlement ?? 0; i < RESTORATIONS.length; i++) {
+    const r = RESTORATIONS[i]
+    if (held < r.wave || (i >= 2 && !sim.challenge.harbour) || (i >= 3 && !sim.challenge.gardens)) break
+    p.settlement = i + 1; earned.restorations.push(r.reward)
+  }
+  if (earned.feats.length || earned.restorations.length) saveProgress(p)
+  return earned
+}
+
+/** Only one optional goal is surfaced; early onboarding stays focused on the board. */
+export function masteryGoal(sim: Sim, p: Progress): string | null {
+  if (!sim.challenge.guard || sim.isChallenge || sim.wave < 6) return null
+  if (!p.feats.crowned) return 'Optional · Crowned: buy a tier-three upgrade → Ember Keeper'
+  if (!p.feats['full-bloom']) return `Optional · Full Bloom: ${Math.min(1200, sim.stats.pops)}/1,200 cheered → Reed Keeper`
+  if (!p.feats['early-bird'] && !sim.challenge.harbour) return `Optional · Early Bird: ${Math.min(10, sim.stats.earlyCalls)}/10 early calls → village bunting`
+  return null
+}
+
 /** Free play after a win only extends a finished run: record the best free-play wave, nothing else. */
 export function recordFreeplay(sim: Sim) {
   const p = loadProgress()
@@ -243,7 +283,8 @@ export function creditJournal(cheered: Partial<Record<EnemyId, number>>) {
 export function recordRun(sim: Sim, blooms: number): string[] {
   const p = loadProgress()
   if (sim.challenge.harbour) {
-    if (sim.won) p.harbourWins = (p.harbourWins ?? 0) + 1
+    if (sim.won && sim.challenge.gardens) p.gardensWins = (p.gardensWins ?? 0) + 1
+    else if (sim.won) p.harbourWins = (p.harbourWins ?? 0) + 1
     saveProgress(p)
     return []
   }
@@ -349,6 +390,8 @@ export interface Session {
   retries?: number
   lastLeak?: string
   harbour?: boolean
+  gardens?: boolean
+  guardian?: 'lantern' | 'ember' | 'reed'
   event?: 'resume'
   at: string
   difficulty: Difficulty
@@ -398,6 +441,8 @@ export function recordMetrics(sim: Sim, result: string, extra?: SessionExtras) {
     retries: sim.stats.retries ?? 0,
     lastLeak: sim.lastLeak?.enemy,
     harbour: !!sim.challenge.harbour,
+    gardens: !!sim.challenge.gardens,
+    guardian: sim.challenge.guardian ?? 'lantern',
     at: new Date().toISOString(),
     difficulty: sim.difficulty,
     challenge: sim.challenge.id,
