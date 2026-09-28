@@ -30,6 +30,8 @@ npm run dev
 
 Open http://localhost:5173/. To try it on a phone, open the "Network" URL that Vite prints (for example `http://192.168.x.x:5173/`) while both devices are on the same Wi-Fi. Then use "Add to Home Screen" for a full-screen view.
 
+For the hosted build, see [web deployment](docs/WEB-DEPLOYMENT.md). Its Sites project and static output directory are configured in `.openai/hosting.json`.
+
 Other scripts:
 
 | Command | What it does |
