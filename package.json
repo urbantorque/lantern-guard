@@ -24,6 +24,7 @@
     "ios:open": "cap open ios",
     "check": "npm run typecheck && npm test && npm run test:release && npm run test:growth && npm run test:guard && npm run test:journey && npm run test:refinement && npm run test:gardens && npm run test:compact && npm run test:replay && npm run test:depth && npm run test:balance && npm run test:integrity",
     "qa:fixtures": "tsx scripts/qa-fixtures.ts",
+    "qa:gallery": "tsx scripts/gallery-fixtures.ts",
     "test:gardens": "tsx scripts/gardens-test.ts",
     "balance:gardens": "tsx scripts/gardens-balance.ts",
     "test:compact": "tsx scripts/compact-test.ts",

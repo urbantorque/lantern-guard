@@ -1,10 +1,20 @@
 # Hosted game
 
-Test the game at [Lantern Guard](https://lantern-guard.chic-bee-3413.chatgpt.site/?muted=1). The `muted=1` link turns audio off before the first interaction; sound can be enabled again in Settings. The initial Sites publication is private to the owner and may ask for ChatGPT sign-in.
+The public demo is [Lantern Guard on GitHub Pages](https://urbantorque.github.io/lantern-guard/?muted=1). It opens without a download or sign-in. The `muted=1` link turns audio off before the first interaction; sound can be enabled again in Settings.
+
+## GitHub Pages
+
+GitHub serves the static production build from the root of the `gh-pages` branch. The `main` branch contains the source. Relative asset URLs work beneath `/lantern-guard/`; `.nojekyll` keeps the compiled files unchanged.
+
+To update the public demo from a clean, committed checkout, run `./scripts/publish-pages.ps1` in PowerShell. It builds the game, uses a temporary Git index to commit only `dist/` to `gh-pages`, then pushes it without switching the working branch. It preserves deployment history and refuses to overwrite another Pages configuration. The GitHub CLI must be signed in as a repository administrator. Confirm the resulting Pages build has completed before sharing an update.
+
+## Private Sites build
+
+The earlier [Sites deployment](https://lantern-guard.chic-bee-3413.chatgpt.site/?muted=1) remains a separate owner-private build and may ask for ChatGPT sign-in.
 
 The game is a static Vite build. The Sites project is recorded in `.openai/hosting.json`; reuse its `project_id` for future releases. The deployment serves `dist/` and needs no application secrets or database.
 
-## Release steps
+### Sites release steps
 
 1. Commit the source, including `.openai/hosting.json`.
 2. Run `npm run build` from that commit.
