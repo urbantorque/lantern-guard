@@ -8,10 +8,11 @@ export const CANAL_STAGES = [
   { wave: 11, name: 'Whole canal', next: 'Both entrances are open', pads: LEVEL.pads.map((_, i) => i) },
 ] as const
 
-export const KEEPER_WAVE: Record<TowerId, number> = { wick: 1, cracker: 1, bell: 3, garden: 4, owl: 6, beam: 7 }
+export const KEEPER_WAVE: Record<TowerId, number> = { wick: 1, cracker: 1, bell: 3, garden: 4, owl: 6, beam: 7, storm: 16, ballista: 26 }
 export const KEEPER_ROLE: Record<TowerId, string> = {
   wick: 'Fast shots', cracker: 'Crowd bursts', bell: 'Slows groups',
   owl: 'Sees hidden', beam: 'Heavy beam', garden: 'Earns glow',
+  storm: 'Chain lightning', ballista: 'Heavy single hits',
 }
 export const KEEPER_HELP: Record<TowerId, string> = {
   wick: 'Fast, cheap shots. Weak against armour.',
@@ -20,6 +21,8 @@ export const KEEPER_HELP: Record<TowerId, string> = {
   owl: 'Reveals hidden enemies for nearby towers.',
   beam: 'Steady damage against armour and bosses.',
   garden: 'Earns glow after each wave. Cannot attack at first.',
+  storm: 'Lightning jumps through crowds. Weak against armour at first.',
+  ballista: 'Slow, heavy bolts target the strongest enemy. Needs help with crowds.',
 }
 
 export const stageForWave = (wave: number) => wave >= 11 ? 2 : wave >= 6 ? 1 : 0

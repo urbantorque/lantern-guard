@@ -1,4 +1,5 @@
 import { compactLevel, compactWave, COMPACT_END, STARTER_PLOTS, PLOTS, REFINEMENTS, refineStats } from './compact'
+import { LATE_REFINEMENTS, LATE_TOWERS, PREPARATIONS, lateRefine, encounterWave, preparationCost, netDamage, type Preparation, type PreparationId } from './depth'
 import { gardensLevel, GARDENS_END, GARDENS_WAVES } from './gardens'
 import type { GuardianId } from './guardians'
 import { BATTLE_PLANS, PLAN_ROUNDS, applyBattlePlans, type BattlePlanId } from './battle-plans'
@@ -122,7 +123,7 @@ export interface Tower {
   earned: number
 }
 
-export type ProjKind = 'spark' | 'feather' | 'firework' | 'rocket' | 'moth' | 'mini'
+export type ProjKind = 'spark' | 'feather' | 'firework' | 'rocket' | 'moth' | 'mini' | 'bolt'
 
 export interface Proj {
   bounced?: boolean
@@ -168,6 +169,8 @@ export interface GateState {
 }
 
 export type SimEvent =
+  | { t: 'arc'; x: number; y: number; tx: number; ty: number }
+  | { t: 'prepare'; id: PreparationId; x: number; y: number }
   | { t: 'pop'; x: number; y: number; tx: number; ty: number; size: number; enemy: EnemyId; family: string; reward: number; lured: boolean; boss: boolean }
   | { t: 'combo'; x: number; y: number; count: number }
   | { t: 'bounce'; x: number; y: number; tx: number; ty: number }
@@ -204,6 +207,9 @@ export type SimEvent =
 
 /** Rules a night is played under. Plain nights use {}; tides and weekly nights set several. */
 export interface Challenge {
+  skirmish?: { from: number; to: number; glow: number; seed: number }
+  /** Extra towers, preparations and later upgrades. Old saves retain their rules. */
+  depth?: 1
   /** Fixed mobile board and paid plots. Versioned independently from legacy campaigns. */
   compact?: 1
   /** Run-specific tower choices, introduced with Stone Weir. */
@@ -370,6 +376,8 @@ export interface SaveSnapshotV1 extends SnapshotBase {
 
 /** Full save, valid at any moment including mid-wave. Restores to an identical simulation. */
 export interface SaveSnapshotV2 extends SnapshotBase {
+  preparation?: Preparation | null
+  preparationRound?: number
   battlePlans?: BattlePlanId[]
   plots?: number[]
   waveReports?: WaveReport[]
@@ -422,6 +430,8 @@ export class Sim {
   canalStage = 0
   plots = new Set<number>(STARTER_PLOTS)
   battlePlans: BattlePlanId[] = []
+  preparation: Preparation | null = null
+  preparationRound = 0
   time = 0
   enemies: Enemy[] = []
   towers: Tower[] = []
@@ -450,6 +460,7 @@ export class Sim {
   private speedMul: number
 
   constructor(difficulty: Difficulty = 'standard', challenge: Challenge = {}, seed = 7) {
+    seed = challenge.skirmish?.seed ?? seed
     this.difficulty = difficulty
     this.challenge = challenge
     this.seed = seed
@@ -469,6 +480,25 @@ export class Sim {
       this.wave = tide.from
       this.glow = tide.glow
       for (const src of this.level.def.sources) if (src.openWave <= tide.from) this.openSources.add(src.id)
+    }
+    const short = challenge.skirmish
+    if (short) {
+      this.wave = short.from; this.glow = short.glow
+      this.plots = new Set(PLOTS.flatMap((p, i) => p.wave <= this.planningWave ? [i] : []))
+      for (const src of this.level.def.sources) if (src.openWave <= this.planningWave) this.openSources.add(src.id)
+      const defence: [number, TowerId, number, number][] = short.from === 10
+        ? [[0, 'wick', 2, 1], [3, 'cracker', 1, 0], [6, 'bell', 1, 0]]
+        : [[0, 'wick', 3, 1], [3, 'cracker', 2, 1], [6, 'bell', 2, 1], [10, 'owl', 1, 2]]
+      if (challenge.variant === 3) for (const tower of defence) {
+        // The Stone Weir inlet skips the upper loop. Its starting support guards the lower bank.
+        tower[0] = tower[1] === 'cracker' ? 6 : tower[1] === 'bell' ? 10 : tower[1] === 'owl' ? 7 : 0
+      }
+      for (const [pad, id, a, b] of defence) {
+        const t = this.build(pad, id)!
+        for (let i = 0; i < a; i++) this.upgrade(t, 0)
+        for (let i = 0; i < b; i++) this.upgrade(t, 1)
+      }
+      this.events = []
     }
     this.recomputeRoutes()
     this.buildGateDistances()
@@ -558,6 +588,25 @@ export class Sim {
     return true
   }
 
+  get preparationOffer(): number | null {
+    if (!this.challenge.depth || this.isChallenge || this.waveActive || this.over || this.freeplay || this.wave < 5 || this.wave >= 40) return null
+    const round = Math.floor(this.wave / 5) * 5
+    return round > this.preparationRound ? round : null
+  }
+
+  prepare(id: PreparationId): boolean {
+    const round = this.preparationOffer
+    if (!round || !Object.hasOwn(PREPARATIONS, id) || this.glow < preparationCost(round) || this.preparation) return false
+    this.glow -= preparationCost(round)
+    this.preparationRound = round
+    this.preparation = { id, round, wave: this.wave + 1, charges: id === 'net' ? 8 : id === 'ward' ? 4 : 0 }
+    return true
+  }
+
+  activePreparation(id: PreparationId, wave = this.wave): boolean {
+    return this.preparation?.id === id && this.preparation.wave === wave
+  }
+
   gateAvailable(g: GateState): boolean {
     return g.def.outs.every(id => this.level.segs.has(id))
   }
@@ -576,7 +625,7 @@ export class Sim {
 
   /** Waves skipped before a tide opens (0 on a full night). Player-facing wave numbers subtract it. */
   get waveOffset(): number {
-    return this.challenge.tide?.from ?? 0
+    return this.challenge.skirmish?.from ?? this.challenge.tide?.from ?? 0
   }
 
   /** Daily tides and weekly nights end at dawn: no free play, and their results go to the challenge log. */
@@ -588,6 +637,7 @@ export class Sim {
   keeperWave(id: TowerId): number { return this.challenge.compact && id === 'garden' ? 6 : KEEPER_WAVE[id] }
 
   keeperAllowed(id: TowerId): boolean {
+    if (LATE_TOWERS.includes(id) && !this.challenge.depth) return false
     if ((this.challenge.expanding || this.challenge.compact) && this.planningWave < this.keeperWave(id)) return false
     if (id === 'garden' && this.challenge.noGarden) return false
     const k = this.challenge.keepers
@@ -600,12 +650,14 @@ export class Sim {
 
   /** Even with auto-start enabled, a newly revealed section gets a manual planning break. */
   get expansionPlanning(): boolean {
-    if (this.challenge.compact) return !this.waveActive && [5, 10, 15, 20, 25, 29, 30, 34, 39].includes(this.wave)
+    if (this.challenge.compact) return !this.waveActive && [5, 10, 15, 20, 25, 29, 30, 34, 35, 39].includes(this.wave)
     return !!this.challenge.expanding && !this.waveActive && CANAL_STAGES.some(s => s.wave === this.wave + 1 && s.wave > 1)
   }
 
   canStartWave(): boolean {
     if (this.over) return false
+    if (this.preparation && this.waveActive) return false
+    if (this.challenge.skirmish && this.waveActive) return false
     if (this.challenge.compact && this.waveActive && ([6, 11, 16, 21, 25].includes(this.wave + 1) || this.wave >= 25)) return false
     if (this.wave >= this.finalWave && !this.freeplay) return false
     if (this.challenge.harbour && this.waveActive && !this.freeplay) return false
@@ -616,7 +668,11 @@ export class Sim {
   }
 
   waveDef(n: number): WaveDef {
-    if (this.challenge.compact) return compactWave(n, this.challenge.variant ?? 0, this.seed)
+    if (this.challenge.compact) {
+      const wave = compactWave(n, this.challenge.variant ?? 0, this.seed)
+      if (this.challenge.skirmish && n === this.waveOffset + 1) wave.note = 'Enemies use both entrances. Upgrade the starting defence and cover the lower bank.'
+      return this.challenge.depth ? encounterWave(wave, n, this.seed) : wave
+    }
     if (this.challenge.gardens && n > HARBOUR_END && n <= GARDENS_END) return GARDENS_WAVES[n - HARBOUR_END - 1]
     if (this.challenge.harbour && n > FINAL_WAVE && n <= HARBOUR_END) return (this.challenge.harbourEncounters ? HARBOUR_WAVES_V2 : HARBOUR_WAVES)[n - FINAL_WAVE - 1]
     const tide = this.challenge.tide
@@ -656,16 +712,19 @@ export class Sim {
       if (id === 'garden') { stats.income = Math.round(stats.income * .8); stats.lure *= .5 }
       if (id === 'beam') stats.damage *= .85
       if (id === 'bell' && this.challenge.guardian === 'tide') { stats.slow = Math.min(.75, stats.slow + .15); stats.interval *= 1.25 }
-      refineStats(stats, refinement)
+      refineStats(stats, this.challenge.depth ? Math.min(2, refinement) : refinement)
+      if (this.challenge.depth) lateRefine(stats, id, refinement)
       if (this.challenge.plans) applyBattlePlans(stats, id, this.battlePlans)
     }
     return stats
   }
 
   refinementCost(t: Tower): number | null {
-    const next = REFINEMENTS[t.refinement ?? 0]
+    const next = this.refinements[t.refinement ?? 0]
     return this.challenge.compact && next && Math.max(t.a, t.b) === 3 && this.planningWave >= next.wave ? next.cost : null
   }
+
+  get refinements() { return this.challenge.depth ? [...REFINEMENTS, ...LATE_REFINEMENTS] : [...REFINEMENTS] }
 
   refine(t: Tower): boolean {
     const cost = this.refinementCost(t)
@@ -682,7 +741,7 @@ export class Sim {
     return !!this.challenge.guard && !this.waveActive && (!!this.pendingPlan || !!this.challenge.harbour || [8, 10, 16, 25].includes(this.wave + 1))
   }
 
-  get finalWave() { return this.challenge.compact ? COMPACT_END : this.challenge.gardens ? GARDENS_END : this.challenge.harbour ? HARBOUR_END : FINAL_WAVE }
+  get finalWave() { return this.challenge.skirmish?.to ?? (this.challenge.compact ? COMPACT_END : this.challenge.gardens ? GARDENS_END : this.challenge.harbour ? HARBOUR_END : FINAL_WAVE) }
 
   continueHarbour(): boolean {
     if (!this.challenge.guard || !this.challenge.expanding || this.challenge.harbour || this.isChallenge || this.over !== 'won' || this.freeplay || this.wave !== FINAL_WAVE) return false
@@ -793,7 +852,7 @@ export class Sim {
       b: 0,
       stats: this.towerStats(id, 0, 0),
       cd: 0.15,
-      priority: 'first',
+      priority: id === 'ballista' ? 'strong' : 'first',
       spent: cost,
       pops: 0,
       angle: -Math.PI / 2,
@@ -1264,6 +1323,13 @@ export class Sim {
         if ('seg' in nx) {
           e.seg = this.level.segs.get(nx.seg)!
           e.s = over
+          if (nx.seg === 'h' && !e.def.boss && this.activePreparation('net', e.wave) && this.preparation!.charges > 0) {
+            this.preparation!.charges--
+            e.slowF = Math.max(e.slowF, .5); e.slowT = Math.max(e.slowT, 3)
+            this.events.push({ t: 'prepare', id: 'net', x: e.x, y: e.y })
+            this.damage(e, netDamage(this.preparation!.round), true, null)
+            if (!e.alive) break
+          }
           if (e.def.id === 'reedling' && e.phase === 0 && (nx.seg === 'garden-merge' || (this.challenge.compact && nx.seg === 'm1'))) {
             e.phase = 1; e.shell = e.maxShell = 16 * this.hpMul
           }
@@ -1342,7 +1408,13 @@ export class Sim {
     e.alive = false
     this.decWave(e.wave)
     // greed has a price: escapees from a short rich run cost double light
-    const w = e.def.weight * (e.rich ? RICH_LEAK : 1)
+    let w = e.def.weight * (e.rich ? RICH_LEAK : 1)
+    if (this.activePreparation('ward', e.wave) && this.preparation!.charges > 0) {
+      const saved = Math.min(w, this.preparation!.charges)
+      this.preparation!.charges -= saved; w -= saved
+      this.events.push({ t: 'prepare', id: 'ward', x: e.x, y: e.y })
+      if (!w) return
+    }
     if (this.challenge.guard) this.lastLeak = { enemy: e.def.id, route: e.route, hidden: !!e.def.hidden && !e.revealedPerm && e.seenT <= 0, armoured: e.shell > 0, wave: e.wave, light: w }
     this.lives = Math.max(0, this.lives - w)
     this.stats.leaked += w
@@ -1516,8 +1588,39 @@ export class Sim {
     for (const t of this.towers) {
       const s = t.stats
       const range = this.effRange(t)
-      const rate = t.rateMul
+      const rate = t.rateMul * (this.activePreparation('oil') && this.waveActive ? 1.15 : 1)
       switch (t.def.kind) {
+        case 'arc': {
+          t.cd -= dt * rate
+          if (t.cd > 0) break
+          let target = this.pickTarget(t, range)
+          if (!target) break
+          t.cd = s.interval; t.fireT = this.time
+          t.angle = Math.atan2(target.y - t.y, target.x - t.x)
+          const hit = new Set<number>()
+          let x = t.x, y = t.y - 25
+          for (let i = 0; target && i < s.count; i++) {
+            hit.add(target.uid)
+            this.events.push({ t: 'arc', x, y, tx: target.x, ty: target.y })
+            this.damage(target, s.damage, s.heavy, t)
+            x = target.x; y = target.y
+            target = this.enemies.filter(e => e.alive && !hit.has(e.uid) && this.canSee(e, s.detect) && dist2(x, y, e.x, e.y) <= s.splash ** 2)
+              .sort((a, b) => dist2(x, y, a.x, a.y) - dist2(x, y, b.x, b.y) || a.uid - b.uid)[0] ?? null
+          }
+          this.events.push({ t: 'shoot', x: t.x, y: t.y, tower: t.id, angle: t.angle })
+          break
+        }
+        case 'bolt': {
+          t.cd -= dt * rate
+          if (t.cd > 0) break
+          const target = this.pickTarget(t, range)
+          if (!target) break
+          t.cd = s.interval; t.fireT = this.time
+          t.angle = Math.atan2(target.y - t.y, target.x - t.x)
+          this.projs.push(this.makeProj(t, 'bolt', t.angle, target, range))
+          this.events.push({ t: 'shoot', x: t.x, y: t.y, tower: t.id, angle: t.angle })
+          break
+        }
         case 'spark':
         case 'owl': {
           t.cd -= dt * rate
@@ -1758,6 +1861,9 @@ export class Sim {
         }
         p.hit.push(e.uid)
         const landed = this.damage(e, p.dmg, p.heavy, p.tower)
+        if (landed && p.kind === 'bolt' && p.burn > 0 && e.alive) {
+          e.burnT = Math.max(e.burnT, p.burnDur); e.burnDps = Math.max(e.burnDps, p.burn)
+        }
         if (landed) this.events.push({ t: 'hit', x: e.x, y: e.y, kind: p.kind, hue: p.tower.def.hue })
         if (landed && p.bounced === false) {
           p.bounced = true
@@ -1845,6 +1951,7 @@ export class Sim {
       const spawning = this.spawners.some((sp) => sp.wave === w)
       if (spawning || (this.waveAlive.get(w) ?? 0) > 0) continue
       this.wavesPending.delete(w)
+      if (this.preparation?.wave === w) this.preparation = null
       cleared = true
       const d = DIFFICULTY[this.difficulty]
       const bonus = Math.round((this.challenge.compact ? 90 + w * 8 : 45 + w * 5) * d.bonus)
@@ -1903,6 +2010,7 @@ export class Sim {
       ...(this.challenge.expanding ? { canalStage: this.canalStage } : {}),
       ...(this.challenge.compact ? { plots: [...this.plots] } : {}),
       ...(this.challenge.plans ? { battlePlans: [...this.battlePlans] } : {}),
+      ...(this.challenge.depth ? { preparation: this.preparation && { ...this.preparation }, preparationRound: this.preparationRound } : {}),
       difficulty: this.difficulty,
       challenge: { ...this.challenge },
       wave: this.wave,
@@ -1991,8 +2099,14 @@ export class Sim {
   /** Accepts v1 (between waves, older builds) and v2 (full, any moment) saves. */
   static restore(snap: SaveSnapshot): Sim {
     const sim = new Sim(snap.difficulty, snap.challenge, snap.seed)
+    // The challenge's starter defence is only for new attempts.
+    if (snap.challenge.skirmish) { sim.towers = []; sim.projs = []; for (const pad of sim.pads) pad.tower = null; sim.uid = 1 }
     const full = snap.v === 2 ? snap : null
     sim.wave = snap.wave
+    if (snap.challenge.depth && full) {
+      sim.preparation = full.preparation ? { ...full.preparation } : null
+      sim.preparationRound = full.preparationRound ?? 0
+    }
     if (snap.challenge.plans && full?.battlePlans) sim.battlePlans = [...full.battlePlans]
     if (snap.challenge.compact && full?.plots) sim.plots = new Set(full.plots)
     if (snap.challenge.expanding && full) sim.revealCanal(full.canalStage ?? stageForWave(snap.wave))

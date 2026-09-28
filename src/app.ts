@@ -1,4 +1,5 @@
-import { compactNext, nextCompactVariant, PLOTS, REFINEMENTS } from './game/compact'
+import { compactNext, nextCompactVariant, PLOTS } from './game/compact'
+import { FINAL_PERK, LATE_TOWERS, PREPARATIONS, nextMilestone } from './game/depth'
 import { BATTLE_PLANS, type BattlePlanId } from './game/battle-plans'
 import { gardensStatus } from './game/gardens'
 import { GUARDIANS, guardianUnlocked, signatureFor, towerName, type GuardianId } from './game/guardians'
@@ -11,7 +12,7 @@ import { comboHint, routeCoverage } from './game/route-plan'
 import { leakAdvice, waveHighlight } from './game/feedback'
 import { wardenStatus } from './game/harbour'
 import {
-  BLOOM_SETS, creditMilestones, masteryGoal, FEATS,
+  BLOOM_SETS, creditMilestones, masteryGoal, guardianMasteryTier, FEATS,
   clearRun,
   canRetry, loadCheckpoint, saveCheckpoint,
   creditJournal,
@@ -176,6 +177,9 @@ export class App {
     const plans = document.createElement('button'); plans.id = 'btn-battle-plan'; plans.hidden = true
     plans.onclick = () => { this.closeSheet(); this.screens.battlePlans() }
     $('dock').prepend(plans)
+    const supplies = document.createElement('button'); supplies.id = 'btn-prepare'; supplies.hidden = true
+    supplies.onclick = () => { this.closeSheet(); this.screens.preparations() }
+    $('dock').prepend(supplies)
     $('move-cancel').onclick = () => this.cancelMove()
     $('move-confirm').onclick = () => this.confirmMove()
     const learn = document.createElement('div')
@@ -225,7 +229,7 @@ export class App {
     const watch = Number.isSafeInteger(progress.watchIndex) && progress.watchIndex! >= 0 ? progress.watchIndex! : 0
     progress.watchIndex = watch + 1
     saveProgress(progress)
-    this.sim = new Sim(difficulty, { compact: 1, plans: 1, variant: nextCompactVariant(watch), guard: 1, ...(this.settings.guardian && guardianUnlocked(this.settings.guardian, progress.feats) ? { guardian: this.settings.guardian } : {}) }, 7 + watch * 997)
+    this.sim = new Sim(difficulty, { compact: 1, plans: 1, depth: 1, variant: nextCompactVariant(watch), guard: 1, ...(this.settings.guardian && guardianUnlocked(this.settings.guardian, progress.feats) ? { guardian: this.settings.guardian } : {}) }, 7 + watch * 997)
     this.startRun()
     this.persist(true)
   }
@@ -249,7 +253,7 @@ export class App {
     this.persist(true)
     const offer = this.offer()
     if (!offer) return
-    const opening = this.sim.challenge.tide ? `Build with ${this.sim.glow.toLocaleString('en')} glow, then start the tide.` : 'The whole night, under one rule.'
+    const opening = this.sim.challenge.skirmish ? `${this.sim.glow.toLocaleString('en')} glow left. Improve the starting towers, then hold 10 waves.` : this.sim.challenge.tide ? `Build with ${this.sim.glow.toLocaleString('en')} glow, then start the tide.` : 'The whole night, under one rule.'
     this.banner(offer.name, [opening, ...offer.rules].join(' '), 5200)
   }
 
@@ -296,6 +300,7 @@ export class App {
     this.banner(mid ? `${word} ${this.shownWave()}` : `${word} ${this.shownWave() + 1} is next`, mid ? 'Resumed where you left off. Paused so you can get your bearings.' : 'Resumed from your last save.', 2800)
     if (recovered) this.toast('Recovered the previous autosave. Your last few seconds may be missing.', 6500)
     if (mid) this.setPaused(true)
+    if (this.sim.challenge.depth && this.sim.towers.length) this.screens.resumeBriefing()
   }
 
   private startRun() {
@@ -477,7 +482,7 @@ export class App {
           const def = this.sim.waveDef(ev.n)
           const boss = def.groups.some((g) => ENEMIES[g.type].boss)
           const tide = !!this.sim.challenge.tide
-          const label = ev.n > this.sim.finalWave ? `Free play wave ${ev.n - this.sim.finalWave}` : tide ? `Tide wave ${this.shownWave(ev.n)}` : `Wave ${ev.n}`
+          const label = ev.n > this.sim.finalWave ? `Free play wave ${ev.n - this.sim.finalWave}` : tide ? `Tide wave ${this.shownWave(ev.n)}` : `Wave ${this.shownWave(ev.n)}`
           // a tide's remixed waves carry no handmade notes: its bosses get the canonical warnings
           const note = def.note ?? (tide && boss ? (ev.n === FINAL_WAVE ? 'Old Gloom is shrouded until it splits at the Lower Lock.' : 'Gloomtoads jam any lock they sit on. Set your locks before they arrive.') : '')
           if (note && (firstRuns || boss || ev.n === 11 || this.sim.challenge.harbour) && !this.notesShown.has(ev.n)) {
@@ -499,7 +504,7 @@ export class App {
           if (ev.n === 1) { this.coach.tutorialDone = true; saveCoach(this.coach) }
           this.persist(true)
           if ((this.sim.challenge.expanding || this.sim.challenge.compact) && !this.sim.waveActive && ev.n !== 5) {
-            const joined = TOWER_ORDER.find(id => this.sim.keeperWave(id) === ev.n + 1)
+            const joined = TOWER_ORDER.find(id => this.sim.keeperAllowed(id) && this.sim.keeperWave(id) === ev.n + 1)
             if (joined) this.toast(`${towerName(joined, this.sim.challenge.guardian)} is ready. ${this.keeperHelp(joined)}`, 4500)
           }
           if (ev.n === 3 && !this.coach.upgraded) this.toast('Tap a tower to see its upgrades.', 3500)
@@ -508,8 +513,8 @@ export class App {
             this.coach.charmSeen = true
             saveCoach(this.coach)
           }
-          if (this.sim.challenge.compact && !this.sim.waveActive && [5, 10, 15, 20, 25].includes(ev.n)) {
-            const reward = ev.n === 25 ? 'Level 5 upgrades are ready. Skiffs arrive next.' : ev.n === 15 ? 'Level 4 upgrades and two building plots are ready.' : 'Two building plots are ready. Tap a + to see the price.'
+          if (this.sim.challenge.compact && !this.sim.isChallenge && !this.sim.waveActive && [5, 10, 15, 20, 25, ...(this.sim.challenge.depth ? [30, 35] : [])].includes(ev.n)) {
+            const reward = this.sim.challenge.depth && ev.n === 35 ? 'Level 7 upgrades are ready. Each tower gains a final perk.' : this.sim.challenge.depth && ev.n === 30 ? 'Level 6 upgrades are ready. Ten waves to go.' : ev.n === 25 ? `Level 5 upgrades are ready.${this.sim.challenge.depth ? ' Dusk Ballista joins your towers.' : ' Skiffs arrive next.'}` : ev.n === 15 ? `Level 4 upgrades and two building plots are ready.${this.sim.challenge.depth ? ' Storm Reed joins your towers.' : ''}` : 'Two building plots are ready. Tap a + to see the price.'
             this.toast(reward, 5500)
           }
           if (milestoneMessage) this.toast(milestoneMessage, 6000)
@@ -642,7 +647,7 @@ export class App {
     let fresh: string[] = []
     let challenge: { best: ChallengeResult; improved: boolean } | null = null
     creditJournal(sim.stats.cheered)
-    if (sim.isChallenge) challenge = recordChallenge(sim, FINAL_WAVE)
+    if (sim.isChallenge) challenge = recordChallenge(sim, sim.finalWave)
     else if (freeplay) recordFreeplay(sim)
     else if (won || !canRetry(sim)) fresh = recordRun(sim, this.renderer.bloomCount())
     recordMetrics(sim, won ? 'won' : freeplay ? 'freeplay-end' : 'lost', this.extras())
@@ -689,6 +694,7 @@ export class App {
     const earned = creditMilestones(this.sim)
     const p = this.masteryProgress = loadProgress()
     this.renderer.settlement = p.settlement ?? 0
+    this.renderer.guardianMastery = this.sim.isChallenge ? 0 : guardianMasteryTier(p.guardianRecords?.[this.sim.challenge.guardian ?? 'lantern']?.waves ?? 0)
     this.renderer.bunting = !!p.feats['early-bird']
     if (!announce) return
     const rewards: Record<string, string> = { groundskeeper: 'Tide Keeper unlocked', crowned: 'Ember Keeper unlocked', 'full-bloom': 'Reed Keeper unlocked', 'early-bird': 'Village bunting unlocked' }
@@ -826,6 +832,7 @@ export class App {
   private keeperBarred(id: TowerId): string | null {
     const sim = this.sim
     if (sim.keeperAllowed(id)) return null
+    if (LATE_TOWERS.includes(id) && !sim.challenge.depth) return `Start a new game to use ${TOWERS[id].name}.`
     if ((sim.challenge.expanding || sim.challenge.compact) && sim.planningWave < sim.keeperWave(id)) return `${towerName(id, this.sim.challenge.guardian)} is available from wave ${sim.keeperWave(id)}.`
     const k = sim.challenge.keepers
     if (k && !k.includes(id)) return `Tonight only ${k.map((q) => TOWERS[q].name).join(', ')} can be built.`
@@ -1087,7 +1094,7 @@ export class App {
     // let Enter/Space activate whatever button or control has focus
     const onControl = !!target?.closest?.('button, input, select, textarea, [role="switch"], [role="tab"]')
     if ((k === ' ' || k === 'enter') && (onControl || target?.id === 'cv')) return
-    if (k >= '1' && k <= '6') this.trayTap(TOWER_ORDER[Number(k) - 1], 'mouse')
+    if (k >= '1' && k <= '8') this.trayTap(TOWER_ORDER[Number(k) - 1], 'mouse')
     else if (k === 'q' || k === 'e') {
       const g = this.sim.gates[k === 'q' ? 0 : 1]
       if (g) this.flip(g)
@@ -1176,7 +1183,7 @@ export class App {
         else if (this.view.armed) this.build(t.index, this.view.armed)
         else {
           this.select({ kind: 'pad', index: t.index })
-          if (this.sim.padAvailable(t.index)) this.toast('Pad selected. Press 1 to 6 to build a keeper here.', 2600)
+          if (this.sim.padAvailable(t.index)) this.toast('Pad selected. Press a tower number (1–8) to build here.', 2600)
         }
       }
       return
@@ -1530,7 +1537,7 @@ export class App {
       const def = TOWERS[id]
       const poor = sim.glow < def.cost
       const disabled = !sim.keeperAllowed(id)
-      b.hidden = !!(sim.challenge.expanding || sim.challenge.compact) && sim.planningWave < sim.keeperWave(id)
+      b.hidden = (LATE_TOWERS.includes(id) && !sim.challenge.depth) || !!(sim.challenge.expanding || sim.challenge.compact) && sim.planningWave < sim.keeperWave(id)
       b.setAttribute('aria-disabled', String(disabled))
       const key = `${poor}|${this.view.armed === id}|${this.view.preview === id}|${disabled}`
       if (!force && b.dataset.key === key) return
@@ -1543,13 +1550,17 @@ export class App {
       b.setAttribute('aria-label', `${towerName(id, sim.challenge.guardian)}, ${def.cost} glow${disabled ? ', not allowed tonight' : poor ? ', not enough glow yet' : ''}. ${this.keeperHelp(id)}`)
     })
     $('tray').style.setProperty('--keeper-count', String(this.trayBtns.filter(b => !b.hidden).length))
+    $('tray').classList.toggle('late-roster', this.trayBtns.filter(b => !b.hidden).length > 6)
     $('gates').classList.toggle('one-lock', sim.gates.filter(g => sim.gateAvailable(g)).length === 1)
     const progress = $('canal-progress')
     progress.hidden = !(sim.challenge.expanding || sim.challenge.compact)
     if (sim.challenge.compact) {
       const available = sim.pads.filter((_, i) => sim.plotCost(i) !== null).length
-      const next = (!sim.waveActive && available ? `${available} plots available · ` : '') + compactNext(sim.wave)
-      const text = gardensStatus(sim) ?? wardenStatus(sim) ?? (sim.waveActive ? compactNext(sim.wave) : sim.planningWave <= 2 ? 'Tap a stone circle to build. Highlighted water is in range.' : sim.planningWave === 5 ? 'Armour next · the mill cracks shells; Crackers also help.' : sim.planningWave === 8 ? 'Hidden enemies next · use Owl sight or the Lantern bridge.' : next)
+      const milestone = sim.challenge.skirmish ? `${sim.finalWave - sim.wave + Number(sim.waveActive)} waves left · keep as much light as you can` : sim.challenge.depth ? nextMilestone(sim.wave) : compactNext(sim.wave)
+      const encounter = !sim.waveActive && !sim.over ? sim.waveDef(sim.wave + 1).encounter : undefined
+      const next = (encounter ? `${encounter} · ` : !sim.waveActive && available ? `${available} plots available · ` : '') + milestone
+      const power = sim.waveActive && sim.preparation ? `${PREPARATIONS[sim.preparation.id].name} · ${sim.preparation.id === 'oil' ? 'towers fire 15% faster' : sim.preparation.charges + (sim.preparation.id === 'net' ? ' catches left' : ' light protected')}` : null
+      const text = gardensStatus(sim) ?? wardenStatus(sim) ?? power ?? (sim.waveActive ? milestone : sim.planningWave <= 2 ? 'Tap a stone circle to build. Highlighted water is in range.' : sim.planningWave === 5 ? 'Armour next · the mill cracks shells; Crackers also help.' : sim.planningWave === 8 ? 'Hidden enemies next · use Owl sight or the Lantern bridge.' : next)
       progress.classList.toggle('planning-tip', !sim.waveActive)
       if (progress.textContent !== text) progress.textContent = text
     }
@@ -1578,6 +1589,10 @@ export class App {
     planButton.hidden = !sim.pendingPlan || this.sheetMode !== 'none' || !!this.view.moving || this.mode !== 'play'
     const planLabel = 'Wave ' + sim.pendingPlan + ' cleared · Choose a battle plan'
     if (planButton.textContent !== planLabel) planButton.textContent = planLabel
+    const supplies = $('btn-prepare')
+    supplies.hidden = (!sim.preparationOffer && !sim.preparation) || !!sim.pendingPlan || this.sheetMode !== 'none' || !!this.view.moving || this.mode !== 'play' || sim.waveActive || !!sim.over
+    const supplyLabel = sim.preparation ? `${PREPARATIONS[sim.preparation.id].name} · ready for wave ${sim.preparation.wave}` : 'Prepare for a wave · optional'
+    if (supplies.textContent !== supplyLabel) supplies.textContent = supplyLabel
     const goalText = !sim.waveActive && !sim.over && !sim.pendingPlan && !this.view.moving && this.sheetMode === 'none' ? masteryGoal(sim, this.masteryProgress) : null
     goal.hidden = !goalText
     if (goalText && goal.textContent !== goalText) goal.textContent = goalText
@@ -1599,7 +1614,7 @@ export class App {
     let key = 'none'
     if (this.sheetMode === 'tower' && this.view.selection?.kind === 'tower') {
       const t = this.view.selection.tower
-      key = `t|${t.uid}|${t.a}|${t.b}|${t.priority}|${t.refinement}|${sim.planningWave >= 16}|${sim.planningWave >= 26}`
+      key = `t|${t.uid}|${t.a}|${t.b}|${t.priority}|${t.refinement}|${sim.planningWave}`
     } else if (this.sheetMode === 'plot' && sel?.kind === 'pad') {
       key = `p|${sel.index}|${sim.waveActive}|${sim.glow >= (sim.plotCost(sel.index) ?? Infinity)}`
     } else if (this.sheetMode === 'charms') {
@@ -1763,8 +1778,8 @@ export class App {
         return `<div class="path"><div class="path-head"><span>${p.name}</span><span class="pips" role="img" aria-label="Level ${tier} of 3">${pips}</span></div><div class="path-role">${PATH_ROLE[t.id][path]}</div>${btn}</div>`
       })
       .join('')
-    const refinement = this.sim.challenge.compact && Math.max(t.a, t.b) === 3 ? REFINEMENTS[t.refinement ?? 0] : undefined
-    const refinementRow = refinement ? `<button class="refine-btn" data-refine data-focuskey="refine"><b>${refinement.name} · ${refinement.cost} glow</b><span>${refinementSummary(t.id, t.stats, this.sim.towerStats(t.id, t.a, t.b, (t.refinement ?? 0) + 1), this.sim.challenge.guardian)}${this.sim.planningWave < refinement.wave ? ' Available after wave ' + (refinement.wave - 1) + '.' : ''}</span></button>` : this.sim.challenge.compact && t.refinement === 2 ? '<p class="combo-note">Level 5 · fully upgraded</p>' : ''
+    const refinement = this.sim.challenge.compact && Math.max(t.a, t.b) === 3 ? this.sim.refinements[t.refinement ?? 0] : undefined
+    const refinementRow = refinement ? `<button class="refine-btn" data-refine data-focuskey="refine"><b>${refinement.name} · ${refinement.cost} glow</b><span>${refinementSummary(t.id, t.stats, this.sim.towerStats(t.id, t.a, t.b, (t.refinement ?? 0) + 1), this.sim.challenge.guardian)}${t.refinement === 3 ? ' ' + FINAL_PERK[t.id] : ''}${this.sim.planningWave < refinement.wave ? ' Available after wave ' + (refinement.wave - 1 - this.sim.waveOffset) + '.' : ''}</span></button>` : this.sim.challenge.compact && t.refinement ? `<p class="combo-note">Level ${3 + t.refinement} · complete</p>` : ''
     const plan = this.sim.battlePlans.map(id => BATTLE_PLANS[id]).find(p => p.tower === t.id)
     const planNote = plan ? `<p class="battle-plan-note"><b>${plan.name}</b> · ${plan.benefit} ${plan.tradeoff}</p>` : ''
     const canTarget = def.kind !== 'pulse' && def.kind !== 'garden'
@@ -1799,7 +1814,7 @@ export class App {
       this.persist()
     })
     el.querySelector('[data-refine]')?.addEventListener('click', () => {
-      const rank = REFINEMENTS[t.refinement ?? 0]
+      const rank = this.sim.refinements[t.refinement ?? 0]
       if (!this.sim.refine(t)) return
       this.toast(`${towerName(t.id, this.sim.challenge.guardian)} · ${rank.name} complete.`, 1800)
       sound.tap(); this.sheetKey = ''; this.persist(true); this.refreshDock(true)

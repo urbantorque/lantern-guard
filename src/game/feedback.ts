@@ -17,7 +17,7 @@ export function leakAdvice(sim: Sim): string {
 export function waveHighlight(sim: Sim, wave: number): string {
   const report = sim.waveReports.find(r => r.wave === wave)
   if (!report) return ''
-  if (report.slowSplashHits >= 3) return `Wave ${wave}: ${report.slowSplashHits} explosions hit enemies slowed by Moonbells.`
+  if (report.slowSplashHits >= 3) return `Wave ${wave - sim.waveOffset}: ${report.slowSplashHits} blast hits landed on slowed enemies.`
   const top = Object.entries(report.damage).sort((a, b) => b[1]! - a[1]!)[0]
-  return top ? `Wave ${wave}: your ${towerName(top[0] as TowerId, sim.challenge.guardian)} towers dealt ${Math.round(top[1]!)} damage.` : ''
+  return top ? `Wave ${wave - sim.waveOffset}: your ${towerName(top[0] as TowerId, sim.challenge.guardian)} towers dealt ${Math.round(top[1]!)} damage.` : ''
 }

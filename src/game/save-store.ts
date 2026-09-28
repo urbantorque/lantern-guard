@@ -1,4 +1,5 @@
 import { compactLevel, PLOTS, STARTER_PLOTS, REFINEMENTS } from './compact'
+import { LATE_REFINEMENTS, LATE_TOWERS, PREPARATIONS } from './depth'
 import { BATTLE_PLANS, type BattlePlanId } from './battle-plans'
 import { gardensLevel, GARDENS_PADS } from './gardens'
 import { WATERWAYS } from './waterways'
@@ -70,7 +71,19 @@ export function validSnapshot(s: unknown): s is SaveSnapshot {
   for (const key of ['lockedGates', 'noGarden', 'noCharms']) if (s.challenge[key] !== undefined && typeof s.challenge[key] !== 'boolean') return false
   if (s.challenge.id !== undefined && typeof s.challenge.id !== 'string') return false
   if (s.challenge.keepers !== undefined && (!Array.isArray(s.challenge.keepers) || !s.challenge.keepers.every(v => typeof v === 'string' && Object.hasOwn(TOWERS, v)))) return false
-  if (s.challenge.compact !== undefined && (s.challenge.compact !== 1 || s.v !== 2 || s.challenge.guard !== 1 || !integer(s.challenge.variant, 0, s.challenge.plans === 1 ? 3 : 2) || ['expanding', 'waterway', 'harbour', 'gardens', 'harbourEncounters', 'id', 'tide'].some(k => (s.challenge as Record<string, unknown>)[k] !== undefined))) return false
+  if (s.challenge.compact !== undefined && (s.challenge.compact !== 1 || s.v !== 2 || s.challenge.guard !== 1 || !integer(s.challenge.variant, 0, s.challenge.plans === 1 || s.challenge.depth === 1 ? 3 : 2) || ['expanding', 'waterway', 'harbour', 'gardens', 'harbourEncounters', 'tide', ...(s.challenge.skirmish ? [] : ['id'])].some(k => (s.challenge as Record<string, unknown>)[k] !== undefined))) return false
+  if (s.challenge.depth !== undefined && (s.challenge.depth !== 1 || s.challenge.compact !== 1 || s.challenge.guard !== 1 || s.v !== 2)) return false
+  if (s.challenge.skirmish !== undefined) {
+    const q = s.challenge.skirmish
+    if (!object(q) || !s.challenge.depth || typeof s.challenge.id !== 'string' || !s.challenge.id.endsWith(':compact1') || ![10, 20].includes(q.from as number) || q.to !== Number(q.from) + 10 || q.glow !== (q.from === 10 ? 4200 : 8500) || !integer(q.seed, 0, 4294967295) || s.seed !== q.seed || s.wave < Number(q.from) || s.wave > Number(q.to) || s.freeplay || s.challenge.tide || s.challenge.plans || s.challenge.guardian) return false
+  }
+  if (s.challenge.depth) {
+    if (!integer(s.preparationRound, 0, 35) || s.preparationRound % 5 !== 0 || s.preparationRound > s.wave) return false
+    if (s.preparation !== null) {
+      const p = s.preparation
+      if (!object(p) || !Object.hasOwn(PREPARATIONS, String(p.id)) || p.round !== s.preparationRound || !integer(p.round, 5, 35) || !integer(p.wave, p.round + 1, p.round + 5) || !integer(p.charges, 0, p.id === 'net' ? 8 : p.id === 'ward' ? 4 : 0) || ![s.wave, s.wave + 1].includes(p.wave)) return false
+    }
+  } else if (s.preparation !== undefined || s.preparationRound !== undefined) return false
   if (s.challenge.plans !== undefined && (s.challenge.plans !== 1 || s.challenge.compact !== 1)) return false
   if (s.challenge.plans) {
     if (!Array.isArray(s.battlePlans) || s.battlePlans.length > 2 || !s.battlePlans.every(id => typeof id === 'string' && Object.hasOwn(BATTLE_PLANS, id))) return false
@@ -93,7 +106,9 @@ export function validSnapshot(s: unknown): s is SaveSnapshot {
   const pads = new Set<number>()
   for (const t of s.towers) {
     if (!object(t) || typeof t.id !== 'string' || !Object.hasOwn(TOWERS, t.id) || !integer(t.pad, 0, maxPads - 1) || pads.has(t.pad) || !integer(t.a, 0, 3) || !integer(t.b, 0, 3) || (t.a > 1 && t.b > 1) || !number(t.spent, 0) || !number(t.pops, 0) || !['first', 'last', 'strong', 'close'].includes(String(t.priority))) return false
-    if (s.challenge.compact && (!(s.plots as number[]).includes(t.pad) || !integer(t.refinement, 0, 2) || (t.refinement > 0 && (Math.max(t.a, t.b) < 3 || REFINEMENTS[t.refinement - 1].wave > s.wave + 1)))) return false
+    const ranks = s.challenge.depth ? [...REFINEMENTS, ...LATE_REFINEMENTS] : REFINEMENTS
+    if (LATE_TOWERS.includes(t.id as import('./defs').TowerId) && (!s.challenge.depth || (t.id === 'storm' ? 16 : 26) > s.wave + 1)) return false
+    if (s.challenge.compact && (!(s.plots as number[]).includes(t.pad) || !integer(t.refinement, 0, ranks.length) || (t.refinement > 0 && (Math.max(t.a, t.b) < 3 || ranks[t.refinement - 1].wave > s.wave + 1)))) return false
     if (!s.challenge.compact && t.refinement !== undefined) return false
     pads.add(t.pad)
   }
@@ -157,7 +172,7 @@ export function validSnapshot(s: unknown): s is SaveSnapshot {
     if (p.bounced !== undefined && (typeof p.bounced !== 'boolean' || p.kind !== 'spark' || s.challenge.guardian !== 'reed')) return false
     for (const key of ['vx', 'vy', 'speed', 'target', 'dmg', 'pierce', 'splash', 'burn', 'burnDur', 'cluster', 'life', 'sx', 'sy', 'ex', 'ey', 't', 'dur']) if (!number(p[key])) return false
     for (const key of ['heavy', 'detect', 'brittleBonus']) if (typeof p[key] !== 'boolean') return false
-    if (!['spark', 'feather', 'firework', 'rocket', 'moth', 'mini'].includes(String(p.kind)) || !(p.hit as unknown[]).every((v: unknown) => integer(v))) return false
+    if (!['spark', 'feather', 'firework', 'rocket', 'moth', 'mini', ...(s.challenge.depth ? ['bolt'] : [])].includes(String(p.kind)) || !(p.hit as unknown[]).every((v: unknown) => integer(v))) return false
   }
   return (s.wavesPending as unknown[]).every(v => integer(v, 1, 10000))
 }

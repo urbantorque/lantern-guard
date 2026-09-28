@@ -83,7 +83,7 @@ console.log('PASS mid-wave and planning saves round-trip, including both expansi
 for (const [id, wave] of Object.entries(KEEPER_WAVE)) {
   const s = Sim.restore(fixtures[wave >= 6 ? 'growth-after-6' : 'growth-start'])
   s.wave = wave - 1
-  assert(s.keeperAllowed(id as keyof typeof KEEPER_WAVE))
+  assert.equal(s.keeperAllowed(id as keyof typeof KEEPER_WAVE), !['storm', 'ballista'].includes(id), 'Late specialists stay out of legacy campaigns')
 }
 for (const modify of [
   (s: SaveSnapshotV2) => { s.canalStage = 2 },

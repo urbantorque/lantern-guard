@@ -3,7 +3,7 @@
  * and enemies lives here so tuning never touches behaviour code.
  */
 
-export type TowerId = 'wick' | 'cracker' | 'bell' | 'beam' | 'owl' | 'garden'
+export type TowerId = 'wick' | 'cracker' | 'bell' | 'beam' | 'owl' | 'garden' | 'storm' | 'ballista'
 export type Priority = 'first' | 'last' | 'strong' | 'close'
 export type EnemyId = 'drip' | 'skitter' | 'shell' | 'veil' | 'bloat' | 'wisp' | 'mender' | 'vshell' | 'toad' | 'gloom' | 'skiff' | 'warden' | 'reedling' | 'bloomheart'
 export type CharmTrait = 'shell' | 'veil' | 'swift' | 'heavy'
@@ -55,7 +55,7 @@ export interface TowerDef {
   role: string
   blurb: string
   cost: number
-  kind: 'spark' | 'lob' | 'pulse' | 'beam' | 'owl' | 'garden'
+  kind: 'spark' | 'lob' | 'pulse' | 'beam' | 'owl' | 'garden' | 'arc' | 'bolt'
   base: Partial<TowerStats>
   paths: [PathDef, PathDef]
   hue: string
@@ -102,6 +102,42 @@ const DEFAULT_STATS: TowerStats = {
 }
 
 export const TOWERS: Record<TowerId, TowerDef> = {
+  storm: {
+    id: 'storm', name: 'Storm Reed', role: 'Chain lightning',
+    blurb: 'Lightning jumps between 3 nearby enemies. Best against crowds; weak against armour.',
+    cost: 480, kind: 'arc', hue: '#8fe5de', family: 'ice',
+    base: { range: 180, interval: 1.6, damage: 3, count: 3, splash: 95 },
+    paths: [
+      { name: 'Fork', tiers: [
+        { name: 'Fourth Fork', cost: 200, desc: 'Lightning hits up to 4 enemies.', apply: s => { s.count = 4 } },
+        { name: 'Wide Current', cost: 390, desc: 'Lightning jumps farther and deals 1 extra damage.', apply: s => { s.splash += 40; s.damage += 1 } },
+        { name: 'Storm Canopy', cost: 950, desc: 'Lightning hits up to 7 enemies and fires faster.', apply: s => { s.count = 7; s.interval *= .8 } },
+      ] },
+      { name: 'Thunder', tiers: [
+        { name: 'Charged Stem', cost: 210, desc: 'Lightning deals 2 extra damage.', apply: s => { s.damage += 2 } },
+        { name: 'Thunderhead', cost: 460, desc: 'Lightning deals full damage to armour.', apply: s => { s.heavy = true } },
+        { name: 'Storm Lantern', cost: 1100, desc: 'More range and damage. Can hit hidden enemies.', apply: s => { s.range += 45; s.damage += 4; s.detect = true } },
+      ] },
+    ],
+  },
+  ballista: {
+    id: 'ballista', name: 'Dusk Ballista', role: 'Heavy single hits',
+    blurb: 'Fires slow, heavy bolts at the strongest enemy. Good against bosses; needs help with crowds.',
+    cost: 720, kind: 'bolt', hue: '#eac08a', family: 'amber',
+    base: { range: 290, interval: 3.2, damage: 30, heavy: true, projSpeed: 960, homing: true },
+    paths: [
+      { name: 'Impact', tiers: [
+        { name: 'Iron Tip', cost: 300, desc: 'Bolts deal 12 extra damage.', apply: s => { s.damage += 12 } },
+        { name: 'Heavy Draw', cost: 620, desc: 'Bolts deal 24 extra damage.', apply: s => { s.damage += 24 } },
+        { name: 'Siege Bow', cost: 1350, desc: 'Bolts deal 45 extra damage and burn targets.', apply: s => { s.damage += 45; s.burn = 4; s.burnDur = 3 } },
+      ] },
+      { name: 'Reload', tiers: [
+        { name: 'Light Winch', cost: 280, desc: '20% less time between bolts.', apply: s => { s.interval *= .8 } },
+        { name: 'Night Sight', cost: 540, desc: 'More range. Can hit hidden enemies.', apply: s => { s.range += 55; s.detect = true } },
+        { name: 'Twin Winch', cost: 1200, desc: '35% less time between bolts. Adds 10 damage.', apply: s => { s.interval *= .65; s.damage += 10 } },
+      ] },
+    ],
+  },
   wick: {
     id: 'wick',
     name: 'Wickling',
@@ -278,7 +314,7 @@ export const TOWERS: Record<TowerId, TowerDef> = {
   },
 }
 
-export const TOWER_ORDER: TowerId[] = ['wick', 'cracker', 'bell', 'owl', 'beam', 'garden']
+export const TOWER_ORDER: TowerId[] = ['wick', 'cracker', 'bell', 'owl', 'beam', 'garden', 'storm', 'ballista']
 
 export function computeStats(id: TowerId, a: number, b: number): TowerStats {
   const def = TOWERS[id]

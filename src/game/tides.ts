@@ -15,6 +15,7 @@
 import { ENEMIES, TOWERS, type EnemyId, type TowerId } from './defs'
 import type { Challenge } from './sim'
 import { WAVES, type Group, type Source, type WaveDef } from './waves'
+import { WATCH_NAMES } from './compact'
 
 /** The daily tide takes over after this wave: waves 15 to 25. */
 export const TIDE_FROM = 14
@@ -365,7 +366,7 @@ export function offerFor(id: string): ChallengeOffer | null {
   if (kind === 'daily') {
     const [y, m, d] = key.split('-').map(Number)
     if (!y || !m || !d) return null
-    return dailyTide(new Date(y, m - 1, d), version === 'guard1')
+    return version === 'compact1' ? compactChallenge(new Date(y, m - 1, d), 'daily') : dailyTide(new Date(y, m - 1, d), version === 'guard1')
   }
   if (kind === 'weekly') {
     const m = /^(\d{4})-W(\d{2})$/.exec(key)
@@ -374,7 +375,22 @@ export function offerFor(id: string): ChallengeOffer | null {
     const jan4 = new Date(Number(m[1]), 0, 4)
     const mon = new Date(jan4)
     mon.setDate(jan4.getDate() - ((jan4.getDay() + 6) % 7) + (Number(m[2]) - 1) * 7 + 3)
-    return weeklyNight(mon, version === 'guard1')
+    return version === 'compact1' ? compactChallenge(mon, 'weekly') : weeklyNight(mon, version === 'guard1')
   }
   return null
+}
+
+/** Ten waves on the same compact boards, with a fixed defence and budget to improve. */
+export function compactChallenge(date: Date, kind: 'daily' | 'weekly'): ChallengeOffer {
+  const week = isoWeek(date)
+  const key = kind === 'daily' ? dayKey(date) : `${week.year}-W${pad2(week.week)}`
+  const id = `${kind}:${key}:compact1`, seed = hashKey(id), variant = seed % 4
+  const from = kind === 'daily' ? 10 : 20, glow = kind === 'daily' ? 4200 : 8500
+  return {
+    kind, id, name: kind === 'daily' ? 'Finish this defence' : 'Hold against the Warden',
+    when: kind === 'daily' ? shortDate(date) : `week of ${DATE_FMT.format(week.monday)}`,
+    twist: 'none', rule: 'none',
+    challenge: { compact: 1, depth: 1, guard: 1, variant, skirmish: { from, to: from + 10, glow, seed }, id },
+    rules: [`${WATCH_NAMES[variant]} · 10 waves on Standard.`, `${glow.toLocaleString('en')} glow total, including the starting towers.`, 'Upgrade, sell or add towers before starting. Keep as much light as you can.'],
+  }
 }

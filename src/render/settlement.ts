@@ -2,7 +2,7 @@ import { TAU } from '../core/math'
 import { glowSprite, P } from './palette'
 
 /** Profile rewards are scenery only; they never cover pads or change combat. */
-export function drawSettlement(ctx: CanvasRenderingContext2D, stage: number, bunting: boolean, harbour: boolean, gardens: boolean, compact?: number) {
+export function drawSettlement(ctx: CanvasRenderingContext2D, stage: number, bunting: boolean, harbour: boolean, gardens: boolean, compact?: number, festival = false) {
   ctx.save()
   for (const [x, y] of [[90, 820], [615, 820], [650, 355]]) {
     ctx.fillStyle = '#34464a'; ctx.fillRect(x - 26, y - 36, 52, 44)
@@ -10,6 +10,10 @@ export function drawSettlement(ctx: CanvasRenderingContext2D, stage: number, bun
     ctx.fillStyle = stage >= 1 ? P.amberHi : '#142b34'
     ctx.fillRect(x - 17, y - 26, 12, 14); ctx.fillRect(x + 5, y - 26, 12, 14)
     if (stage >= 1) ctx.drawImage(glowSprite(P.amber, 64), x - 36, y - 49, 72, 64)
+    if (festival) for (const side of [-1, 1]) {
+      ctx.strokeStyle = P.cream; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x + side * 30, y - 32); ctx.lineTo(x + side * 30, y - 18); ctx.stroke()
+      ctx.fillStyle = side < 0 ? P.coral : P.ice; ctx.beginPath(); ctx.roundRect(x + side * 30 - 5, y - 19, 10, 13, 4); ctx.fill()
+    }
     if (bunting) {
       ctx.strokeStyle = P.cream; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x - 34, y - 31); ctx.quadraticCurveTo(x, y - 15, x + 34, y - 31); ctx.stroke()
       for (let i = 0; i < 5; i++) { const bx = x - 28 + i * 12; ctx.fillStyle = [P.coral, P.ice, P.amber][i % 3]; ctx.beginPath(); ctx.moveTo(bx, y - 25); ctx.lineTo(bx + 9, y - 25); ctx.lineTo(bx + 4, y - 14); ctx.fill() }

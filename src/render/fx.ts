@@ -3,7 +3,7 @@ import type { EnemyId } from '../game/defs'
 import { drawCheer } from './enemies'
 import { glowSprite, P, withAlpha } from './palette'
 
-export type PKind = 'spark' | 'ink' | 'ring' | 'firefly' | 'text' | 'shard' | 'flash' | 'mote' | 'note' | 'cheer' | 'petal' | 'pillar' | 'orbit'
+export type PKind = 'spark' | 'ink' | 'ring' | 'firefly' | 'text' | 'shard' | 'flash' | 'mote' | 'note' | 'cheer' | 'petal' | 'pillar' | 'orbit' | 'link'
 
 export interface Particle {
   kind: PKind
@@ -191,6 +191,12 @@ export class Fx {
     for (const p of this.list) {
       const k = p.life / p.max
       switch (p.kind) {
+        case 'link': {
+          ctx.globalAlpha = k * .85; ctx.strokeStyle = p.color; ctx.lineWidth = p.lw; ctx.lineCap = 'round'
+          ctx.beginPath(); ctx.moveTo(p.x, p.y)
+          ctx.lineTo((p.x + p.tx) / 2 + 4, (p.y + p.ty) / 2 - 4); ctx.lineTo(p.tx, p.ty); ctx.stroke()
+          break
+        }
         case 'cheer': {
           ctx.globalAlpha = 1
           drawCheer(ctx, p.enemy!, p.x, p.y, 1 - k)

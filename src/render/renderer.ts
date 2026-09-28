@@ -102,6 +102,7 @@ const FIREWORK_COLS = [P.coral, P.amberHi, P.ice, P.lime, P.lilac, P.gold, P.pin
 export class Renderer {
   zone: MapZone = 'canal'
   settlement = 0
+  guardianMastery = 0
   bunting = false
   private comboUntil = 0
   setHarbourView(on: boolean) { this.setZone(on ? 'harbour' : 'canal') }
@@ -299,7 +300,7 @@ export class Renderer {
 
   handleEvents(sim: Sim) {
     const fx = this.fx
-    const calm = this.settings.calmFx
+    const calm = this.settings.calmFx || this.settings.reduceMotion
     fx.density = calm ? 0.5 : 1
     let pops = 0
     for (const ev of sim.events) {
@@ -474,10 +475,16 @@ export class Renderer {
           break
         case 'combo':
           fx.ring(ev.x, ev.y, 48, P.ice, .45, 3)
-          if (this.time >= this.comboUntil) { fx.text(ev.x, ev.y - 42, 'Slow + splash', P.ice, 20, 1.1); this.comboUntil = this.time + 4 }
+          if (this.time >= this.comboUntil) { if (!calm) fx.shards(ev.x, ev.y, P.ice, 4); fx.text(ev.x, ev.y - 42, 'Slow + burst', P.ice, 20, 1.1); this.comboUntil = this.time + 4 }
           break
         case 'bounce':
-          for (let i = 0; i < 6; i++) { const k = i / 5; fx.add({ kind: 'spark', x: ev.x + (ev.tx - ev.x) * k, y: ev.y + (ev.ty - ev.y) * k, life: .23, size: 4, color: P.lime }) }
+          fx.add({ kind: 'link', x: ev.x, y: ev.y, tx: ev.tx, ty: ev.ty, life: .22, lw: 3, color: P.lime })
+          break
+        case 'arc':
+          fx.add({ kind: 'link', x: ev.x, y: ev.y, tx: ev.tx, ty: ev.ty, life: .2, lw: 3.5, color: P.ice })
+          break
+        case 'prepare':
+          fx.ring(ev.x, ev.y, ev.id === 'ward' ? 48 : 30, ev.id === 'ward' ? P.amberHi : P.lime, .5, 3)
           break
         case 'phase':
           fx.flash(ev.x, ev.y, 120, P.pale, 0.6)
@@ -723,7 +730,7 @@ export class Renderer {
     ctx.drawImage(this.bg!, -BG_PAD_X, -BG_PAD_Y, WORLD_W + BG_PAD_X * 2, WORLD_H + BG_PAD_Y * 2)
     if (sim.challenge.harbour) this.drawHarbour(ctx, sim)
     if (sim.challenge.gardens) this.drawGardens(ctx, sim)
-    if (sim.challenge.guard) drawSettlement(ctx, this.settlement, this.bunting, !!sim.challenge.harbour, !!sim.challenge.gardens, sim.challenge.compact ? sim.challenge.variant ?? 0 : undefined)
+    if (sim.challenge.guard) drawSettlement(ctx, this.settlement, this.bunting, !!sim.challenge.harbour, !!sim.challenge.gardens, sim.challenge.compact ? sim.challenge.variant ?? 0 : undefined, this.guardianMastery >= 3)
 
     this.drawFlow(ctx, sim, dt)
     ctx.drawImage(this.bloomCv!, 0, 0, WORLD_W, WORLD_H)
@@ -750,6 +757,22 @@ export class Renderer {
       ctx.strokeStyle = P.amberHi
       ctx.lineWidth = 2
       ctx.beginPath(); ctx.ellipse(p.x, p.y, p.radius, p.radius * .65, 0, 0, TAU); ctx.fill(); ctx.stroke()
+      ctx.fillStyle = P.amberHi
+      for (const offset of [-.45, 0, .45]) {
+        const x = p.x + offset * p.radius, y = p.y + Math.abs(offset) * p.radius * .25
+        ctx.beginPath(); ctx.moveTo(x - 4, y + 3); ctx.quadraticCurveTo(x - 8, y - 3, x + 2, y - 13); ctx.quadraticCurveTo(x + 9, y, x + 4, y + 3); ctx.fill()
+      }
+      ctx.restore()
+    }
+
+    if (sim.preparation && sim.preparation.charges > 0) {
+      const net = sim.preparation.id === 'net'
+      const p = net ? sim.level.segs.get('h')!.line.pts[0] : sim.level.def.home
+      ctx.save(); ctx.strokeStyle = net ? P.lime : P.amberHi; ctx.globalAlpha = .7; ctx.lineWidth = 2.5
+      if (net) for (const offset of [-18, -6, 6, 18]) {
+        ctx.beginPath(); ctx.moveTo(p.x + offset, p.y - 16); ctx.lineTo(p.x + offset, p.y + 16); ctx.stroke()
+        ctx.beginPath(); ctx.moveTo(p.x - 23, p.y + offset * .7); ctx.lineTo(p.x + 23, p.y + offset * .7); ctx.stroke()
+      } else { ctx.beginPath(); ctx.ellipse(p.x, p.y - 25, 37, 54, 0, 0, TAU); ctx.stroke() }
       ctx.restore()
     }
 
@@ -840,6 +863,8 @@ export class Renderer {
         drawTower(ctx, tw.x, tw.y, {
           id: tw.id,
           guardian: sim.challenge.guardian,
+          refinement: tw.refinement,
+          mastery: this.guardianMastery,
           a: tw.a,
           b: tw.b,
           angle: tw.angle,
@@ -866,7 +891,7 @@ export class Renderer {
       const p = sim.pads[view.moving.destination]
       const tw = view.moving.tower
       ctx.globalAlpha = .65
-      drawTower(ctx, p.x, p.y, { id: tw.id, guardian: sim.challenge.guardian, a: tw.a, b: tw.b, angle: tw.angle, since: 9, age: 9, upAge: 9, t, seed: tw.uid })
+      drawTower(ctx, p.x, p.y, { id: tw.id, guardian: sim.challenge.guardian, refinement: tw.refinement, mastery: this.guardianMastery, a: tw.a, b: tw.b, angle: tw.angle, since: 9, age: 9, upAge: 9, t, seed: tw.uid })
       ctx.globalAlpha = 1
     }
     // build preview ghost
@@ -1829,6 +1854,12 @@ export class Renderer {
 
   private drawProj(ctx: CanvasRenderingContext2D, p: Proj) {
     switch (p.kind) {
+      case 'bolt': {
+        ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(Math.atan2(p.vy, p.vx))
+        ctx.strokeStyle = '#eac08a'; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(-22, 0); ctx.lineTo(4, 0); ctx.stroke()
+        ctx.fillStyle = '#fff4d3'; ctx.beginPath(); ctx.moveTo(11, 0); ctx.lineTo(-1, -6); ctx.lineTo(-1, 6); ctx.closePath(); ctx.fill(); ctx.restore()
+        break
+      }
       case 'spark': {
         const sp = Math.hypot(p.vx, p.vy) || 1
         const tx = p.x - (p.vx / sp) * 16
@@ -2104,7 +2135,7 @@ export class Renderer {
     for (const g of sim.gates) if (sim.gateAvailable(g)) this.drawGateBase(ctx, sim, g, 0)
     this.drawLandmarks(ctx, sim, 'under')
     for (const tw of [...sim.towers].sort((a, b) => a.y - b.y)) {
-      drawTower(ctx, tw.x, tw.y, { id: tw.id, guardian: sim.challenge.guardian, a: tw.a, b: tw.b, angle: tw.angle, since: 9, age: 9, upAge: 9, t: this.time, seed: tw.uid })
+      drawTower(ctx, tw.x, tw.y, { id: tw.id, guardian: sim.challenge.guardian, refinement: tw.refinement, mastery: this.guardianMastery, a: tw.a, b: tw.b, angle: tw.angle, since: 9, age: 9, upAge: 9, t: this.time, seed: tw.uid })
     }
     this.drawLandmarks(ctx, sim, 'over')
     for (const g of sim.gates) if (sim.gateAvailable(g)) this.drawGateTop(ctx, sim, g)

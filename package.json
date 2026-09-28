@@ -22,14 +22,16 @@
     "balance:reedbank": "tsx scripts/waterway-balance.ts",
     "ios:sync": "npm run build && cap sync ios",
     "ios:open": "cap open ios",
-    "check": "npm run typecheck && npm test && npm run test:release && npm run test:growth && npm run test:guard && npm run test:journey && npm run test:refinement && npm run test:gardens && npm run test:compact && npm run test:replay && npm run test:integrity",
+    "check": "npm run typecheck && npm test && npm run test:release && npm run test:growth && npm run test:guard && npm run test:journey && npm run test:refinement && npm run test:gardens && npm run test:compact && npm run test:replay && npm run test:depth && npm run test:integrity",
     "qa:fixtures": "tsx scripts/qa-fixtures.ts",
     "test:gardens": "tsx scripts/gardens-test.ts",
     "balance:gardens": "tsx scripts/gardens-balance.ts",
     "test:compact": "tsx scripts/compact-test.ts",
     "balance:compact": "tsx scripts/compact-balance.ts",
     "test:replay": "tsx scripts/replay-test.ts",
-    "balance:replay": "tsx scripts/replay-balance.ts"
+    "balance:replay": "tsx scripts/replay-balance.ts",
+    "test:depth": "tsx scripts/depth-test.ts",
+    "balance:depth": "tsx scripts/depth-balance.ts"
   },
   "type": "module",
   "devDependencies": {

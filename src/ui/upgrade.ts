@@ -12,6 +12,8 @@ export const PATH_ROLE: Record<TowerId, [string, string]> = {
   beam: ['Damage & piercing', 'Range & two targets'],
   owl: ['More attack damage', 'Help nearby towers'],
   garden: ['More glow each wave', 'Attacks & bonus glow'],
+  storm: ['More lightning jumps', 'Damage & armour breaking'],
+  ballista: ['Stronger bolts', 'Faster firing & sight'],
 }
 
 export function upgradeDescription(id: TowerId, a: number, b: number, path: 0 | 1, statsFor: typeof computeStats): string {
@@ -56,14 +58,14 @@ export function upgradeSummary(id: TowerId, a: number, b: number, path: 0 | 1, s
   if (after.mothEvery && !before.mothEvery) changes.push('Moths defend nearby water')
   if (after.income !== before.income) changes.push(`${before.income} → ${after.income} glow / wave`)
   if (after.lifePerWave !== before.lifePerWave) changes.push(`+${after.lifePerWave} light / wave`)
-  if (after.count !== before.count) changes.push(`${before.count} → ${after.count} shots`)
+  if (after.count !== before.count) changes.push(`${before.count} → ${after.count} ${id === 'storm' ? 'targets' : 'shots'}`)
   if (after.burn !== before.burn) changes.push(`Burns for ${after.burn}/sec`)
   const fmt = (n: number) => Number(n.toFixed(2))
   if (after.damage !== before.damage) changes.push(`${id === 'beam' ? 'Damage/sec' : 'Damage'} ${fmt(hitDamage(id, before.damage, guardian))} → ${fmt(hitDamage(id, after.damage, guardian))}`)
   if (after.range !== before.range) changes.push(`Range ${fmt(before.range)} → ${fmt(after.range)}`)
   if (after.slow !== before.slow) changes.push(`Slow ${Math.round(before.slow * 100)}% → ${Math.round(after.slow * 100)}%`)
   if (after.interval !== before.interval) changes.push(`${Math.round((before.interval / after.interval - 1) * 100)}% faster`)
-  if (after.splash !== before.splash) changes.push(`Splash ${before.splash} → ${after.splash}`)
+  if (after.splash !== before.splash) changes.push(`${id === 'storm' ? 'Jump range' : 'Splash'} ${before.splash} → ${after.splash}`)
   if (after.pierce !== before.pierce) changes.push(`Pierces ${after.pierce} targets`)
   return changes.slice(0, 2).join(' · ')
 }

@@ -2339,6 +2339,21 @@ html.reduce-motion .stat-light.hurt {
 .card .new-game-note { font-size:13px; }
 #btn-battle-plan { order:-4; min-height:44px; width:100%; padding:8px 12px; background:#2b443b; border:1px solid #8bb697; border-radius:10px; color:#eef4d7; font-size:13px; line-height:1.25; }
 #btn-battle-plan[hidden] { display:none; }
+#btn-prepare { order:-3; min-height:44px; padding:8px 12px; background:var(--panel-2); border:1px solid var(--line); border-radius:10px; color:var(--text-2); font-size:13px; }
+#btn-prepare[hidden] { display:none; }
+.guardian-card img[class*="mastery-frame-"]:not(.mastery-frame-0) { border:3px solid #b99a71; border-radius:50%; background:#443c30; }
+.guardian-card img.mastery-frame-3 { border-color:#e1c779; }
+.mastery-note { color:#c6d5a9; }
+.mastery-records { margin:14px 0; font-size:13px; }
+.mastery-records summary { min-height:44px; display:flex; align-items:center; cursor:pointer; }
+.return-briefing dl { margin:20px 0; }
+.return-briefing dt { color:var(--text-2); font-size:12px; margin-top:16px; }
+.return-briefing dd { margin:4px 0 0; line-height:1.5; }
+@media (max-width: 700px) and (orientation: portrait) {
+  #tray.late-roster { display:flex; overflow-x:auto; overscroll-behavior-x:contain; scroll-snap-type:x proximity; padding-bottom:6px; scrollbar-width:thin; scrollbar-color:#728982 #1d3038; }
+  #tray.late-roster .tw-btn { flex:0 0 26%; min-width:80px; scroll-snap-align:start; }
+  #tray.late-roster .tw-btn[hidden] { display:none; }
+}
 .battle-plan-note { padding:8px 12px; margin:6px 0; border-left:3px solid var(--amber); font-size:12px; line-height:1.4; color:var(--text-2); }
 @media (max-width:360px) {
   .next-map { gap:10px; padding:8px; }

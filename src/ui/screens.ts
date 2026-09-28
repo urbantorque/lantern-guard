@@ -1,4 +1,5 @@
 import { WATCH_NAMES, WATCH_HELP, nextCompactVariant } from '../game/compact'
+import { PREPARATIONS, LATE_TOWERS, preparationCost, netDamage, nextMilestone, type PreparationId } from '../game/depth'
 import { BATTLE_PLANS, planIds, type BattlePlanId } from '../game/battle-plans'
 import { GUARDIANS, guardianUnlocked, signatureFor, towerName, type GuardianId } from '../game/guardians'
 import { KEEPER_HELP } from '../game/canal-growth'
@@ -10,8 +11,8 @@ import { TAU } from '../core/math'
 import { DIFFICULTY, ENEMIES, TOWER_ORDER, TOWERS, type Difficulty, type EnemyId, type TowerId } from '../game/defs'
 import { LEVEL } from '../game/level'
 import { BLOOM_SETS, restorationPreview, RESTORATIONS, canRetry, loadCheckpoint, clearMetrics, FEATS, journalTotal, loadChallenges, loadMetrics, loadProgress, loadRun, type ChallengeResult, type Settings } from '../game/progress'
-import { FINAL_WAVE } from '../game/sim'
-import { dailyTide, dayKey, offerFor, TIDE_FROM, TIDE_GLOW, weeklyNight, type ChallengeOffer, type Rule, type Twist } from '../game/tides'
+import { compactChallenge, dayKey, offerFor, type ChallengeOffer, type Rule, type Twist } from '../game/tides'
+import { GUARDIAN_REWARDS, guardianMasteryTier, guardianNextGoal } from '../game/progress'
 import { asBloomStyle, bloomIconURL, bloomSetURL, famIndex } from '../render/blooms'
 import { drawEnemyIcon } from '../render/enemies'
 import { glyphBadgeURL } from '../render/glyphs'
@@ -97,6 +98,34 @@ if (typeof window !== 'undefined') {
 }
 
 export class Screens {
+  resumeBriefing() {
+    const sim = this.app.sim, wave = sim.wave + Number(!sim.waveActive), def = sim.waveDef(wave)
+    const kinds = [...new Set(def.groups.map(g => g.type))]
+    const threat = kinds.filter(id => ENEMIES[id].boss || ['vshell', 'veil', 'mender', 'skiff', 'reedling'].includes(id)).slice(0, 3)
+    const names = (threat.length ? threat : kinds.slice(0, 2)).map(id => ENEMIES[id].name).join(', ')
+    this.show(`<div class="card return-briefing"><h2>Your defence</h2><p>${sim.level.def.name} · ${GUARDIANS[sim.challenge.guardian ?? 'lantern'].name}</p>
+      <dl><dt>${sim.waveActive ? 'In progress' : 'Up next'}</dt><dd>Wave ${this.app.shownWave(wave)} · ${names}${def.encounter ? `<br>${def.encounter}` : ''}</dd>
+      <dt>Your build</dt><dd>${sim.towers.length} towers · ${sim.glow} glow · ${sim.lives} light${sim.battlePlans.length ? `<br>${sim.battlePlans.map(id => BATTLE_PLANS[id].name).join(' · ')}` : ''}</dd>
+      <dt>Next goal</dt><dd>${sim.challenge.skirmish ? 'Hold all 10 waves with as much light as you can.' : nextMilestone(sim.wave)}</dd></dl>
+      <button class="big-btn primary" data-act="return">${sim.waveActive ? 'Review while paused' : 'Back to defence'}</button></div>`, () => this.resumeBriefing())
+    this.on('[data-act="return"]', () => this.close())
+  }
+  preparations() {
+    const sim = this.app.sim, round = sim.preparationOffer
+    const current = sim.preparation
+    this.show(`<div class="card battle-plan-card"><h2>Wave supplies</h2>
+      <p>${current ? `${PREPARATIONS[current.id].name} is ready for wave ${current.wave}.` : 'Buy one boost for the next wave. It starts automatically.'}</p>
+      ${current ? `<p>${PREPARATIONS[current.id].description}</p>` : round ? `<p>One purchase every 5 waves · ${preparationCost(round)} glow</p><div class="stack">${(Object.keys(PREPARATIONS) as PreparationId[]).map(id => `<button class="big-btn battle-plan" data-preparation="${id}" ${sim.glow < preparationCost(round) ? 'disabled' : ''}><span><b>${PREPARATIONS[id].name}</b><small>${id === 'net' ? `Catches up to 8 enemies near the lantern: ${netDamage(round)} damage and a 50% slow for 3 seconds. Bosses pass through.` : PREPARATIONS[id].description}</small><small>${preparationCost(round)} glow${sim.glow < preparationCost(round) ? ' · not enough glow' : ''}</small></span></button>`).join('')}</div>` : '<p>More supplies arrive after the next five-wave milestone.</p>'}
+      <button class="big-btn" data-act="back">Back to defence</button></div>`, () => this.preparations())
+    this.on('[data-preparation]', b => {
+      const id = b.dataset.preparation as PreparationId
+      this.confirm(`Buy ${PREPARATIONS[id].name.toLowerCase()}?`, `Costs ${preparationCost(round!)} glow. Used automatically during wave ${sim.wave + 1}.`, 'Buy preparation', () => {
+        if (!sim.prepare(id)) return
+        this.app.persist(true); this.close(); this.app.toast(`${PREPARATIONS[id].name} ready for wave ${sim.wave + 1}.`, 2400)
+      })
+    })
+    this.on('[data-act="back"]', () => this.back())
+  }
   private app: App
   private el: HTMLElement
   private stack: (() => void)[] = []
@@ -199,7 +228,7 @@ export class Screens {
         <p class="tagline">Defend the lantern.<br>Hold out for 40 waves.</p>
         <div class="title-play stack">
           <button class="big-btn primary resume-btn" data-act="${save ? 'continue' : 'play'}"><span>${icon('play')} ${save ? 'Continue' : 'Play'}</span>${save ? `<small>${name} · ${save.challenge.compact ? WATCH_NAMES[save.challenge.variant ?? 0] : save.challenge.gardens ? 'Gardens' : save.challenge.harbour ? 'Harbour' : 'Canal'} · wave ${nextWave}${save.v === 2 && save.over ? (save.won ? ' complete' : ' · review') : ''}<br>${save.towers.length} ${save.towers.length === 1 ? 'tower' : 'towers'} · ${save.lives} light</small>` : ''}</button>
-          ${challengeSave ? `<button class="title-quiet" data-act="continue-challenge">Resume challenge · wave ${Math.max(1, challengeSave.wave - (challengeSave.challenge.tide?.from ?? 0))}</button>` : ''}
+          ${challengeSave ? `<button class="title-quiet" data-act="continue-challenge">Resume challenge · wave ${Math.max(1, challengeSave.wave - (challengeSave.challenge.skirmish?.from ?? challengeSave.challenge.tide?.from ?? 0) + Number(challengeSave.v === 2 && !challengeSave.over && !challengeSave.enemies.length && !challengeSave.spawners.length))}</button>` : ''}
           ${save ? '<button class="title-quiet" data-act="night">New game</button>' : ''}
         </div>
         ${saveHealth === 'invalid' ? '<p class="save-note" role="status">Your saved night could not be read. Your journal is kept separately.</p>' : saveHealth === 'recovered' ? '<p class="save-note" role="status">Continue will use your previous autosave.</p>' : saveHealth === 'unavailable' ? '<p class="save-note" role="status">Saving is unavailable. Keep the game open to retain your night.</p>' : ''}
@@ -293,10 +322,11 @@ export class Screens {
   }
 
   private guardians() {
-    const feats = loadProgress().feats
+    const progress = loadProgress(), feats = progress.feats
     const selected = this.app.settings.guardian ?? 'lantern'
     this.show(`<div class="card guardian-picker"><h2>Choose a guardian</h2><p>Choose a special tower for your next game.</p>
-      <div class="stack">${(Object.keys(GUARDIANS) as GuardianId[]).map(id => { const g = GUARDIANS[id]; const earned = guardianUnlocked(id, feats); return `<button class="big-btn guardian-card ${selected === id ? 'primary' : ''}" data-guardian="${id}" aria-pressed="${selected === id}" ${earned ? '' : 'disabled'}><img src="${towerIcon(g.tower ?? 'wick', 0, 0, 96, id)}" width="64" height="64" alt=""><span><b>${g.name}</b><em>${g.signature ?? 'Original towers'}${selected === id ? ' · Selected' : ''}</em><small>${g.description}</small>${earned ? '' : `<small class="unlock-note">Unlock: ${g.unlock}.</small>`}</span></button>` }).join('')}</div>
+      <div class="stack">${(Object.keys(GUARDIANS) as GuardianId[]).map(id => { const g = GUARDIANS[id]; const earned = guardianUnlocked(id, feats); const record = progress.guardianRecords?.[id]; const tier = guardianMasteryTier(record?.waves ?? 0); return `<button class="big-btn guardian-card ${selected === id ? 'primary' : ''}" data-guardian="${id}" aria-pressed="${selected === id}" ${earned ? '' : 'disabled'}><img class="mastery-frame-${tier}" src="${towerIcon(g.tower ?? 'wick', 0, 0, 96, id)}" width="64" height="64" alt=""><span><b>${g.name}</b><em>${g.signature ?? 'Original towers'}${selected === id ? ' · Selected' : ''}</em><small>${g.description}</small>${earned ? `<small class="mastery-note">${guardianNextGoal(progress, id)}</small>${record ? `<small>Best: wave ${record.best} · ${record.wins} wins</small>` : ''}` : `<small class="unlock-note">Unlock: ${g.unlock}.</small>`}</span></button>` }).join('')}</div>
+      <details class="mastery-records"><summary>Guardian rewards and map records</summary><p>Cleared waves count across games, even when you stop early. Rewards are cosmetic.</p>${GUARDIAN_REWARDS.map(r => `<p>${r.waves} waves · ${r.reward}</p>`).join('')}${Object.entries(progress.guardianRecords ?? {}).map(([id, record]) => `<h3>${GUARDIANS[id as GuardianId].name}</h3>${Object.entries(record.maps).map(([key, value]) => { const [map, mode] = key.split(':'); return `<p>${WATCH_NAMES[Number(map)]} · ${DIFFICULTY[mode as Difficulty].name}: wave ${value.best}, ${value.wins} wins</p>` }).join('')}`).join('')}</details>
       <p>Applies to your next game. Challenges use the original towers.</p><button class="big-btn" data-act="back">Back</button></div>`, () => this.guardians())
     this.on('[data-guardian]', b => {
       const id = b.dataset.guardian as GuardianId
@@ -310,8 +340,8 @@ export class Screens {
   /** The daily tide and the weekly night: what they ask, how you did, and a way to share it. */
   tides() {
     const now = new Date()
-    const daily = dailyTide(now, true)
-    const weekly = weeklyNight(now, true)
+    const daily = compactChallenge(now, 'daily')
+    const weekly = compactChallenge(now, 'weekly')
     const results = loadChallenges()
     const save = loadRun('challenge')
     const block = (o: ChallengeOffer, sum: string, play: string) => {
@@ -334,7 +364,7 @@ export class Screens {
     // the last seven tides, oldest first: kept, lost, or not played
     const days = Array.from({ length: 7 }, (_, i) => {
       const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 6 + i)
-      const r = results[`daily:${dayKey(d)}:guard1`] ?? results[`daily:${dayKey(d)}`]
+      const r = results[`daily:${dayKey(d)}:compact1`] ?? results[`daily:${dayKey(d)}:guard1`] ?? results[`daily:${dayKey(d)}`]
       const name = d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })
       const state = r?.won ? 'kept' : r ? 'lost' : 'none'
       const label = `${name}: ${r?.won ? 'tide kept' : r ? 'played, lantern went out' : 'not played'}`
@@ -343,10 +373,10 @@ export class Screens {
     this.show(
       `<div class="card">
         <h2>Tides</h2>
-        <p>A new tide every day and a new rule every week. Everyone who plays gets the same ones.</p>
-        ${block(daily, `Waves ${TIDE_FROM + 1} to ${FINAL_WAVE} of a remixed night on Standard. Start with ${TIDE_GLOW.toLocaleString('en')} glow and build before the first wave.`, "Play today's tide")}
+        <p>Short challenges with a starting defence to improve. Everyone gets the same map, towers and budget.</p>
+        ${block(daily, 'Improve a small defence and hold ten waves. Your campaign stays saved.', "Play today's tide")}
         <ol class="week-strip" aria-label="The last seven daily tides">${days}</ol>
-        ${block(weekly, 'The whole of Wickwater Canal on Standard, under one rule.', "Play this week's night")}
+        ${block(weekly, 'A stronger starting defence and ten later waves, ending with the Warden.', "Play this week's night")}
         <div class="stack gap-top"><button class="big-btn" data-act="done">Back</button></div>
       </div>`,
       () => this.tides(),
@@ -450,7 +480,7 @@ export class Screens {
     const mode = DIFFICULTY[sim.difficulty]
     const offer = this.app.offer()
     const shown = this.app.shownWave() + (!sim.waveActive && !sim.over ? 1 : 0)
-    const where = sim.wave > sim.finalWave ? `free play wave ${sim.wave - sim.finalWave}` : sim.challenge.tide ? `tide wave ${shown} of ${FINAL_WAVE - sim.waveOffset}` : `wave ${shown} of ${sim.finalWave}`
+    const where = sim.wave > sim.finalWave ? `free play wave ${sim.wave - sim.finalWave}` : `wave ${shown} of ${sim.finalWave - sim.waveOffset}`
     this.show(
       `<div class="card">
         <h2>Paused</h2>
@@ -659,15 +689,15 @@ export class Screens {
         ${guard ? row('eye', 'Enemy status', 'An eye icon means a hidden enemy is revealed. A coral ring shows armour. A blue ring means the enemy is slowed.') : ''}
         ${guard ? row('restart', 'Retry a lost wave', 'On Relaxed and Standard, retry from the last break with the same towers and glow. Nightfall and challenges have no retries.') : ''}
         ${guard && !compactWatch ? row('waves', 'Water Gardens', 'After Harbour, two garden streams meet above your established defence. Whole map shows the complete route; tap a district to inspect it. Guardians can change at chapter victories without rebuilding.') : ''}
-        ${compactWatch ? row('star', 'Upgrades & new games', 'Level 4 upgrades open after wave 15; level 5 after wave 25. New games rotate through four maps. Choose a guardian before you start to change one of your towers.') : ''}
+        ${compactWatch ? row('star', 'Upgrades & new games', `Level 4 opens after wave 15; Level 5 after wave 25.${this.app.sim.challenge.depth ? ' Level 6 opens after wave 30; Level 7 after wave 35. Storm Reed joins at wave 16 and Dusk Ballista at wave 26. Optional wave supplies arrive every 5 waves.' : ''} New games rotate through four maps. Choose a guardian before you start to change one tower.`) : ''}
         ${this.app.sim.challenge.plans ? row('star', 'Battle plans', 'After waves 10 and 20, choose one tower change for this game. Each has a benefit and a drawback. You can decide later or play without one.') : ''}
         ${guard && !compactWatch ? row('waves', 'Lantern Harbour', 'After wave 25, play eight more waves upstream while keeping your towers. Switch between Harbour and Canal views to inspect both parts. New Skiffs accelerate after losing armour.') : ''}
-        ${row('pause', 'Pause to plan', `Pause any time to build and upgrade. On Nightfall, live route changes require time to run. Keys: 1–6 towers, Q/E quick switches, Space starts a wave, P pauses, F changes speed.${guard ? '' : ' C opens charms.'}`)}
+        ${row('pause', 'Pause to plan', `Pause any time to build and upgrade. On Nightfall, live route changes require time to run. Keys: 1–8 towers, Q/E quick switches, Space starts a wave, P pauses, F changes speed.${guard ? '' : ' C opens charms.'}`)}
       </div>`
     } else if (tab === 'keepers') {
       body = `<div class="journal">${TOWER_ORDER.map((id: TowerId) => {
         const d = TOWERS[id]
-        return `<div class="j-row"><img src="${towerIcon(id, 0, 0, 128, this.app.sim.challenge.guardian)}" alt="" width="44" height="44"><div><b><img class="sw" src="${glyphBadgeURL(d.family)}" alt="${d.family} family" width="16" height="16">${towerName(id, this.app.sim.challenge.guardian)} <span class="j-cost">${d.cost}</span></b><span>${signatureFor(id, this.app.sim.challenge.guardian)?.description ?? KEEPER_HELP[id]} ${this.app.sim.keeperWave(id) > 1 ? `Available from wave ${this.app.sim.keeperWave(id)}.` : 'Available from the start.'} Paths: ${d.paths[0].name} or ${d.paths[1].name}.</span></div></div>`
+        return `<div class="j-row"><img src="${towerIcon(id, 0, 0, 128, this.app.sim.challenge.guardian)}" alt="" width="44" height="44"><div><b><img class="sw" src="${glyphBadgeURL(d.family)}" alt="${d.family} family" width="16" height="16">${towerName(id, this.app.sim.challenge.guardian)} <span class="j-cost">${d.cost}</span></b><span>${signatureFor(id, this.app.sim.challenge.guardian)?.description ?? KEEPER_HELP[id]} ${LATE_TOWERS.includes(id) && !this.app.sim.challenge.depth ? `New games: available from wave ${this.app.sim.keeperWave(id)}.` : this.app.sim.keeperWave(id) > 1 ? `Available from wave ${this.app.sim.keeperWave(id)}.` : 'Available from the start.'} Paths: ${d.paths[0].name} or ${d.paths[1].name}.</span></div></div>`
       }).join('')}</div>`
     } else {
       const ids: EnemyId[] = JOURNAL_ORDER
@@ -763,7 +793,7 @@ export class Screens {
       heading = won ? (daily ? 'The tide is kept' : `Dawn: ${offer.name} kept`) : 'The lantern went out'
       body = won
         ? `${offer.name}, ${offer.when}. You kept ${sim.lives} of ${sim.maxLives} light.`
-        : `${offer.name}, ${offer.when}. You held ${held} of ${FINAL_WAVE - sim.waveOffset} ${daily ? 'tide waves' : 'waves'}.`
+        : `${offer.name}, ${offer.when}. You held ${held} of ${sim.finalWave - sim.waveOffset} ${daily ? 'tide waves' : 'waves'}.`
       if (record) body += record.improved ? (record.best.tries > 1 ? ' A new best.' : '') : ` Your best: ${resultLine(record.best).toLowerCase()}.`
     } else {
       heading = freeplay ? 'The long night ends' : won ? (sim.challenge.gardens ? 'Water Gardens is in bloom' : sim.challenge.harbour ? 'Lantern Harbour is safe' : 'Dawn: the lantern burns bright') : 'The lantern went out'
@@ -807,7 +837,7 @@ export class Screens {
           <div><b>${st.glowEarned}</b><span>Glow earned</span></div>
           <div><b>${mins}:${String(secs).padStart(2, '0')}</b><span>Night length</span></div>
         </div>
-        ${tip}${next}${bloomGoal}${featsHtml}
+        ${tip}${next}${sim.challenge.depth && !sim.isChallenge ? `<p class="battle-plan-note">${guardianNextGoal(progress, sim.challenge.guardian ?? 'lantern')}</p>` : bloomGoal}${featsHtml}
         <h3>Tonight's canal</h3>
         <figure class="postcard">
           <div class="pc-frame" role="img" aria-label="A picture of the canal as the night ended: the banks in bloom, your keepers and the Great Lantern."></div>

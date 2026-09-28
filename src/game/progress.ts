@@ -158,6 +158,8 @@ export const saveCoach = (c: Coach) => write(KEY_COACH, c)
 // ------------------------------------------------------------------ progress + feats
 
 export interface Progress {
+  guardianRecords?: Record<string, { waves: number; best: number; wins: number; maps: Record<string, { best: number; wins: number }> }>
+  masteryCredits?: Record<string, { held: number; won: boolean; guardian: string }>
   watchIndex?: number
   compactWins?: number
   settlement?: number
@@ -237,13 +239,34 @@ export function creditMilestones(sim: Sim): { feats: string[]; restorations: str
   const tests: Record<string, boolean> = { groundskeeper: !!sim.challenge.compact && (sim.stats.plotsUnlocked ?? 0) >= 3, crowned: sim.stats.maxTier >= 3, 'full-bloom': sim.stats.pops >= 1200, 'early-bird': sim.stats.earlyCalls >= 10 }
   for (const [id, passed] of Object.entries(tests)) if (passed && !p.feats[id]) { p.feats[id] = true; earned.feats.push(id) }
   const held = Math.min(sim.wave - (sim.over === 'lost' || sim.waveActive ? 1 : 0), ...[...sim.wavesPending].map(w => w - 1))
+  let masteryChanged = false
+  if (sim.challenge.depth && !sim.freeplay) {
+    const key = `${sim.seed}:${sim.challenge.variant ?? 0}:${sim.difficulty}`
+    const credits = p.masteryCredits ??= {}
+    const before = credits[key] ?? { held: 0, won: false, guardian: sim.challenge.guardian ?? 'lantern' }
+    const guardian = before.guardian ?? sim.challenge.guardian ?? 'lantern'
+    const record = (p.guardianRecords ??= {})[guardian] ??= { waves: 0, best: 0, wins: 0, maps: {} }
+    const oldTier = guardianMasteryTier(record.waves)
+    const delta = Math.max(0, Math.min(40, held) - before.held)
+    const win = sim.won && !before.won
+    if (delta || win) {
+      record.waves += delta; record.best = Math.max(record.best, Math.min(40, held)); record.wins += Number(win)
+      const map = record.maps[`${sim.challenge.variant ?? 0}:${sim.difficulty}`] ??= { best: 0, wins: 0 }
+      map.best = Math.max(map.best, Math.min(40, held)); map.wins += Number(win)
+      credits[key] = { held: Math.max(before.held, Math.min(40, held)), won: before.won || sim.won, guardian }
+      for (const old of Object.keys(credits).slice(0, -256)) delete credits[old]
+      const tier = guardianMasteryTier(record.waves)
+      if (tier > oldTier) earned.restorations.push(`${GUARDIAN_REWARDS[tier - 1].reward} earned for this guardian.`)
+      masteryChanged = true
+    }
+  }
   for (let i = p.settlement ?? 0; i < RESTORATIONS.length; i++) {
     const r = RESTORATIONS[i]
     const target = sim.challenge.compact ? [5, 10, 30, 40][i] : r.wave
     if (held < target || (!sim.challenge.compact && ((i >= 2 && !sim.challenge.harbour) || (i >= 3 && !sim.challenge.gardens)))) break
     p.settlement = i + 1; earned.restorations.push(r.reward)
   }
-  if (earned.feats.length || earned.restorations.length) saveProgress(p)
+  if (masteryChanged || earned.feats.length || earned.restorations.length) saveProgress(p)
   return earned
 }
 
@@ -253,8 +276,21 @@ export function masteryGoal(sim: Sim, p: Progress): string | null {
   if (sim.challenge.compact && !p.feats.groundskeeper) return `Unlock Tide Keeper · Buy plots: ${Math.min(3, sim.stats.plotsUnlocked ?? 0)}/3`
   if (!p.feats.crowned) return 'Unlock Ember Keeper · Buy a level 3 upgrade'
   if (!p.feats['full-bloom']) return `Unlock Reed Keeper · Defeat enemies: ${Math.min(1200, sim.stats.pops)}/1,200`
+  if (sim.challenge.depth) return guardianNextGoal(p, sim.challenge.guardian ?? 'lantern')
   if (!p.feats['early-bird'] && !sim.challenge.harbour && !sim.challenge.compact) return `Optional · Early Bird: ${Math.min(10, sim.stats.earlyCalls)}/10 early calls → village bunting`
   return null
+}
+
+export const GUARDIAN_REWARDS = [
+  { waves: 20, reward: 'Bronze portrait frame' },
+  { waves: 60, reward: 'Gold tower pennant' },
+  { waves: 120, reward: 'Festival lanterns' },
+] as const
+export const guardianMasteryTier = (waves: number) => GUARDIAN_REWARDS.filter(r => waves >= r.waves).length
+export function guardianNextGoal(p: Progress, guardian: string) {
+  const count = p.guardianRecords?.[guardian]?.waves ?? 0
+  const next = GUARDIAN_REWARDS.find(r => count < r.waves)
+  return next ? `${next.reward} · ${count}/${next.waves} waves cleared with this guardian` : 'Guardian collection complete · try another map or difficulty'
 }
 
 /** Free play after a win only extends a finished run: record the best free-play wave, nothing else. */

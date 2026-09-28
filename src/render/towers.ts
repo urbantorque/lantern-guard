@@ -12,6 +12,8 @@ import { FAMILY_COLOR, glowSprite, mix, P, withAlpha } from './palette'
  */
 
 export interface TowerLook {
+  refinement?: number
+  mastery?: number
   guardian?: GuardianId
   id: TowerId
   a: number
@@ -318,6 +320,12 @@ export function drawTower(ctx: CanvasRenderingContext2D, x: number, y: number, L
   ctx.translate(x, y)
   ctx.scale(pop * (1 + upK * 0.12), pop * (1 - upK * 0.1 + kick * 0.05))
   switch (L.id) {
+    case 'storm':
+      drawStorm(ctx, L)
+      break
+    case 'ballista':
+      drawBallista(ctx, L, kick)
+      break
     case 'wick':
       drawWick(ctx, L, kick)
       break
@@ -336,6 +344,22 @@ export function drawTower(ctx: CanvasRenderingContext2D, x: number, y: number, L
     case 'garden':
       drawGarden(ctx, L)
       break
+  }
+  const rank = L.refinement ?? 0
+  if (rank > 0) {
+    // Broad brass brackets and a row of gems read as permanent upgrades at phone size.
+    ctx.strokeStyle = rank >= 3 ? '#f7e4a9' : '#bca26c'; ctx.lineWidth = 4
+    for (const side of [-1, 1]) {
+      ctx.beginPath(); ctx.moveTo(side * 20, 6); ctx.lineTo(side * 29, -2); ctx.lineTo(side * 29, -14 - rank * 3); ctx.stroke()
+    }
+    ctx.fillStyle = keeperHue(L.id)
+    for (let i = 0; i < rank; i++) {
+      const x = (i - (rank - 1) / 2) * 9
+      ctx.beginPath(); ctx.moveTo(x, -3); ctx.lineTo(x + 3.5, 1); ctx.lineTo(x, 5); ctx.lineTo(x - 3.5, 1); ctx.closePath(); ctx.fill()
+    }
+  }
+  if ((L.mastery ?? 0) >= 2 && (signatureFor(L.id, L.guardian) || !L.guardian && L.id === 'wick')) {
+    ctx.fillStyle = '#f6df94'; ctx.beginPath(); ctx.moveTo(23, -36); ctx.lineTo(37, -36); ctx.lineTo(31, -28); ctx.lineTo(37, -20); ctx.lineTo(23, -20); ctx.closePath(); ctx.fill()
   }
   if (signatureFor(L.id, L.guardian)) {
     // Broad, quiet silhouette changes remain legible at phone size.
@@ -359,6 +383,35 @@ export function drawTower(ctx: CanvasRenderingContext2D, x: number, y: number, L
   }
   ctx.restore()
   if (upK > 0) glow(ctx, x, y - 24, 72, keeperHue(L.id), upK * 0.75)
+}
+
+function drawStorm(ctx: CanvasRenderingContext2D, L: TowerLook) {
+  const tier = Math.max(L.a, L.b), forks = L.a >= 3 ? 5 : L.a ? 4 : 3
+  ctx.fillStyle = '#365654'; ctx.beginPath(); ctx.roundRect(-19, -13, 38, 22, 7); ctx.fill()
+  ctx.strokeStyle = '#70afa0'; ctx.lineWidth = 5; ctx.lineCap = 'round'
+  for (let i = 0; i < forks; i++) {
+    const x = (i - (forks - 1) / 2) * 13, h = 43 + tier * 5 - Math.abs(x) * .4
+    ctx.beginPath(); ctx.moveTo(x * .4, -5); ctx.quadraticCurveTo(x * .6, -30, x, -h); ctx.stroke()
+    glow(ctx, x, -h, L.since < .2 ? 22 : 13, P.ice, .45)
+    ctx.fillStyle = L.b >= 2 ? '#fff0bb' : '#b7f5ee'; ctx.beginPath(); ctx.moveTo(x, -h - 9); ctx.lineTo(x + 5, -h); ctx.lineTo(x, -h + 6); ctx.lineTo(x - 5, -h); ctx.closePath(); ctx.fill()
+  }
+  face(ctx, 0, -4, 4)
+}
+
+function drawBallista(ctx: CanvasRenderingContext2D, L: TowerLook, kick: number) {
+  const tier = Math.max(L.a, L.b)
+  ctx.fillStyle = '#6b5649'; ctx.beginPath(); ctx.roundRect(-19, -14, 38, 23, 5); ctx.fill()
+  ctx.fillStyle = '#d6bd8b'; ctx.fillRect(-7, -31, 14, 26)
+  ctx.save(); ctx.translate(0, -28 + kick * 4); ctx.rotate(L.angle + Math.PI / 2)
+  ctx.strokeStyle = L.a >= 2 ? '#efdcb2' : '#a17c52'; ctx.lineWidth = 7 + tier
+  ctx.beginPath(); ctx.moveTo(-28 - tier * 3, -10); ctx.quadraticCurveTo(0, -28, 28 + tier * 3, -10); ctx.stroke()
+  ctx.strokeStyle = '#e7d8b5'; ctx.lineWidth = 2
+  ctx.beginPath(); ctx.moveTo(-28 - tier * 3, -10); ctx.lineTo(0, 6 + kick * 5); ctx.lineTo(28 + tier * 3, -10); ctx.stroke()
+  ctx.fillStyle = '#8d714f'; ctx.fillRect(-5, -20, 10, 34)
+  ctx.strokeStyle = '#f9e2ac'; ctx.lineWidth = 4
+  ctx.beginPath(); ctx.moveTo(0, 5); ctx.lineTo(0, -29); ctx.stroke()
+  ctx.fillStyle = '#edf5ef'; ctx.beginPath(); ctx.moveTo(0, -37); ctx.lineTo(6, -24); ctx.lineTo(-6, -24); ctx.closePath(); ctx.fill()
+  ctx.restore(); face(ctx, 0, -4, 4)
 }
 
 function drawWick(ctx: CanvasRenderingContext2D, L: TowerLook, kick: number) {
@@ -1324,6 +1377,8 @@ function drawGarden(ctx: CanvasRenderingContext2D, L: TowerLook) {
 /** Rough extent above the base [top, half width] of a keeper, for portrait framing. */
 function extent(id: TowerId, a: number, b: number): [number, number] {
   switch (id) {
+    case 'storm': return [75, 38]
+    case 'ballista': return [78, 43]
     case 'wick':
       return [b >= 3 ? 64 : b >= 1 ? 58 : a >= 3 ? 56 : 46, a >= 3 ? 37 : a >= 1 ? 30 : 16]
     case 'cracker':

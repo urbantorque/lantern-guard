@@ -308,6 +308,8 @@ function chooseType(sim: Sim, o: BotOpts): TowerId {
   if (n.fast > 0 && have('bell') < 1 + Math.floor(sim.wave / 12)) want.push(['bell', 2])
   if (n.big > 8 && have('beam') < 1 + Math.floor(sim.wave / 8)) want.push(['beam', 3])
   want.push(['wick', 1], ['cracker', 1], ['beam', 0.8], ['bell', 0.5], ['owl', 0.5])
+  if (o.mix.storm && !have('storm')) want.push(['storm', 4])
+  if (o.mix.ballista && !have('ballista')) want.push(['ballista', 4])
   let best: TowerId = (['wick', 'cracker', 'beam', 'bell', 'owl'] as TowerId[]).find(ok) ?? 'wick'
   let bs = -1
   for (const [id, w] of want) {

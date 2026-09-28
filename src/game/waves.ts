@@ -11,6 +11,7 @@ export interface Group {
 }
 
 export interface WaveDef {
+  encounter?: string
   groups: Group[]
   /** Short coaching line shown as the wave starts (first-session guidance). */
   note?: string
