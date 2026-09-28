@@ -27,6 +27,7 @@ export interface BotOpts {
   reaction?: number
   /** Calls waves early when idle. */
   early?: boolean
+  freezeAt?: number
   maxTowers?: number
   /** Send weak Mopes down rich channels for extra glow. */
   greed?: boolean
@@ -170,7 +171,7 @@ function pathDamage(sim: Sim, segIds: string[], e: Enemy): number {
 }
 
 /** The short, double-glow branch of a lock. */
-const richDir = (sim: Sim, g: GateState): 0 | 1 => (sim.level.segs.get(g.def.outs[0])!.bonus > 1 ? 0 : 1)
+const richDir = (sim: Sim, g: GateState): 0 | 1 => ((sim.challenge.compact ? !!sim.level.segs.get(g.def.outs[0])!.feature : sim.level.segs.get(g.def.outs[0])!.bonus > 1) ? 0 : 1)
 
 /** Greed with judgment: a rich run only for a Mope its keepers will surely cheer up (escapees there cost double). */
 function surelyDies(sim: Sim, g: GateState, rich: 0 | 1, e: Enemy): boolean {
@@ -202,7 +203,7 @@ function wantDir(sim: Sim, g: GateState, e: Enemy, greed: boolean): 0 | 1 {
   const ft = sim.level.segs.get(g.def.outs[rich])!.feature
   if (ft?.kind === 'reveal' && e.def.hidden && !e.revealedPerm) return rich
   if (ft?.kind === 'crack' && e.shell > 0) return rich
-  if (greed && surelyDies(sim, g, rich, e)) return rich
+  if (!sim.challenge.compact && greed && surelyDies(sim, g, rich, e)) return rich
   return safe
 }
 
@@ -282,11 +283,11 @@ function needs(sim: Sim) {
     for (const g of def.groups) {
       const t = g.type
       n.count += g.count
-      if (t === 'shell' || t === 'vshell') n.shell += g.count
+      if (t === 'shell' || t === 'vshell' || (sim.challenge.compact && (t === 'skiff' || t === 'reedling'))) n.shell += g.count
       if (t === 'veil' || t === 'vshell') n.veil += g.count
       if (t === 'wisp') n.swarm += g.count
       if (t === 'skitter') n.fast += g.count
-      if (t === 'bloat' || t === 'toad' || t === 'gloom' || t === 'mender') n.big += g.count * (t === 'toad' ? 20 : t === 'gloom' ? 60 : 1)
+      if (t === 'bloat' || t === 'toad' || t === 'gloom' || t === 'mender' || (sim.challenge.compact && (t === 'warden' || t === 'bloomheart'))) n.big += g.count * (t === 'toad' ? 20 : t === 'gloom' ? 60 : 1)
     }
   }
   return n
@@ -297,6 +298,7 @@ function chooseType(sim: Sim, o: BotOpts): TowerId {
   if (sim.towers.filter((t) => t.id !== 'garden').length < 2 && !(o.ban ?? []).includes('wick') && sim.keeperAllowed('wick')) return 'wick'
   const have = (id: TowerId) => sim.towers.filter((t) => t.id === id).length
   const n = needs(sim)
+  if (sim.challenge.compact && n.veil > 0 && !sim.towers.some(t => t.id === 'owl') && !(o.ban ?? []).includes('owl') && sim.keeperAllowed('owl')) return 'owl'
   const want: [TowerId, number][] = []
   const ok = (id: TowerId) => !(o.ban ?? []).includes(id) && sim.keeperAllowed(id)
   const heavy = sim.towers.filter((t) => t.stats.heavy).length
@@ -310,6 +312,7 @@ function chooseType(sim: Sim, o: BotOpts): TowerId {
   let bs = -1
   for (const [id, w] of want) {
     if (!ok(id)) continue
+    if (sim.challenge.compact && ((id === 'owl' && have('owl') >= 2) || (id === 'bell' && have('bell') >= 2))) continue
     const s = w * (o.mix[id] ?? 1)
     if (s > bs) {
       bs = s
@@ -336,21 +339,29 @@ function bestPad(sim: Sim, id: TowerId, wave: number): number {
 }
 
 function spend(sim: Sim, o: BotOpts) {
+  if (o.freezeAt !== undefined && sim.wave >= o.freezeAt) return
   for (let guard = 0; guard < 20; guard++) {
+    if (sim.challenge.compact && !sim.waveActive && !sim.pads.some((p, i) => !p.tower && sim.padAvailable(i))) {
+      const want = chooseType(sim, o)
+      const candidates = sim.pads.map((_, i) => ({ i, cost: sim.plotCost(i), score: padScore(sim, i, TOWERS[want].base.range ?? 150, sim.wave + 1) }))
+        .filter(p => p.cost !== null && sim.glow >= p.cost + TOWERS[want].cost)
+        .sort((a, b) => b.score - a.score)
+      if (candidates.length && sim.towers.length < (o.maxTowers ?? 14) + (o.gardens ?? 0)) { sim.unlockPlot(candidates[0].i); continue }
+    }
     const gardens = sim.towers.filter((t) => t.id === 'garden').length
     // early gardens
     if (gardens < (o.gardens ?? 0) && sim.wave >= 2 && !(o.ban ?? []).includes('garden') && sim.keeperAllowed('garden')) {
       if (sim.glow < TOWERS.garden.cost) return
       const pad = bestPad(sim, 'garden', sim.wave + 1)
-      if (pad >= 0) sim.build(pad, 'garden')
-      continue
+      if (pad >= 0) { sim.build(pad, 'garden'); continue }
+      if (!sim.challenge.compact) continue
     }
     const nonEco = sim.towers.filter((t) => t.id !== 'garden').length
     const target = Math.min(o.maxTowers ?? 14, 2 + Math.floor(sim.wave * 0.55))
     const wantType = chooseType(sim, o)
     const n = needs(sim)
     const urgent = (n.shell > 0 && !sim.towers.some((t) => t.stats.heavy)) || (n.veil > 0 && !sim.towers.some((t) => t.id === 'owl' || t.stats.detect))
-    if ((nonEco < target || urgent) && sim.pads.some((p) => !p.tower)) {
+    if ((nonEco < target || urgent) && sim.pads.some((p, i) => !p.tower && (!sim.challenge.compact || sim.padAvailable(i)))) {
       if (sim.glow < TOWERS[wantType].cost) return
       const pad = bestPad(sim, wantType, sim.wave + 1)
       if (pad < 0) return
@@ -387,7 +398,11 @@ function spend(sim: Sim, o: BotOpts) {
       sim.upgrade(pick.t, pick.path)
       continue
     }
-    if (!pick && sim.pads.some((p) => !p.tower)) {
+    if (sim.challenge.compact) {
+      const refinable = sim.towers.filter(t => sim.refinementCost(t) !== null).sort((a, b) => (a.id === 'garden' ? 1 : 0) - (b.id === 'garden' ? 1 : 0))
+      if (refinable.some(t => sim.refine(t))) continue
+    }
+    if (!pick && sim.pads.some((p, i) => !p.tower && (!sim.challenge.compact || sim.padAvailable(i)))) {
       if (sim.glow < TOWERS[wantType].cost) return
       const pad = bestPad(sim, wantType, sim.wave + 1)
       if (pad >= 0) sim.build(pad, wantType)

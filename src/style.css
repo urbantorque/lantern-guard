@@ -2308,3 +2308,16 @@ html.reduce-motion .stat-light.hurt {
 .guardian-break summary { cursor:pointer; min-height:44px; display:flex; align-items:center; color:var(--amber); }
 .guardian-break button[aria-pressed="true"] { border-color:var(--amber); background:#334035; }
 .settlement-card p { font-size:14px; }
+
+/* Paid plots and late refinements use the same compact action sheet. */
+.plot-note { margin:8px 4px 14px; color:var(--text-2); font-size:13px; line-height:1.45; }
+.refine-btn { display:flex; flex-direction:column; width:100%; gap:4px; min-height:52px; margin:8px 0 4px; padding:10px; border:1px solid var(--amber); border-radius:10px; background:#28382f; color:var(--text); text-align:left; }
+.refine-btn b { font-size:13px; }
+.refine-btn span { font-size:12px; line-height:1.35; color:var(--text-2); }
+.refine-btn:disabled { opacity:.55; cursor:default; }
+.tower-sheet.manage-open .refine-btn { display:none; }
+[data-clear-plot] { width:100%; min-height:48px; }
+.big-text .refine-btn span, .big-text .plot-note { font-size:14px; }
+
+/* Close and Manage stay reachable when a short phone scrolls its upgrade sheet. */
+.tower-sheet .sh-head { position:sticky; top:-4px; z-index:2; background:var(--panel); padding:4px 0; }

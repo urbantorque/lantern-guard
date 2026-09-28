@@ -1,10 +1,11 @@
+import { compactNext, PLOTS, REFINEMENTS, refinementHelp } from './game/compact'
 import { gardensStatus } from './game/gardens'
 import { GUARDIANS, guardianUnlocked, type GuardianId } from './game/guardians'
 import { migrateSlots, selectSlot, saveHealth, type RunSlot } from './game/save-store'
 import { watchAppState } from './core/platform'
 import { sound } from './core/audio'
 import { canUpgrade, CHARM_COST, CHARM_ORDER, DIFFICULTY, ENEMIES, TOWER_ORDER, TOWERS, type CharmTrait, type Difficulty, type EnemyId, type Priority, type TowerId } from './game/defs'
-import { CANAL_STAGES, KEEPER_HELP, KEEPER_ROLE, KEEPER_WAVE } from './game/canal-growth'
+import { CANAL_STAGES, KEEPER_HELP, KEEPER_ROLE } from './game/canal-growth'
 import { comboHint, routeCoverage } from './game/route-plan'
 import { leakAdvice, waveHighlight } from './game/feedback'
 import { wardenStatus } from './game/harbour'
@@ -25,6 +26,7 @@ import {
   recordResume,
   recordRun,
   saveCoach,
+  saveProgress,
   saveRun,
   saveSettings,
   type ChallengeResult,
@@ -85,7 +87,7 @@ export class App {
   paused = false
   mode: 'title' | 'play' | 'over' = 'title'
   /** Which dock sheet is open: a keeper (via view.selection) or the lock charms. */
-  sheetMode: 'none' | 'tower' | 'charms' | 'routes' = 'none'
+  sheetMode: 'none' | 'tower' | 'charms' | 'routes' | 'plot' = 'none'
   private acc = 0
   private last = performance.now()
   private hudCache: Record<string, string | number | boolean> = {}
@@ -128,7 +130,7 @@ export class App {
     this.settings = loadSettings()
     this.coach = loadCoach()
     this.renderer = new Renderer($<HTMLCanvasElement>('cv'))
-    this.sim = new Sim('standard', { expanding: 1, guard: 1 })
+    this.sim = new Sim('standard', { compact: 1, variant: 0, guard: 1 })
     this.renderer.attach(this.sim)
     this.screens = new Screens(this)
     this.applySettings()
@@ -215,7 +217,11 @@ export class App {
     selectSlot('campaign')
     this.leaveRun()
     clearRun()
-    this.sim = new Sim(difficulty, { expanding: 1, guard: 1, ...(this.settings.guardian && guardianUnlocked(this.settings.guardian, loadProgress().feats) ? { guardian: this.settings.guardian } : {}) }, 7)
+    const progress = loadProgress()
+    const watch = Number.isSafeInteger(progress.watchIndex) && progress.watchIndex! >= 0 ? progress.watchIndex! : 0
+    progress.watchIndex = watch + 1
+    saveProgress(progress)
+    this.sim = new Sim(difficulty, { compact: 1, variant: watch % 3, guard: 1, ...(this.settings.guardian && guardianUnlocked(this.settings.guardian, progress.feats) ? { guardian: this.settings.guardian } : {}) }, 7 + watch * 997)
     this.startRun()
     this.persist(true)
   }
@@ -302,8 +308,8 @@ export class App {
     this.screens.close()
     this.buildDock()
     this.refreshDock(true)
-    if (!this.coach.tutorialDone && this.sim.challenge.expanding && !this.sim.wave && !this.sim.towers.length) {
-      this.select({ kind: 'pad', index: 12 })
+    if (!this.coach.tutorialDone && (this.sim.challenge.expanding || this.sim.challenge.compact) && !this.sim.wave && !this.sim.towers.length) {
+      this.select({ kind: 'pad', index: this.sim.challenge.compact ? 0 : 12 })
       this.view.preview = 'wick'
     }
     this.updateCoach()
@@ -316,7 +322,7 @@ export class App {
     this.paused = false
     this.view.paused = false
     const snap = loadRun('campaign') ?? loadRun('challenge')
-    this.sim = snap ? Sim.restore(snap) : new Sim('standard', { expanding: 1, guard: 1 })
+    this.sim = snap ? Sim.restore(snap) : new Sim('standard', { compact: 1, variant: 0, guard: 1 })
     this.renderer.attach(this.sim)
     this.closeSheet()
     this.clearMessages()
@@ -453,6 +459,7 @@ export class App {
   private onEvents(events: SimEvent[]) {
     const firstRuns = loadProgress().runs < 2
     for (const ev of events) {
+      let milestoneMessage = ''
       switch (ev.t) {
         case 'waveStart': {
           const def = this.sim.waveDef(ev.n)
@@ -471,7 +478,7 @@ export class App {
           break
         }
         case 'waveEnd':
-          this.updateMilestones()
+          milestoneMessage = this.updateMilestones() ?? ''
           if (!this.sim.waveActive && !this.sim.lastLeak && ev.n >= 7 && !this.sim.over) this.toast(waveHighlight(this.sim, ev.n), 4200)
           if (!this.sim.waveActive && this.sim.lastLeak && !this.sim.over) {
             this.view.feedbackRoute = this.sim.lastLeak.route
@@ -479,8 +486,8 @@ export class App {
           }
           if (ev.n === 1) { this.coach.tutorialDone = true; saveCoach(this.coach) }
           this.persist(true)
-          if (this.sim.challenge.expanding && !this.sim.waveActive && ev.n !== 5) {
-            const joined = TOWER_ORDER.find(id => KEEPER_WAVE[id] === ev.n + 1)
+          if ((this.sim.challenge.expanding || this.sim.challenge.compact) && !this.sim.waveActive && ev.n !== 5) {
+            const joined = TOWER_ORDER.find(id => this.sim.keeperWave(id) === ev.n + 1)
             if (joined) this.toast(`${TOWERS[joined].name} is ready. ${KEEPER_HELP[joined]}`, 4500)
           }
           if (ev.n === 3 && !this.coach.upgraded) this.toast('Tip: tap a keeper to see its upgrades.', 3500)
@@ -489,6 +496,11 @@ export class App {
             this.coach.charmSeen = true
             saveCoach(this.coach)
           }
+          if (this.sim.challenge.compact && !this.sim.waveActive && [5, 10, 15, 20, 25].includes(ev.n)) {
+            const reward = ev.n === 25 ? 'Ascendant upgrades are ready for mastered towers. Skiffs arrive next.' : ev.n === 15 ? 'Mastery upgrades and two new plots are ready. Tap a tier-three tower or a dashed + plot.' : 'Two new plots are ready. Tap a dashed + to see its clearing cost, or keep investing in upgrades.'
+            this.toast(reward, 5500)
+          }
+          if (milestoneMessage) this.toast(milestoneMessage, 6000)
           this.updateCoach()
           break
         case 'expand': {
@@ -537,6 +549,7 @@ export class App {
           break
         }
         case 'source':
+          if (this.sim.challenge.compact) { this.banner('The side inlet opens', 'A second approach on the same board. Check your tower coverage.', 3600); break }
           this.banner('The West Sluice opens', 'Its Mopes join the middle channel and skip the Upper Lock.', 4200)
           break
         case 'jam': {
@@ -553,7 +566,7 @@ export class App {
           if (!ev.boss || this.noteWave === this.sim.wave) break
           if (ev.type === 'gloom') this.banner('Old Gloom rises', 'It splits in two at the Lower Lock.', 3600)
           else if (ev.type === 'bloomheart') this.banner('Bloomheart', 'Its ring counts down to a healing pulse. Clear nearby Mopes before it lands.', 4200)
-          else if (ev.type === 'warden') this.banner('The Harbour Warden', this.sim.challenge.harbourEncounters ? 'Watch its signal and clear the linked escorts.' : 'It launches Skiffs and surges at half health.', 3600)
+          else if (ev.type === 'warden') this.banner('The Harbour Warden', (this.sim.challenge.harbourEncounters || this.sim.challenge.compact) ? 'Watch its signal and clear the linked escorts.' : 'It launches Skiffs and surges at half health.', 3600)
           else this.banner('Gloomtoad!', 'It jams any lock it sits on.', 2400)
           break
       }
@@ -666,9 +679,10 @@ export class App {
     this.renderer.settlement = p.settlement ?? 0
     this.renderer.bunting = !!p.feats['early-bird']
     if (!announce) return
-    const rewards: Record<string, string> = { crowned: 'Ember Keeper unlocked', 'full-bloom': 'Reed Keeper unlocked', 'early-bird': 'Village bunting unlocked' }
+    const rewards: Record<string, string> = { groundskeeper: 'Tide Keeper unlocked', crowned: 'Ember Keeper unlocked', 'full-bloom': 'Reed Keeper unlocked', 'early-bird': 'Village bunting unlocked' }
     const words = [...earned.restorations, ...earned.feats.map(id => `${FEATS.find(f => f.id === id)!.name}: ${rewards[id]}.`)]
     if (words.length) this.toast(words.join(' '), 6000)
+    return words.join(' ')
   }
 
   // ------------------------------------------------------------------ actions
@@ -800,7 +814,7 @@ export class App {
   private keeperBarred(id: TowerId): string | null {
     const sim = this.sim
     if (sim.keeperAllowed(id)) return null
-    if (sim.challenge.expanding && sim.planningWave < KEEPER_WAVE[id]) return `${TOWERS[id].name} joins before wave ${KEEPER_WAVE[id]}.`
+    if ((sim.challenge.expanding || sim.challenge.compact) && sim.planningWave < sim.keeperWave(id)) return `${TOWERS[id].name} joins before wave ${sim.keeperWave(id)}.`
     const k = sim.challenge.keepers
     if (k && !k.includes(id)) return `Tonight only ${k.map((q) => TOWERS[q].name).join(', ')} can be built.`
     return `No ${TOWERS[id].name}s tonight.`
@@ -808,6 +822,7 @@ export class App {
 
   build(padIndex: number, id: TowerId) {
     const sim = this.sim
+    if (sim.plotCost(padIndex) !== null) { this.select({ kind: 'pad', index: padIndex }); return }
     const barred = this.keeperBarred(id)
     if (barred) {
       sound.deny()
@@ -901,7 +916,8 @@ export class App {
     this.view.selection = sel
     this.view.routeDir = undefined
     if (!sel || sel.kind !== 'pad') this.view.preview = null
-    this.sheetMode = sel?.kind === 'tower' ? 'tower' : 'none'
+    this.sheetMode = sel?.kind === 'tower' ? 'tower' : sel?.kind === 'pad' && this.sim.plotCost(sel.index) !== null ? 'plot' : 'none'
+    if (this.sheetMode === 'plot') { this.view.armed = null; this.view.preview = null; this.clearMessages() }
     this.sheetKey = ''
     this.refreshSheet()
     this.updateCoach()
@@ -1086,7 +1102,7 @@ export class App {
   private mapTargets(): MapTarget[] {
     if (this.renderer.zone === 'overview') return []
     const sim = this.sim
-    return [...sim.pads.map((p, i) => ({ kind: 'pad' as const, index: i, x: p.x, y: p.y })).filter(p => sim.padAvailable(p.index)), ...sim.gates.filter(g => sim.gateAvailable(g)).map((g) => ({ kind: 'gate' as const, gate: g, x: g.def.x, y: g.def.y - 26 }))].filter(p => {
+    return [...sim.pads.map((p, i) => ({ kind: 'pad' as const, index: i, x: p.x, y: p.y })).filter(p => sim.padRevealed(p.index)), ...sim.gates.filter(g => sim.gateAvailable(g)).map((g) => ({ kind: 'gate' as const, gate: g, x: g.def.x, y: g.def.y - 26 }))].filter(p => {
       const screen = this.renderer.toScreen(p.x, p.y)
       return screen.x >= 0 && screen.x <= $('field').clientWidth && screen.y >= 0 && screen.y <= $('field').clientHeight
     })
@@ -1148,7 +1164,7 @@ export class App {
         else if (this.view.armed) this.build(t.index, this.view.armed)
         else {
           this.select({ kind: 'pad', index: t.index })
-          this.toast('Pad selected. Press 1 to 6 to build a keeper here.', 2600)
+          if (this.sim.padAvailable(t.index)) this.toast('Pad selected. Press 1 to 6 to build a keeper here.', 2600)
         }
       }
       return
@@ -1189,7 +1205,7 @@ export class App {
       }
       sound.tap()
       this.select(sel)
-      if (!this.coach.built) this.toast(this.pointerType === 'mouse' ? 'Now choose a keeper below.' : 'Now pick a keeper below, then tap it again to build.', 3600)
+      if (this.sim.padAvailable(sel.index) && !this.coach.built) this.toast(this.pointerType === 'mouse' ? 'Now choose a keeper below.' : 'Now pick a keeper below, then tap it again to build.', 3600)
       return
     }
     sound.tap()
@@ -1385,6 +1401,7 @@ export class App {
   }
 
   private waveSource(west: boolean) {
+    if (this.sim.challenge.compact) return west ? ' from the side inlet' : ''
     return this.sim.challenge.gardens ? (west ? ' from the East garden' : ' from the West garden') : west ? ' from the West Sluice' : ''
   }
 
@@ -1412,7 +1429,7 @@ export class App {
         .map((g) => {
           const boss = !!ENEMIES[g.id].boss
           const name = ENEMIES[g.id].name
-          return `<button class="chip ${boss ? 'boss' : ''}" data-id="${g.id}" aria-label="${g.count} ${name}${g.count > 1 ? 's' : ''}${this.waveSource(g.west)}${boss ? ', boss' : ''}"><img src="${enemyIcon(g.id)}" alt="" width="24" height="24">${g.count > 1 ? '×' + g.count : ''}${sim.challenge.gardens ? `<span class="w">${g.west ? 'E' : 'W'}</span>` : g.west ? '<span class="w">W</span>' : ''}</button>`
+          return `<button class="chip ${boss ? 'boss' : ''}" data-id="${g.id}" aria-label="${g.count} ${name}${g.count > 1 ? 's' : ''}${this.waveSource(g.west)}${boss ? ', boss' : ''}"><img src="${enemyIcon(g.id)}" alt="" width="24" height="24">${g.count > 1 ? '×' + g.count : ''}${sim.challenge.gardens ? `<span class="w">${g.west ? 'E' : 'W'}</span>` : g.west ? `<span class="w">${sim.challenge.compact ? 'S' : 'W'}</span>` : ''}</button>`
         })
         .join('')
     el.setAttribute('aria-label', `Next wave: ${list.map((g) => `${g.count} ${ENEMIES[g.id].name}`).join(', ')}`)
@@ -1420,7 +1437,7 @@ export class App {
       b.addEventListener('click', () => {
         const d = ENEMIES[b.dataset.id as EnemyId]
         sound.tap()
-        this.toast(`${d.name}: ${d.id === 'warden' && this.sim.challenge.harbourEncounters ? 'Signals four Skiffs at 70% health. Linked escorts reduce damage by 40%. Clear them with bursts; it surges at 35%.' : d.tip}`, 4600)
+        this.toast(`${d.name}: ${d.id === 'warden' && (this.sim.challenge.harbourEncounters || this.sim.challenge.compact) ? 'Signals four Skiffs at 70% health. Linked escorts reduce damage by 40%. Clear them with bursts; it surges at 35%.' : d.tip}`, 4600)
       }),
     )
     this.fitPreview(el, list)
@@ -1443,7 +1460,7 @@ export class App {
     const rest = list.slice(list.length - hidden)
     more.addEventListener('click', () => {
       sound.tap()
-      this.toast(`Also coming: ${rest.map((g) => `${g.count} ${ENEMIES[g.id].name}${g.count > 1 ? 's' : ''}${g.west ? ' from the West Sluice' : ''}`).join(', ')}.`, 4200)
+      this.toast(`Also coming: ${rest.map((g) => `${g.count} ${ENEMIES[g.id].name}${g.count > 1 ? 's' : ''}${this.waveSource(g.west)}`).join(', ')}.`, 4200)
     })
   }
 
@@ -1483,7 +1500,7 @@ export class App {
         const charmNote = g.charm ? ` Charm: ${CHARM_LABEL[g.charm.trait]} always take the ${g.def.labels[g.charm.dir]}.` : ''
         const nextNote = next.length ? ` Next: ${next.map((e) => e.def.name).join(', ')}.` : ''
         const tidalNote = sim.challenge.tidal && !locked ? ` Tidal lock: its short run swings shut ${sim.challenge.tidal} seconds after you open it.` : ''
-        b.setAttribute('aria-label', `${g.def.name}: ${locked ? (sim.challenge.lockedGates ? 'fixed tonight' : `opens at wave ${g.def.unlockWave}`) : g.jammed ? 'jammed' : 'sending Mopes along the ' + g.def.labels[dir] + (rich ? ', double glow and double light lost on escape' : ', long route with more time to attack')}.${charmNote}${tidalNote}${nextNote} ${action}`)
+        b.setAttribute('aria-label', `${g.def.name}: ${locked ? (sim.challenge.lockedGates ? 'fixed tonight' : `opens at wave ${g.def.unlockWave}`) : g.jammed ? 'jammed' : 'sending Mopes along the ' + g.def.labels[dir] + (sim.challenge.compact ? ', ' + g.def.blurbs[dir].replace(/\.$/, '') : rich ? ', double glow and double light lost on escape' : ', long route with more time to attack')}.${charmNote}${tidalNote}${nextNote} ${action}`)
       }
       const cd = b.querySelector('.cd') as HTMLElement
       const w = g.cd > 0 ? `${(g.cd / 0.9) * 100}%` : '0%'
@@ -1499,7 +1516,7 @@ export class App {
       const def = TOWERS[id]
       const poor = sim.glow < def.cost
       const disabled = !sim.keeperAllowed(id)
-      b.hidden = !!sim.challenge.expanding && sim.planningWave < KEEPER_WAVE[id]
+      b.hidden = !!(sim.challenge.expanding || sim.challenge.compact) && sim.planningWave < sim.keeperWave(id)
       b.setAttribute('aria-disabled', String(disabled))
       const key = `${poor}|${this.view.armed === id}|${this.view.preview === id}|${disabled}`
       if (!force && b.dataset.key === key) return
@@ -1514,7 +1531,14 @@ export class App {
     $('tray').style.setProperty('--keeper-count', String(this.trayBtns.filter(b => !b.hidden).length))
     $('gates').classList.toggle('one-lock', sim.gates.filter(g => sim.gateAvailable(g)).length === 1)
     const progress = $('canal-progress')
-    progress.hidden = !sim.challenge.expanding
+    progress.hidden = !(sim.challenge.expanding || sim.challenge.compact)
+    if (sim.challenge.compact) {
+      const available = sim.pads.filter((_, i) => sim.plotCost(i) !== null).length
+      const next = (!sim.waveActive && available ? `${available} plots to clear · ` : '') + compactNext(sim.wave)
+      const text = gardensStatus(sim) ?? wardenStatus(sim) ?? (sim.waveActive ? compactNext(sim.wave) : sim.planningWave <= 2 ? 'Tap a stone circle to build. Bright water shows your reach.' : sim.planningWave === 5 ? 'Armour next · the mill cracks shells; Crackers also help.' : sim.planningWave === 8 ? 'Hidden enemies next · use Owl sight or the Lantern bridge.' : next)
+      progress.classList.toggle('planning-tip', !sim.waveActive)
+      if (progress.textContent !== text) progress.textContent = text
+    }
     if (sim.challenge.expanding) {
       const stage = CANAL_STAGES[sim.canalStage]
       const advice: Record<number, string> = {
@@ -1557,7 +1581,9 @@ export class App {
     let key = 'none'
     if (this.sheetMode === 'tower' && this.view.selection?.kind === 'tower') {
       const t = this.view.selection.tower
-      key = `t|${t.uid}|${t.a}|${t.b}|${t.priority}`
+      key = `t|${t.uid}|${t.a}|${t.b}|${t.priority}|${t.refinement}|${sim.planningWave >= 16}|${sim.planningWave >= 26}`
+    } else if (this.sheetMode === 'plot' && sel?.kind === 'pad') {
+      key = `p|${sel.index}|${sim.waveActive}|${sim.glow >= (sim.plotCost(sel.index) ?? Infinity)}`
     } else if (this.sheetMode === 'charms') {
       key = `c|${sim.gates.map((g) => `${g.charm?.trait}${g.charm?.dir}${sim.gateLocked(g)}${this.pendingTrait[g.def.id] ?? ''}`).join('|')}|${sim.glow >= CHARM_COST}`
     } else if (this.sheetMode === 'routes' && sel?.kind === 'gate') {
@@ -1584,12 +1610,13 @@ export class App {
       const focusKey = (document.activeElement as HTMLElement | null)?.dataset?.focuskey
       if (!wasOpen) this.sheetOpenedAt = performance.now()
       sheet.hidden = false
-      sheet.classList.toggle('tower-sheet', this.sheetMode === 'tower')
+      sheet.classList.toggle('tower-sheet', this.sheetMode === 'tower' || this.sheetMode === 'plot')
       sheet.classList.toggle('route-sheet', this.sheetMode === 'routes')
       sheet.classList.remove('manage-open')
       $('planbar').inert = this.sheetMode === 'tower' && getComputedStyle(sheet).position !== 'static'
       tray.hidden = true
       if (this.sheetMode === 'tower' && this.view.selection?.kind === 'tower') this.renderTowerSheet(sheet, this.view.selection.tower)
+      else if (this.sheetMode === 'plot' && sel?.kind === 'pad') this.renderPlotSheet(sheet, sel.index)
       else if (this.sheetMode === 'routes' && sel?.kind === 'gate') this.renderRouteSheet(sheet, sel.gate)
       else this.renderCharmSheet(sheet)
       if (focusKey) sheet.querySelector<HTMLElement>(`[data-focuskey="${focusKey}"]`)?.focus({ preventScroll: true })
@@ -1597,6 +1624,19 @@ export class App {
       this.placeSheet()
     }
     if (this.sheetMode === 'tower' && this.view.selection?.kind === 'tower') this.patchTowerSheet(sheet, this.view.selection.tower)
+  }
+
+  private renderPlotSheet(el: HTMLElement, index: number) {
+    const sim = this.sim, cost = sim.plotCost(index) ?? PLOTS[index].cost
+    el.setAttribute('role', 'region'); el.setAttribute('aria-labelledby', 'sheet-title')
+    el.innerHTML = `<div class="sh-head"><div class="sh-title"><h2 id="sheet-title" class="sh-h">Clear a building plot</h2><span>Keep this space for the rest of your watch.</span></div><button class="sh-close" aria-label="Close plot">${icon('close')}</button></div><p class="plot-note">Spend glow on more space, or save it for upgrades. Clearing the reeds leaves an empty plot; a tower costs extra.</p><button class="big-btn primary" data-clear-plot ${sim.waveActive || sim.glow < cost ? 'disabled' : ''}>${sim.waveActive ? 'Clear between waves' : 'Clear plot · ' + cost + ' glow'}</button>`
+    el.querySelector('.sh-close')!.addEventListener('click', () => this.closeSheet())
+    el.querySelector('[data-clear-plot]')!.addEventListener('click', () => {
+      if (!sim.unlockPlot(index)) return
+      sound.tap(); const reward = this.updateMilestones(); this.persist(true)
+      this.select({ kind: 'pad', index }); this.view.preview = 'wick'; this.refreshDock(true)
+      this.toast(reward ? `${reward} Plot cleared.` : 'Plot cleared. Choose a tower to build here.', reward ? 6000 : 2300)
+    })
   }
 
   private renderRouteSheet(el: HTMLElement, g: GateState) {
@@ -1619,11 +1659,11 @@ export class App {
         const names = plan.branchTowers.map(t => t.def.name).filter((name, i, all) => all.indexOf(name) === i)
         return `<button class="route-choice ${d === dir ? 'on' : ''}" data-route="${d}" data-focuskey="route${d}" aria-pressed="${d === dir}" ${blocked ? 'disabled' : ''}>
           <span class="route-choice-title">${icon(d === 0 ? 'bendLeft' : 'bendRight')}<b>${g.def.labels[d]}</b><span class="route-status">${d === dir ? 'Set' : 'Use'}</span></span>
-          <span>${rich ? 'Short · ×2 glow & light lost' : 'Long · more firing time'}</span>
+          <span>${sim.challenge.compact ? g.def.blurbs[d] : rich ? 'Short · ×2 glow & light lost' : 'Long · more firing time'}</span>
           <span class="route-cover">${plan.attackers.length} damage ${plan.attackers.length === 1 ? 'tower' : 'towers'}${plan.support.length ? ` · ${plan.support.length} support` : ''} on this branch</span>
           <small>${names.join(', ') || 'Build along this water to cover it.'}</small>
         </button>`
-      }).join('')}</div><p class="route-note">Gold path: to the lantern. Short-route ×2 marks last until defeat or escape and never stack. ${g.def.id === 'upper' ? 'Bridge reveals hidden enemies.' : 'Mill cracks armour.'}</p>`
+      }).join('')}</div><p class="route-note">${sim.challenge.compact ? 'Both routes pay the same glow and cost the same light on escape. Choose by coverage and the next enemies.' : 'Gold path: to the lantern. Short-route ×2 marks last until defeat or escape and never stack.'} ${g.def.id === 'upper' ? 'Bridge reveals hidden enemies.' : 'Mill cracks armour.'}</p>`
     el.querySelector('.sh-close')!.addEventListener('click', () => this.closeSheet())
     el.querySelectorAll<HTMLButtonElement>('[data-route]').forEach(button => {
       const d = Number(button.dataset.route) as 0 | 1
@@ -1699,11 +1739,13 @@ export class App {
         else if (!canUpgrade(t.a, t.b, path)) btn = `<div class="up-btn locked"><b>${p.tiers[tier].name}</b><span class="desc">Locked: the other path went past tier 1.</span><span class="price">${icon('lock')}</span></div>`
         else {
           const up = p.tiers[tier]
-          btn = `<button class="up-btn" data-path="${path}" data-focuskey="up${path}" aria-label="Upgrade to ${up.name}, ${up.cost} glow. ${up.desc}"><b>${up.name}</b><span class="desc">${up.desc}</span><span class="price">${up.cost}<small>${upgradeSummary(t.id, t.a, t.b, path, (id, a, b) => this.sim.towerStats(id, a, b))}</small></span></button>`
+          btn = `<button class="up-btn" data-path="${path}" data-focuskey="up${path}" aria-label="Upgrade to ${up.name}, ${up.cost} glow. ${up.desc}"><b>${up.name}</b><span class="desc">${up.desc}</span><span class="price">${up.cost}<small>${upgradeSummary(t.id, t.a, t.b, path, (id, a, b) => this.sim.towerStats(id, a, b, t.refinement))}</small></span></button>`
         }
         return `<div class="path"><div class="path-head"><span>${p.name}</span><span class="pips" role="img" aria-label="Tier ${tier} of 3">${pips}</span></div><div class="path-role">${PATH_ROLE[t.id][path]}</div>${btn}</div>`
       })
       .join('')
+    const refinement = this.sim.challenge.compact && Math.max(t.a, t.b) === 3 ? REFINEMENTS[t.refinement ?? 0] : undefined
+    const refinementRow = refinement ? `<button class="refine-btn" data-refine data-focuskey="refine"><b>${refinement.name} · ${refinement.cost} glow</b><span>${refinementHelp(t.id)}${this.sim.planningWave < refinement.wave ? ' Available after wave ' + (refinement.wave - 1) + '.' : ''}</span></button>` : this.sim.challenge.compact && t.refinement === 2 ? '<p class="combo-note">Ascendant · fully refined</p>' : ''
     const canTarget = def.kind !== 'pulse' && def.kind !== 'garden'
     el.setAttribute('role', 'region')
     el.innerHTML = `
@@ -1718,7 +1760,7 @@ export class App {
         ${this.sim.challenge.guard && !this.sim.isChallenge ? `<button class="pill-btn" data-act="move" data-focuskey="move">Move · ${RELOCATE_COST}</button>` : ''}
         <button class="pill-btn sell" data-act="sell" data-focuskey="sell"></button>
       </div>
-      <div class="paths">${paths}</div><p class="combo-note">${comboHint(this.sim, t)}</p>${lockNote}`
+      <div class="paths">${paths}</div>${refinementRow}<p class="combo-note">${comboHint(this.sim, t)}</p>${lockNote}`
     el.setAttribute('aria-labelledby', 'sheet-title')
     el.querySelector('.sh-close')!.addEventListener('click', () => this.closeSheet())
     el.querySelector('[data-act="manage"]')!.addEventListener('click', () => {
@@ -1735,10 +1777,16 @@ export class App {
       sound.tap()
       this.persist()
     })
+    el.querySelector('[data-refine]')?.addEventListener('click', () => {
+      const rank = REFINEMENTS[t.refinement ?? 0]
+      if (!this.sim.refine(t)) return
+      this.toast(`${t.def.name} · ${rank.name} complete.`, 1800)
+      sound.tap(); this.sheetKey = ''; this.persist(true); this.refreshDock(true)
+    })
     el.querySelectorAll<HTMLButtonElement>('button.up-btn').forEach(b => {
       const path = Number(b.dataset.path) as 0 | 1
       const preview = () => {
-        const stats = this.sim.towerStats(t.id, t.a + (path === 0 ? 1 : 0), t.b + (path === 1 ? 1 : 0))
+        const stats = this.sim.towerStats(t.id, t.a + (path === 0 ? 1 : 0), t.b + (path === 1 ? 1 : 0), t.refinement)
         this.view.upgradeRange = stats.range * t.rangeMul
       }
       b.addEventListener('pointerenter', preview)
@@ -1758,9 +1806,11 @@ export class App {
     if (t.def.kind === 'pulse') what = `${stat(t, 'slowed')} slowed`
     else if (t.def.kind === 'garden') what = `${stat(t, 'earned')} glow earned · ${t.stats.income} a wave`
     else if (t.id === 'owl') what = `${t.pops} cheered · ${stat(t, 'spotted')} Veils spotted`
-    const sub = `${sim.challenge.guardian === 'ember' && t.id === 'cracker' ? 'Ember bursts · weaker impact, lingering fire' : sim.challenge.guardian === 'reed' && t.id === 'wick' ? 'Reed sparks · weaker hits, one nearby bounce' : t.def.role} · ${what}`
+    const sub = `${sim.challenge.guardian === 'ember' && t.id === 'cracker' ? 'Ember bursts · weaker impact, lingering fire' : sim.challenge.guardian === 'reed' && t.id === 'wick' ? 'Reed sparks · weaker hits, one nearby bounce' : sim.challenge.guardian === 'tide' && t.id === 'bell' ? 'Tide tolls · stronger slow, slower rhythm' : t.def.role} · ${what}`
     const subEl = el.querySelector('.sh-sub')
     if (subEl && (force || subEl.textContent !== sub)) subEl.textContent = sub
+    const refine = el.querySelector<HTMLButtonElement>('[data-refine]')
+    if (refine) { const cost = sim.refinementCost(t); refine.disabled = cost === null || sim.glow < cost || !!sim.over }
     const move = el.querySelector<HTMLButtonElement>('[data-act="move"]')
     if (move) {
       move.disabled = !sim.canRelocate(t) || sim.glow < RELOCATE_COST
@@ -1886,7 +1936,7 @@ export class App {
 
   private keeperHelp(id: TowerId) {
     return id === 'cracker' && this.sim.challenge.guardian === 'ember'
-      ? 'Weaker bursts leave ground fire. Slow groups to keep them burning.' : id === 'wick' && this.sim.challenge.guardian === 'reed' ? 'Sparks deal 25% less damage and bounce once to a second nearby enemy.' : KEEPER_HELP[id]
+      ? 'Weaker bursts leave ground fire. Slow groups to keep them burning.' : id === 'wick' && this.sim.challenge.guardian === 'reed' ? 'Sparks deal 25% less damage and bounce once to a second nearby enemy.' : id === 'bell' && this.sim.challenge.guardian === 'tide' ? 'Stronger slowing, with 25% slower tolls. Pair with steady damage.' : KEEPER_HELP[id]
   }
 
   private info(id: TowerId, extra = '') {
@@ -1922,7 +1972,7 @@ export class App {
     if (!this.coach.built && !this.coach.tutorialDone && !sim.isChallenge && sim.wave === 0 && !sim.towers.length) {
       if (this.view.selection?.kind === 'pad') this.trayBtns[0].classList.add('coach')
       else {
-        const p = sim.pads[sim.challenge.expanding && sim.canalStage === 0 ? 12 : 1]
+        const p = sim.pads[sim.challenge.compact ? 0 : sim.challenge.expanding && sim.canalStage === 0 ? 12 : 1]
         this.view.hint = { x: p.x, y: p.y, label: 'Tap a pad' }
       }
       return

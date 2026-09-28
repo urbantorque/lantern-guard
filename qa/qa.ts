@@ -1,3 +1,4 @@
+import compactFixtures from './compact-fixtures.json'
 import gardensFixtures from './gardens-fixtures.json'
 import { sound } from '../src/core/audio'
 import refinementFixtures from './refinement-fixtures.json'
@@ -20,11 +21,12 @@ const backup = () => {
 document.querySelectorAll<HTMLButtonElement>('[data-fixture]').forEach(b => b.onclick = () => {
   backup()
   saveSettings({ ...loadSettings(), muted: true })
-  const all: Record<string, unknown> = { ...fixtures, ...growthFixtures, ...guardFixtures, ...journeyFixtures, ...continuityFixtures, ...refinementFixtures, ...gardensFixtures }
+  const all: Record<string, unknown> = { ...fixtures, ...growthFixtures, ...guardFixtures, ...journeyFixtures, ...continuityFixtures, ...refinementFixtures, ...gardensFixtures, ...compactFixtures }
   const snapshot = all[b.dataset.fixture!] as SaveSnapshot
   selectSlot(snapshot.challenge.id ? 'challenge' : 'campaign')
   clearRun()
   if (b.dataset.fixture === 'retry-loss') saveCheckpoint(Sim.restore(continuityFixtures['retry-checkpoint'] as SaveSnapshot), [])
+  if (b.dataset.fixture === 'compact-start') localStorage.removeItem('lanternlocks.coach.v1')
   if (b.dataset.fixture === 'new-journey') localStorage.removeItem('lanternlocks.coach.v1')
   else saveRun(snapshot)
   location.assign('/')

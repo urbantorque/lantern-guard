@@ -7,12 +7,12 @@ export const WARDEN_ESCORT_RANGE = 170
 export const WARDEN_GUARD_TAKEN = .6
 
 export function wardenEscorts(sim: Sim, boss: Enemy): Enemy[] {
-  if (!sim.challenge.harbourEncounters || !boss.alive || boss.phase !== 2) return []
+  if (!(sim.challenge.harbourEncounters || sim.challenge.compact) || !boss.alive || boss.phase !== 2) return []
   return sim.enemies.filter(e => e.alive && e.escortOf === boss.uid && (e.x - boss.x) ** 2 + (e.y - boss.y) ** 2 <= WARDEN_ESCORT_RANGE ** 2)
 }
 
 export function wardenStatus(sim: Sim): string | null {
-  if (!sim.challenge.harbourEncounters) return null
+  if (!(sim.challenge.harbourEncounters || sim.challenge.compact)) return null
   const boss = sim.enemies.find(e => e.alive && e.def.id === 'warden')
   if (!boss) return null
   if (boss.phase === 1) return 'Warden signalling escorts · crowd bursts break their guard'

@@ -723,7 +723,7 @@ export class Renderer {
     ctx.drawImage(this.bg!, -BG_PAD_X, -BG_PAD_Y, WORLD_W + BG_PAD_X * 2, WORLD_H + BG_PAD_Y * 2)
     if (sim.challenge.harbour) this.drawHarbour(ctx, sim)
     if (sim.challenge.gardens) this.drawGardens(ctx, sim)
-    if (sim.challenge.guard) drawSettlement(ctx, this.settlement, this.bunting, !!sim.challenge.harbour, !!sim.challenge.gardens)
+    if (sim.challenge.guard) drawSettlement(ctx, this.settlement, this.bunting, !!sim.challenge.harbour, !!sim.challenge.gardens, sim.challenge.compact ? sim.challenge.variant ?? 0 : undefined)
 
     this.drawFlow(ctx, sim, dt)
     ctx.drawImage(this.bloomCv!, 0, 0, WORLD_W, WORLD_H)
@@ -755,8 +755,16 @@ export class Renderer {
 
     // pads
     for (let i = 0; i < sim.pads.length; i++) {
-      if (!sim.padAvailable(i)) continue
+      if (!sim.padRevealed(i)) continue
       const p = sim.pads[i]
+      if (!sim.padAvailable(i)) {
+        const selected = view.selection?.kind === 'pad' && view.selection.index === i
+        ctx.save(); ctx.fillStyle = '#173532'; ctx.strokeStyle = selected ? P.amberHi : '#a3b89b'
+        ctx.lineWidth = selected ? 3 : 2; ctx.setLineDash([5, 5])
+        ctx.beginPath(); ctx.ellipse(p.x, p.y, PAD_R + 8, PAD_R * .75, 0, 0, TAU); ctx.fill(); ctx.stroke()
+        ctx.setLineDash([]); ctx.font = `600 ${this.fontPx(20)}px ${FONT}`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = P.cream
+        ctx.fillText('+', p.x, p.y); ctx.restore(); continue
+      }
       if (p.tower) {
         drawPad(ctx, p.x, p.y, 'occupied', t, p.tower.def.hue, Math.max(p.tower.a, p.tower.b))
         continue
@@ -776,7 +784,7 @@ export class Renderer {
     for (const g of sim.gates) if (sim.gateAvailable(g)) this.drawGateBase(ctx, sim, g, dt)
     this.drawLandmarks(ctx, sim, 'under')
 
-    if (sim.challenge.harbourEncounters) {
+    if (sim.challenge.harbourEncounters || sim.challenge.compact) {
       for (const boss of sim.enemies) {
         if (!boss.alive || boss.def.id !== 'warden') continue
         const escorts = wardenEscorts(sim, boss)
@@ -2074,7 +2082,7 @@ export class Renderer {
     ctx.fillRect(0, 0, W, H)
     // the whole canal fits above the caption; the painted countryside fills the sides
     const top = sim.challenge.gardens ? -1030 : sim.challenge.harbour ? -480 : 0
-    const k = (H - BAND - 24) / (WORLD_H - top)
+    const k = (H - BAND - 24) / ((sim.challenge.compact ? 840 : WORLD_H) - top)
     const ox = (W - WORLD_W * k) / 2
     const oy = 18 - top * k
     ctx.save()
@@ -2084,7 +2092,7 @@ export class Renderer {
     ctx.drawImage(bg, -BG_PAD_X, -BG_PAD_Y, WORLD_W + BG_PAD_X * 2, WORLD_H + BG_PAD_Y * 2)
     if (sim.challenge.harbour) this.drawHarbour(ctx, sim)
     if (sim.challenge.gardens) this.drawGardens(ctx, sim)
-    if (sim.challenge.guard) drawSettlement(ctx, this.settlement, this.bunting, !!sim.challenge.harbour, !!sim.challenge.gardens)
+    if (sim.challenge.guard) drawSettlement(ctx, this.settlement, this.bunting, !!sim.challenge.harbour, !!sim.challenge.gardens, sim.challenge.compact ? sim.challenge.variant ?? 0 : undefined)
     for (const b of this.blooms) paintBloom(ctx, b, this.bloomStyle, true)
     this.drawSluice(ctx, sim, false)
     for (const [i, p] of sim.pads.entries()) {
@@ -2122,7 +2130,7 @@ export class Renderer {
     // wordmark, bottom right: the lantern mark and the name
     ctx.textAlign = 'right'
     ctx.font = `650 34px ${FONT}`
-    const mark = 'locks'
+    const mark = ' Guard'
     const markW = ctx.measureText(mark).width
     ctx.fillStyle = P.amber
     ctx.fillText(mark, W - x, H - 40)
@@ -2143,7 +2151,7 @@ export class Renderer {
     let best: Selection = null
     let bd = 58
     for (let i = 0; i < sim.pads.length; i++) {
-      if (!sim.padAvailable(i)) continue
+      if (!sim.padRevealed(i)) continue
       const p = sim.pads[i]
       const d = Math.hypot(wx - p.x, wy - (p.y - (p.tower ? 18 : 0)))
       if (d < bd) {

@@ -86,7 +86,7 @@ export function loadCheckpoint() {
 // ------------------------------------------------------------------ settings
 
 export interface Settings {
-  guardian?: 'ember' | 'reed'
+  guardian?: 'ember' | 'reed' | 'tide'
   sfx: number
   music: number
   ambience: number
@@ -131,7 +131,7 @@ export const DEFAULT_SETTINGS: Settings = {
 
 export function loadSettings(): Settings {
   const s = read<Settings & { v?: number }>(KEY_SETTINGS, { ...DEFAULT_SETTINGS, v: 2 })
-  if (!['ember', 'reed'].includes(String(s.guardian))) delete s.guardian
+  if (!['ember', 'reed', 'tide'].includes(String(s.guardian))) delete s.guardian
   // v1 stored the device's Reduce Motion as a fixed choice; go back to following the device once
   if (s.v !== 2) {
     s.reduceMotion = null
@@ -158,6 +158,8 @@ export const saveCoach = (c: Coach) => write(KEY_COACH, c)
 // ------------------------------------------------------------------ progress + feats
 
 export interface Progress {
+  watchIndex?: number
+  compactWins?: number
   settlement?: number
   gardensWins?: number
   harbourWins?: number
@@ -191,6 +193,7 @@ export interface Feat {
 }
 
 export interface RunSummary {
+  compact?: 1
   expanding?: 1
   waterway?: WaterwayId
   won: boolean
@@ -203,7 +206,8 @@ export interface RunSummary {
 }
 
 export const FEATS: Feat[] = [
-  { id: 'reedkeeper', name: 'Canal Keeper', desc: 'Keep the lantern lit through all 25 waves of the growing canal.', test: r => r.won && (r.expanding === 1 || r.waterway === 'reedbank') },
+  { id: 'groundskeeper', name: 'Groundskeeper', desc: 'Clear three building plots in one compact watch.', test: r => (r.stats.plotsUnlocked ?? 0) >= 3 },
+  { id: 'reedkeeper', name: 'Canal Keeper', desc: 'Complete a canal watch with the lantern still lit.', test: r => r.won && (r.compact === 1 || r.expanding === 1 || r.waterway === 'reedbank') },
   { id: 'first-light', name: 'First Light', desc: 'Win on any mode.', test: (r) => r.won },
   { id: 'lamplighter', name: 'Lamplighter', desc: 'Win on Standard.', test: (r) => r.won && r.difficulty !== 'relaxed' },
   { id: 'long-night', name: 'Long Night', desc: 'Win on Nightfall.', test: (r) => r.won && r.difficulty === 'nightfall' },
@@ -230,12 +234,13 @@ export function creditMilestones(sim: Sim): { feats: string[]; restorations: str
   const earned = { feats: [] as string[], restorations: [] as string[] }
   if (!sim.challenge.guard || sim.isChallenge) return earned
   const p = loadProgress()
-  const tests: Record<string, boolean> = { crowned: sim.stats.maxTier >= 3, 'full-bloom': sim.stats.pops >= 1200, 'early-bird': sim.stats.earlyCalls >= 10 }
+  const tests: Record<string, boolean> = { groundskeeper: !!sim.challenge.compact && (sim.stats.plotsUnlocked ?? 0) >= 3, crowned: sim.stats.maxTier >= 3, 'full-bloom': sim.stats.pops >= 1200, 'early-bird': sim.stats.earlyCalls >= 10 }
   for (const [id, passed] of Object.entries(tests)) if (passed && !p.feats[id]) { p.feats[id] = true; earned.feats.push(id) }
   const held = Math.min(sim.wave - (sim.over === 'lost' || sim.waveActive ? 1 : 0), ...[...sim.wavesPending].map(w => w - 1))
   for (let i = p.settlement ?? 0; i < RESTORATIONS.length; i++) {
     const r = RESTORATIONS[i]
-    if (held < r.wave || (i >= 2 && !sim.challenge.harbour) || (i >= 3 && !sim.challenge.gardens)) break
+    const target = sim.challenge.compact ? [5, 10, 30, 40][i] : r.wave
+    if (held < target || (!sim.challenge.compact && ((i >= 2 && !sim.challenge.harbour) || (i >= 3 && !sim.challenge.gardens)))) break
     p.settlement = i + 1; earned.restorations.push(r.reward)
   }
   if (earned.feats.length || earned.restorations.length) saveProgress(p)
@@ -245,9 +250,10 @@ export function creditMilestones(sim: Sim): { feats: string[]; restorations: str
 /** Only one optional goal is surfaced; early onboarding stays focused on the board. */
 export function masteryGoal(sim: Sim, p: Progress): string | null {
   if (!sim.challenge.guard || sim.isChallenge || sim.wave < 6) return null
+  if (sim.challenge.compact && !p.feats.groundskeeper) return `Optional · Clear ${Math.min(3, sim.stats.plotsUnlocked ?? 0)}/3 plots → Tide Keeper`
   if (!p.feats.crowned) return 'Optional · Crowned: buy a tier-three upgrade → Ember Keeper'
   if (!p.feats['full-bloom']) return `Optional · Full Bloom: ${Math.min(1200, sim.stats.pops)}/1,200 cheered → Reed Keeper`
-  if (!p.feats['early-bird'] && !sim.challenge.harbour) return `Optional · Early Bird: ${Math.min(10, sim.stats.earlyCalls)}/10 early calls → village bunting`
+  if (!p.feats['early-bird'] && !sim.challenge.harbour && !sim.challenge.compact) return `Optional · Early Bird: ${Math.min(10, sim.stats.earlyCalls)}/10 early calls → village bunting`
   return null
 }
 
@@ -288,7 +294,9 @@ export function recordRun(sim: Sim, blooms: number): string[] {
     saveProgress(p)
     return []
   }
+  if (sim.challenge.compact && sim.won) p.compactWins = (p.compactWins ?? 0) + 1
   const summary: RunSummary = {
+    compact: sim.challenge.compact,
     expanding: sim.challenge.expanding,
     waterway: sim.challenge.waterway,
     won: sim.won,
@@ -391,7 +399,7 @@ export interface Session {
   lastLeak?: string
   harbour?: boolean
   gardens?: boolean
-  guardian?: 'lantern' | 'ember' | 'reed'
+  guardian?: 'lantern' | 'ember' | 'reed' | 'tide'
   event?: 'resume'
   at: string
   difficulty: Difficulty

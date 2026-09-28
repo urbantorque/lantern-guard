@@ -1,5 +1,6 @@
+import { WATCH_NAMES } from '../game/compact'
 import { GUARDIANS, guardianUnlocked, type GuardianId } from '../game/guardians'
-import { KEEPER_HELP, KEEPER_WAVE } from '../game/canal-growth'
+import { KEEPER_HELP } from '../game/canal-growth'
 import { leakAdvice } from '../game/feedback'
 import { saveHealth } from '../game/save-store'
 import type { App } from '../app'
@@ -198,9 +199,9 @@ export class Screens {
         <div class="logo"><canvas id="logo-cv" width="128" height="128" aria-hidden="true"></canvas><h1 translate="no" aria-label="Lantern Guard: Tower Defense">Lantern <em>Guard</em><span class="title-genre">Tower Defense</span></h1></div>
         <p class="tagline">Build your towers. Grow your defence.<br>Keep the lantern lit.</p>
         <div class="title-play stack">
-          <button class="big-btn primary resume-btn" data-act="${save ? 'continue' : 'play'}"><span>${icon('play')} ${save ? 'Continue' : 'Play'}</span>${save ? `<small>${name} · ${save.challenge.gardens ? 'Gardens' : save.challenge.harbour ? 'Harbour' : 'Canal'} · wave ${nextWave}${save.v === 2 && save.over ? (save.won ? ' complete' : ' · review') : ''}<br>${save.towers.length} towers · ${save.lives} light</small>` : ''}</button>
+          <button class="big-btn primary resume-btn" data-act="${save ? 'continue' : 'play'}"><span>${icon('play')} ${save ? 'Continue' : 'Play'}</span>${save ? `<small>${name} · ${save.challenge.compact ? WATCH_NAMES[save.challenge.variant ?? 0] : save.challenge.gardens ? 'Gardens' : save.challenge.harbour ? 'Harbour' : 'Canal'} · wave ${nextWave}${save.v === 2 && save.over ? (save.won ? ' complete' : ' · review') : ''}<br>${save.towers.length} towers · ${save.lives} light</small>` : ''}</button>
           ${challengeSave ? `<button class="title-quiet" data-act="continue-challenge">Resume challenge · wave ${Math.max(1, challengeSave.wave - (challengeSave.challenge.tide?.from ?? 0))}</button>` : ''}
-          <button class="title-quiet" data-act="night">${save ? 'Start a new night' : `Difficulty: ${DIFFICULTY[this.difficulty].name}`}</button>
+          <button class="title-quiet" data-act="night">${save ? 'New compact watch' : `Difficulty: ${DIFFICULTY[this.difficulty].name}`}</button>
         </div>
         ${saveHealth === 'invalid' ? '<p class="save-note" role="status">Your saved night could not be read. Your journal is kept separately.</p>' : saveHealth === 'recovered' ? '<p class="save-note" role="status">Continue will use your previous autosave.</p>' : saveHealth === 'unavailable' ? '<p class="save-note" role="status">Saving is unavailable. Keep the game open to retain your night.</p>' : ''}
         <div class="title-links">
@@ -225,7 +226,7 @@ export class Screens {
   private chooseNight(replace: boolean) {
     const p = loadProgress()
     this.show(`<div class="card"><h2>${replace ? 'Start a new night' : 'Difficulty'}</h2>
-      <p>One canal, growing as you play. Your towers stay in place as new sections open.</p>
+      <p>One compact board for 40 waves. Buy new plots, refine your towers and face new enemies. Each new watch rotates the layout; your current watch keeps every investment.</p>
       <div class="modes">${(Object.keys(DIFFICULTY) as Difficulty[]).map(d => {
         const m = DIFFICULTY[d]
         const won = (p.wins[d] ?? 0) > 0
@@ -235,7 +236,7 @@ export class Screens {
           <span class="medal ${won ? 'won' : ''}" aria-label="${won ? 'Won before' : ''}">${icon(won ? 'trophy' : !replace && d === this.difficulty ? 'check' : 'play')}</span>
         </button>`
       }).join('')}</div>
-      ${p.feats.crowned ? `<p>Guardian for new nights: ${GUARDIANS[this.app.settings.guardian ?? 'lantern'].name}. Change in Collection.</p>` : ''}
+      ${p.feats.crowned || p.feats.groundskeeper || p.feats['full-bloom'] ? `<p>Guardian for new watches: ${GUARDIANS[this.app.settings.guardian ?? 'lantern'].name}. Change in Collection.</p>` : ''}
       <div class="stack gap-top"><button class="big-btn" data-act="back">Back</button></div></div>`, () => this.chooseNight(replace))
     this.on('[data-mode]', b => {
       const d = b.dataset.mode as Difficulty
@@ -253,7 +254,7 @@ export class Screens {
       <div class="stack">
         <button class="big-btn" data-act="journal">${icon('book')} Bloom journal <small>${Math.floor(journalTotal(p)).toLocaleString('en')} blooms</small></button>
         <button class="big-btn" data-act="feats">${icon('star')} Feats <small>${Object.values(p.feats).filter(Boolean).length}/${FEATS.length}</small></button>
-        <button class="big-btn" data-act="guardians">${icon('sparkle')} Guardians <small>${p.feats.crowned ? 'Ember Keeper unlocked' : 'Master a tier-three tower to unlock Ember Keeper'}</small></button>
+        <button class="big-btn" data-act="guardians">${icon('sparkle')} Guardians <small>${Object.keys(GUARDIANS).filter(id => guardianUnlocked(id as GuardianId, p.feats)).length}/4 available · choose your next watch’s style</small></button>
         <section class="settlement-card"><h3>Your settlement · ${p.settlement ?? 0}/4 restored</h3><p>${restorationPreview(p)}</p>${RESTORATIONS.slice(0, p.settlement ?? 0).map(r => `<p>✓ ${r.reward}</p>`).join('')}${p.feats['early-bird'] ? '<p>✓ Village bunting earned.</p>' : ''}</section>
         ${p.harbourWins ? `<p>Lantern Harbour kept ${p.harbourWins} ${p.harbourWins === 1 ? 'time' : 'times'}.</p>` : ''}
         ${tides ? `<button class="big-btn" data-act="tides">${icon('calendar')} Daily tides &amp; weekly nights</button>` : ''}
@@ -617,28 +618,30 @@ export class Screens {
   journal(tab: 'basics' | 'keepers' | 'mopes') {
     let body = ''
     const guard = !!this.app.sim.challenge.guard
+    const compactWatch = !!this.app.sim.challenge.compact
     if (tab === 'basics') {
       const row = (ic: Parameters<typeof icon>[0], title: string, text: string) =>
         `<div class="j-row"><div class="j-ic">${icon(ic)}</div><div><b>${title}</b><span>${text}</span></div></div>`
       body = `<div class="journal">
         ${row('tap', 'Build keepers', 'Tap a stone pad, then pick a keeper (on a phone, tap it twice). Keepers cheer up Mopes that drift past.')}
-        ${row('waves', 'Grow the same defence', 'Start at Lantern bend. Before wave 6 the upper canal opens; before wave 11 the west inlet opens. Your towers and upgrades stay in place. New tower choices arrive a few at a time.')}
+        ${row('waves', 'Grow the same defence', compactWatch ? 'Your board stays the same size for 40 waves. After waves 5, 10, 15 and 20, tap a dashed + plot and spend glow to clear it. Towers cost extra; upgrades may be the better investment.' : 'Start at Lantern bend. Before wave 6 the upper canal opens; before wave 11 the west inlet opens. Your towers and upgrades stay in place. New tower choices arrive a few at a time.')}
         ${row('swap', guard ? 'Plan your routes' : 'Steer with the locks', guard ? 'Between waves, tap a lock to compare both routes and the towers covering them. Your choice stays set. During combat, tap to switch quickly; hold a lock or pause to compare routes.' : 'Tap a lock, or its button at the bottom, to send Mopes down the other channel. Flowing water and the arrow show where they will go.')}
-        ${row('flower', 'Long loops or short runs', guard ? 'Long loops give towers more firing time. Short routes mark Mopes with a gold ring: double glow when defeated, double light lost if they escape, wherever they finish. The bonus never stacks. The bridge reveals Veils; the mill cracks armour.' : 'Long loops give more firing time. Defeats on short runs pay double glow; any Mope that took one costs double light on escape. The bridge reveals Veils; the mill cracks shells.')}
-        ${guard && !this.app.sim.isChallenge ? row('swap', 'Move between waves', 'Select a tower, open Manage, then Move. Choose an empty pad to preview its reach and confirm for 25 glow. Upgrades and progress stay with it. Cancel is free; you can switch Harbour and Canal views while choosing.') : ''}
+        ${row('flower', 'Long loops or short runs', compactWatch ? 'Both routes pay the same glow. Long loops give more firing time; shorter routes reveal hidden enemies or crack armour. Compare the towers covering each branch and choose for the incoming wave.' : guard ? 'Long loops give towers more firing time. Short routes mark Mopes with a gold ring: double glow when defeated, double light lost if they escape, wherever they finish. The bonus never stacks. The bridge reveals Veils; the mill cracks armour.' : 'Long loops give more firing time. Defeats on short runs pay double glow; any Mope that took one costs double light on escape. The bridge reveals Veils; the mill cracks shells.')}
+        ${guard && !this.app.sim.isChallenge ? row('swap', 'Move between waves', 'Select a tower, open Manage, then Move. Choose an empty cleared pad to preview its reach and confirm for 25 glow. Upgrades and progress stay with it. Cancel is free.') : ''}
         ${row('sparkle', 'Combine your towers', 'Moonbell slows groups for Cracker bursts. Lamp Owl reveals hidden targets for nearby attackers. Select a tower to see shared coverage. Matching a Mope’s colour and symbol also deals 1.5× damage.')}
         ${!guard ? row('star', 'Charms', 'Charms make a lock always send one kind of Mope the same way, whatever the arrow says. Open them from the Charms button, or press and hold a lock.') : ''}
         ${row('heart', 'Keep the lantern lit', 'Mopes that reach the Great Lantern dim it. When the light runs out, the night is lost.')}
         ${guard ? row('eye', 'Read the fight', 'An eye beneath a hidden enemy means it is revealed. Segmented coral armour and an icy slow ring show active defences and effects. Select a tower to see its contribution.') : ''}
         ${guard ? row('restart', 'Revise your defence', 'On Relaxed and Standard, a lost ordinary night can return to its last planning break with the same resources. Challenges and Nightfall have no retries. Your main canal and challenge save separately.') : ''}
-        ${guard ? row('waves', 'Water Gardens', 'After Harbour, two garden streams meet above your established defence. Whole map shows the complete route; tap a district to inspect it. Guardians can change at chapter victories without rebuilding.') : ''}
-        ${guard ? row('waves', 'Lantern Harbour', 'After wave 25, open eight more authored waves upstream while keeping your towers. Switch between Harbour and Canal views to inspect both parts. New Skiffs accelerate after losing armour.') : ''}
+        ${guard && !compactWatch ? row('waves', 'Water Gardens', 'After Harbour, two garden streams meet above your established defence. Whole map shows the complete route; tap a district to inspect it. Guardians can change at chapter victories without rebuilding.') : ''}
+        ${compactWatch ? row('star', 'Refine and replay', 'Tier-three towers can buy Mastery after wave 15 and Ascendant after wave 25. Clear three plots to unlock Tide Keeper, buy a tier-three upgrade for Ember Keeper, or cheer 1,200 Mopes for Reed Keeper. Choose earned guardians in Collection for your next watch.') : ''}
+        ${guard && !compactWatch ? row('waves', 'Lantern Harbour', 'After wave 25, open eight more authored waves upstream while keeping your towers. Switch between Harbour and Canal views to inspect both parts. New Skiffs accelerate after losing armour.') : ''}
         ${row('pause', 'Pause to plan', `Pause any time to build and upgrade. On Nightfall, live route changes require time to run. Keys: 1–6 towers, Q/E quick switches, Space starts a wave, P pauses, F changes speed.${guard ? '' : ' C opens charms.'}`)}
       </div>`
     } else if (tab === 'keepers') {
       body = `<div class="journal">${TOWER_ORDER.map((id: TowerId) => {
         const d = TOWERS[id]
-        return `<div class="j-row"><img src="${towerIcon(id)}" alt="" width="44" height="44"><div><b><img class="sw" src="${glyphBadgeURL(d.family)}" alt="${d.family} family" width="16" height="16">${d.name} <span class="j-cost">${d.cost}</span></b><span>${KEEPER_HELP[id]} ${KEEPER_WAVE[id] > 1 ? `Joins before wave ${KEEPER_WAVE[id]} in a new night.` : 'Available from the start.'} Paths: ${d.paths[0].name} or ${d.paths[1].name}.</span></div></div>`
+        return `<div class="j-row"><img src="${towerIcon(id)}" alt="" width="44" height="44"><div><b><img class="sw" src="${glyphBadgeURL(d.family)}" alt="${d.family} family" width="16" height="16">${d.name} <span class="j-cost">${d.cost}</span></b><span>${KEEPER_HELP[id]} ${this.app.sim.keeperWave(id) > 1 ? `Joins before wave ${this.app.sim.keeperWave(id)} in a new night.` : 'Available from the start.'} Paths: ${d.paths[0].name} or ${d.paths[1].name}.</span></div></div>`
       }).join('')}</div>`
     } else {
       const ids: EnemyId[] = JOURNAL_ORDER
@@ -744,11 +747,11 @@ export class Screens {
           ? `You kept the light through all ${sim.finalWave} waves on ${sim.level.def.name}, ${DIFFICULTY[sim.difficulty].name}. Your defence is saved.`
           : `You held until wave ${sim.wave} on ${sim.level.def.name}, ${DIFFICULTY[sim.difficulty].name}.`
     }
-    const guardianChoice = sim.guardianBreak ? `<details class="guardian-break"><summary>Guardian: ${GUARDIANS[sim.challenge.guardian ?? 'lantern'].name} · change</summary><p>Keep every tower, upgrade and glow. Changes apply to the next chapter.</p><div class="stack">${(Object.keys(GUARDIANS) as GuardianId[]).map(id => {
+    const guardianChoice = sim.guardianBreak ? `<details class="guardian-break"><summary>Guardian: ${GUARDIANS[sim.challenge.guardian ?? 'lantern'].name} · change</summary><p>Keep every tower, upgrade and glow. Changes apply when you continue.</p><div class="stack">${(Object.keys(GUARDIANS) as GuardianId[]).map(id => {
       const g = GUARDIANS[id]
       const previous = GUARDIANS[sim.challenge.guardian ?? 'lantern'].tower
       const affected = id === (sim.challenge.guardian ?? 'lantern') ? 0 : sim.towers.filter(t => t.id === g.tower || t.id === previous).length
-      return `<button class="big-btn" data-chapter-guardian="${id}" aria-pressed="${(sim.challenge.guardian ?? 'lantern') === id}" ${guardianUnlocked(id, progress.feats) ? '' : 'disabled'}>${g.name}<small>${g.description}<br>${guardianUnlocked(id, progress.feats) ? affected + ' existing towers affected · free to change' : g.unlock}</small></button>`
+      return `<button class="big-btn" data-chapter-guardian="${id}" aria-pressed="${(sim.challenge.guardian ?? 'lantern') === id}" ${guardianUnlocked(id, progress.feats) && (id !== 'tide' || sim.challenge.compact) ? '' : 'disabled'}>${g.name}<small>${g.description}<br>${guardianUnlocked(id, progress.feats) ? affected + ' existing towers affected · free to change' : g.unlock}</small></button>`
     }).join('')}</div></details>` : ''
     const buttons = offer
       ? `${record ? `<button class="big-btn ${won ? 'primary' : ''}" data-act="share">${icon('share')} Share result</button>` : ''}

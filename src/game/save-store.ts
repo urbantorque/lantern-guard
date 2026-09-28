@@ -1,3 +1,4 @@
+import { compactLevel, PLOTS, STARTER_PLOTS, REFINEMENTS } from './compact'
 import { gardensLevel, GARDENS_PADS } from './gardens'
 import { WATERWAYS } from './waterways'
 import { DIFFICULTY, TOWERS, ENEMIES, CHARMS } from './defs'
@@ -68,18 +69,25 @@ export function validSnapshot(s: unknown): s is SaveSnapshot {
   for (const key of ['lockedGates', 'noGarden', 'noCharms']) if (s.challenge[key] !== undefined && typeof s.challenge[key] !== 'boolean') return false
   if (s.challenge.id !== undefined && typeof s.challenge.id !== 'string') return false
   if (s.challenge.keepers !== undefined && (!Array.isArray(s.challenge.keepers) || !s.challenge.keepers.every(v => typeof v === 'string' && Object.hasOwn(TOWERS, v)))) return false
+  if (s.challenge.compact !== undefined && (s.challenge.compact !== 1 || s.v !== 2 || s.challenge.guard !== 1 || !integer(s.challenge.variant, 0, 2) || ['expanding', 'waterway', 'harbour', 'gardens', 'harbourEncounters', 'id', 'tide'].some(k => (s.challenge as Record<string, unknown>)[k] !== undefined))) return false
+  if (s.challenge.variant !== undefined && !s.challenge.compact) return false
+  if (s.challenge.compact) {
+    if (!Array.isArray(s.plots) || s.plots.length > PLOTS.length || new Set(s.plots).size !== s.plots.length || !s.plots.every(p => integer(p, 0, PLOTS.length - 1) && PLOTS[p].wave <= (s.wave as number) + 1) || !STARTER_PLOTS.every(p => (s.plots as number[]).includes(p))) return false
+  } else if (s.plots !== undefined) return false
   if (s.challenge.waterway !== undefined && !Object.hasOwn(WATERWAYS, String(s.challenge.waterway))) return false
   if (s.challenge.expanding !== undefined && (s.challenge.expanding !== 1 || s.v !== 2 || s.challenge.waterway !== undefined || s.challenge.id !== undefined || s.challenge.tide !== undefined || !integer(s.canalStage, 0, 2))) return false
-  if (s.challenge.guard !== undefined && (s.challenge.guard !== 1 || (s.challenge.expanding !== 1 && typeof s.challenge.id !== 'string') || s.challenge.waterway !== undefined)) return false
+  if (s.challenge.guard !== undefined && (s.challenge.guard !== 1 || (s.challenge.expanding !== 1 && s.challenge.compact !== 1 && typeof s.challenge.id !== 'string') || s.challenge.waterway !== undefined)) return false
   if (s.challenge.harbour !== undefined && (s.challenge.harbour !== 1 || s.challenge.guard !== 1 || s.challenge.expanding !== 1 || s.wave < 25 || s.canalStage !== 2)) return false
   if (s.challenge.harbourEncounters !== undefined && (s.challenge.harbourEncounters !== 1 || s.challenge.harbour !== 1)) return false
-  if (s.challenge.guardian !== undefined && (!['ember', 'reed'].includes(String(s.challenge.guardian)) || s.challenge.guard !== 1 || s.challenge.id !== undefined)) return false
+  if (s.challenge.guardian !== undefined && (!['ember', 'reed', 'tide'].includes(String(s.challenge.guardian)) || (s.challenge.guardian === 'tide' && !s.challenge.compact) || s.challenge.guard !== 1 || s.challenge.id !== undefined)) return false
   if (s.challenge.gardens !== undefined && (s.challenge.gardens !== 1 || s.challenge.harbour !== 1 || s.wave < 33)) return false
-  const maxPads = LEVEL.pads.length + (s.challenge.harbour ? HARBOUR_PADS.length : 0) + (s.challenge.gardens ? GARDENS_PADS.length : 0)
+  const maxPads = s.challenge.compact ? PLOTS.length : LEVEL.pads.length + (s.challenge.harbour ? HARBOUR_PADS.length : 0) + (s.challenge.gardens ? GARDENS_PADS.length : 0)
   if (!Array.isArray(s.towers) || s.towers.length > maxPads || !Array.isArray(s.gates) || s.gates.length !== 2) return false
   const pads = new Set<number>()
   for (const t of s.towers) {
     if (!object(t) || typeof t.id !== 'string' || !Object.hasOwn(TOWERS, t.id) || !integer(t.pad, 0, maxPads - 1) || pads.has(t.pad) || !integer(t.a, 0, 3) || !integer(t.b, 0, 3) || (t.a > 1 && t.b > 1) || !number(t.spent, 0) || !number(t.pops, 0) || !['first', 'last', 'strong', 'close'].includes(String(t.priority))) return false
+    if (s.challenge.compact && (!(s.plots as number[]).includes(t.pad) || !integer(t.refinement, 0, 2) || (t.refinement > 0 && (Math.max(t.a, t.b) < 3 || REFINEMENTS[t.refinement - 1].wave > s.wave + 1)))) return false
+    if (!s.challenge.compact && t.refinement !== undefined) return false
     pads.add(t.pad)
   }
   for (const g of s.gates) {
@@ -118,7 +126,7 @@ export function validSnapshot(s: unknown): s is SaveSnapshot {
     const harbour = !!s.challenge.harbour
     if (s.towers.some(t => !available.includes((t as { pad: number }).pad) && !(harbour && (t as { pad: number }).pad >= LEVEL.pads.length))) return false
   }
-  const base = s.challenge.expanding ? growingCanal(s.canalStage as number) : LEVEL
+  const base = s.challenge.compact ? compactLevel(s.challenge.variant as number) : s.challenge.expanding ? growingCanal(s.canalStage as number) : LEVEL
   const harbour = s.challenge.harbour ? harbourLevel(base) : base
   const segments = new Set((s.challenge.gardens ? gardensLevel(harbour) : harbour).segments.map(seg => seg.id))
   if (s.waveReports !== undefined && (!s.challenge.guard || !Array.isArray(s.waveReports) || s.waveReports.length > 100 || !s.waveReports.every(r => object(r) && integer(r.wave, 1, 10000) && integer(r.slowSplashHits) && object(r.damage) && Object.entries(r.damage).every(([id, value]) => Object.hasOwn(TOWERS, id) && number(value, 0))))) return false
@@ -130,9 +138,9 @@ export function validSnapshot(s: unknown): s is SaveSnapshot {
   if (!(s.spawners as unknown[]).every(p => object(p) && integer(p.wave, 1, 10000) && integer(p.group, 0, 100) && number(p.t) && integer(p.spawned))) return false
   if (!(s.waveAlive as unknown[]).every(v => Array.isArray(v) && integer(v[0], 1, 10000) && integer(v[1]))) return false
   for (const e of s.enemies as Record<string, unknown>[]) {
-    if (e.escortOf !== undefined && (!integer(e.escortOf, 1) || e.type !== 'skiff' || s.challenge.harbourEncounters !== 1)) return false
-    if (e.signalT !== undefined && !((e.type === 'warden' && s.challenge.harbourEncounters === 1 && number(e.signalT, 0, 2.4)) || (e.type === 'bloomheart' && s.challenge.gardens === 1 && number(e.signalT, 0, 3)))) return false
-    if (['reedling', 'bloomheart'].includes(String(e.type)) && s.challenge.gardens !== 1) return false
+    if (e.escortOf !== undefined && (!integer(e.escortOf, 1) || e.type !== 'skiff' || s.challenge.harbourEncounters !== 1 && s.challenge.compact !== 1)) return false
+    if (e.signalT !== undefined && !((e.type === 'warden' && (s.challenge.harbourEncounters === 1 || s.challenge.compact === 1) && number(e.signalT, 0, 2.4)) || (e.type === 'bloomheart' && (s.challenge.gardens === 1 || s.challenge.compact === 1) && number(e.signalT, 0, 3)))) return false
+    if (['reedling', 'bloomheart'].includes(String(e.type)) && s.challenge.gardens !== 1 && s.challenge.compact !== 1) return false
     for (const key of ['shell', 'maxShell', 'seenT', 'phase', 'spawnCd', 'speedBase', 'slowT', 'slowF', 'stunT', 'burnT', 'burnDps', 'brittleT', 'visScale', 'reward', 'age']) if (!number(e[key])) return false
     for (const key of ['revealedPerm', 'split']) if (typeof e[key] !== 'boolean') return false
     for (const key of ['rich', 'shrouded', 'owlSeen']) if (e[key] !== undefined && typeof e[key] !== 'boolean') return false

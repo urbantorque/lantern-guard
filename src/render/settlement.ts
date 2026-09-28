@@ -2,7 +2,7 @@ import { TAU } from '../core/math'
 import { glowSprite, P } from './palette'
 
 /** Profile rewards are scenery only; they never cover pads or change combat. */
-export function drawSettlement(ctx: CanvasRenderingContext2D, stage: number, bunting: boolean, harbour: boolean, gardens: boolean) {
+export function drawSettlement(ctx: CanvasRenderingContext2D, stage: number, bunting: boolean, harbour: boolean, gardens: boolean, compact?: number) {
   ctx.save()
   for (const [x, y] of [[90, 820], [615, 820], [650, 355]]) {
     ctx.fillStyle = '#34464a'; ctx.fillRect(x - 26, y - 36, 52, 44)
@@ -14,6 +14,13 @@ export function drawSettlement(ctx: CanvasRenderingContext2D, stage: number, bun
       ctx.strokeStyle = P.cream; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(x - 34, y - 31); ctx.quadraticCurveTo(x, y - 15, x + 34, y - 31); ctx.stroke()
       for (let i = 0; i < 5; i++) { const bx = x - 28 + i * 12; ctx.fillStyle = [P.coral, P.ice, P.amber][i % 3]; ctx.beginPath(); ctx.moveTo(bx, y - 25); ctx.lineTo(bx + 9, y - 25); ctx.lineTo(bx + 4, y - 14); ctx.fill() }
     }
+  }
+  if (compact !== undefined) {
+    // Compact watches place restoration ornaments at the board edge, away from the build circles.
+    if (stage >= 2) { ctx.fillStyle = '#aa9271'; ctx.fillRect(22, 810, 42, 6) }
+    if (stage >= 3) { ctx.fillStyle = P.amberHi; ctx.beginPath(); ctx.ellipse(665, 785, 20, 8, 0, 0, TAU); ctx.fill() }
+    if (stage >= 4) for (const x of [27, 48, 70]) { ctx.fillStyle = P.pink; ctx.beginPath(); ctx.arc(x, 750, 5, 0, TAU); ctx.fill() }
+    ctx.restore(); return
   }
   if (stage >= 2) {
     // A small pedestrian crossing on the west inlet, away from build pads.
