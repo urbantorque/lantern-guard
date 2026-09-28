@@ -1,5 +1,7 @@
 # Hosted game
 
+Test the game at [Lantern Guard](https://lantern-guard.chic-bee-3413.chatgpt.site/?muted=1). The `muted=1` link turns audio off before the first interaction; sound can be enabled again in Settings. The initial Sites publication is private to the owner and may ask for ChatGPT sign-in.
+
 The game is a static Vite build. The Sites project is recorded in `.openai/hosting.json`; reuse its `project_id` for future releases. The deployment serves `dist/` and needs no application secrets or database.
 
 ## Release steps

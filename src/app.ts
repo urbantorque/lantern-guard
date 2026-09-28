@@ -131,6 +131,7 @@ export class App {
   constructor() {
     migrateSlots()
     this.settings = loadSettings()
+    if (new URLSearchParams(location.search).get('muted') === '1') this.settings.muted = true
     this.coach = loadCoach()
     this.renderer = new Renderer($<HTMLCanvasElement>('cv'))
     this.sim = new Sim('standard', { compact: 1, variant: 0, guard: 1 })
