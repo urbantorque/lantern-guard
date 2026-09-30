@@ -146,6 +146,9 @@ export class FixedApp {
     this.sim=sim;if(sim.challenge.hero)this.hero=sim.challenge.hero;this.map=sim.challenge.variant??0;this.difficulty=sim.difficulty;this.undo=[];this.selection=null;this.moving=null;this.paused=true;this.endShown=false;this.drawer='';this.recap='';this.lastHUD=''
     $('app').innerHTML=`<main class="game"><header class="hud"><div class="stat">${icon('heart')}<b id="light"></b><span>Light</span></div><div class="stat">${icon('sparkle')}<b id="glow"></b><span>Glow</span></div><div class="wave-stat" id="wave"></div>${button('menu',icon('gear')+'<span class="sr-only">Watch menu</span>','icon-button')}</header><section id="battlefield" class="battlefield" aria-label="Battlefield"><canvas id="canvas" aria-label="Fixed paths through the district"></canvas><div id="plots" aria-label="Tower plots"></div><button id="sky" class="sky-strip" data-action="sky"></button><div id="board-status" class="board-status"></div><div class="map-caption"><span>${WATCH_NAMES[this.map]}${sim.challenge.hero?" · "+HEROES[sim.challenge.hero].name:""}</span><span id="act"></span></div></section><footer class="playbar"><button data-action="forecast" class="forecast-button" id="forecast"></button><div class="play-actions">${button('undo','Undo','secondary',true)}${button('speed','1×','secondary')}<button id="go" data-action="go" class="primary"></button></div></footer></main><div id="modal-root"></div><div id="live" class="sr-only" aria-live="polite"></div><p id="save-warning" role="status"></p>`
     this.renderer=new Renderer($<HTMLCanvasElement>('canvas')); this.renderer.attach(sim);if(blooms.length)this.renderer.importBlooms(blooms)
+    const renderer=this.renderer
+    renderer.glowTarget=()=>{const glow=$('glow').getBoundingClientRect(),board=$('canvas').getBoundingClientRect();return renderer.toWorld(glow.x+glow.width/2-board.x,glow.y+glow.height/2-board.y)}
+    renderer.onGlowArrive=()=>{if(!this.profile.settings.reducedMotion)$('glow')?.animate([{transform:'scale(1)'},{transform:'scale(1.15)',color:'#fff4b4'},{transform:'scale(1)'}],{duration:220})}
     this.renderer.settlement=Math.max(this.profile.settlement,loadProgress().settlement??0)
     this.renderer.bunting=this.profile.commissions.includes('market')
     this.renderer.keepsakes=[...this.profile.commissions];this.renderer.crest=this.guardian
@@ -163,7 +166,8 @@ export class FixedApp {
       if(!s.padRevealed(i)||s.challenge.blockedPad===i)return ''
       const point=this.renderer!.toScreen(p.x,p.y)
       const label=p.tower?`${p.tower.def.name}, ${STAGES[stageOf(p.tower)]}, plot ${i+1}`:s.padAvailable(i)?`Build on plot ${i+1}`:`Unlock plot ${i+1} for ${s.plotCost(i)} glow`
-      return `<button class="plot-hit" data-action="plot:${i}" style="left:${point.x}px;top:${point.y}px" aria-label="${label}"><span>${i+1}</span></button>`
+      const empty=!p.tower,open=s.padAvailable(i)
+      return `<button class="plot-hit${empty?' is-empty':''}${empty&&!open?' is-locked':''}" data-action="plot:${i}" style="left:${point.x}px;top:${point.y}px" aria-label="${label}">${empty?`<span class="plot-marker" aria-hidden="true">${open?icon('plus'):icon('lock')}</span><span class="plot-label" aria-hidden="true">${open?'Build':s.plotCost(i)+' glow'}</span>`:`<span class="plot-number">${i+1}</span>`}</button>`
     }).join('')
   }
   private refresh() {
@@ -171,6 +175,7 @@ export class FixedApp {
     $('light').textContent=String(s.lives);$('glow').textContent=String(Math.floor(s.glow))
     const sky=s.sky
     $('battlefield').classList.toggle('is-day',!sky.night)
+    $('battlefield').classList.toggle('wave-active',s.waveActive)
     $('sky').classList.toggle('is-night',sky.night)
     $('sky').innerHTML=`<span><i class="sky-disc" aria-hidden="true"></i>${sky.night?'Night':'Daylight'} <b>${clockText(sky.phaseLeft)}</b></span><span>${WEATHER[sky.weather].name} ${icon('caretRight')}</span>`
     $('sky').setAttribute('aria-label',`${sky.night?'Night, dawn':'Daylight, nightfall'} in ${clockText(sky.phaseLeft)}. ${WEATHER[sky.weather].name}. Open sky forecast`)
@@ -183,7 +188,7 @@ export class FixedApp {
     const groups=s.waveDef(Math.min(s.finalWave,s.wave+(s.waveActive?0:1))).groups
     const unique=[...new Set(groups.map(g=>g.type))]
     $('forecast').innerHTML=`<span class="eyebrow">${s.waveActive?'On the water':s.over?'Watch complete':'Next on the water'} ${icon('caretRight')}</span><b>${unique.slice(0,3).map(e=>ENEMIES[e].name).join(' · ')}${unique.length>3?' +'+(unique.length-3):''}</b>`
-    $('board-status').textContent=this.moving!==null?'Choose an empty plot · 25 glow':s.waveActive&&this.paused?'Paused':!s.towers.length?'Tap an upper plot to build your first tower':this.recap&&!s.waveActive?this.recap:''
+    $('board-status').textContent=this.moving!==null?'Choose an empty plot · 25 glow':s.waveActive&&this.paused?'Paused':!s.towers.length?'Tap a + to build your first tower':this.recap&&!s.waveActive?this.recap:''
     $('save-warning').textContent=storageMessage
   }
   private selectPlot(i:number) {
@@ -197,7 +202,7 @@ export class FixedApp {
     if(p.tower){this.towerSheet(p.tower);return}
     const cost=s.plotCost(i)
     if(cost!==null) {this.show('A little more room',`<p>Unlock plot ${i+1} for ${cost} glow. Building a tower costs extra.</p>${button('unlock:'+i,`Unlock · ${cost} glow`,'primary wide',s.glow<cost||s.waveActive)}${s.waveActive?'<p class="muted">Building happens between waves.</p>':''}`,'plot');return}
-    const cards=TOWER_ORDER.filter(id=>s.keeperAllowed(id)).map(id=>`<button data-action="build:${i}:${id}" class="build-card" ${s.glow<s.towerCost(id)||s.waveActive?'disabled':''}><img src="${fixedTowerIcon(id,0,0,0,this.sim?.challenge.hero)}" alt=""/><span><b>${this.towerDef(id).name}</b><small>${role[id]} · ${id==='garden'?'Daylight income':id==='owl'?'Night shelter':lamplit(id)?'Lamplit':'Owl shelter helps at night'}</small></span><strong>${s.towerCost(id)} <small>glow</small></strong></button>`).join('')
+    const cards=TOWER_ORDER.filter(id=>s.keeperAllowed(id)).map(id=>`<button data-action="build:${i}:${id}" class="build-card" ${s.glow<s.towerCost(id)||s.waveActive?'disabled':''}><img src="${fixedTowerIcon(id,0,0,0,this.sim?.challenge.hero)}" alt=""/><span><b>${this.towerDef(id).name}</b><small>${role[id]} · ${id==='garden'?'Daylight income':id==='owl'?'Night shelter':lamplit(id)?'Lamplit':'Needs night shelter'}</small></span><strong>${s.towerCost(id)} <small>glow</small></strong></button>`).join('')
     const next=TOWER_ORDER.filter(id=>FIXED_UNLOCK[id]>s.planningWave).sort((a,b)=>FIXED_UNLOCK[a]-FIXED_UNLOCK[b])[0]
     this.show(`Build on plot ${i+1}`,`<p class="muted">${s.waveActive?'Finish this wave before building.':'Choose a role for this part of the stream.'}</p><div class="build-list">${cards}</div>${next?`<p class="small muted">${this.towerDef(next).name} arrives at wave ${FIXED_UNLOCK[next]}.</p>`:''}`,'build')
   }

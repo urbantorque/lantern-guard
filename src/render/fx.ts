@@ -3,7 +3,7 @@ import type { EnemyId } from '../game/defs'
 import { drawCheer } from './enemies'
 import { glowSprite, P, withAlpha } from './palette'
 
-export type PKind = 'spark' | 'ink' | 'ring' | 'firefly' | 'text' | 'shard' | 'flash' | 'mote' | 'note' | 'cheer' | 'petal' | 'pillar' | 'orbit' | 'link'
+export type PKind = 'spark' | 'ink' | 'ring' | 'firefly' | 'text' | 'shard' | 'flash' | 'mote' | 'note' | 'cheer' | 'petal' | 'pillar' | 'orbit' | 'link' | 'arc'
 
 export interface Particle {
   kind: PKind
@@ -191,6 +191,14 @@ export class Fx {
     for (const p of this.list) {
       const k = p.life / p.max
       switch (p.kind) {
+        case 'arc': {
+          const dx=p.tx-p.x,dy=p.ty-p.y,d=Math.hypot(dx,dy)||1
+          ctx.globalAlpha=k;ctx.lineCap='round';ctx.lineJoin='round'
+          ctx.beginPath();ctx.moveTo(p.x,p.y)
+          for(let i=1;i<6;i++){const offset=Math.sin(i*17+k*12)*Math.min(9,d*.07);ctx.lineTo(p.x+dx*i/6-dy/d*offset,p.y+dy*i/6+dx/d*offset)}
+          ctx.lineTo(p.tx,p.ty);ctx.strokeStyle=p.color;ctx.lineWidth=p.lw+4;ctx.globalAlpha=k*.3;ctx.stroke();ctx.strokeStyle='#edfcff';ctx.lineWidth=p.lw*.55;ctx.globalAlpha=k;ctx.stroke()
+          break
+        }
         case 'link': {
           ctx.globalAlpha = k * .85; ctx.strokeStyle = p.color; ctx.lineWidth = p.lw; ctx.lineCap = 'round'
           ctx.beginPath(); ctx.moveTo(p.x, p.y)
@@ -262,7 +270,7 @@ export class Fx {
     ctx.globalAlpha = 1
   }
 
-  drawGlow(ctx: CanvasRenderingContext2D) {
+  drawGlow(ctx: CanvasRenderingContext2D, crisp=false) {
     for (const p of this.list) {
       const k = p.life / p.max
       switch (p.kind) {
@@ -271,6 +279,7 @@ export class Fx {
           ctx.globalAlpha = Math.min(1, k * 1.5)
           const spr = glowSprite(p.color, 32)
           ctx.drawImage(spr, p.x - s * 2, p.y - s * 2, s * 4, s * 4)
+          if(crisp){ctx.fillStyle='#fff4cd';ctx.beginPath();ctx.arc(p.x,p.y,Math.max(1,s*.5),0,TAU);ctx.fill()}
           break
         }
         case 'mote': {

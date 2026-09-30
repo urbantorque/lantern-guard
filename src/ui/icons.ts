@@ -40,8 +40,10 @@ import chart from '@phosphor-icons/core/assets/fill/chart-bar-fill.svg?raw'
 import waves from '@phosphor-icons/core/assets/fill/waves-fill.svg?raw'
 import check from '@phosphor-icons/core/assets/fill/check-circle-fill.svg?raw'
 import image from '@phosphor-icons/core/assets/fill/image-fill.svg?raw'
+import plus from '@phosphor-icons/core/assets/bold/plus-bold.svg?raw'
 
 export const ICON = {
+  plus,
   play,
   pause,
   fastForward,

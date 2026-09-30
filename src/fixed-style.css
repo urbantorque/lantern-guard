@@ -22,3 +22,16 @@
 .sky-strip{position:absolute;top:8px;left:12px;right:12px;z-index:2;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 12px;background:#e5e5d9ed;color:#344858;border-color:#667e85;box-shadow:0 2px 10px #172b3610;font-size:12px;min-height:44px;border-radius:6px}.sky-strip.is-night{background:#243947ed;color:#ece5bb;border-color:#73818a}.sky-strip span{display:flex;align-items:center;gap:7px}.sky-strip b{font-weight:500;font-variant-numeric:tabular-nums}.sky-strip svg{width:12px;height:12px}.sky-disc{width:12px;height:12px;border-radius:50%;background:#a08341;display:inline-block;flex-shrink:0}.is-night .sky-disc{background:#eee6b9;box-shadow:inset 4px -2px #243947}.board-status{top:60px}.sky-cycle{display:grid;grid-template-columns:1fr 1fr;margin-bottom:20px;border:1px solid var(--line);border-radius:8px;overflow:hidden}.sky-cycle>div{padding:14px;display:flex;flex-direction:column;gap:7px}.sky-cycle .current{background:#d9d3a714}.sky-cycle span{color:var(--gold);font-variant-numeric:tabular-nums}.sky-cycle small{font-size:12px;color:var(--muted);line-height:1.6}.sky-tower-note{font-size:13px;color:#c8d4d2;border-left:2px solid #87999d;padding-left:12px}.sky-tower-note b{font-weight:500;color:var(--gold)}.large-text .sky-strip{font-size:13px}@media(min-width:1000px){.sky-strip{max-width:420px;left:50%;transform:translateX(-50%)} }@media(max-width:350px){.sky-strip{font-size:11px;padding:7px 9px}.large-text .sky-strip{font-size:12px}}
 
 .battlefield.is-day .map-caption{color:#415d6b}.qa-bar{flex-wrap:wrap;max-width:calc(100vw - 20px)}@media(max-height:500px) and (min-width:601px){.sky-strip{position:fixed;z-index:3;left:auto;right:16px;top:66px;width:198px;max-width:none;flex-direction:column;transform:none}}
+
+/* Build controls keep their screen size when the battlefield scales down. */
+.plot-hit.is-empty{overflow:visible;border:0;background:transparent;box-shadow:none}
+.plot-hit .plot-marker{position:absolute;top:0;left:6px;width:32px;height:32px;display:grid;place-items:center;opacity:1;border:2px solid #fff0bf;border-radius:50%;background:#234c57;color:#ffe5a4;box-shadow:0 3px 0 #173640,0 0 0 3px #183e4130;padding:0}
+.plot-marker svg{width:19px;height:19px}
+.plot-hit .plot-label{position:absolute;top:35px;left:50%;transform:translateX(-50%);opacity:1;padding:2px 5px;border-radius:4px;background:#193b46eb;color:#fff0c3;font-size:10px;font-weight:650;line-height:1.1;white-space:nowrap;letter-spacing:.02em}
+.plot-hit.is-locked .plot-marker{border-color:#a3c5c1;color:#c3dfd9;background:#43636b;box-shadow:0 2px 0 #284853}
+.plot-hit.is-locked .plot-label{color:#d8e9e0;background:#2c4c55e8;font-size:9px}
+.plot-hit:hover .plot-marker,.plot-hit:focus-visible .plot-marker{background:#fff0bf;color:#214956;box-shadow:0 3px 0 #856d48,0 0 0 4px #ffe6a640}
+.plot-hit:focus-visible .plot-label{background:#153642}
+.wave-active .plot-hit.is-empty .plot-label{display:none}
+.wave-active .plot-hit.is-empty:not(:hover):not(:focus-visible) .plot-marker{opacity:.5}
+@media(max-height:500px) and (min-width:601px){.board-status{position:fixed;top:150px;right:16px;left:auto;transform:none;width:198px;max-width:198px;font-size:12px;padding:8px 10px}}

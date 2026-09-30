@@ -13,38 +13,47 @@ export const TOWER_COLOURS:Record<TowerId,{front:string;roof:string;side:string;
   ballista:{front:'#497c99',roof:'#a2cee1',side:'#2e4c69',accent:'#75e1e0'},
 }
 
+/** Shared anchor keeps muzzle flashes and departing shots attached to the actual roof. */
+export function fixedMuzzle(t:Miniature){
+  const stage=t.refinement?4:Math.max(t.a,t.b),h=26+stage*3
+  return {x:t.id==='wick'?4:0,y:t.id==='beam'?-64-stage*7:t.id==='bell'?-30:t.id==='storm'?-h-40:t.id==='ballista'?-h-12:-h-24}
+}
+
 /** Low-poly architectural keepers, drawn as vectors for clear phone-scale silhouettes. */
 export function drawFixedTower(c:CanvasRenderingContext2D,x:number,y:number,t:Miniature) {
   c.save();c.translate(x,y)
   const colour=TOWER_COLOURS[t.id],time=t.time??0,since=t.since??9
-  const recoil=t.reducedMotion?0:Math.max(0,1-since/.3),day=isDaylit(c)
+  const recoil=t.reducedMotion?0:Math.max(0,1-since/.32),day=isDaylit(c)
   const age=t.age??9,upAge=t.upAge??9
-  if(age<.5){const q=Math.min(1,age/.5),rise=1-Math.pow(1-q,3);c.translate(0,(1-rise)*14);c.scale(1,Math.max(.12,rise+Math.sin(q*Math.PI)*.1))}
-  if(upAge<.5){const pulse=Math.sin(upAge/.5*Math.PI);c.scale(1+pulse*.055,1+pulse*.055)}
+  if(age<.55){const q=Math.min(1,age/.55),rise=1-Math.pow(1-q,3);c.translate(0,(1-rise)*22);c.scale(1+Math.sin(q*Math.PI)*.08,Math.max(.12,rise+Math.sin(q*Math.PI)*.18))}
+  if(upAge<.55){const pulse=Math.sin(upAge/.55*Math.PI);c.scale(1+pulse*.09,1+pulse*.09)}
   const stage=t.refinement?4:Math.max(t.a,t.b),special=stage>=2,master=stage>=3,crown=stage===4
   const h=26+stage*3,w=46+Math.min(2,stage)*2
   const house=(bx:number,by:number,bw:number,bd:number,bh:number)=>block(c,bx,by,bw,bd,bh,colour.front,colour.roof,colour.side)
   if(!day)lightPool(c,0,0,47,colour.accent,.48)
+  if(recoil>0){lightPool(c,0,-18,36+recoil*14,colour.accent,recoil*.7);c.translate(-Math.cos(t.angle??0)*recoil*2,-recoil*2)}
   polygon(c,[[-28,7],[25,7],[43,-7],[-9,-15]],'#15253555')
   block(c,0,3,w+8,28,6,'#698f91','#c2d5ba','#385c72')
   const line=(points:number[][],color:string,width=2)=>{c.strokeStyle=color;c.lineWidth=width;c.lineCap='butt';c.beginPath();points.forEach(([a,b],i)=>i?c.lineTo(a,b):c.moveTo(a,b));c.stroke()}
   const lamp=(lx:number,ly:number,height=13)=>{block(c,lx,ly,7,6,height,'#c9cbb0','#c1c7bb','#909d9e');c.fillStyle=CITY.window;c.fillRect(lx-2,ly-height+2,4,height-4)}
   if(t.id==='wick'){
     house(0,-2,w,23,h);windows(c,0,-2,w,h,stage>=1?2:1)
-    c.save();c.translate(-Math.cos(t.angle??0)*recoil*3,-Math.sin(t.angle??0)*recoil*3)
+    c.save();c.translate(-Math.cos(t.angle??0)*recoil*6,-Math.sin(t.angle??0)*recoil*4)
     house(4,-h-9,19,18,special?22:15);lamp(4,-h-17,special?14:10)
-    lightPool(c,4,-h-26,15+recoil*10,colour.accent,.4+recoil*.5,1)
+    lightPool(c,4,-h-26,17+recoil*15,colour.accent,.45+recoil*.5,1)
+    // A visible aiming arm connects the architectural tower to its next shot.
+    const aim=t.angle??-.8;line([[4,-h-24],[4+Math.cos(aim)*18,-h-24+Math.sin(aim)*12]],'#fff2b6',4)
     c.restore()
     if(master){block(c,-20,-6,13,14,25);windows(c,-20,-6,13,25)}
     if(crown){block(c,18,-h-10,11,12,34);lamp(18,-h-39,8)}
     if(t.b&&special)line([[13,-h-19],[25,-h-39]],'#899ca7',3)
   }else if(t.id==='cracker'){
     house(0,-2,w,25,h);windows(c,0,-2,w,h,1)
-    for(let i=0;i<(special?3:2);i++){const px=-14+i*14,kick=recoil*(i===0?6:3);house(px,-h-5+kick,11,13,master?26:19);c.fillStyle='#352a49';c.fillRect(px-4,-h-(master?28:21)+kick,8,6);c.fillStyle=colour.accent;c.fillRect(px-4,-h-12+kick,8,4)}
+    for(let i=0;i<(special?3:2);i++){const px=-14+i*14,kick=recoil*(i===0?10:5);house(px,-h-5+kick,11,13,master?26:19);c.fillStyle='#352a49';c.fillRect(px-4,-h-(master?28:21)+kick,8,6);c.fillStyle=colour.accent;c.fillRect(px-4,-h-12+kick,8,4)}
     if(crown){block(c,-25,-4,13,17,27);windows(c,-25,-4,13,27);block(c,18,-h-11,10,12,35,'#73828a')}
   }else if(t.id==='bell'){
     house(-19,-3,9,12,56);house(19,-3,9,12,56);house(0,-59,53,25,7)
-    c.save();c.translate(5,-60);c.rotate(t.reducedMotion?0:Math.sin(since*22)*Math.exp(-since*4)*.35);c.translate(-5,60)
+    c.save();c.translate(5,-60);c.rotate(t.reducedMotion?0:Math.sin(since*22)*Math.exp(-since*4)*.52);c.translate(-5,60)
     line([[5,-65],[5,-42]],'#aab4b3',2)
     polygon(c,[[-4,-44],[13,-44],[16,-28],[22,-24],[-13,-24],[-7,-29]],special?'#ffe9a0':'#eebc71');polygon(c,[[4,-44],[13,-44],[16,-28],[22,-24],[7,-24]],'#b98156');c.fillStyle='#ffe9a3';c.fillRect(-12,-26,33,4)
     c.restore()
@@ -56,8 +65,8 @@ export function drawFixedTower(c:CanvasRenderingContext2D,x:number,y:number,t:Mi
     house(0,-2,w,25,h);windows(c,0,-2,w,h)
     const by=-h-4
     polygon(c,[[-22,by],[-24,by-17],[-15,by-33],[4,by-38],[22,by-27],[28,by-9],[22,by]],colour.roof);polygon(c,[[4,by-38],[22,by-27],[28,by-9],[22,by],[5,by]],colour.front);polygon(c,[[-24,by-17],[-15,by-33],[4,by-38],[-6,by-18]],'#e0edbd')
-    const look=Math.sin(t.angle??0)*3;block(c,look,by-9,27,8,14,'#26484f','#789c75');c.fillStyle=colour.accent;c.fillRect(look-10,by-20,7,7);c.fillRect(look+3,by-20,7,7)
-    for(const side of [-1,1]){const lift=recoil*12;polygon(c,[[side*20,by-6],[side*34,by-16-lift],[side*31,by+1],[side*21,by+5]],colour.roof)}
+    const look=Math.cos(t.angle??0)*4;block(c,look,by-9,27,8,14,'#26484f','#789c75');c.fillStyle=colour.accent;c.fillRect(look-10,by-20,7,7);c.fillRect(look+3,by-20,7,7)
+    for(const side of [-1,1]){const lift=recoil*18;polygon(c,[[side*20,by-6],[side*34,by-16-lift],[side*31,by+1],[side*21,by+5]],colour.roof)}
     if(special)line([[17,by-25],[29,by-45]],'#96a6af',3)
     if(master){block(c,-25,-3,11,15,25);windows(c,-25,-3,11,25)}
     if(crown){block(c,23,-5,13,16,35);lamp(23,-36,16);line([[-16,by-35],[-25,by-45]],'#a4b6b9',3)}

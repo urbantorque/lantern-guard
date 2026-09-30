@@ -9,14 +9,15 @@ const colours:Record<EnemyId,string>={drip:'#58d5ca',skitter:'#ffbd59',shell:'#f
 export function drawFixedEnemy(c:CanvasRenderingContext2D,e:Enemy,reducedMotion=false){
   const r=e.def.radius*(e.visScale??1)*1.24,hidden=e.def.hidden&&!e.revealedPerm&&e.seenT<=0
   const phase=(e.age??0)*(e.def.id==='skitter'?14:7)+(e.uid??0)*1.7
-  const moving=!reducedMotion&&!(e.stunT>0),bob=moving?Math.sin(phase)*r*.09:0
+  const moving=!reducedMotion&&!(e.stunT>0),bob=moving?Math.sin(phase)*r*.15:0
   const hit=!reducedMotion?Math.max(0,e.hitT??0)/.12:0
   const col=currentPalette()==='clear'?ENEMY_MARK[e.def.id]:colours[e.def.id]
   c.save();c.translate(e.x,e.y);c.globalAlpha=hidden?.48:1
   c.fillStyle='#092c4655';c.beginPath();c.ellipse(2,5,r*1.07,r*.36,0,0,Math.PI*2);c.fill()
   // A travelling wake anchors every creature to the canal surface.
-  c.strokeStyle='#b4fff17a';c.lineWidth=1.5;c.beginPath();c.ellipse(0,4,r*1.3,r*.43,0,.1,Math.PI-.1);c.stroke()
-  c.save();c.translate(0,-2-bob);c.scale(1+hit*.07,1-hit*.1)
+  c.strokeStyle='#c5fff5a0';c.lineWidth=1.6
+  for(let i=0;i<2;i++){const drift=moving?((e.age??0)*2.5+i*.5)%1:i*.5;c.save();c.globalAlpha*=1-drift*.7;c.beginPath();c.ellipse(-(e.tx??0)*drift*r,4-(e.ty??0)*drift*r,r*(1.05+drift*.55),r*(.35+drift*.17),0,.1,Math.PI-.1);c.stroke();c.restore()}
+  c.save();c.translate(0,-2-bob);const squash=moving?Math.sin(phase)*.035:0;c.scale(1+hit*.14+squash,1-hit*.18-squash)
   const boss=e.def.boss,armoured=(e.shell??0)>0,swift=e.def.id==='skitter'||e.def.id==='skiff'
   if(swift){
     // Low hull, pointed nose and paddles for the fast families.
@@ -52,6 +53,7 @@ export function drawFixedEnemy(c:CanvasRenderingContext2D,e:Enemy,reducedMotion=
   if(e.def.heal||e.def.id==='bloomheart'){c.strokeStyle='#e4ffc9';c.lineWidth=3;c.beginPath();c.moveTo(-5,-r*1.02);c.lineTo(5,-r*1.02);c.moveTo(0,-r*1.02-5);c.lineTo(0,-r*1.02+5);c.stroke()}
   c.restore()
   if(e.slowT>0){c.strokeStyle='#d7faff';c.lineWidth=2;c.setLineDash([5,4]);c.beginPath();c.ellipse(0,4,r*1.2,r*.4,0,0,Math.PI*2);c.stroke();c.setLineDash([])}
+  if(e.stunT>0){c.fillStyle='#fff0a3';for(let i=0;i<3;i++){const a=i*Math.PI*2/3+(reducedMotion?0:(e.age??0)*4);const x=Math.cos(a)*r*.9,y=-r*1.75+Math.sin(a)*r*.22;polygon(c,[[x,y-3],[x+3,y],[x,y+3],[x-3,y]],'#fff0a3')}}
   if(e.def.hidden){c.strokeStyle='#e3cfff';c.lineWidth=1.5;c.setLineDash(hidden?[3,3]:[]);c.beginPath();c.ellipse(0,4,r*.8,r*.27,0,0,Math.PI*2);c.stroke();c.setLineDash([])}
   if(boss||e.hp<e.maxHp){const w=Math.max(24,r*1.9),y=-r*(boss?2.45:1.85);c.fillStyle='#173546';c.fillRect(-w/2-1,y-1,w+2,6);c.fillStyle='#a8f0aa';c.fillRect(-w/2,y,w*Math.max(0,e.hp/e.maxHp),4)}
   if(e.signalT&&e.signalT>0){c.strokeStyle='#ffdc8f';c.lineWidth=3;c.beginPath();c.arc(0,0,Math.max(r,50),-Math.PI/2,-Math.PI/2+Math.PI*2*Math.min(1,e.signalT/3));c.stroke()}

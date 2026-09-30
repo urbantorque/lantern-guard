@@ -14,7 +14,9 @@ import { drawEnemy, drawEnemyIcon, ENEMY_VIS, setEnemySpriteScale } from './enem
 import { Fx } from './fx'
 import { FAMILY_COLOR, glowSprite, P, withAlpha } from './palette'
 import { drawPad, drawTower, PAD_R } from './towers'
-import { drawFixedWorld, districtGround } from './fixed-world'
+import { drawFixedWorld } from './fixed-world'
+import { districtGradient } from './fixed-scenery'
+import { fixedMuzzle } from './fixed-towers'
 
 export type Selection =
   | { kind: 'pad'; index: number }
@@ -223,9 +225,11 @@ export class Renderer {
       : this.zone === 'gardens' ? { x: 0, y: -1020, w: 720, h: 750 }
       : this.zone === 'harbour' ? { x: 0, y: -475, w: 720, h: 830 } : this.levelBuilt?.def.bounds ?? { x: 0, y: -36, w: WORLD_W, h: WORLD_H + 36 }
     const mapTop = this.fixedEdition&&h>400?60:this.zone === 'gardens' || this.zone === 'overview' ? 52 : 0
-    this.scale = Math.min(w / bounds.w, Math.max(1, h - mapTop) / bounds.h)
+    // Screen-sized build labels need space below the last plot, especially in landscape.
+    const mapBottom=this.fixedEdition?(h<=400?32:18):0
+    this.scale = Math.min(w / bounds.w, Math.max(1, h - mapTop - mapBottom) / bounds.h)
     this.ox = (w - bounds.w * this.scale) / 2 - bounds.x * this.scale
-    this.oy = mapTop + (h - mapTop - bounds.h * this.scale) / 2 - bounds.y * this.scale
+    this.oy = mapTop + (h - mapTop - mapBottom - bounds.h * this.scale) / 2 - bounds.y * this.scale
     this.fx.textScale = Math.max(1, Math.min(1.9, 0.62 / this.scale))
     this.fx.minText = this.minText / this.scale
     setEnemySpriteScale(this.scale * dpr)
@@ -306,7 +310,7 @@ export class Renderer {
   handleEvents(sim: Sim) {
     const fx = this.fx
     const calm = this.settings.calmFx || this.settings.reduceMotion
-    fx.density = sim.challenge.fixed ? (this.settings.reduceMotion ? .15 : .6) : calm ? 0.5 : 1
+    fx.density = sim.challenge.fixed ? (this.settings.reduceMotion ? .15 : .85) : calm ? 0.5 : 1
     let pops = 0
     for (const ev of sim.events) {
       switch (ev.t) {
@@ -317,9 +321,11 @@ export class Renderer {
           if (sim.challenge.fixed) {
             this.addBloom(ev)
             if (!this.settings.reduceMotion && (ev.boss || pops < 5)) {
-              fx.ring(ev.x,ev.y,ev.boss?70:18,withAlpha(col,.85),.35,2)
-              fx.flash(ev.x,ev.y-8,ev.boss?65:22,col,.2)
-              fx.petals(ev.x,ev.y-6,col,ev.boss?18:6,ev.boss?6:3.5,ev.boss?150:80)
+              fx.ring(ev.x,ev.y,ev.boss?82:25,withAlpha(col,.9),.4,2.5)
+              fx.flash(ev.x,ev.y-8,ev.boss?75:28,col,.22)
+              fx.petals(ev.x,ev.y-6,col,ev.boss?18:7,ev.boss?6:4,ev.boss?170:105)
+              fx.burst(ev.x,ev.y-8,P.cream,ev.boss?12:3,ev.boss?180:100,3,.35)
+              if(pops<3&&fx.list.filter(p=>p.kind==='firefly').length<12)this.firefly(ev.x,ev.y-8,vrand(-55,55),-100)
               if(ev.boss)fx.burst(ev.x,ev.y-8,P.amberHi,26,200,4,.7)
             }
             sound.pop(big)
@@ -374,12 +380,12 @@ export class Renderer {
             fx.flash(ev.x, ev.y, 18, c, 0.2)
             fx.burst(ev.x, ev.y, c, calm ? 1 : 3, 90, 2.2, 0.3)
           } else if (sim.challenge.fixed && !this.settings.reduceMotion) {
-            fx.flash(ev.x,ev.y-5,14,ev.hue,.13)
-            if(Math.random()<.45)fx.burst(ev.x,ev.y-5,ev.hue,3,100,2.5,.22)
+            fx.flash(ev.x,ev.y-8,21,ev.hue,.16)
+            if(Math.random()<.65)fx.burst(ev.x,ev.y-8,ev.hue,4,130,3,.25)
           } else if (!calm && Math.random() < 0.6) fx.burst(ev.x, ev.y, ev.hue, 2, 110, 2.5, 0.25)
           break
         case 'shoot':
-          if(sim.challenge.fixed&&!this.settings.reduceMotion)fx.flash(ev.x,ev.y-44,ev.tower==='cracker'?24:15,ev.tower==='storm'?P.ice:ev.tower==='owl'?P.lime:P.amberHi,.14)
+          if(sim.challenge.fixed&&!this.settings.reduceMotion){const tower=sim.towers.find(t=>t.x===ev.x&&t.y===ev.y),muzzle=tower?fixedMuzzle(tower):{x:0,y:-44};fx.flash(ev.x+muzzle.x,ev.y+muzzle.y,ev.tower==='cracker'?30:20,ev.tower==='storm'?P.ice:ev.tower==='owl'?P.lime:P.amberHi,.17)}
           if (ev.tower === 'wick') sound.spark()
           else if (ev.tower === 'owl') sound.swoosh()
           else if (ev.tower === 'cracker') {
@@ -501,7 +507,7 @@ export class Renderer {
           fx.add({ kind: 'link', x: ev.x, y: ev.y, tx: ev.tx, ty: ev.ty, life: .22, lw: 3, color: P.lime })
           break
         case 'arc':
-          fx.add({ kind: 'link', x: ev.x, y: ev.y, tx: ev.tx, ty: ev.ty, life: .2, lw: 3.5, color: P.ice })
+          fx.add({ kind: sim.challenge.fixed&&!calm?'arc':'link', x: ev.x, y: ev.y, tx: ev.tx, ty: ev.ty, life: .2, lw: 3.5, color: P.ice })
           break
         case 'prepare':
           fx.ring(ev.x, ev.y, ev.id === 'ward' ? 48 : 30, ev.id === 'ward' ? P.amberHi : P.lime, .5, 3)
@@ -735,12 +741,13 @@ export class Renderer {
   draw(sim: Sim, dt: number, view: ViewState) {
     if(sim.challenge.fixed) {
       this.time+=dt;this.fx.update(dt)
-      const c=this.ctx;c.setTransform(this.dpr,0,0,this.dpr,0,0);c.fillStyle=districtGround(sim);c.fillRect(0,0,this.w,this.h)
+      this.leakStack=Math.max(0,this.leakStack-dt*1.2)
+      const c=this.ctx;c.setTransform(this.dpr,0,0,this.dpr,0,0);c.fillStyle=districtGradient(c,sim,this.ox,this.oy-105*this.scale,720*this.scale,960*this.scale);c.fillRect(0,0,this.w,this.h)
       c.translate(this.ox,this.oy);c.scale(this.scale,this.scale)
       drawFixedWorld(c,sim,view,this.settlement,this.keepsakes,this.crest,this.scale,this.settings.reduceMotion,this.time)
       this.fx.drawBase(c)
       // The previous fixed renderer omitted this layer, hiding hits, muzzle flashes and rewards.
-      if(!this.settings.reduceMotion){c.save();c.globalCompositeOperation='screen';this.fx.drawGlow(c);c.restore()}
+      if(!this.settings.reduceMotion){c.save();c.globalCompositeOperation='screen';this.fx.drawGlow(c,true);c.restore()}
       sound.beam(view.paused||sim.over?0:sim.beamIntensity)
       return
     }
