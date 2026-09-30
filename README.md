@@ -4,10 +4,10 @@ The city sleeps. You keep the light.
 
 Build a thoughtful defence through a quiet canal district. Study the next wave, choose where to invest, and keep the district alight for forty waves.
 
-![Nightward's architectural canal district](public/nightward-title.webp)
+![Nightward's colourful canal district](public/nightward-city-v2.webp)
 
 - **Four fixed waterways.** Placement and shared coverage shape your defence.
-- **Eight tower roles, five stages.** Choose one specialisation, then grow it into an architectural landmark.
+- **Three heroes, eight towers each.** Sol brings fire and income, Mira brings control and night shelter, Ivo brings speed and electricity. Each roster has different mechanics, names and architecture; every tower has five stages.
 - **Tower Bonds.** Pair a Moonbell with a Cracker, or an Owl with a Wickling, for a bounded shared-range effect.
 - **District Commissions.** Three permanent five-wave challenges award visible cosmetic details in a separate save slot.
 - **Your own pace.** Three difficulties, planning undo, pausing, clear forecasts and same-seed retries. Nightfall retries are recorded separately as practice.
@@ -25,7 +25,7 @@ npm run dev
 Open the local URL printed by Vite. Add `?muted=1` for a silent preview. Progress stays on the device. Backgrounding pauses the watch and suspends audio.
 
 ```sh
-npm run check       # Regression suites, saves, sky rules and 112 campaign simulations
+npm run check       # Regression suites, saves, sky rules and hero balance
 npm run build       # Typecheck and produce dist/
 npm run ios:sync    # Build and sync the Capacitor iOS project
 ```
@@ -36,7 +36,7 @@ The [GitHub Pages address](https://urbantorque.github.io/lantern-guard/?muted=1)
 
 ## Design and verification
 
-[Execution roadmap](docs/FIXED-PATH-ROADMAP.md) · [Delivered changes, balance evidence and art credits](docs/NIGHTWARD-RELEASE.md) · [iOS build guide](docs/IOS-BUILD.md)
+[Three-hero release and visual revision](docs/VIBRANT-HEROES-RELEASE.md) · [Execution roadmap](docs/FIXED-PATH-ROADMAP.md) · [Delivered changes, balance evidence and art credits](docs/NIGHTWARD-RELEASE.md) · [iOS build guide](docs/IOS-BUILD.md)
 
 Nightward replaces Lantern Guard's playable routing edition. Old battle snapshots remain archived on the device; journal, settlement, achievements and settings carry forward. New records and saves use a separate rules version.
 

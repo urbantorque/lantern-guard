@@ -11,6 +11,8 @@ import { sound } from './core/audio'
 import { watchAppState } from './core/platform'
 import { upgradeDetail } from './game/fixed-copy'
 import { setPalette } from './render/palette'
+import { HEROES, HERO_IDS, isHero, heroTower, type HeroId } from './game/heroes'
+import { heroPortrait } from './render/heroes'
 import { loadProgress } from './game/progress'
 import { loadVillage, loadWatch, saveWatch, recordWatch, bestWave, legacyExists, storageMessage, writeJSON, loadPlanning, type Slot } from './game/fixed-store'
 
@@ -41,11 +43,13 @@ export class FixedApp {
   private endShown=false
   private guardian='lantern'
   private qa=false
+  private hero:HeroId='sol'
 
   constructor() {
     this.qa=import.meta.env.DEV && new URLSearchParams(location.search).has('qa')
     if(this.qa||new URLSearchParams(location.search).get('muted')==='1')this.profile.settings.muted=true
     this.map=this.profile.lastMap
+    this.hero=this.profile.lastHero??'sol'
     this.guardian=this.profile.guardian??'lantern'
     this.applySettings()
     document.addEventListener('click',e=>{
@@ -73,8 +77,8 @@ export class FixedApp {
     this.save(); this.paused=true; this.sim=null; this.renderer=null; this.observer?.disconnect();this.drawer=''
     const saved=loadWatch('campaign'), commission=loadWatch('commission')
     const best=Math.max(0,...Object.values(this.profile.records).map(r=>r.wave))
-    $('app').innerHTML=`<main class="home"><div class="title-art" role="img" aria-label="A geometric canal district after dusk, with planted roofs and warm windows"></div><div class="home-content"><p class="eyebrow">The city sleeps. You keep the light.</p><h1>Nightward<span class="title-dot">.</span></h1><p class="home-intro">Build with care.<br>Be ready for the night.</p><div class="home-actions">
-      ${saved&&!saved.snapshot.over?button('resume:campaign',`Continue watch <small>Wave ${saved.snapshot.wave || 1} · ${WATCH_NAMES[saved.snapshot.challenge.variant??0]}</small>`,'primary'):''}
+    $('app').innerHTML=`<main class="home"><div class="title-art" role="img" aria-label="A colourful canal district at sunset, with planted terraces and golden windows"></div><div class="home-content"><p class="eyebrow">The city sleeps. You keep the light.</p><h1>Nightward<span class="title-dot">.</span></h1><p class="home-intro">Build with care.<br>Be ready for the night.</p><div class="home-actions">
+      ${saved&&!saved.snapshot.over?button('resume:campaign',`Continue watch <small>Wave ${saved.snapshot.wave || 1} · ${WATCH_NAMES[saved.snapshot.challenge.variant??0]}${saved.snapshot.challenge.hero?" · "+HEROES[saved.snapshot.challenge.hero].name:""}</small>`,'primary'):''}
       ${button('choose','Begin a watch',saved&&!saved.snapshot.over?'secondary':'primary')}
       <div class="home-links">${button('district','The district')}${button('commissions','Commissions')}${button('settings',icon('gear')+'<span class="sr-only">Settings</span>')}</div>
       ${commission&&!commission.snapshot.over?button('resume:commission','Continue commission','text-button'):''}</div><p class="home-note">${best?`Best watch · ${best}/40 waves`:'40 waves · Four waterways · Your own pace'}</p></div></main><div id="modal-root"></div><div id="live" class="sr-only" aria-live="polite"></div>`
@@ -83,7 +87,7 @@ export class FixedApp {
     if(!this.drawer) this.previousFocus=document.activeElement as HTMLElement
     this.drawer=kind||title; this.paused=true
     document.querySelector('main')?.setAttribute('inert','')
-    $('modal-root').innerHTML=`<div class="scrim" data-action="close"></div><section class="drawer ${kind}" role="dialog" aria-modal="true" aria-labelledby="dialog-title"><header><h2 id="dialog-title">${title}</h2>${button('close',icon('close')+'<span class="sr-only">Close</span>','icon-button')}</header><div class="drawer-body">${content}</div></section>`
+    $('modal-root').innerHTML=`<div class="scrim" data-action="close"></div><section class="drawer ${kind}" role="dialog" aria-modal="true" aria-labelledby="dialog-title"><header><h2 id="dialog-title">${title}</h2>${button('close',icon('close')+'<span class="sr-only">Close</span>','icon-button')}</header><div class="drawer-body">${this.kitCopy(content)}</div></section>`
     $('modal-root').querySelector<HTMLButtonElement>('.drawer button')?.focus()
     this.refresh()
   }
@@ -94,8 +98,35 @@ export class FixedApp {
     else document.querySelector<HTMLButtonElement>('.plot-hit, .home-actions button')?.focus()
     this.refresh()
   }
-  private choose() {
-    this.show('Choose your watch',`<p class="muted">Four fixed waterways. Every entrance has one clear route to the lantern.</p><div class="map-list">${WATCH_NAMES.map((name,i)=>button(`map:${i}`,`${this.preview(i)}<span><b>${name}</b><small>${MAP_HELP[i]}</small><em>${bestWave(this.profile,i,this.difficulty)}/40 waves held</em></span>`,this.map===i?'map-choice selected':'map-choice')).join('')}</div><fieldset><legend>Difficulty</legend><div class="segmented">${(['relaxed','standard','nightfall'] as Difficulty[]).map(d=>button('mode:'+d,DIFFICULTY[d].name,this.difficulty===d?'selected':'')).join('')}</div><p class="muted">${this.difficulty==='relaxed'?'50 light. Gentler enemies. Retry any wave.':this.difficulty==='standard'?'25 light. Thoughtful planning, with a retry when you need it.':'15 light. Stronger enemies. Retrying records this watch as practice.'} Pause whenever you need.</p></fieldset>${loadWatch('campaign')&&!loadWatch('campaign')!.snapshot.over?'<p class="notice">Beginning replaces your current fixed-path watch. Your records stay in the district.</p>':''}${button('new','Begin in '+WATCH_NAMES[this.map],'primary wide')}${legacyExists()?'<p class="small muted">Your previous edition’s watch is archived on this device. Its routes cannot carry into this edition. Your journal and achievements remain in the district.</p>':''}`,'choose')
+  private choose(focusAction?:string) {
+    const scroll=document.querySelector<HTMLElement>(".drawer-body")?.scrollTop??0
+    this.show('Choose your watch',`${this.heroChoices()}<p class="muted">Four fixed waterways. Every entrance has one clear route to the lantern.</p><div class="map-list">${WATCH_NAMES.map((name,i)=>button(`map:${i}`,`${this.preview(i)}<span><b>${name}</b><small>${MAP_HELP[i]}</small><em>${bestWave(this.profile,i,this.difficulty,this.hero)}/40 waves held</em></span>`,this.map===i?'map-choice selected':'map-choice')).join('')}</div><fieldset><legend>Difficulty</legend><div class="segmented">${(['relaxed','standard','nightfall'] as Difficulty[]).map(d=>button('mode:'+d,DIFFICULTY[d].name,this.difficulty===d?'selected':'')).join('')}</div><p class="muted">${this.difficulty==='relaxed'?'50 light. Gentler enemies. Retry any wave.':this.difficulty==='standard'?'25 light. Thoughtful planning, with a retry when you need it.':'15 light. Stronger enemies. Retrying records this watch as practice.'} Pause whenever you need.</p></fieldset>${loadWatch('campaign')&&!loadWatch('campaign')!.snapshot.over?'<p class="notice">Beginning replaces your current fixed-path watch. Your records stay in the district.</p>':''}${button('new','Begin in '+WATCH_NAMES[this.map],'primary wide')}${legacyExists()?'<p class="small muted">Your previous edition’s watch is archived on this device. Its routes cannot carry into this edition. Your journal and achievements remain in the district.</p>':''}`,'choose')
+    if(focusAction){document.querySelector<HTMLButtonElement>('[data-action="'+focusAction+'"]')?.focus({preventScroll:true});const body=document.querySelector<HTMLElement>('.drawer-body');if(body)body.scrollTop=scroll}
+  }
+  private towerDef(id:TowerId){return heroTower(id,this.sim?this.sim.challenge.hero:this.hero)}
+  private kitCopy(text:string){
+    const hero=this.sim?this.sim.challenge.hero:this.hero;if(!hero)return text
+    text=text.replaceAll('An Owl guides a Wickling hit','A scout guides a spark').replaceAll('an Owl','a scout tower').replaceAll('An Owl','A scout tower')
+    for(const id of TOWER_ORDER)text=text.replaceAll(TOWERS[id].name,HEROES[hero].towers[id].name)
+    return text.replace(/\bWicklings\b/g,HEROES[hero].towers.wick.name+' towers').replace(/\bMoonbells\b/g,HEROES[hero].towers.bell.name+' towers').replace(/\bLighthouses\b/g,HEROES[hero].towers.beam.name+' towers').replace(/\bOwls\b/g,'scout towers').replace(/\bOwl\b/g,'scout tower').replace(/\bGardens\b/g,'income towers').replace(/\bCrackers\b/g,'blast towers').replace(/\bBallistas\b/g,'bolt towers')
+  }
+  private towerFacts(t:Tower){
+    const s=t.stats,n=(x:number)=>Number(x.toFixed(2)),facts:string[]=[]
+    if(t.id==='garden')facts.push(`<b>${s.income}</b> base glow / wave`)
+    else if(t.id==='bell')facts.push(`<b>${Math.round(s.slow*100)}%</b> slow · <b>${n(s.slowDur)}s</b>`)
+    else facts.push(`<b>${n(s.damage)}</b> damage ${t.id==='beam'?'/ second':'/ hit'}`)
+    if(t.id!=='garden'&&t.id!=='beam')facts.push(`<b>${n(s.interval)}s</b> reload`)
+    if(s.count>1&&t.id!=='garden')facts.push(`<b>${s.count}</b> ${t.id==='storm'?'arc targets':'shots'}`)
+    if(t.id==='beam')facts.push(`<b>${s.beams}</b> ${s.beams===1?'beam':'beams'}`)
+    facts.push(`<b>${Math.round(s.range)}</b> base reach`)
+    return `<div class="tower-facts">${facts.map(f=>`<span>${f}</span>`).join('')}</div>`
+  }
+  private heroChoices(){
+    return `<p class="lead">Choose the keeper of this watch.</p><div class="hero-choices" role="group" aria-label="Choose a hero">${HERO_IDS.map(id=>{const h=HEROES[id];return `<button class="hero-choice ${this.hero===id?'selected':''}" data-action="hero:${id}" aria-pressed="${this.hero===id}" style="--hero:${h.colour}"><img src="${heroPortrait(id)}" alt=""/><span><b>${h.name}</b><small>${h.title}</small><em>${h.approach}</em></span>${this.hero===id?icon('check'):''}</button>`}).join('')}</div><p class="small muted">${HEROES[this.hero].tradeoff} Your hero and eight-tower roster stay fixed for the watch.</p>${button('roster',`Meet ${HEROES[this.hero].name}’s eight towers`,'secondary wide')}<h3 class="watch-waterway">Choose a waterway</h3>`
+  }
+  private roster(){
+    const id=this.sim?this.sim.challenge.hero:this.hero,h=id?HEROES[id]:null
+    this.show(h?`${h.name} · ${h.title}`:'The original keepers',`${h?`<div class="hero-intro"><img src="${heroPortrait(id!)}" alt="${h.name}, ${h.title}"/><div><p class="lead">${h.approach}</p><p class="small muted">${h.tradeoff}</p></div></div>`:''}<p class="small muted">All three heroes are available immediately. Towers arrive gradually during a watch; each has two specialisations and five stages. Shared roles make a new roster easy to learn.</p><div class="roster-list">${[...TOWER_ORDER].sort((a,b)=>FIXED_UNLOCK[a]-FIXED_UNLOCK[b]).map(t=>`<article><img src="${fixedTowerIcon(t,1,0,0,id)}" alt=""/><div><h3>${heroTower(t,id).name}</h3><p class="roster-role">${role[t]} · Wave ${FIXED_UNLOCK[t]} · ${TOWERS[t].cost} glow</p><p>${h?h.towers[t].trait:TOWERS[t].blurb}</p><small>${heroTower(t,id).paths.map(p=>p.name).join(' / ')}</small></div></article>`).join('')}</div>${!this.sim?button('choose','Back to watch setup','primary wide'):''}`,'roster')
   }
   private preview(map:number) {
     const level=fixedLevel(map)
@@ -104,15 +135,16 @@ export class FixedApp {
   private newWatch(commissionId?:string,sameSeed?:number) {
     const c=COMMISSIONS.find(q=>q.id===commissionId)
     this.slot=c?'commission':'campaign'; this.map=c?.variant??this.map
-    const challenge={fixed:1 as const,compact:1 as const,guard:1 as const,depth:1 as const,balance:1 as const,variant:this.map,...(c?{commission:c.id,blockedPad:c.blockedPad,id:`commission:${c.id}:fixed1`,skirmish:{from:c.from,to:c.to,glow:c.glow,seed:c.seed}}:{})}
-    this.profile.lastMap=this.map;writeJSON('profile',this.profile)
+    const hero=sameSeed!==undefined?this.sim?.challenge.hero:this.hero
+    const challenge={fixed:1 as const,compact:1 as const,guard:1 as const,depth:1 as const,balance:1 as const,variant:this.map,...(hero?{hero}:{}),...(c?{commission:c.id,blockedPad:c.blockedPad,id:`commission:${c.id}:fixed1`,skirmish:{from:c.from,to:c.to,glow:c.glow,seed:c.seed}}:{})}
+    this.profile.lastMap=this.map;this.profile.lastHero=this.hero;writeJSON('profile',this.profile)
     this.begin(new Sim(this.difficulty,challenge,sameSeed??Math.floor(Math.random()*4294967295)))
     this.writePlanning(this.sim!.snapshot()); this.save()
   }
   private begin(sim:Sim,blooms:number[]=[]) {
     document.body.classList.add('playing')
-    this.sim=sim;this.map=sim.challenge.variant??0;this.difficulty=sim.difficulty;this.undo=[];this.selection=null;this.moving=null;this.paused=true;this.endShown=false;this.drawer='';this.recap='';this.lastHUD=''
-    $('app').innerHTML=`<main class="game"><header class="hud"><div class="stat">${icon('heart')}<b id="light"></b><span>Light</span></div><div class="stat">${icon('sparkle')}<b id="glow"></b><span>Glow</span></div><div class="wave-stat" id="wave"></div>${button('menu',icon('gear')+'<span class="sr-only">Watch menu</span>','icon-button')}</header><section id="battlefield" class="battlefield" aria-label="Battlefield"><canvas id="canvas" aria-label="Fixed paths through the district"></canvas><div id="plots" aria-label="Tower plots"></div><button id="sky" class="sky-strip" data-action="sky"></button><div id="board-status" class="board-status"></div><div class="map-caption"><span>${WATCH_NAMES[this.map]}</span><span id="act"></span></div></section><footer class="playbar"><button data-action="forecast" class="forecast-button" id="forecast"></button><div class="play-actions">${button('undo','Undo','secondary',true)}${button('speed','1×','secondary')}<button id="go" data-action="go" class="primary"></button></div></footer></main><div id="modal-root"></div><div id="live" class="sr-only" aria-live="polite"></div><p id="save-warning" role="status"></p>`
+    this.sim=sim;if(sim.challenge.hero)this.hero=sim.challenge.hero;this.map=sim.challenge.variant??0;this.difficulty=sim.difficulty;this.undo=[];this.selection=null;this.moving=null;this.paused=true;this.endShown=false;this.drawer='';this.recap='';this.lastHUD=''
+    $('app').innerHTML=`<main class="game"><header class="hud"><div class="stat">${icon('heart')}<b id="light"></b><span>Light</span></div><div class="stat">${icon('sparkle')}<b id="glow"></b><span>Glow</span></div><div class="wave-stat" id="wave"></div>${button('menu',icon('gear')+'<span class="sr-only">Watch menu</span>','icon-button')}</header><section id="battlefield" class="battlefield" aria-label="Battlefield"><canvas id="canvas" aria-label="Fixed paths through the district"></canvas><div id="plots" aria-label="Tower plots"></div><button id="sky" class="sky-strip" data-action="sky"></button><div id="board-status" class="board-status"></div><div class="map-caption"><span>${WATCH_NAMES[this.map]}${sim.challenge.hero?" · "+HEROES[sim.challenge.hero].name:""}</span><span id="act"></span></div></section><footer class="playbar"><button data-action="forecast" class="forecast-button" id="forecast"></button><div class="play-actions">${button('undo','Undo','secondary',true)}${button('speed','1×','secondary')}<button id="go" data-action="go" class="primary"></button></div></footer></main><div id="modal-root"></div><div id="live" class="sr-only" aria-live="polite"></div><p id="save-warning" role="status"></p>`
     this.renderer=new Renderer($<HTMLCanvasElement>('canvas')); this.renderer.attach(sim);if(blooms.length)this.renderer.importBlooms(blooms)
     this.renderer.settlement=Math.max(this.profile.settlement,loadProgress().settlement??0)
     this.renderer.bunting=this.profile.commissions.includes('market')
@@ -130,7 +162,7 @@ export class FixedApp {
     $('plots').innerHTML=s.pads.map((p,i)=>{
       if(!s.padRevealed(i)||s.challenge.blockedPad===i)return ''
       const point=this.renderer!.toScreen(p.x,p.y)
-      const label=p.tower?`${TOWERS[p.tower.id].name}, ${STAGES[stageOf(p.tower)]}, plot ${i+1}`:s.padAvailable(i)?`Build on plot ${i+1}`:`Unlock plot ${i+1} for ${s.plotCost(i)} glow`
+      const label=p.tower?`${p.tower.def.name}, ${STAGES[stageOf(p.tower)]}, plot ${i+1}`:s.padAvailable(i)?`Build on plot ${i+1}`:`Unlock plot ${i+1} for ${s.plotCost(i)} glow`
       return `<button class="plot-hit" data-action="plot:${i}" style="left:${point.x}px;top:${point.y}px" aria-label="${label}"><span>${i+1}</span></button>`
     }).join('')
   }
@@ -165,9 +197,9 @@ export class FixedApp {
     if(p.tower){this.towerSheet(p.tower);return}
     const cost=s.plotCost(i)
     if(cost!==null) {this.show('A little more room',`<p>Unlock plot ${i+1} for ${cost} glow. Building a tower costs extra.</p>${button('unlock:'+i,`Unlock · ${cost} glow`,'primary wide',s.glow<cost||s.waveActive)}${s.waveActive?'<p class="muted">Building happens between waves.</p>':''}`,'plot');return}
-    const cards=TOWER_ORDER.filter(id=>s.keeperAllowed(id)).map(id=>`<button data-action="build:${i}:${id}" class="build-card" ${s.glow<s.towerCost(id)||s.waveActive?'disabled':''}><img src="${fixedTowerIcon(id)}" alt=""/><span><b>${TOWERS[id].name}</b><small>${role[id]} · ${id==='garden'?'Daylight income':id==='owl'?'Night shelter':lamplit(id)?'Lamplit':'Owl shelter helps at night'}</small></span><strong>${s.towerCost(id)} <small>glow</small></strong></button>`).join('')
+    const cards=TOWER_ORDER.filter(id=>s.keeperAllowed(id)).map(id=>`<button data-action="build:${i}:${id}" class="build-card" ${s.glow<s.towerCost(id)||s.waveActive?'disabled':''}><img src="${fixedTowerIcon(id,0,0,0,this.sim?.challenge.hero)}" alt=""/><span><b>${this.towerDef(id).name}</b><small>${role[id]} · ${id==='garden'?'Daylight income':id==='owl'?'Night shelter':lamplit(id)?'Lamplit':'Owl shelter helps at night'}</small></span><strong>${s.towerCost(id)} <small>glow</small></strong></button>`).join('')
     const next=TOWER_ORDER.filter(id=>FIXED_UNLOCK[id]>s.planningWave).sort((a,b)=>FIXED_UNLOCK[a]-FIXED_UNLOCK[b])[0]
-    this.show(`Build on plot ${i+1}`,`<p class="muted">${s.waveActive?'Finish this wave before building.':'Choose a role for this part of the stream.'}</p><div class="build-list">${cards}</div>${next?`<p class="small muted">${TOWERS[next].name} arrives at wave ${FIXED_UNLOCK[next]}.</p>`:''}`,'build')
+    this.show(`Build on plot ${i+1}`,`<p class="muted">${s.waveActive?'Finish this wave before building.':'Choose a role for this part of the stream.'}</p><div class="build-list">${cards}</div>${next?`<p class="small muted">${this.towerDef(next).name} arrives at wave ${FIXED_UNLOCK[next]}.</p>`:''}`,'build')
   }
   private towerSheet(t:Tower) {
     const s=this.sim!,stage=stageOf(t),active=s.waveActive
@@ -181,9 +213,9 @@ export class FixedApp {
     const bond=s.bonds.find(b=>b.a===t.uid||b.b===t.uid),partner=bond?s.towers.find(q=>q.uid===(bond.a===t.uid?bond.b:bond.a)):null
     const partners=s.towers.filter(q=>q!==t&&bondName(t.id,q.id)&&s.sharedCoverage(t,q)&&!s.bonds.some(b=>[b.a,b.b].includes(q.uid)))
     const income=t.id==='garden'?`<p class="notice">${Math.round(t.stats.income*1.4)} glow in a daylight wave, ${Math.round(t.stats.income*.55)} at night, before rain. A mixed wave pays the time-weighted average; ${s.finalWave-s.wave} remain. Invested: ${t.spent}. Earned: ${Math.floor(t.earned)}.</p>`:''
-    this.show(TOWERS[t.id].name,`<div class="tower-heading"><img src="${fixedTowerIcon(t.id,t.a,t.b,t.refinement)}" alt="${STAGES[stage]} ${TOWERS[t.id].name}"/><div><p class="eyebrow">${STAGES[stage]} · ${stage+1} of 5</p><h3>${stage>=2?t.def.paths[t.b?1:0].name:role[t.id]}</h3><p class="muted">${Math.round(s.effRange(t))} current reach · ${Math.round(t.damageDealt??0)} damage dealt</p></div></div>${income}<p class="sky-tower-note">${SKY_TOWER_HELP[t.id]}${!lamplit(t.id)?` <b>${s.sheltered(t)?'Sheltered by an Owl.':'Outside Owl shelter.'}</b>`:''}</p>${upgrades}${active?'<p class="notice">Inspect freely. Upgrades and movement happen between waves.</p>':''}
+    this.show(t.def.name,`<div class="tower-heading"><img src="${fixedTowerIcon(t.id,t.a,t.b,t.refinement,this.sim?.challenge.hero)}" alt="${STAGES[stage]} ${t.def.name}"/><div><p class="eyebrow">${STAGES[stage]} · ${stage+1} of 5</p><h3>${stage>=2?t.def.paths[t.b?1:0].name:role[t.id]}</h3><p class="muted">${Math.round(s.effRange(t))} current reach · ${Math.round(t.damageDealt??0)} damage dealt</p></div></div>${s.challenge.hero?`<p class="notice">${HEROES[s.challenge.hero].towers[t.id].trait}</p>`:''}${income}${this.towerFacts(t)}<p class="sky-tower-note">${SKY_TOWER_HELP[t.id]}${!lamplit(t.id)?` <b>${s.sheltered(t)?'Sheltered by an Owl.':'Outside Owl shelter.'}</b>`:''}</p>${upgrades}${active?'<p class="notice">Inspect freely. Upgrades and movement happen between waves.</p>':''}
       ${t.id!=='garden'?`<fieldset><legend>Target priority</legend><div class="segmented">${(['first','strong','last','close'] as Priority[]).map(p=>button(`priority:${t.uid}:${p}`,p==='close'?'Nearest':p[0].toUpperCase()+p.slice(1),p===t.priority?'selected':'',active)).join('')}</div></fieldset>`:''}
-      ${s.wave>=5?`<div class="bond-section"><h3>Tower Bond</h3>${partner?`<p><b>${bondName(t.id,partner.id)}</b> with ${TOWERS[partner.id].name}.</p><p class="small muted">${BOND_HELP[bondName(t.id,partner.id)!]} Activated ${bond!.activations} times.</p>${button('unbond:'+t.uid,'Remove Bond','secondary',active)}`:partners.length?`<p class="small muted">One tower per Bond. ${s.wave>=20?2:1} Bond slots available for this watch.</p>${partners.map(q=>button(`bond:${t.uid}:${q.uid}`,`${bondName(t.id,q.id)} · ${TOWERS[q.id].name}`,'secondary wide',active||s.bonds.length>=(s.wave>=20?2:1))).join('')}`:'<p class="small muted">A Moonbell and Cracker, or an Owl and Wickling, can bond when their ranges share the stream.</p>'}</div>`:''}
+      ${s.wave>=5?`<div class="bond-section"><h3>Tower Bond</h3>${partner?`<p><b>${bondName(t.id,partner.id)}</b> with ${partner.def.name}.</p><p class="small muted">${BOND_HELP[bondName(t.id,partner.id)!]} Activated ${bond!.activations} times.</p>${button('unbond:'+t.uid,'Remove Bond','secondary',active)}`:partners.length?`<p class="small muted">One tower per Bond. ${s.wave>=20?2:1} Bond slots available for this watch.</p>${partners.map(q=>button(`bond:${t.uid}:${q.uid}`,`${bondName(t.id,q.id)} · ${q.def.name}`,'secondary wide',active||s.bonds.length>=(s.wave>=20?2:1))).join('')}`:'<p class="small muted">A Moonbell and Cracker, or an Owl and Wickling, can bond when their ranges share the stream.</p>'}</div>`:''}
       <div class="utility-actions">${button('move:'+t.uid,'Move · 25','secondary',active||s.glow<25)}${button('sell:'+t.uid,`Sell · ${s.sellValue(t)}`,'secondary',active||s.challenge.commission==='garden'&&t.id==='garden')}</div>`,'tower')
   }
   private forecast() {
@@ -192,9 +224,8 @@ export class FixedApp {
     this.show(`Wave ${n-s.waveOffset} forecast`,`<p class="lead">${w.note}</p>${button('sky',`${s.sky.night?'Dawn':'Nightfall'} in ${clockText(s.sky.phaseLeft)} · ${WEATHER[s.sky.weather].name}`,'secondary wide')}<div class="enemy-list">${[...counts].map(([id,count])=>`<article><img src="${enemyIcon(id)}" alt=""/><div><h3>${count} ${ENEMIES[id].name}${count>1?'s':''}</h3><p>${FIXED_TIPS[id]}</p></div></article>`).join('')}</div><p class="notice">Entrances: ${[...new Set(w.groups.map(g=>g.src==='west'?'Side inlet':'North stream'))].join(' and ')}. Surviving this wave earns ${Math.round((125+n*15)*DIFFICULTY[s.difficulty].bonus)} glow, plus defeated enemies and Gardens.</p>${this.recap?`<p>${this.recap}</p>`:''}`,'forecast')
   }
   private skyForecast() {
-    const s=this.sim!,sky=s.sky
-    const exposed=s.towers.filter(t=>!lamplit(t.id)&&!s.sheltered(t))
-    this.show('Plan for the sky',`<p class="eyebrow">Cycle ${sky.cycle} · Active game time</p><p class="lead">${sky.night?'Dawn':'Nightfall'} in ${clockText(sky.phaseLeft)}</p><div class="sky-cycle"><div class="${!sky.night?'current':''}"><b>Daylight</b><span>1m 40s</span><small>Gardens +40% yield<br>Ballistas +12% reach</small></div><div class="${sky.night?'current':''}"><b>Night</b><span>1m 20s</span><small>Enemies move 8% faster<br>Unlit towers lose 15% reach</small></div></div><p>Wicklings, Moonbells, Owls and Lighthouses keep their reach. Wicklings fire 12% faster and Lighthouses deal 12% more damage at night. An Owl shelters nearby towers from darkness and mist.</p><p class="notice">${exposed.length?`${exposed.length} unlit ${exposed.length===1?'tower is':'towers are'} outside Owl shelter. Check that their night reach still covers the stream.`:'Every current attack tower is lamplit or sheltered.'} Garden yield falls to 55% at night; spending on income leaves less glow for the next defence.</p><h3>${WEATHER[sky.weather].name}</h3><p>${WEATHER[sky.weather].effect}</p><p class="small muted">Next: ${WEATHER[sky.nextWeather].name} in ${clockText(sky.weatherLeft)}. ${WEATHER[sky.nextWeather].effect}</p><p class="small muted">Weather is seeded every 45 combat seconds. The same watch has the same forecast after a reload or retry. Planning, pausing and backgrounding freeze both clocks. At 2× speed, both clocks advance at 2×.</p><p class="small muted">Garden income averages the conditions fought through during a wave. Waiting in a menu cannot grow a harvest.</p>`,'sky-forecast')
+    const s=this.sim!,sky=s.sky,exposed=s.towers.filter(t=>!lamplit(t.id)&&!s.sheltered(t))
+    this.show('Plan for the sky',`<p class="lead">${sky.night?'Dawn':'Nightfall'} in ${clockText(sky.phaseLeft)}</p><div class="sky-cycle"><div class="${!sky.night?'current':''}"><b>Daylight</b><span>1m 40s</span><small>Income +40%<br>Bolt tower reach +12%</small></div><div class="${sky.night?'current':''}"><b>Night</b><span>1m 20s</span><small>Enemies 8% faster<br>Income −45%</small></div></div><h3>Be ready for night</h3><p>Scout towers shelter nearby defences. Without shelter, blast, lightning and bolt towers lose 15% reach.</p><p class="notice">${exposed.length?exposed.length+' exposed '+(exposed.length===1?'tower':'towers')+'. Check that their night reach still covers the stream.':'Your attack towers are lamplit or sheltered.'}</p><p class="small muted">Spark, chime, scout and beam towers keep their reach. Spark towers fire 12% faster at night; beams deal 12% more damage.</p><h3>${WEATHER[sky.weather].name}</h3><p>${WEATHER[sky.weather].effect}</p><p class="small muted">Next: ${WEATHER[sky.nextWeather].name} in ${clockText(sky.weatherLeft)}.</p><details class="rule-details"><summary>How the clock and income work</summary><p class="small muted">The clock runs only during combat. Planning and pausing stop it; 2× speed also speeds up the sky. Reloading or retrying keeps the same forecast.</p><p class="small muted">Harvests average the day, night and weather fought through in that wave. Waiting cannot earn extra glow.</p></details>`,'sky-forecast')
   }
   private district() {
     const legacy=loadProgress(),settlement=Math.max(legacy.settlement??0,this.profile.settlement)
@@ -203,13 +234,13 @@ export class FixedApp {
     this.show('The district',`<div class="district-scene stage-${settlement}" aria-label="${names[settlement]}"><div class="district-houses">${[0,1,2,3,4].map(i=>`<span class="house ${i<=settlement?'lit':''}"></span>`).join('')}</div></div><h3>${names[settlement]}</h3><p class="muted">${settlement<4?`Hold ${[5,10,30,40][settlement]} waves to restore the next part of the district.`:'Every district is lit. Try a different waterway or a commission.'} Restorations and keepsakes never increase combat power.</p><div class="keepsakes">${COMMISSIONS.map(c=>`<span class="keepsake ${this.profile.commissions.includes(c.id)?'earned':''}">${this.profile.commissions.includes(c.id)?icon('check'):icon('lock')}${c.reward}</span>`).join('')}</div><h3>Your watches</h3><div class="records">${WATCH_NAMES.map((name,i)=>`<p><b>${name}</b><span>${(['relaxed','standard','nightfall'] as Difficulty[]).map(d=>`${DIFFICULTY[d].name} ${bestWave(this.profile,i,d)}/40`).join(' · ')}</span></p>`).join('')}</div>${Object.entries(this.profile.records).filter(([k,r])=>k.endsWith(':practice')&&r.practice).length?'<p class="small muted">Assisted Nightfall watches are kept separately as practice.</p>':''}<h3>Field journal</h3><div class="enemy-list">${Object.entries(journal).filter(([,n])=>(n??0)>0).map(([id,n])=>`<article><img src="${enemyIcon(id as EnemyId)}" alt=""/><div><h3>${ENEMIES[id as EnemyId].name} · ${Math.floor(n??0)}</h3><p>${FIXED_TIPS[id as EnemyId]}</p></div></article>`).join('')||'<p class="muted">Meet the first Drips to begin your journal.</p>'}</div><p class="small muted">Previous edition: ${legacy.runs} watches and ${Object.values(legacy.feats).filter(Boolean).length} achievements retained.</p>`,'district')
   }
   private commissions() {
-    this.show('District Commissions',`<p class="lead">A short watch with one thoughtful constraint. Return whenever you like; every commission stays available.</p>${COMMISSIONS.map(c=>`<article class="commission"><p class="eyebrow">Five waves · ${WATCH_NAMES[c.variant]}</p><h3>${c.name}</h3><p>${c.desc}</p><p class="small muted">Keepsake: ${c.reward}${this.profile.commissions.includes(c.id)?' · earned':''}</p>${button('commission:'+c.id,'Accept commission','secondary wide')}</article>`).join('')}<p class="small muted">Your campaign has its own save slot. Starting a commission replaces only a previous commission attempt.</p>`,'commissions')
+    this.show('District Commissions',`<p class="lead">A short watch with one thoughtful constraint.</p><p class="small muted">Playing as ${HEROES[this.hero].name}. Choose another hero in watch setup. Every commission stays available.</p>${COMMISSIONS.map(c=>`<article class="commission"><p class="eyebrow">Five waves · ${WATCH_NAMES[c.variant]}</p><h3>${c.name}</h3><p>${c.desc}</p><p class="small muted">Keepsake: ${c.reward}${this.profile.commissions.includes(c.id)?' · earned':''}</p>${button('commission:'+c.id,'Accept commission','secondary wide')}</article>`).join('')}<p class="small muted">Your campaign has its own save slot. Starting a commission replaces only a previous commission attempt.</p>`,'commissions')
   }
   private settings() {
     const s=this.profile.settings
-    this.show('Make yourself comfortable',`<div class="setting-list">${([['largeText','Larger text'],['reducedMotion','Reduced motion'],['muted','Mute sound'],['clearPalette','Distinct colours']] as const).map(([key,name])=>`<button data-action="setting:${key}" role="switch" aria-checked="${s[key]}"><span>${name}</span><b>${s[key]?'On':'Off'}</b></button>`).join('')}</div><p class="muted">Motion is restrained throughout. Opening a panel pauses the watch. Returning from another app leaves it paused.</p><h3>Your keeper</h3><p class="small muted">Choose a district crest. This is a cosmetic identity.</p><div class="segmented">${['lantern','ember','reed','tide'].map(g=>button('guardian:'+g,g[0].toUpperCase()+g.slice(1),this.guardian===g?'selected':'')).join('')}</div><p class="small muted">Keyboard: Tab moves between controls and plots. Enter selects. P pauses or resumes. Escape closes a panel.</p>`,'settings')
+    this.show('Make yourself comfortable',`<div class="setting-list">${([['largeText','Larger text'],['reducedMotion','Reduced motion'],['muted','Mute sound'],['clearPalette','Distinct colours']] as const).map(([key,name])=>`<button data-action="setting:${key}" role="switch" aria-checked="${s[key]}"><span>${name}</span><b>${s[key]?'On':'Off'}</b></button>`).join('')}</div><p class="muted">Reduced motion stills the water, weather and tower animation and softens combat effects. Opening a panel pauses the watch. Returning from another app leaves it paused.</p><h3>District crest</h3><p class="small muted">A cosmetic detail on your towers. Your hero stays the same.</p><div class="segmented">${['lantern','ember','reed','tide'].map(g=>button('guardian:'+g,g[0].toUpperCase()+g.slice(1),this.guardian===g?'selected':'')).join('')}</div><p class="small muted">Keyboard: Tab moves between controls and plots. Enter selects. P pauses or resumes. Escape closes a panel.</p>`,'settings')
   }
-  private menu() {this.show('Your watch',`<p>${WATCH_NAMES[this.map]} · ${DIFFICULTY[this.difficulty].name}${this.sim?.challenge.practice?' · Practice':''}</p>${button('forecast','Wave forecast','secondary wide')}${button('sky','Day, night & weather','secondary wide')}${button('district','District & journal','secondary wide')}${button('settings','Settings','secondary wide')}${button('home','Save & return to district','secondary wide')}<p class="small muted">Waves never advance while you are away.</p>`,'menu')}
+  private menu() {const s=this.sim!;this.show('Your watch',`${button('roster',s.challenge.hero?HEROES[s.challenge.hero].name+' · View eight towers':'Original district roster','hero-roster-link secondary wide')}<p>${WATCH_NAMES[this.map]} · ${DIFFICULTY[this.difficulty].name}${this.sim?.challenge.practice?' · Practice':''}</p>${button('forecast','Wave forecast','secondary wide')}${button('sky','Day, night & weather','secondary wide')}${button('district','District & journal','secondary wide')}${button('settings','Settings','secondary wide')}${button('home','Save & return to district','secondary wide')}<p class="small muted">Waves never advance while you are away.</p>`,'menu')}
   private result() {
     const s=this.sim!;this.endShown=true
     const won=s.over==='won'
@@ -224,13 +255,15 @@ export class FixedApp {
   private action(action:string) {
     const [cmd,a,b]=action.split(':'),s=this.sim
     if(cmd==='fixture'&&import.meta.env.DEV&&['0','15','30','39','day','night'].includes(a)) {
-      void fetch(`${import.meta.env.BASE_URL}artifacts/fixed-wave-${a==='day'||a==='night'?'39':a}.json`).then(r=>r.json()).then((snap:SaveSnapshotV2)=>{this.qa=true;if(a==='day'||a==='night')snap.climate={elapsed:a==='day'?0:100,waveSeconds:0,gardenExposure:0};this.begin(Sim.restore(snap))})
+      void fetch(`${import.meta.env.BASE_URL}artifacts/fixed-wave-${a==='day'||a==='night'?'39':a}.json`).then(r=>r.json()).then((snap:SaveSnapshotV2)=>{this.qa=true;if(a==='day'||a==='night')snap.climate={elapsed:a==='day'?0:100,waveSeconds:0,gardenExposure:0};snap.challenge.hero=this.hero;this.begin(Sim.restore(snap))})
       return
     }
     if(cmd==='close'){this.close();return}
+    if(cmd==='hero'&&isHero(a)&&this.drawer==='choose'){this.hero=a;this.choose(action);return}
+    if(cmd==='roster'){this.roster();return}
     if(cmd==='choose'){this.choose();return}
-    if(cmd==='map'){this.map=Number(a);this.choose();return}
-    if(cmd==='mode'){this.difficulty=a as Difficulty;this.choose();return}
+    if(cmd==='map'){this.map=Number(a);this.choose(action);return}
+    if(cmd==='mode'){this.difficulty=a as Difficulty;this.choose(action);return}
     if(cmd==='new'){this.newWatch();return}
     if(cmd==='home'){this.home();return}
     if(cmd==='resume'){const run=loadWatch(a as Slot);if(run){this.slot=a as Slot;this.begin(Sim.restore(run.snapshot),run.blooms)}return}
@@ -247,7 +280,7 @@ export class FixedApp {
     if(cmd==='forecast')this.forecast()
     if(cmd==='plot')this.selectPlot(Number(a))
     if(cmd==='unlock'){this.change(()=>s.unlockPlot(Number(a)));this.selectPlot(Number(a))}
-    if(cmd==='build'){this.change(()=>s.build(Number(a),b as TowerId));const t=s.pads[Number(a)].tower;if(t){this.close();this.selection={kind:'tower',tower:t};this.recap=`${TOWERS[t.id].name} ready. ${s.waveDef(s.wave+1).note??''}`}}
+    if(cmd==='build'){this.change(()=>s.build(Number(a),b as TowerId));const t=s.pads[Number(a)].tower;if(t){this.close();this.selection={kind:'tower',tower:t};this.recap=`${t.def.name} ready.`}}
     if(cmd==='upgrade'){const t=tower();this.change(()=>stageOf(t)===3?s.refine(t):s.upgrade(t,Number(b) as 0|1));this.towerSheet(t)}
     if(cmd==='priority'){const t=tower();this.change(()=>{t.priority=b as Priority});this.towerSheet(t)}
     if(cmd==='bond'){const t=tower();this.change(()=>s.bond(t,s.towers.find(q=>q.uid===Number(b))!));this.towerSheet(t)}
@@ -269,7 +302,7 @@ export class FixedApp {
   private key(e:KeyboardEvent) {
     if(e.key==='Escape'){if(this.drawer)this.close();else{this.moving=null;this.paused=true;this.refresh()}return}
     if(this.drawer&&e.key==='Tab') {
-      const all=[...document.querySelectorAll<HTMLButtonElement>('.drawer button:not(:disabled)')],first=all[0],last=all[all.length-1]
+      const all=[...document.querySelectorAll<HTMLElement>('.drawer button:not(:disabled), .drawer summary, .drawer a[href], .drawer [tabindex="0"]')],first=all[0],last=all[all.length-1]
       if(e.shiftKey&&document.activeElement===first){e.preventDefault();last?.focus()}
       else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first?.focus()}
     }
@@ -288,7 +321,7 @@ export class FixedApp {
         if(e.t==='waveEnd') {
           const damage=s.waveReports.find(q=>q.wave===e.n)?.damage??{}
           const top=Object.entries(damage).sort((a,b)=>(b[1]??0)-(a[1]??0))[0]
-          this.recap=`Wave ${e.n-s.waveOffset} held · +${e.bonus+e.income} glow${top?` · ${TOWERS[top[0] as TowerId].name} led damage`:''}`
+          this.recap=`Wave ${e.n-s.waveOffset} held · +${e.bonus+e.income} glow${top?` · ${this.towerDef(top[0] as TowerId).name} led damage`:''}`
           this.paused=true;if(!this.qa)recordWatch(this.profile,s);r.settlement=Math.max(r.settlement,this.profile.settlement);this.plots();$('live').textContent=this.recap
           this.save()
         }

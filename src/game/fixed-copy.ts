@@ -1,9 +1,9 @@
 import type { Tower, Sim } from './sim'
-import { fixedStats,stageOf,upgradePrice } from './fixed'
+import { stageOf,upgradePrice } from './fixed'
 
 export function upgradeDetail(sim:Sim,t:Tower,branch:0|1) {
   const stage=stageOf(t)
-  const next=stage===3?fixedStats(t.id,t.a,t.b,1):fixedStats(t.id,stage===0?1:branch===0?stage+1:0,stage===0?0:branch===1?stage+1:0)
+  const next=stage===3?sim.towerStats(t.id,t.a,t.b,1):sim.towerStats(t.id,stage===0?1:branch===0?stage+1:0,stage===0?0:branch===1?stage+1:0)
   const old=t.stats,lines:string[]=[]
   if(next.damage!==old.damage)lines.push(`${+next.damage.toFixed(1)} damage${t.id==='beam'?' / second':' per hit'}`)
   if(next.interval!==old.interval&&t.id!=='beam')lines.push(`${+next.interval.toFixed(2)}s between attacks`)

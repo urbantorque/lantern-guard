@@ -1,0 +1,650 @@
+[
+  {
+    "hero": "sol",
+    "map": 0,
+    "mode": "relaxed",
+    "seed": 1047,
+    "won": true,
+    "wave": 40,
+    "light": 50
+  },
+  {
+    "hero": "sol",
+    "map": 0,
+    "mode": "relaxed",
+    "seed": 4099,
+    "won": true,
+    "wave": 40,
+    "light": 50
+  },
+  {
+    "hero": "sol",
+    "map": 0,
+    "mode": "standard",
+    "seed": 1047,
+    "won": true,
+    "wave": 40,
+    "light": 25
+  },
+  {
+    "hero": "sol",
+    "map": 0,
+    "mode": "standard",
+    "seed": 4099,
+    "won": true,
+    "wave": 40,
+    "light": 25
+  },
+  {
+    "hero": "sol",
+    "map": 0,
+    "mode": "nightfall",
+    "seed": 1047,
+    "won": true,
+    "wave": 40,
+    "light": 15
+  },
+  {
+    "hero": "sol",
+    "map": 0,
+    "mode": "nightfall",
+    "seed": 4099,
+    "won": true,
+    "wave": 40,
+    "light": 15
+  },
+  {
+    "hero": "sol",
+    "map": 1,
+    "mode": "relaxed",
+    "seed": 1047,
+    "won": true,
+    "wave": 40,
+    "light": 50
+  },
+  {
+    "hero": "sol",
+    "map": 1,
+    "mode": "relaxed",
+    "seed": 4099,
+    "won": true,
+    "wave": 40,
+    "light": 50
+  },
+  {
+    "hero": "sol",
+    "map": 1,
+    "mode": "standard",
+    "seed": 1047,
+    "won": true,
+    "wave": 40,
+    "light": 17
+  },
+  {
+    "hero": "sol",
+    "map": 1,
+    "mode": "standard",
+    "seed": 4099,
+    "won": true,
+    "wave": 40,
+    "light": 16
+  },
+  {
+    "hero": "sol",
+    "map": 1,
+    "mode": "nightfall",
+    "seed": 1047,
+    "won": true,
+    "wave": 40,
+    "light": 6
+  },
+  {
+    "hero": "sol",
+    "map": 1,
+    "mode": "nightfall",
+    "seed": 4099,
+    "won": true,
+    "wave": 40,
+    "light": 3
+  },
+  {
+    "hero": "sol",
+    "map": 2,
+    "mode": "relaxed",
+    "seed": 1047,
+    "won": true,
+    "wave": 40,
+    "light": 50
+  },
+  {
+    "hero": "sol",
+    "map": 2,
+    "mode": "relaxed",
+    "seed": 4099,
+    "won": true,
+    "wave": 40,
+    "light": 50
+  },
+  {
+    "hero": "sol",
+    "map": 2,
+    "mode": "standard",
+    "seed": 1047,
+    "won": true,
+    "wave": 40,
+    "light": 25
+  },
+  {
+    "hero": "sol",
+    "map": 2,
+    "mode": "standard",
+    "seed": 4099,
+    "won": true,
+    "wave": 40,
+    "light": 25
+  },
+  {
+    "hero": "sol",
+    "map": 2,
+    "mode": "nightfall",
+    "seed": 1047,
+    "won": true,
+    "wave": 40,
+    "light": 15
+  },
+  {
+    "hero": "sol",
+    "map": 2,
+    "mode": "nightfall",
+    "seed": 4099,
+    "won": true,
+    "wave": 40,
+    "light": 15
+  },
+  {
+    "hero": "sol",
+    "map": 3,
+    "mode": "relaxed",
+    "seed": 1047,
+    "won": true,
+    "wave": 40,
+    "light": 50
+  },
+  {
+    "hero": "sol",
+    "map": 3,
+    "mode": "relaxed",
+    "seed": 4099,
+    "won": true,
+    "wave": 40,
+    "light": 50
+  },
+  {
+    "hero": "sol",
+    "map": 3,
+    "mode": "standard",
+    "seed": 1047,
+    "won": true,
+    "wave": 40,
+    "light": 25
+  },
+  {
+    "hero": "sol",
+    "map": 3,
+    "mode": "standard",
+    "seed": 4099,
+    "won": true,
+    "wave": 40,
+    "light": 25
+  },
+  {
+    "hero": "sol",
+    "map": 3,
+    "mode": "nightfall",
+    "seed": 1047,
+    "won": true,
+    "wave": 40,
+    "light": 15
+  },
+  {
+    "hero": "sol",
+    "map": 3,
+    "mode": "nightfall",
+    "seed": 4099,
+    "won": true,
+    "wave": 40,
+    "light": 15
+  },
+  {
+    "hero": "mira",
+    "map": 0,
+    "mode": "relaxed",
+    "seed": 1047,
+    "won": true,
+    "wave": 40,
+    "light": 50
+  },
+  {
+    "hero": "mira",
+    "map": 0,
+    "mode": "relaxed",
+    "seed": 4099,
+    "won": true,
+    "wave": 40,
+    "light": 50
+  },
+  {
+    "hero": "mira",
+    "map": 0,
+    "mode": "standard",
+    "seed": 1047,
+    "won": true,
+    "wave": 40,
+    "light": 25
+  },
+  {
+    "hero": "mira",
+    "map": 0,
+    "mode": "standard",
+    "seed": 4099,
+    "won": true,
+    "wave": 40,
+    "light": 25
+  },
+  {
+    "hero": "mira",
+    "map": 0,
+    "mode": "nightfall",
+    "seed": 1047,
+    "won": true,
+    "wave": 40,
+    "light": 15
+  },
+  {
+    "hero": "mira",
+    "map": 0,
+    "mode": "nightfall",
+    "seed": 4099,
+    "won": true,
+    "wave": 40,
+    "light": 15
+  },
+  {
+    "hero": "mira",
+    "map": 1,
+    "mode": "relaxed",
+    "seed": 1047,
+    "won": true,
+    "wave": 40,
+    "light": 50
+  },
+  {
+    "hero": "mira",
+    "map": 1,
+    "mode": "relaxed",
+    "seed": 4099,
+    "won": true,
+    "wave": 40,
+    "light": 50
+  },
+  {
+    "hero": "mira",
+    "map": 1,
+    "mode": "standard",
+    "seed": 1047,
+    "won": true,
+    "wave": 40,
+    "light": 13
+  },
+  {
+    "hero": "mira",
+    "map": 1,
+    "mode": "standard",
+    "seed": 4099,
+    "won": true,
+    "wave": 40,
+    "light": 14
+  },
+  {
+    "hero": "mira",
+    "map": 1,
+    "mode": "nightfall",
+    "seed": 1047,
+    "won": true,
+    "wave": 40,
+    "light": 4
+  },
+  {
+    "hero": "mira",
+    "map": 1,
+    "mode": "nightfall",
+    "seed": 4099,
+    "won": true,
+    "wave": 40,
+    "light": 4
+  },
+  {
+    "hero": "mira",
+    "map": 2,
+    "mode": "relaxed",
+    "seed": 1047,
+    "won": true,
+    "wave": 40,
+    "light": 50
+  },
+  {
+    "hero": "mira",
+    "map": 2,
+    "mode": "relaxed",
+    "seed": 4099,
+    "won": true,
+    "wave": 40,
+    "light": 50
+  },
+  {
+    "hero": "mira",
+    "map": 2,
+    "mode": "standard",
+    "seed": 1047,
+    "won": true,
+    "wave": 40,
+    "light": 25
+  },
+  {
+    "hero": "mira",
+    "map": 2,
+    "mode": "standard",
+    "seed": 4099,
+    "won": true,
+    "wave": 40,
+    "light": 25
+  },
+  {
+    "hero": "mira",
+    "map": 2,
+    "mode": "nightfall",
+    "seed": 1047,
+    "won": true,
+    "wave": 40,
+    "light": 15
+  },
+  {
+    "hero": "mira",
+    "map": 2,
+    "mode": "nightfall",
+    "seed": 4099,
+    "won": true,
+    "wave": 40,
+    "light": 15
+  },
+  {
+    "hero": "mira",
+    "map": 3,
+    "mode": "relaxed",
+    "seed": 1047,
+    "won": true,
+    "wave": 40,
+    "light": 50
+  },
+  {
+    "hero": "mira",
+    "map": 3,
+    "mode": "relaxed",
+    "seed": 4099,
+    "won": true,
+    "wave": 40,
+    "light": 50
+  },
+  {
+    "hero": "mira",
+    "map": 3,
+    "mode": "standard",
+    "seed": 1047,
+    "won": true,
+    "wave": 40,
+    "light": 23
+  },
+  {
+    "hero": "mira",
+    "map": 3,
+    "mode": "standard",
+    "seed": 4099,
+    "won": true,
+    "wave": 40,
+    "light": 23
+  },
+  {
+    "hero": "mira",
+    "map": 3,
+    "mode": "nightfall",
+    "seed": 1047,
+    "won": true,
+    "wave": 40,
+    "light": 15
+  },
+  {
+    "hero": "mira",
+    "map": 3,
+    "mode": "nightfall",
+    "seed": 4099,
+    "won": true,
+    "wave": 40,
+    "light": 15
+  },
+  {
+    "hero": "ivo",
+    "map": 0,
+    "mode": "relaxed",
+    "seed": 1047,
+    "won": true,
+    "wave": 40,
+    "light": 50
+  },
+  {
+    "hero": "ivo",
+    "map": 0,
+    "mode": "relaxed",
+    "seed": 4099,
+    "won": true,
+    "wave": 40,
+    "light": 50
+  },
+  {
+    "hero": "ivo",
+    "map": 0,
+    "mode": "standard",
+    "seed": 1047,
+    "won": true,
+    "wave": 40,
+    "light": 25
+  },
+  {
+    "hero": "ivo",
+    "map": 0,
+    "mode": "standard",
+    "seed": 4099,
+    "won": true,
+    "wave": 40,
+    "light": 25
+  },
+  {
+    "hero": "ivo",
+    "map": 0,
+    "mode": "nightfall",
+    "seed": 1047,
+    "won": true,
+    "wave": 40,
+    "light": 15
+  },
+  {
+    "hero": "ivo",
+    "map": 0,
+    "mode": "nightfall",
+    "seed": 4099,
+    "won": true,
+    "wave": 40,
+    "light": 15
+  },
+  {
+    "hero": "ivo",
+    "map": 1,
+    "mode": "relaxed",
+    "seed": 1047,
+    "won": true,
+    "wave": 40,
+    "light": 50
+  },
+  {
+    "hero": "ivo",
+    "map": 1,
+    "mode": "relaxed",
+    "seed": 4099,
+    "won": true,
+    "wave": 40,
+    "light": 50
+  },
+  {
+    "hero": "ivo",
+    "map": 1,
+    "mode": "standard",
+    "seed": 1047,
+    "won": true,
+    "wave": 40,
+    "light": 8
+  },
+  {
+    "hero": "ivo",
+    "map": 1,
+    "mode": "standard",
+    "seed": 4099,
+    "won": true,
+    "wave": 40,
+    "light": 8
+  },
+  {
+    "hero": "ivo",
+    "map": 1,
+    "mode": "nightfall",
+    "seed": 1047,
+    "won": false,
+    "wave": 15,
+    "light": 0
+  },
+  {
+    "hero": "ivo",
+    "map": 1,
+    "mode": "nightfall",
+    "seed": 4099,
+    "won": true,
+    "wave": 40,
+    "light": 3
+  },
+  {
+    "hero": "ivo",
+    "map": 2,
+    "mode": "relaxed",
+    "seed": 1047,
+    "won": true,
+    "wave": 40,
+    "light": 50
+  },
+  {
+    "hero": "ivo",
+    "map": 2,
+    "mode": "relaxed",
+    "seed": 4099,
+    "won": true,
+    "wave": 40,
+    "light": 50
+  },
+  {
+    "hero": "ivo",
+    "map": 2,
+    "mode": "standard",
+    "seed": 1047,
+    "won": true,
+    "wave": 40,
+    "light": 25
+  },
+  {
+    "hero": "ivo",
+    "map": 2,
+    "mode": "standard",
+    "seed": 4099,
+    "won": true,
+    "wave": 40,
+    "light": 25
+  },
+  {
+    "hero": "ivo",
+    "map": 2,
+    "mode": "nightfall",
+    "seed": 1047,
+    "won": true,
+    "wave": 40,
+    "light": 15
+  },
+  {
+    "hero": "ivo",
+    "map": 2,
+    "mode": "nightfall",
+    "seed": 4099,
+    "won": true,
+    "wave": 40,
+    "light": 15
+  },
+  {
+    "hero": "ivo",
+    "map": 3,
+    "mode": "relaxed",
+    "seed": 1047,
+    "won": true,
+    "wave": 40,
+    "light": 50
+  },
+  {
+    "hero": "ivo",
+    "map": 3,
+    "mode": "relaxed",
+    "seed": 4099,
+    "won": true,
+    "wave": 40,
+    "light": 50
+  },
+  {
+    "hero": "ivo",
+    "map": 3,
+    "mode": "standard",
+    "seed": 1047,
+    "won": true,
+    "wave": 40,
+    "light": 25
+  },
+  {
+    "hero": "ivo",
+    "map": 3,
+    "mode": "standard",
+    "seed": 4099,
+    "won": true,
+    "wave": 40,
+    "light": 23
+  },
+  {
+    "hero": "ivo",
+    "map": 3,
+    "mode": "nightfall",
+    "seed": 1047,
+    "won": true,
+    "wave": 40,
+    "light": 15
+  },
+  {
+    "hero": "ivo",
+    "map": 3,
+    "mode": "nightfall",
+    "seed": 4099,
+    "won": true,
+    "wave": 40,
+    "light": 15
+  }
+]

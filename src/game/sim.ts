@@ -1,4 +1,5 @@
 import { fixedLevel, fixedWave, fixedStats, FIXED_UNLOCK, stageOf, upgradePrice, bondName, type Bond } from './fixed'
+import { heroStats, heroTower, heroHitSlow, type HeroId } from './heroes'
 import { skyAt, skyReach, skyRate, skyDamage, skySpeed, gardenYield, type ClimateState } from './environment'
 import { compactLevel, compactWave, COMPACT_END, STARTER_PLOTS, PLOTS, REFINEMENTS, refineStats } from './compact'
 import { LATE_REFINEMENTS, LATE_TOWERS, PREPARATIONS, lateRefine, encounterWave, preparationCost, netDamage, type Preparation, type PreparationId } from './depth'
@@ -211,6 +212,8 @@ export type SimEvent =
 /** Rules a night is played under. Plain nights use {}; tides and weekly nights set several. */
 export interface Challenge {
   fixed?: 1
+  /** Absent on pre-hero watches, whose exact balance is preserved. */
+  hero?: HeroId
   commission?: string
   blockedPad?: number
   practice?: boolean
@@ -731,7 +734,7 @@ export class Sim {
 
   /** Support coverage improves in new nights without rewriting legacy towers or saves. */
   towerStats(id: TowerId, a: number, b: number, refinement = 0) {
-    if (this.challenge.fixed) return fixedStats(id,a,b,refinement)
+    if (this.challenge.fixed) return heroStats(fixedStats(id,a,b,refinement),id,this.challenge.hero)
     const stats = computeStats(id, a, b)
     if (this.challenge.guard && (id === 'bell' || id === 'owl')) stats.range += 20
     if (this.challenge.compact) {
@@ -890,7 +893,7 @@ export class Sim {
     const t: Tower = {
       uid: this.uid++,
       id,
-      def: TOWERS[id],
+      def: this.challenge.fixed?heroTower(id,this.challenge.hero):TOWERS[id],
       pad: padIndex,
       x: pad.x,
       y: pad.y,
@@ -1517,6 +1520,7 @@ export class Sim {
   damage(e: Enemy, amount: number, heavy: boolean, src: Tower | null, continuous = false): boolean {
     if (!e.alive || amount <= 0) return false
     if(this.challenge.fixed&&src)amount*=skyDamage(src.id,this.sky)
+    if(this.challenge.fixed&&src&&!continuous){const slow=heroHitSlow(this.challenge.hero,src.id);if(slow){e.slowF=Math.max(e.slowF,slow.amount);e.slowT=Math.max(e.slowT,slow.duration)}}
     const before = Math.max(0, e.hp) + Math.max(0, e.shell)
     if (this.challenge.fixed && src && !continuous) heavy = this.applyBond(e,src,heavy)
     if (e.brittleT > 0) amount += continuous ? amount * 0.25 : 1
@@ -2280,7 +2284,7 @@ export class Sim {
         ...(snap.challenge.guard ? { damageDealt: t.damageDealt ?? 0 } : {}),
         uid: t.uid ?? sim.uid++,
         id: t.id,
-        def: TOWERS[t.id],
+        def: snap.challenge.fixed?heroTower(t.id,snap.challenge.hero):TOWERS[t.id],
         pad: t.pad,
         x: pad.x,
         y: pad.y,

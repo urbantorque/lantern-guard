@@ -1,5 +1,6 @@
 import { compactLevel, PLOTS, STARTER_PLOTS, REFINEMENTS } from './compact'
 import { fixedLevel, COMMISSIONS, FIXED_UNLOCK, bondName } from './fixed'
+import { isHero } from './heroes'
 import { LATE_REFINEMENTS, LATE_TOWERS, PREPARATIONS } from './depth'
 import { BATTLE_PLANS, type BattlePlanId } from './battle-plans'
 import { gardensLevel, GARDENS_PADS } from './gardens'
@@ -69,6 +70,7 @@ const allFinite = (x: unknown, depth = 0): boolean => depth < 12 && (typeof x ==
 export function validSnapshot(s: unknown): s is SaveSnapshot {
   if (!object(s) || (s.v !== 1 && s.v !== 2) || typeof s.difficulty !== 'string' || !Object.hasOwn(DIFFICULTY, s.difficulty)) return false
   if (!object(s.challenge) || s.challenge.chapter !== undefined || s.challenge.campaign !== undefined || !integer(s.wave, 0, 10000) || !number(s.glow, 0) || !number(s.lives) || !number(s.seed) || typeof s.won !== 'boolean' || !object(s.stats) || !allFinite(s)) return false
+  if(s.challenge.hero!==undefined&&(!isHero(s.challenge.hero)||s.challenge.fixed!==1))return false
   if (s.challenge.fixed !== undefined && (s.challenge.fixed !== 1 || s.challenge.compact !== 1 || s.challenge.depth !== 1 || s.challenge.balance !== 1 || s.challenge.guard !== 1 || s.challenge.plans || s.challenge.guardian || s.freeplay || s.wave > 40)) return false
   if (s.challenge.fixed && (s.preparation !== null || s.preparationRound !== 0 || s.challenge.practice !== undefined && typeof s.challenge.practice !== 'boolean' || !s.challenge.skirmish && (s.challenge.commission !== undefined || s.challenge.blockedPad !== undefined))) return false
   for (const key of ['lockedGates', 'noGarden', 'noCharms']) if (s.challenge[key] !== undefined && typeof s.challenge[key] !== 'boolean') return false

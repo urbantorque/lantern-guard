@@ -496,3 +496,8 @@ The first implementation batch should deliver:
 6. Representative save-migration trials, new deterministic fixtures and an observed newcomer session before scaling production.
 
 The decision at the end of that batch is whether the fixed-path defence is understandable, whether its spending choices reward thought and whether Bonds add a choice worth keeping. Full roster art and a long reward catalogue should wait for that evidence.
+
+
+## Executed follow-up: vibrant city and hero rosters
+
+The player feedback on muted graphics led to a stronger palette, richer architectural scenery, expressive enemy shapes, moving water and weather, tower attack animation, restored combat glow feedback and new title/launch artwork. Three playable heroes now offer eight mechanically distinct tower variants each, with simple descriptions, inspectable stats, permanent run choice, separate records and backwards-compatible saves. See [release details and test evidence](VIBRANT-HEROES-RELEASE.md). Physical-device performance and observed human playtesting remain follow-up validation, rather than claimed automated results.

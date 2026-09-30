@@ -306,7 +306,7 @@ export class Renderer {
   handleEvents(sim: Sim) {
     const fx = this.fx
     const calm = this.settings.calmFx || this.settings.reduceMotion
-    fx.density = sim.challenge.fixed ? .18 : calm ? 0.5 : 1
+    fx.density = sim.challenge.fixed ? (this.settings.reduceMotion ? .15 : .6) : calm ? 0.5 : 1
     let pops = 0
     for (const ev of sim.events) {
       switch (ev.t) {
@@ -316,7 +316,12 @@ export class Renderer {
           const big = ev.boss ? 3 : ev.size >= 18 ? 1.6 : 1
           if (sim.challenge.fixed) {
             this.addBloom(ev)
-            if (!this.settings.reduceMotion && (ev.boss || pops < 3)) fx.ring(ev.x,ev.y,ev.boss?55:12,withAlpha(col,.45),.25,1.5)
+            if (!this.settings.reduceMotion && (ev.boss || pops < 5)) {
+              fx.ring(ev.x,ev.y,ev.boss?70:18,withAlpha(col,.85),.35,2)
+              fx.flash(ev.x,ev.y-8,ev.boss?65:22,col,.2)
+              fx.petals(ev.x,ev.y-6,col,ev.boss?18:6,ev.boss?6:3.5,ev.boss?150:80)
+              if(ev.boss)fx.burst(ev.x,ev.y-8,P.amberHi,26,200,4,.7)
+            }
             sound.pop(big)
             break
           }
@@ -368,9 +373,13 @@ export class Renderer {
             const c = ev.kind === 'feather' ? P.lime : P.gold
             fx.flash(ev.x, ev.y, 18, c, 0.2)
             fx.burst(ev.x, ev.y, c, calm ? 1 : 3, 90, 2.2, 0.3)
+          } else if (sim.challenge.fixed && !this.settings.reduceMotion) {
+            fx.flash(ev.x,ev.y-5,14,ev.hue,.13)
+            if(Math.random()<.45)fx.burst(ev.x,ev.y-5,ev.hue,3,100,2.5,.22)
           } else if (!calm && Math.random() < 0.6) fx.burst(ev.x, ev.y, ev.hue, 2, 110, 2.5, 0.25)
           break
         case 'shoot':
+          if(sim.challenge.fixed&&!this.settings.reduceMotion)fx.flash(ev.x,ev.y-44,ev.tower==='cracker'?24:15,ev.tower==='storm'?P.ice:ev.tower==='owl'?P.lime:P.amberHi,.14)
           if (ev.tower === 'wick') sound.spark()
           else if (ev.tower === 'owl') sound.swoosh()
           else if (ev.tower === 'cracker') {
@@ -518,6 +527,11 @@ export class Renderer {
           const tw = sim.towers.find((q) => q.x === ev.x && q.y === ev.y)
           const hue = tw?.def.hue ?? P.amberHi
           const top = ev.tier >= 3
+          if(sim.challenge.fixed){
+            fx.ring(ev.x,ev.y,top?62:44,hue,.65,3)
+            if(!this.settings.reduceMotion){fx.flash(ev.x,ev.y-35,48,hue,.4);fx.petals(ev.x,ev.y-25,hue,top?18:10,4,100);fx.orbit(ev.x,ev.y,36,hue,6,.8)}
+            sound.upgrade(ev.tier);haptic(top?45:20);break
+          }
           fx.ring(ev.x, ev.y - 20, top ? 84 : 60, hue, 0.7, top ? 6 : 4)
           fx.flash(ev.x, ev.y - 24, top ? 90 : 48, hue, top ? 0.6 : 0.35)
           fx.burst(ev.x, ev.y - 20, hue, top ? 44 : 22, top ? 340 : 240, top ? 4.2 : 3.5, top ? 1.2 : 0.9)
@@ -723,8 +737,10 @@ export class Renderer {
       this.time+=dt;this.fx.update(dt)
       const c=this.ctx;c.setTransform(this.dpr,0,0,this.dpr,0,0);c.fillStyle=districtGround(sim);c.fillRect(0,0,this.w,this.h)
       c.translate(this.ox,this.oy);c.scale(this.scale,this.scale)
-      drawFixedWorld(c,sim,view,this.settlement,this.keepsakes,this.crest,this.scale,this.settings.reduceMotion)
+      drawFixedWorld(c,sim,view,this.settlement,this.keepsakes,this.crest,this.scale,this.settings.reduceMotion,this.time)
       this.fx.drawBase(c)
+      // The previous fixed renderer omitted this layer, hiding hits, muzzle flashes and rewards.
+      if(!this.settings.reduceMotion){c.save();c.globalCompositeOperation='screen';this.fx.drawGlow(c);c.restore()}
       sound.beam(view.paused||sim.over?0:sim.beamIntensity)
       return
     }
