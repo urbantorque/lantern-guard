@@ -73,7 +73,7 @@ try {
         Invoke-Git ($buildGit + @('read-tree', '--empty')) | Out-Null
         Invoke-Git ($buildGit + @('add', '--all', '--', '.')) | Out-Null
         $tree = Invoke-Git ($buildGit + @('write-tree'))
-        $commitArguments = @('commit-tree', $tree, '-m', "Publish Lantern Guard from $sourceCommit")
+        $commitArguments = @('commit-tree', $tree, '-m', "Publish Nightward from $sourceCommit")
         if ($parentCommit) { $commitArguments += @('-p', $parentCommit) }
         $deploymentCommit = Invoke-Git $commitArguments
     } finally {
