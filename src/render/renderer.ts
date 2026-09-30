@@ -14,6 +14,7 @@ import { drawEnemy, drawEnemyIcon, ENEMY_VIS, setEnemySpriteScale } from './enem
 import { Fx } from './fx'
 import { FAMILY_COLOR, glowSprite, P, withAlpha } from './palette'
 import { drawPad, drawTower, PAD_R } from './towers'
+import { drawFixedWorld, districtGround } from './fixed-world'
 
 export type Selection =
   | { kind: 'pad'; index: number }
@@ -54,7 +55,7 @@ export interface RenderSettings {
   shake: boolean
 }
 
-const FONT = '"Fredoka Variable", Fredoka, ui-rounded, system-ui, sans-serif'
+const FONT = '"DM Sans Variable", ui-sans-serif, system-ui, sans-serif'
 /** Smallest on-screen size for any canvas text, in CSS px (raised by the Larger text setting). */
 const MIN_TEXT_PX = 13
 const MIN_TEXT_PX_BIG = 16
@@ -100,6 +101,9 @@ const cellKey = (x: number, y: number) => Math.floor(x / BLOOM_CELL) * 1000 + Ma
 const FIREWORK_COLS = [P.coral, P.amberHi, P.ice, P.lime, P.lilac, P.gold, P.pink]
 
 export class Renderer {
+  private fixedEdition=false
+  keepsakes: string[] = []
+  crest = 'lantern'
   zone: MapZone = 'canal'
   settlement = 0
   guardianMastery = 0
@@ -166,6 +170,7 @@ export class Renderer {
   }
 
   attach(sim: Sim, preserveBlooms = false) {
+    this.fixedEdition=!!sim.challenge.fixed
     if (!sim.challenge.harbour) this.zone = 'canal'
     this.routeKey = ''
     this.partnerKey = ''
@@ -217,7 +222,7 @@ export class Renderer {
     const bounds = this.zone === 'overview' ? { x: -20, y: top, w: 760, h: WORLD_H + 30 - top }
       : this.zone === 'gardens' ? { x: 0, y: -1020, w: 720, h: 750 }
       : this.zone === 'harbour' ? { x: 0, y: -475, w: 720, h: 830 } : this.levelBuilt?.def.bounds ?? { x: 0, y: -36, w: WORLD_W, h: WORLD_H + 36 }
-    const mapTop = this.zone === 'gardens' || this.zone === 'overview' ? 52 : 0
+    const mapTop = this.fixedEdition&&h>400?60:this.zone === 'gardens' || this.zone === 'overview' ? 52 : 0
     this.scale = Math.min(w / bounds.w, Math.max(1, h - mapTop) / bounds.h)
     this.ox = (w - bounds.w * this.scale) / 2 - bounds.x * this.scale
     this.oy = mapTop + (h - mapTop - bounds.h * this.scale) / 2 - bounds.y * this.scale
@@ -301,7 +306,7 @@ export class Renderer {
   handleEvents(sim: Sim) {
     const fx = this.fx
     const calm = this.settings.calmFx || this.settings.reduceMotion
-    fx.density = calm ? 0.5 : 1
+    fx.density = sim.challenge.fixed ? .18 : calm ? 0.5 : 1
     let pops = 0
     for (const ev of sim.events) {
       switch (ev.t) {
@@ -309,6 +314,12 @@ export class Renderer {
           pops++
           const col = FAMILY_COLOR[ev.family] ?? P.amber
           const big = ev.boss ? 3 : ev.size >= 18 ? 1.6 : 1
+          if (sim.challenge.fixed) {
+            this.addBloom(ev)
+            if (!this.settings.reduceMotion && (ev.boss || pops < 3)) fx.ring(ev.x,ev.y,ev.boss?55:12,withAlpha(col,.45),.25,1.5)
+            sound.pop(big)
+            break
+          }
           const crowd = sim.enemies.length > 60
           const ring = !calm || pops < 4
           const x = ev.x
@@ -661,6 +672,7 @@ export class Renderer {
   // ------------------------------------------------------------------ victory
 
   private stepVictory(dt: number) {
+    if (this.settings.calmFx || this.settings.reduceMotion) return
     if (this.victoryT < 0 || this.victoryT > 2.8) return
     const prev = this.victoryT
     this.victoryT += dt
@@ -707,6 +719,15 @@ export class Renderer {
   // ------------------------------------------------------------------ frame
 
   draw(sim: Sim, dt: number, view: ViewState) {
+    if(sim.challenge.fixed) {
+      this.time+=dt;this.fx.update(dt)
+      const c=this.ctx;c.setTransform(this.dpr,0,0,this.dpr,0,0);c.fillStyle=districtGround(sim);c.fillRect(0,0,this.w,this.h)
+      c.translate(this.ox,this.oy);c.scale(this.scale,this.scale)
+      drawFixedWorld(c,sim,view,this.settlement,this.keepsakes,this.crest,this.scale,this.settings.reduceMotion)
+      this.fx.drawBase(c)
+      sound.beam(view.paused||sim.over?0:sim.beamIntensity)
+      return
+    }
     this.time += dt
     this.richTextBudget = Math.min(4, this.richTextBudget + dt * 5)
     this.leakStack = Math.max(0, this.leakStack - dt * 1.2)
@@ -730,7 +751,7 @@ export class Renderer {
     ctx.drawImage(this.bg!, -BG_PAD_X, -BG_PAD_Y, WORLD_W + BG_PAD_X * 2, WORLD_H + BG_PAD_Y * 2)
     if (sim.challenge.harbour) this.drawHarbour(ctx, sim)
     if (sim.challenge.gardens) this.drawGardens(ctx, sim)
-    if (sim.challenge.guard) drawSettlement(ctx, this.settlement, this.bunting, !!sim.challenge.harbour, !!sim.challenge.gardens, sim.challenge.compact ? sim.challenge.variant ?? 0 : undefined, this.guardianMastery >= 3)
+    else if (sim.challenge.guard) drawSettlement(ctx, this.settlement, this.bunting, !!sim.challenge.harbour, !!sim.challenge.gardens, sim.challenge.compact ? sim.challenge.variant ?? 0 : undefined, this.guardianMastery >= 3)
 
     this.drawFlow(ctx, sim, dt)
     ctx.drawImage(this.bloomCv!, 0, 0, WORLD_W, WORLD_H)

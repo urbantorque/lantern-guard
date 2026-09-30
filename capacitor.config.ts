@@ -2,13 +2,13 @@ import type { CapacitorConfig } from '@capacitor/cli'
 
 const config: CapacitorConfig = {
   appId: 'com.lanternlocks.game',
-  appName: 'Lantern Guard: Tower Defense',
+  appName: 'Nightward',
   webDir: 'dist',
-  backgroundColor: '#081319',
+  backgroundColor: '#233443',
   ios: {
     contentInset: 'never',
     preferredContentMode: 'mobile',
-    backgroundColor: '#081319',
+    backgroundColor: '#233443',
   },
 }
 

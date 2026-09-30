@@ -1,6 +1,6 @@
-import './style.css'
-import { App } from './app'
+import './fixed-style.css'
+import { FixedApp } from './fixed-app'
 
 import { initializePlatform } from './core/platform'
 
-void initializePlatform().then(() => new App())
+void initializePlatform().then(() => new FixedApp())

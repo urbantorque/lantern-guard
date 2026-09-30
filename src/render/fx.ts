@@ -30,7 +30,7 @@ export interface Particle {
 }
 
 const MAX = 1100
-const FONT = '"Fredoka Variable", Fredoka, ui-rounded, system-ui, sans-serif'
+const FONT = '"DM Sans Variable", ui-sans-serif, system-ui, sans-serif'
 
 export class Fx {
   list: Particle[] = []

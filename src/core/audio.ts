@@ -46,6 +46,7 @@ export class Sound {
   }
 
   unlock() {
+    if (this.settings.muted) return
     if (!this.ctx) {
       const AC = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
       if (!AC) return

@@ -1,4 +1,5 @@
 import { compactLevel, PLOTS, STARTER_PLOTS, REFINEMENTS } from './compact'
+import { fixedLevel, COMMISSIONS, FIXED_UNLOCK, bondName } from './fixed'
 import { LATE_REFINEMENTS, LATE_TOWERS, PREPARATIONS } from './depth'
 import { BATTLE_PLANS, type BattlePlanId } from './battle-plans'
 import { gardensLevel, GARDENS_PADS } from './gardens'
@@ -68,15 +69,23 @@ const allFinite = (x: unknown, depth = 0): boolean => depth < 12 && (typeof x ==
 export function validSnapshot(s: unknown): s is SaveSnapshot {
   if (!object(s) || (s.v !== 1 && s.v !== 2) || typeof s.difficulty !== 'string' || !Object.hasOwn(DIFFICULTY, s.difficulty)) return false
   if (!object(s.challenge) || s.challenge.chapter !== undefined || s.challenge.campaign !== undefined || !integer(s.wave, 0, 10000) || !number(s.glow, 0) || !number(s.lives) || !number(s.seed) || typeof s.won !== 'boolean' || !object(s.stats) || !allFinite(s)) return false
+  if (s.challenge.fixed !== undefined && (s.challenge.fixed !== 1 || s.challenge.compact !== 1 || s.challenge.depth !== 1 || s.challenge.balance !== 1 || s.challenge.guard !== 1 || s.challenge.plans || s.challenge.guardian || s.freeplay || s.wave > 40)) return false
+  if (s.challenge.fixed && (s.preparation !== null || s.preparationRound !== 0 || s.challenge.practice !== undefined && typeof s.challenge.practice !== 'boolean' || !s.challenge.skirmish && (s.challenge.commission !== undefined || s.challenge.blockedPad !== undefined))) return false
   for (const key of ['lockedGates', 'noGarden', 'noCharms']) if (s.challenge[key] !== undefined && typeof s.challenge[key] !== 'boolean') return false
   if (s.challenge.id !== undefined && typeof s.challenge.id !== 'string') return false
   if (s.challenge.keepers !== undefined && (!Array.isArray(s.challenge.keepers) || !s.challenge.keepers.every(v => typeof v === 'string' && Object.hasOwn(TOWERS, v)))) return false
   if (s.challenge.compact !== undefined && (s.challenge.compact !== 1 || s.v !== 2 || s.challenge.guard !== 1 || !integer(s.challenge.variant, 0, s.challenge.plans === 1 || s.challenge.depth === 1 ? 3 : 2) || ['expanding', 'waterway', 'harbour', 'gardens', 'harbourEncounters', 'tide', ...(s.challenge.skirmish ? [] : ['id'])].some(k => (s.challenge as Record<string, unknown>)[k] !== undefined))) return false
   if (s.challenge.depth !== undefined && (s.challenge.depth !== 1 || s.challenge.compact !== 1 || s.challenge.guard !== 1 || s.v !== 2)) return false
   if (s.challenge.balance !== undefined && (s.challenge.balance !== 1 || s.challenge.depth !== 1)) return false
-  if (s.challenge.skirmish !== undefined) {
+  if (s.challenge.skirmish !== undefined && !s.challenge.fixed) {
     const q = s.challenge.skirmish
     if (!object(q) || !s.challenge.depth || typeof s.challenge.id !== 'string' || !s.challenge.id.endsWith(s.challenge.balance ? ':compact2' : ':compact1') || ![10, 20].includes(q.from as number) || q.to !== Number(q.from) + 10 || q.glow !== (q.from === 10 ? 4200 : 8500) || !integer(q.seed, 0, 4294967295) || s.seed !== q.seed || s.wave < Number(q.from) || s.wave > Number(q.to) || s.freeplay || s.challenge.tide || s.challenge.plans || s.challenge.guardian) return false
+  }
+  if (s.challenge.fixed && s.challenge.skirmish) {
+    const commissionId = s.challenge.commission
+    const commission = COMMISSIONS.find(c => c.id === commissionId)
+    const q = s.challenge.skirmish
+    if (!commission || !object(q) || q.from !== commission.from || q.to !== commission.to || q.seed !== commission.seed || s.seed !== q.seed || q.glow !== commission.glow || s.challenge.id !== `commission:${commission.id}:fixed1` || s.challenge.variant !== commission.variant || s.challenge.blockedPad !== commission.blockedPad || s.wave < commission.from || s.wave > commission.to) return false
   }
   if (s.challenge.depth) {
     if (!integer(s.preparationRound, 0, 35) || s.preparationRound % 5 !== 0 || s.preparationRound > s.wave) return false
@@ -103,7 +112,7 @@ export function validSnapshot(s: unknown): s is SaveSnapshot {
   if (s.challenge.guardian !== undefined && (!['ember', 'reed', 'tide'].includes(String(s.challenge.guardian)) || (s.challenge.guardian === 'tide' && !s.challenge.compact) || s.challenge.guard !== 1 || s.challenge.id !== undefined)) return false
   if (s.challenge.gardens !== undefined && (s.challenge.gardens !== 1 || s.challenge.harbour !== 1 || s.wave < 33)) return false
   const maxPads = s.challenge.compact ? PLOTS.length : LEVEL.pads.length + (s.challenge.harbour ? HARBOUR_PADS.length : 0) + (s.challenge.gardens ? GARDENS_PADS.length : 0)
-  if (!Array.isArray(s.towers) || s.towers.length > maxPads || !Array.isArray(s.gates) || s.gates.length !== 2) return false
+  if (!Array.isArray(s.towers) || s.towers.length > maxPads || !Array.isArray(s.gates) || s.gates.length !== (s.challenge.fixed ? 0 : 2)) return false
   const pads = new Set<number>()
   for (const t of s.towers) {
     if (!object(t) || typeof t.id !== 'string' || !Object.hasOwn(TOWERS, t.id) || !integer(t.pad, 0, maxPads - 1) || pads.has(t.pad) || !integer(t.a, 0, 3) || !integer(t.b, 0, 3) || (t.a > 1 && t.b > 1) || !number(t.spent, 0) || !number(t.pops, 0) || !['first', 'last', 'strong', 'close'].includes(String(t.priority))) return false
@@ -111,7 +120,22 @@ export function validSnapshot(s: unknown): s is SaveSnapshot {
     if (LATE_TOWERS.includes(t.id as import('./defs').TowerId) && (!s.challenge.depth || (t.id === 'storm' ? 16 : 26) > s.wave + 1)) return false
     if (s.challenge.compact && (!(s.plots as number[]).includes(t.pad) || !integer(t.refinement, 0, ranks.length) || (t.refinement > 0 && (Math.max(t.a, t.b) < 3 || ranks[t.refinement - 1].wave > s.wave + 1)))) return false
     if (!s.challenge.compact && t.refinement !== undefined) return false
+    if (s.challenge.fixed && (Number(t.a) > 0 && Number(t.b) > 0 || Number(t.b) === 1 || Number(t.refinement) > 1 || Number(t.refinement) > 0 && s.wave < 30 || FIXED_UNLOCK[t.id as keyof typeof FIXED_UNLOCK] > s.wave + 1 || t.pad === s.challenge.blockedPad)) return false
     pads.add(t.pad)
+  }
+  if (s.challenge.fixed) {
+    if(s.climate!==undefined){
+      const c=s.climate
+      if(!object(c)||!number(c.elapsed,0)||!number(c.waveSeconds,0)||!number(c.gardenExposure,0)||c.waveSeconds>c.elapsed+1e-6||c.gardenExposure>c.waveSeconds*1.47+1e-6||c.gardenExposure<c.waveSeconds*.55-1e-6)return false
+    }
+    if (!Array.isArray(s.bonds) || s.bonds.length > (s.wave >= 20 ? 2 : s.wave >= 5 ? 1 : 0)) return false
+    const used = new Set<unknown>()
+    for(const b of s.bonds) {
+      if(!object(b) || !number(b.readyAt,0) || !integer(b.activations) || used.has(b.a) || used.has(b.b) || b.a === b.b) return false
+      const a=s.towers.find(t=>t.uid===b.a), other=s.towers.find(t=>t.uid===b.b)
+      if(!a || !other || !bondName(a.id as keyof typeof TOWERS,other.id as keyof typeof TOWERS)) return false
+      used.add(b.a); used.add(b.b)
+    }
   }
   for (const g of s.gates) {
     if (!object(g) || !integer(g.state, 0, 1)) return false
@@ -149,7 +173,7 @@ export function validSnapshot(s: unknown): s is SaveSnapshot {
     const harbour = !!s.challenge.harbour
     if (s.towers.some(t => !available.includes((t as { pad: number }).pad) && !(harbour && (t as { pad: number }).pad >= LEVEL.pads.length))) return false
   }
-  const base = s.challenge.compact ? compactLevel(s.challenge.variant as number) : s.challenge.expanding ? growingCanal(s.canalStage as number) : LEVEL
+  const base = s.challenge.fixed ? fixedLevel(s.challenge.variant as number) : s.challenge.compact ? compactLevel(s.challenge.variant as number) : s.challenge.expanding ? growingCanal(s.canalStage as number) : LEVEL
   const harbour = s.challenge.harbour ? harbourLevel(base) : base
   const segments = new Set((s.challenge.gardens ? gardensLevel(harbour) : harbour).segments.map(seg => seg.id))
   if (s.waveReports !== undefined && (!s.challenge.guard || !Array.isArray(s.waveReports) || s.waveReports.length > 100 || !s.waveReports.every(r => object(r) && integer(r.wave, 1, 10000) && integer(r.slowSplashHits) && object(r.damage) && Object.entries(r.damage).every(([id, value]) => Object.hasOwn(TOWERS, id) && number(value, 0))))) return false

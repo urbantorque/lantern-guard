@@ -1,5 +1,7 @@
 # Project guide
 
+> **Historical architecture notes.** New play now uses Nightward's fixed-path edition. Start with [the Nightward delivery report](NIGHTWARD-RELEASE.md) and [current README](../README.md); the routing, seven-level progression, supplies and guardians described below belong to the previous edition.
+
 A lantern-lit tower defence game for phones. Build your towers, grow your defence and keep the lantern lit.
 
 A browser game with a Capacitor iOS project, designed portrait-first for iPhone. It also plays on desktop.

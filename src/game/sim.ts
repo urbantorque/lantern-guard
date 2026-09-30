@@ -1,3 +1,5 @@
+import { fixedLevel, fixedWave, fixedStats, FIXED_UNLOCK, stageOf, upgradePrice, bondName, type Bond } from './fixed'
+import { skyAt, skyReach, skyRate, skyDamage, skySpeed, gardenYield, type ClimateState } from './environment'
 import { compactLevel, compactWave, COMPACT_END, STARTER_PLOTS, PLOTS, REFINEMENTS, refineStats } from './compact'
 import { LATE_REFINEMENTS, LATE_TOWERS, PREPARATIONS, lateRefine, encounterWave, preparationCost, netDamage, type Preparation, type PreparationId } from './depth'
 import { balanceTower, BEAM_SECONDARY_DAMAGE, GARDEN_REFINEMENT_COSTS, NIGHTFALL_LATE_BOSS_HEALTH } from './balance'
@@ -208,6 +210,10 @@ export type SimEvent =
 
 /** Rules a night is played under. Plain nights use {}; tides and weekly nights set several. */
 export interface Challenge {
+  fixed?: 1
+  commission?: string
+  blockedPad?: number
+  practice?: boolean
   /** Bounded beam piercing, neutral boss colours and revised late tower roles. */
   balance?: 1
   skirmish?: { from: number; to: number; glow: number; seed: number }
@@ -379,6 +385,8 @@ export interface SaveSnapshotV1 extends SnapshotBase {
 
 /** Full save, valid at any moment including mid-wave. Restores to an identical simulation. */
 export interface SaveSnapshotV2 extends SnapshotBase {
+  climate?: ClimateState
+  bonds?: Bond[]
   preparation?: Preparation | null
   preparationRound?: number
   battlePlans?: BattlePlanId[]
@@ -420,6 +428,8 @@ interface Spawner {
 const CELL = 56
 
 export class Sim {
+  climate:ClimateState = {elapsed:0,waveSeconds:0,gardenExposure:0}
+  get sky() {return skyAt(this.climate.elapsed,this.seed)}
   level: BuiltLevel
   difficulty: Difficulty
   challenge: Challenge
@@ -455,6 +465,7 @@ export class Sim {
   /** 0 until the player continues into free play after a win; then the wave reached at that moment (free-play waves = wave - freeplayFrom). */
   freeplayFrom = 0
   stats: RunStats = { pops: 0, leaked: 0, flips: 0, glowEarned: 0, built: 0, upgrades: 0, charms: 0, time: 0, popsBy: {}, towersUsed: [], leaksBy: {}, leakRoutes: {}, firstBuildAt: -1, firstFlipWave: -1, earlyCalls: 0, maxTier: 0, activeTime: 0, cheered: {} }
+  bonds: Bond[] = []
   private uid = 1
   /** Seeded draws so far, so a restored run can fast-forward the generator. */
   private rngDraws = 0
@@ -474,7 +485,7 @@ export class Sim {
     this.maxLives = d.lives
     this.hpMul = d.hp
     this.speedMul = d.speed
-    this.level = buildLevel(challenge.compact ? compactLevel(challenge.variant) : challenge.expanding ? growingCanal(0, !!challenge.guard) : challenge.guard ? growingCanal(2, true) : waterwayLevel(challenge.waterway))
+    this.level = buildLevel(challenge.fixed ? fixedLevel(challenge.variant) : challenge.compact ? compactLevel(challenge.variant) : challenge.expanding ? growingCanal(0, !!challenge.guard) : challenge.guard ? growingCanal(2, true) : waterwayLevel(challenge.waterway))
     this.gates = this.level.def.gates.map((g) => ({ def: g, state: g.lockedDir, charm: null, jammed: false, cd: 0, flipT: -9, routeT: [-9, -9], flips: 0, swingT: 0 }))
     this.pads = this.level.def.pads.map((p) => ({ x: p.x, y: p.y, tower: null }))
     // a tide opens mid-night: the locks and the sluice are already open, and there is a bank to build with
@@ -485,7 +496,7 @@ export class Sim {
       for (const src of this.level.def.sources) if (src.openWave <= tide.from) this.openSources.add(src.id)
     }
     const short = challenge.skirmish
-    if (short) {
+    if (short && !challenge.fixed) {
       this.wave = short.from; this.glow = short.glow
       this.plots = new Set(PLOTS.flatMap((p, i) => p.wave <= this.planningWave ? [i] : []))
       for (const src of this.level.def.sources) if (src.openWave <= this.planningWave) this.openSources.add(src.id)
@@ -502,6 +513,13 @@ export class Sim {
         for (let i = 0; i < b; i++) this.upgrade(t, 1)
       }
       this.events = []
+    }
+    if (short && challenge.fixed) {
+      this.climate.elapsed = short.from * 30
+      this.wave = short.from; this.glow = short.glow
+      this.plots = new Set(PLOTS.flatMap((p,i) => p.wave <= this.planningWave ? [i] : []))
+      for (const source of this.level.def.sources) if(source.openWave <= this.planningWave) this.openSources.add(source.id)
+      if (challenge.commission === 'garden') { this.glow += TOWERS.garden.cost; this.build(0,'garden') }
     }
     this.recomputeRoutes()
     this.buildGateDistances()
@@ -556,6 +574,7 @@ export class Sim {
   }
 
   padAvailable(index: number): boolean {
+    if (this.challenge.fixed && this.challenge.blockedPad === index) return false
     if (this.challenge.compact) return this.plots.has(index)
     if (this.challenge.harbour) return index >= 0 && index < this.pads.length
     return !this.challenge.expanding || (CANAL_STAGES[this.canalStage].pads as readonly number[]).includes(index)
@@ -566,7 +585,7 @@ export class Sim {
   }
 
   plotCost(index: number): number | null {
-    return this.challenge.compact && this.padRevealed(index) && !this.plots.has(index) ? PLOTS[index].cost : null
+    return this.challenge.fixed && this.challenge.blockedPad === index ? null : this.challenge.compact && this.padRevealed(index) && !this.plots.has(index) ? PLOTS[index].cost : null
   }
 
   unlockPlot(index: number): boolean {
@@ -592,6 +611,7 @@ export class Sim {
   }
 
   get preparationOffer(): number | null {
+    if (this.challenge.fixed) return null
     if (!this.challenge.depth || this.isChallenge || this.waveActive || this.over || this.freeplay || this.wave < 5 || this.wave >= 40) return null
     const round = Math.floor(this.wave / 5) * 5
     return round > this.preparationRound ? round : null
@@ -637,9 +657,10 @@ export class Sim {
   }
 
   /** Whether this keeper may be built under the night's rules. */
-  keeperWave(id: TowerId): number { return this.challenge.compact && id === 'garden' ? 6 : KEEPER_WAVE[id] }
+  keeperWave(id: TowerId): number { if (this.challenge.fixed) return FIXED_UNLOCK[id]; return this.challenge.compact && id === 'garden' ? 6 : KEEPER_WAVE[id] }
 
   keeperAllowed(id: TowerId): boolean {
+    if (this.challenge.fixed) return this.planningWave >= FIXED_UNLOCK[id] && !(id === 'garden' && this.challenge.noGarden)
     if (LATE_TOWERS.includes(id) && !this.challenge.depth) return false
     if ((this.challenge.expanding || this.challenge.compact) && this.planningWave < this.keeperWave(id)) return false
     if (id === 'garden' && this.challenge.noGarden) return false
@@ -658,6 +679,7 @@ export class Sim {
   }
 
   canStartWave(): boolean {
+    if (this.challenge.fixed && this.waveActive) return false
     if (this.over) return false
     if (this.preparation && this.waveActive) return false
     if (this.challenge.skirmish && this.waveActive) return false
@@ -671,6 +693,7 @@ export class Sim {
   }
 
   waveDef(n: number): WaveDef {
+    if (this.challenge.fixed) return fixedWave(n,this.challenge.variant ?? 0,this.seed)
     if (this.challenge.compact) {
       const wave = compactWave(n, this.challenge.variant ?? 0, this.seed)
       if (this.challenge.skirmish && n === this.waveOffset + 1) wave.note = 'Enemies use both entrances. Upgrade the starting defence and cover the lower bank.'
@@ -708,6 +731,7 @@ export class Sim {
 
   /** Support coverage improves in new nights without rewriting legacy towers or saves. */
   towerStats(id: TowerId, a: number, b: number, refinement = 0) {
+    if (this.challenge.fixed) return fixedStats(id,a,b,refinement)
     const stats = computeStats(id, a, b)
     if (this.challenge.guard && (id === 'bell' || id === 'owl')) stats.range += 20
     if (this.challenge.compact) {
@@ -724,6 +748,7 @@ export class Sim {
   }
 
   refinementCost(t: Tower): number | null {
+    if (this.challenge.fixed) return stageOf(t) === 3 && this.planningWave >= 31 ? upgradePrice(t) : null
     const next = this.refinementOffer(t)
     return this.challenge.compact && next && Math.max(t.a, t.b) === 3 && this.planningWave >= next.wave ? next.cost : null
   }
@@ -737,7 +762,7 @@ export class Sim {
 
   refine(t: Tower): boolean {
     const cost = this.refinementCost(t)
-    if (cost === null || this.glow < cost || this.over || !this.towers.includes(t)) return false
+    if (cost === null || this.glow < cost || this.over || !this.towers.includes(t) || (this.challenge.fixed && this.waveActive)) return false
     this.glow -= cost; t.spent += cost; t.refinement = (t.refinement ?? 0) + 1
     t.stats = this.towerStats(t.id, t.a, t.b, t.refinement)
     t.upT = this.time; this.stats.upgrades++
@@ -794,13 +819,19 @@ export class Sim {
   }
 
   upgradeCost(t: Tower, path: 0 | 1): number | null {
+    if (this.challenge.fixed) {
+      const stage = stageOf(t)
+      if (stage >= 3 || stage === 2 && this.planningWave < 16 || stage === 0 && path === 1) return null
+      if (stage === 2 && path !== (t.b ? 1 : 0)) return null
+      return upgradePrice(t)
+    }
     if (!canUpgrade(t.a, t.b, path)) return null
     const tier = path === 0 ? t.a : t.b
     return t.def.paths[path].tiers[tier].cost
   }
 
   canRelocate(t: Tower): boolean {
-    return !!this.challenge.guard && !this.isChallenge && !this.over && !this.waveActive && this.towers.includes(t)
+    return !!this.challenge.guard && (!this.isChallenge || !!this.challenge.fixed) && !this.over && !this.waveActive && this.towers.includes(t)
   }
 
   /** Preview destination support without moving or resetting the tower. */
@@ -810,7 +841,8 @@ export class Sim {
     for (const other of this.towers) {
       if (other !== t && other.id === 'owl' && dist2(x, y, other.x, other.y) <= other.stats.range ** 2) bonus = Math.max(bonus, other.stats.auraRange)
     }
-    return t.stats.range * (1 + bonus)
+    const warded=this.towers.some(o=>o.id==='owl'&&dist2(o.x,o.y,x,y)<=o.stats.range**2)
+    return t.stats.range * (1 + bonus) * (this.challenge.fixed?skyReach(t.id,this.sky,warded):1)
   }
 
   /** Moving never rebuilds: timers, income, upgrades, credit and sell value stay attached. */
@@ -828,7 +860,12 @@ export class Sim {
   }
 
   effRange(t: Tower): number {
-    return t.stats.range * t.rangeMul
+    return t.stats.range * t.rangeMul * (this.challenge.fixed?skyReach(t.id,this.sky,this.sheltered(t)):1)
+  }
+
+  /** Owl shelter never stacks and uses its base sight, so it cannot recurse through auras. */
+  sheltered(t:Tower):boolean {
+    return this.towers.some(o=>o.id==='owl'&&dist2(o.x,o.y,t.x,t.y)<=o.stats.range**2)
   }
 
   canSee(e: Enemy, detect: boolean): boolean {
@@ -845,7 +882,7 @@ export class Sim {
 
   build(padIndex: number, id: TowerId): Tower | null {
     const pad = this.pads[padIndex]
-    if (!pad || !this.padAvailable(padIndex) || pad.tower || this.over) return null
+    if (!pad || !this.padAvailable(padIndex) || pad.tower || this.over || (this.challenge.fixed && this.waveActive)) return null
     if (!this.keeperAllowed(id)) return null
     const cost = TOWERS[id].cost
     if (this.glow < cost) return null
@@ -890,10 +927,11 @@ export class Sim {
 
   upgrade(t: Tower, path: 0 | 1): boolean {
     const cost = this.upgradeCost(t, path)
-    if (cost == null || this.glow < cost || this.over) return false
+    if (cost == null || this.glow < cost || this.over || !this.towers.includes(t) || (this.challenge.fixed && this.waveActive)) return false
     this.glow -= cost
     t.spent += cost
-    if (path === 0) t.a++
+    if (this.challenge.fixed && stageOf(t) === 1) { t.a = path === 0 ? 2 : 0; t.b = path === 1 ? 2 : 0 }
+    else if (path === 0) t.a++
     else t.b++
     t.stats = this.towerStats(t.id, t.a, t.b, t.refinement)
     t.upT = this.time
@@ -905,6 +943,8 @@ export class Sim {
   }
 
   sell(t: Tower) {
+    if (!this.towers.includes(t) || this.over || this.challenge.fixed && (this.waveActive || this.challenge.commission === 'garden' && t.id === 'garden')) return
+    this.bonds = this.bonds.filter(b => b.a !== t.uid && b.b !== t.uid)
     const v = this.sellValue(t)
     this.glow += v
     this.pads[t.pad].tower = null
@@ -914,7 +954,7 @@ export class Sim {
   }
 
   canFlip(g: GateState): boolean {
-    return !this.gateLocked(g) && !g.jammed && !this.over && g.cd <= 0
+    return !this.challenge.fixed && !this.gateLocked(g) && !g.jammed && !this.over && g.cd <= 0
   }
 
   flipGate(g: GateState): boolean {
@@ -954,12 +994,14 @@ export class Sim {
 
   /** Glow granted for calling the next wave while Mopes are still on the water. */
   earlyBonus(): number {
+    if (this.challenge.fixed) return 0
     if (this.enemies.length === 0 || this.wave === 0) return 0
     return Math.round(12 + this.wave * 2.5)
   }
 
   startWave(): boolean {
     if (!this.canStartWave()) return false
+    if(this.challenge.fixed){this.climate.waveSeconds=0;this.climate.gardenExposure=0}
     this.lastLeak = null
     const early = this.earlyBonus()
     if (early > 0) {
@@ -993,7 +1035,14 @@ export class Sim {
     if (this.over) return
     this.time += dt
     this.stats.time += dt
-    if (this.waveActive) this.stats.activeTime += dt
+    if (this.waveActive) {
+      this.stats.activeTime += dt
+      if(this.challenge.fixed){
+        this.climate.gardenExposure+=gardenYield(this.sky)*dt
+        this.climate.waveSeconds+=dt
+        this.climate.elapsed+=dt
+      }
+    }
     for (const g of this.gates) if (g.cd > 0) g.cd -= dt
     this.updateTidalLocks(dt)
     this.runSpawners(dt)
@@ -1055,7 +1104,7 @@ export class Sim {
 
   /** silent: no boss 'spawn' event (Old Gloom's twin, restored saves). */
   spawnEnemy(type: EnemyId, seg: Segment, s: number, wave: number, silent = false): Enemy {
-    const def = ENEMIES[type]
+    const def = this.challenge.fixed && (type === 'toad' || type === 'gloom') ? { ...ENEMIES[type], jams: false, spawn: undefined } : ENEMIES[type]
     // harder modes ease in: full toughness only arrives by wave 15
     const ramp = this.hpMul >= 1 ? 1 + (this.hpMul - 1) * Math.min(1, Math.max(0, wave - (this.challenge.compact ? 8 : 4)) / (this.challenge.compact ? 12 : 11)) : this.hpMul
     // the night deepens: Mopes grow a little tougher each wave after the eleventh, bosses more gently after the tenth
@@ -1066,8 +1115,16 @@ export class Sim {
     const lateRate = this.challenge.guard && this.difficulty === 'nightfall' ? 0.25 : d.late
     const late = def.boss ? 1 + Math.max(0, lw - 10) * d.bossLate : 1 + deep * lateRate + deep * deep * d.late2
     const bossHealth = this.challenge.balance && this.difficulty === 'nightfall' && (type === 'warden' || type === 'bloomheart') ? NIGHTFALL_LATE_BOSS_HEALTH : 1
-    const hp = def.hp * ramp * late * bossHealth * (this.challenge.compact && def.id === 'bloomheart' ? .7 : 1) * (this.freeplay ? 1 + (this.wave - (this.challenge.compact ? COMPACT_END : FINAL_WAVE)) * 0.06 : 1)
-    const shell = (def.shell ?? 0) * ramp * late * (this.challenge.thick ?? 1)
+    let hp = def.hp * ramp * late * bossHealth * (this.challenge.compact && def.id === 'bloomheart' ? .7 : 1) * (this.freeplay ? 1 + (this.wave - (this.challenge.compact ? COMPACT_END : FINAL_WAVE)) * 0.06 : 1)
+    let shell = (def.shell ?? 0) * ramp * late * (this.challenge.thick ?? 1)
+    if (this.challenge.fixed) {
+      const mode = this.difficulty === 'relaxed' ? .78 : this.difficulty === 'nightfall' ? 1 + .22*Math.min(1,Math.max(0,wave-10)/25) : 1
+      const growth = def.boss ? 1 + Math.max(0,wave-10)*.045 : 1 + Math.max(0,wave-6)*.1
+      hp = def.hp * mode * growth
+      shell = (def.shell ?? 0)* mode * growth
+      if (type === 'warden') hp *= .7
+      if (type === 'bloomheart') hp *= .65
+    }
     const e: Enemy = {
       uid: this.uid++,
       def,
@@ -1103,7 +1160,7 @@ export class Sim {
       route: '',
       heatT: 0,
       visScale: 1,
-      reward: def.reward,
+      reward: def.reward * (this.challenge.fixed ? .25 : 1),
       lastFlash: -9,
       rich: seg.bonus > 1,
       shrouded: !!def.splitAtGate,
@@ -1255,6 +1312,11 @@ export class Sim {
           if (o !== e && !o.def.boss && o.hp < o.maxHp) o.hp = Math.min(o.maxHp, o.hp + e.def.heal.rate * dt)
         }
       }
+      if (this.challenge.fixed && e.def.id === 'toad' && e.phase === 0 && e.hp <= e.maxHp*.5) {
+        e.phase=1
+        for(let i=0;i<6;i++) this.inherit(this.spawnEnemy('drip',e.seg,Math.max(0,e.s-20-i*18),e.wave),e)
+        this.events.push({t:'phase',x:e.x,y:e.y})
+      }
       // boss minions and phases
       if (e.def.spawn) {
         e.spawnCd -= dt
@@ -1263,7 +1325,7 @@ export class Sim {
           this.inherit(this.spawnEnemy(e.def.spawn.type, e.seg, Math.max(0, e.s - e.def.radius), e.wave), e)
         }
       }
-      if (e.def.id === 'gloom') {
+      if (e.def.id === 'gloom' && !this.challenge.fixed) {
         const f = e.hp / e.maxHp
         // each half of a split Old Gloom calls up half the brood
         const half = !e.def.splitAtGate
@@ -1308,7 +1370,7 @@ export class Sim {
         this.events.push({ t: 'phase', x: e.x, y: e.y })
         for (let i = 0; i < 4; i++) this.inherit(this.spawnEnemy('skiff', e.seg, Math.max(0, e.s - 24 * (i + 1)), e.wave), e)
       }
-      let speed = e.speedBase * (1 - slow)
+      let speed = e.speedBase * (1 - slow) * (this.challenge.fixed?skySpeed(this.sky):1)
       if (e.def.id === 'skiff' && e.shell <= 0) speed *= 1.6
       if (e.stunT > 0) {
         e.stunT -= dt
@@ -1333,6 +1395,7 @@ export class Sim {
         if ('seg' in nx) {
           e.seg = this.level.segs.get(nx.seg)!
           e.s = over
+          if (this.challenge.fixed && nx.seg === 'm1' && e.def.id === 'gloom' && e.shrouded) this.splitFixedGloom(e)
           if (nx.seg === 'h' && !e.def.boss && this.activePreparation('net', e.wave) && this.preparation!.charges > 0) {
             this.preparation!.charges--
             e.slowF = Math.max(e.slowF, .5); e.slowT = Math.max(e.slowT, 3)
@@ -1365,6 +1428,14 @@ export class Sim {
       e.ty = pos.ty
       e.remaining = e.seg.toHome - e.s
     }
+  }
+
+  private splitFixedGloom(e: Enemy) {
+    e.hp /= 2; e.maxHp /= 2; e.reward /= 2; e.visScale = .8; e.shrouded = false
+    const twin = this.spawnEnemy('gloom',e.seg,0,e.wave,true)
+    Object.assign(twin,{hp:e.hp,maxHp:e.maxHp,reward:e.reward,visScale:.8,shrouded:false,stunT:1.5,route:e.route})
+    e.def = halfGloom(e.def); twin.def = e.def
+    this.events.push({t:'split',x:e.x,y:e.y})
   }
 
   private applyFeature(e: Enemy, kind: 'reveal' | 'crack') {
@@ -1445,9 +1516,11 @@ export class Sim {
   /** Apply damage; returns true if any damage landed. */
   damage(e: Enemy, amount: number, heavy: boolean, src: Tower | null, continuous = false): boolean {
     if (!e.alive || amount <= 0) return false
+    if(this.challenge.fixed&&src)amount*=skyDamage(src.id,this.sky)
     const before = Math.max(0, e.hp) + Math.max(0, e.shell)
+    if (this.challenge.fixed && src && !continuous) heavy = this.applyBond(e,src,heavy)
     if (e.brittleT > 0) amount += continuous ? amount * 0.25 : 1
-    if (src && src.def.family === e.def.family && !(this.challenge.balance && e.def.boss)) amount *= FAMILY_BONUS
+    if (!this.challenge.fixed && src && src.def.family === e.def.family && !(this.challenge.balance && e.def.boss)) amount *= FAMILY_BONUS
     if (e.def.id === 'warden' && wardenEscorts(this, e).length) amount *= WARDEN_GUARD_TAKEN
     if (e.shell > 0) {
       if (!heavy) {
@@ -1598,7 +1671,7 @@ export class Sim {
     for (const t of this.towers) {
       const s = t.stats
       const range = this.effRange(t)
-      const rate = t.rateMul * (this.activePreparation('oil') && this.waveActive ? 1.15 : 1)
+      const rate = t.rateMul * (this.challenge.fixed?skyRate(t.id,this.sky):1) * (this.activePreparation('oil') && this.waveActive ? 1.15 : 1)
       switch (t.def.kind) {
         case 'arc': {
           t.cd -= dt * rate
@@ -1968,15 +2041,16 @@ export class Sim {
       if (this.preparation?.wave === w) this.preparation = null
       cleared = true
       const d = DIFFICULTY[this.difficulty]
-      const bonus = Math.round((this.challenge.compact ? 90 + w * 8 : 45 + w * 5) * d.bonus)
+      const bonus = Math.round((this.challenge.fixed ? 125 + w * 15 : this.challenge.compact ? 90 + w * 8 : 45 + w * 5) * d.bonus)
       let income = 0
       let life = 0
       for (const t of this.towers) {
         if (t.id !== 'garden') continue
-        income += t.stats.income
-        t.earned += t.stats.income
+        const earned=this.challenge.fixed?Math.round(t.stats.income*(this.climate.waveSeconds>0?this.climate.gardenExposure/this.climate.waveSeconds:1)):t.stats.income
+        income += earned
+        t.earned += earned
         life += t.stats.lifePerWave
-        if (t.stats.income > 0) this.events.push({ t: 'income', x: t.x, y: t.y, amount: t.stats.income })
+        if (earned > 0) this.events.push({ t: 'income', x: t.x, y: t.y, amount: earned })
       }
       this.glow += bonus + income
       this.stats.glowEarned += bonus + income
@@ -2007,10 +2081,46 @@ export class Sim {
 
   /** After a win the player may continue into free play. */
   continueFreeplay() {
+    if (this.challenge.fixed) return
     if (this.over !== 'won' || this.isChallenge) return
     this.over = null
     this.freeplay = true
     if (!this.freeplayFrom) this.freeplayFrom = this.wave
+  }
+
+  /** Bonds are selected only during planning and only over a shared section of the active path. */
+  sharedCoverage(a: Tower,b: Tower): boolean {
+    for(const seg of this.level.segs.values()) {
+      if(seg.id === 'inlet' && this.planningWave < 11) continue
+      for(let at=0;at<=seg.line.length;at+=12) {
+        const p=seg.line.at(at,{x:0,y:0,tx:0,ty:0})
+        if(dist2(a.x,a.y,p.x,p.y)<=this.effRange(a)**2 && dist2(b.x,b.y,p.x,p.y)<=this.effRange(b)**2) return true
+      }
+    }
+    return false
+  }
+  bond(a: Tower,b: Tower): boolean {
+    const slots=this.wave>=20?2:this.wave>=5?1:0
+    if(!this.challenge.fixed || this.waveActive || this.over || this.bonds.length>=slots || a===b || !this.towers.includes(a) || !this.towers.includes(b) || !bondName(a.id,b.id) || !this.sharedCoverage(a,b) || this.bonds.some(q=>[q.a,q.b].includes(a.uid)||[q.a,q.b].includes(b.uid))) return false
+    this.bonds.push({a:a.uid,b:b.uid,readyAt:0,activations:0}); return true
+  }
+  unbond(t: Tower): boolean {
+    if(this.waveActive || this.over) return false
+    const old=this.bonds.length
+    this.bonds=this.bonds.filter(b=>b.a!==t.uid&&b.b!==t.uid)
+    return old!==this.bonds.length
+  }
+  private applyBond(e: Enemy,src: Tower,heavy: boolean): boolean {
+    const bond=this.bonds.find(b=>b.a===src.uid||b.b===src.uid)
+    if(!bond || bond.readyAt>this.time || !['wick','cracker'].includes(src.id)) return heavy
+    const other=this.towers.find(t=>t.uid===(bond.a===src.uid?bond.b:bond.a))
+    if(!other || dist2(e.x,e.y,src.x,src.y)>this.effRange(src)**2 || dist2(e.x,e.y,other.x,other.y)>this.effRange(other)**2 || !e.shell) return heavy
+    if(src.id==='cracker' && (this.time-other.fireT>2 || e.slowT<=0)) return heavy
+    if(src.id==='wick' && !this.canSee(e,false)) return heavy
+    bond.readyAt=this.time+(src.id==='cracker'?4:2); bond.activations++
+    if(src.id==='cracker') { const removed=Math.min(6,e.shell); e.shell-=removed; src.damageDealt=(src.damageDealt??0)+removed }
+    this.events.push({t:'arc',x:other.x,y:other.y,tx:src.x,ty:src.y})
+    return true
   }
 
   // ------------------------------------------------------------------ save / load
@@ -2020,6 +2130,7 @@ export class Sim {
     const alive = (e: Enemy | null) => (e && e.alive ? e.uid : 0)
     return {
       v: 2,
+      ...(this.challenge.fixed ? { bonds: this.bonds.map(b => ({...b})),climate:{...this.climate} } : {}),
       ...(this.challenge.guard ? { waveReports: this.waveReports.map(r => ({ ...r, damage: { ...r.damage } })), embers: this.embers.map(p => ({ ...p })), lastLeak: this.lastLeak && { ...this.lastLeak } } : {}),
       ...(this.challenge.expanding ? { canalStage: this.canalStage } : {}),
       ...(this.challenge.compact ? { plots: [...this.plots] } : {}),
@@ -2117,6 +2228,8 @@ export class Sim {
     if (snap.challenge.skirmish) { sim.towers = []; sim.projs = []; for (const pad of sim.pads) pad.tower = null; sim.uid = 1 }
     const full = snap.v === 2 ? snap : null
     sim.wave = snap.wave
+    if(snap.challenge.fixed&&full)sim.climate={...(full.climate??{elapsed:full.stats.activeTime,waveSeconds:0,gardenExposure:0})}
+    if (snap.challenge.fixed && full) sim.bonds = (full.bonds ?? []).map(b => ({...b}))
     if (snap.challenge.depth && full) {
       sim.preparation = full.preparation ? { ...full.preparation } : null
       sim.preparationRound = full.preparationRound ?? 0
@@ -2223,7 +2336,7 @@ export class Sim {
         continue
       }
       const e = this.spawnEnemy(se.type, seg, se.s, se.wave, true)
-      if (se.split) e.def = splitDef ??= halfGloom(ENEMIES[se.type])
+      if (se.split) e.def = splitDef ??= halfGloom(this.challenge.fixed ? e.def : ENEMIES[se.type])
       e.uid = se.uid
       e.hp = se.hp
       e.maxHp = se.maxHp
