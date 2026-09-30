@@ -104,7 +104,8 @@ try {
     $site = $published.Output | ConvertFrom-Json
     Write-Host "Published source: $sourceCommit"
     Write-Host "Deployment commit: $deploymentCommit"
-    Write-Host "Play: $($site.html_url)?muted=1"
+    Write-Host "Play: $($site.html_url)"
+    Write-Host "Silent preview: $($site.html_url)?muted=1"
     Write-Host "Check deployment: gh api repos/$Repository/pages/builds/latest"
 } finally {
     Pop-Location

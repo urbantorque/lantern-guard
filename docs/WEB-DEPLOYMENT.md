@@ -1,6 +1,8 @@
 # Hosted game
 
-The public demo is [Nightward on GitHub Pages](https://urbantorque.github.io/lantern-guard/?muted=1). The existing URL remains stable after the rename. It opens without a download or sign-in. The `muted=1` link turns audio off before the first interaction; sound can be enabled again in Settings.
+The public demo is [Nightward on GitHub Pages](https://urbantorque.github.io/lantern-guard/). The existing URL remains stable after the rename. It opens without a download or sign-in and respects the player's saved sound preference. Use the speaker button to enable sound if it was previously muted.
+
+For background browser work, append `?muted=1`. That preview stays silent for the visit without changing saved preferences. Return to the normal address to test audio. The publishing script labels the normal play link and silent preview separately.
 
 ## GitHub Pages
 
