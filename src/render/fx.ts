@@ -39,6 +39,8 @@ export class Fx {
   shake = 0
   shakeEnabled = true
   /** Multiplier so world-space text stays legible when the map is drawn small. */
+  viewRotation = 0
+  viewDepth = 1
   textScale = 1
   /** Smallest world font size that still renders at 13 CSS px. */
   minText = 0
@@ -100,7 +102,7 @@ export class Fx {
   }
 
   text(x: number, y: number, text: string, color: string, size = 22, life = 1.1) {
-    this.add({ kind: 'text', x, y, vy: -38 * this.textScale, text, color, size: Math.max(size * this.textScale, this.minText), life })
+    this.add({ kind: 'text', x, y, vx: -38*this.textScale*Math.sin(this.viewRotation), vy: -38*this.textScale*Math.cos(this.viewRotation), text, color, size: Math.max(size * this.textScale, this.minText), life })
   }
 
   shards(x: number, y: number, color: string, n = 6) {
@@ -260,9 +262,10 @@ export class Fx {
           ctx.textBaseline = 'middle'
           ctx.lineWidth = Math.max(4, s * 0.22)
           ctx.strokeStyle = 'rgba(8,19,25,0.85)'
-          ctx.strokeText(p.text, p.x, p.y)
+          ctx.save();ctx.translate(p.x,p.y);ctx.rotate(-this.viewRotation);ctx.scale(1,1/this.viewDepth)
+          ctx.strokeText(p.text, 0, 0)
           ctx.fillStyle = p.color
-          ctx.fillText(p.text, p.x, p.y)
+          ctx.fillText(p.text, 0, 0);ctx.restore()
           break
         }
       }

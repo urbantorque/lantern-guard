@@ -8,12 +8,13 @@ Build a thoughtful defence through a quiet canal district. Study the next wave, 
 
 - **Four fixed waterways.** Placement and shared coverage shape your defence.
 - **Three heroes, eight towers each.** Sol brings fire and income, Mira brings control and night shelter, Ivo brings speed and electricity. Each roster has different mechanics, names and architecture; every tower has five stages.
-- **Two upgrade streams per tower.** Compare both routes, commit to one, and buy upgrades or change targeting while combat continues. Pause whenever you want time to think.
+- **Quick, live upgrades.** Compare two compact specialisations, commit to one and upgrade while combat continues. Each tower automatically aims for its role, with imminent leaks taking priority.
 - **Tower Bonds.** Pair a Moonbell with a Cracker, or an Owl with a Wickling, for a bounded shared-range effect.
 - **District Commissions.** Three permanent five-wave challenges award visible cosmetic details in a separate save slot.
-- **Your own pace.** Three difficulties, planning undo, pausing, clear forecasts and same-seed retries. Nightfall retries are recorded separately as practice.
+- **Your own pace.** Optional Auto advances ordinary waves after six seconds, and waits at new threats. Planning actions cancel the countdown. Three difficulties, undo, pausing, forecasts and same-seed retries remain available.
 - **Prepare for night.** 60 seconds of daylight favour Gardens and long-range builds; 48-second nights reward lamplit towers and Owl shelter. Weather rolls every 30 combat seconds. Both clocks freeze while planning.
-- **A living soundscape.** A composed day/night theme, water and weather ambience, and distinct combat sounds. The speaker button controls sound; Settings separates music from effects.
+- **A living soundscape.** Eight-bar day/night arrangements, soft melodic echoes, water and weather ambience, and distinct combat sounds. The speaker button controls sound; Settings separates music from effects.
+- **A clearer battlefield.** Wide screens show the canal across the screen. Phones keep it vertical and frame the selected tower during upgrades. Glow updates immediately, without flying reward particles.
 
 ## Play and develop
 
@@ -38,7 +39,7 @@ The [GitHub Pages address](https://urbantorque.github.io/lantern-guard/) keeps i
 
 ## Design and verification
 
-[Continuous combat, upgrade streams and audio fixes](docs/CONTINUOUS-COMBAT-RELEASE.md) · [Three-hero release and visual revision](docs/VIBRANT-HEROES-RELEASE.md) · [Execution roadmap](docs/FIXED-PATH-ROADMAP.md) · [Original fixed-edition delivery](docs/NIGHTWARD-RELEASE.md) · [iOS build guide](docs/IOS-BUILD.md)
+[Battlefield and quick-upgrade revision](docs/BATTLEFIELD-EXPERIENCE-RELEASE.md) · [Continuous combat, upgrade streams and audio fixes](docs/CONTINUOUS-COMBAT-RELEASE.md) · [Three-hero release and visual revision](docs/VIBRANT-HEROES-RELEASE.md) · [Execution roadmap](docs/FIXED-PATH-ROADMAP.md) · [Original fixed-edition delivery](docs/NIGHTWARD-RELEASE.md) · [iOS build guide](docs/IOS-BUILD.md)
 
 Nightward replaces Lantern Guard's playable routing edition. Old battle snapshots remain archived on the device; journal, settlement, achievements and settings carry forward. New records and saves use a separate rules version.
 

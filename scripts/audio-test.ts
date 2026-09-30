@@ -10,7 +10,7 @@ class Param {
   exponentialRampToValueAtTime(v:number){assert(v>0);this.setValueAtTime(v)}
 }
 class Node {
-  gain=new Param();frequency=new Param();detune=new Param();Q=new Param()
+  gain=new Param();frequency=new Param();detune=new Param();Q=new Param();delayTime=new Param()
   threshold=new Param();knee=new Param();ratio=new Param();attack=new Param();release=new Param()
   starts:number[]=[];stops:number[]=[];type='';buffer:unknown;loop=false
   connect<T>(node:T):T{return node}
@@ -22,6 +22,7 @@ class Context {
   private node(){const n=new Node();this.nodes.push(n);return n}
   createDynamicsCompressor(){return this.node()}
   createGain(){return this.node()}
+  createDelay(){return this.node()}
   createOscillator(){return this.node()}
   createBiquadFilter(){return this.node()}
   createBufferSource(){return this.node()}

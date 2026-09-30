@@ -73,6 +73,12 @@ export class Sound {
       this.ambBus = ctx.createGain()
       this.sfxBus.connect(this.master)
       this.musicBus.connect(this.master)
+      // A quiet, filtered echo gives the plucked melody space without a large
+      // sample download or a wash of reverb over combat cues.
+      const send=ctx.createGain(),delay=ctx.createDelay(1),echo=ctx.createBiquadFilter(),feedback=ctx.createGain()
+      send.gain.value=.18;delay.delayTime.value=.3;echo.type='lowpass';echo.frequency.value=1800;feedback.gain.value=.2
+      this.musicBus.connect(send).connect(delay).connect(echo).connect(this.master)
+      echo.connect(feedback).connect(delay)
       this.ambBus.connect(this.master)
       const len = ctx.sampleRate * 2
       this.noiseBuf = ctx.createBuffer(1, len, ctx.sampleRate)
@@ -397,7 +403,7 @@ export class Sound {
     weather.connect(filter).connect(this.weatherGain).connect(this.ambBus);weather.start()
   }
 
-  /** A composed four-bar motif, with a quieter minor arrangement after dusk. */
+  /** Eight-bar call and response, with a softer minor arrangement after dusk. */
   tick(dt: number, intensity: number, scene:AudioScene={night:false,weather:'clear'}) {
     if (!this.audible) return
     const ctx=this.ctx!,now=ctx.currentTime
@@ -412,20 +418,20 @@ export class Sound {
     // Never catch up a backlog after returning from a background tab.
     if(this.musicNext<now-.2)this.musicNext=now
     while(this.musicNext<now+.12){
-      const when=Math.max(0,this.musicNext-now),beat=this.musicStep%16,bar=Math.floor(this.musicStep/16)%4
-      const root=(scene.night?[59,55,62,57]:[62,57,59,55])[bar],minor=root===59,third=minor?3:4
+      const when=Math.max(0,this.musicNext-now),beat=this.musicStep%16,bar=Math.floor(this.musicStep/16)%8
+      const root=(scene.night?[59,55,62,57,64,59,55,57]:[62,57,59,55,64,57,55,62])[bar],minor=root===59||root===64,third=minor?3:4
       if(beat===0){
         this.tone(mtof(root-24),'sine',.06,2.5,.15,this.musicBus,when)
-        for(const note of [0,third,7])this.tone(mtof(root-12+note),'triangle',.24,3,.038,this.musicBus,when)
+        for(const note of [0,third,7,minor?10:11])this.tone(mtof(root-12+note),'sine',.28,3,.034,this.musicBus,when)
       }
-      const motif=minor?[0,3,7,10,7,3,2,7]:[0,4,7,12,9,7,4,2]
-      if(beat%2===0){
+      const motif=bar<4?(minor?[0,3,7,10,7,3,2,7]:[0,4,7,12,9,7,4,2]):(minor?[12,10,7,3,7,2,3,0]:[12,9,7,4,7,2,4,0])
+      if(beat%2===0&&!(bar%2===1&&beat>=12)){
         const freq=mtof(root+motif[beat/2])
-        this.tone(freq,'triangle',.007,scene.night?1.1:.7,.12,this.musicBus,when)
+        this.tone(freq,scene.night?'sine':'triangle',.009,scene.night?1.3:.85,scene.night?.1:.115,this.musicBus,when)
         this.tone(freq*2,'sine',.003,.3,.019,this.musicBus,when+.008)
       }
       const arp=[0,7,third,7][beat%4]
-      this.tone(mtof(root+arp-12),'sine',.005,.3,.035+intensity*.015,this.musicBus,when)
+      if(!scene.night||beat%2===0)this.tone(mtof(root+arp-12),'sine',.005,.3,.032+intensity*.015,this.musicBus,when)
       if(intensity>.15&&beat%4===0)this.noise(.05,'lowpass',350,.8,.045*intensity,when,this.musicBus)
       this.musicStep++;this.musicNext+=scene.night?.34:.3
     }

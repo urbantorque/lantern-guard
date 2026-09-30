@@ -1,3 +1,4 @@
+import { automaticTarget } from './auto-target'
 import { fixedLevel, fixedWave, fixedStats, FIXED_UNLOCK, stageOf, upgradePrice, bondName, type Bond } from './fixed'
 import { heroStats, heroTower, heroHitSlow, type HeroId } from './heroes'
 import { contactTime } from './projectile-collision'
@@ -1656,6 +1657,7 @@ export class Sim {
 
   private pickTarget(t: Tower, range: number, exclude: Enemy | null = null): Enemy | null {
     const cands = this.near(t.x, t.y, range, tmpB)
+    if(this.challenge.fixed)return automaticTarget(t,cands.filter(e=>e!==exclude&&this.canSee(e,t.stats.detect)))
     let best: Enemy | null = null
     let bestScore = Infinity
     const detect = t.stats.detect

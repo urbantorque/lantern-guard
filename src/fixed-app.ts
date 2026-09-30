@@ -1,5 +1,5 @@
 import { Sim, DT, type Tower, type SaveSnapshotV2 } from './game/sim'
-import { TOWERS, TOWER_ORDER, ENEMIES, DIFFICULTY, type TowerId, type Difficulty, type Priority, type EnemyId } from './game/defs'
+import { TOWERS, TOWER_ORDER, ENEMIES, DIFFICULTY, type TowerId, type Difficulty, type EnemyId } from './game/defs'
 import { ACTS, MAP_HELP, fixedLevel, stageOf, STAGES, upgradePrice, FIXED_UNLOCK, FIXED_TIPS, COMMISSIONS, bondName, BOND_HELP } from './game/fixed'
 import { WATCH_NAMES } from './game/compact'
 import { WEATHER, SKY_TOWER_HELP, DAY_SECONDS, NIGHT_SECONDS, clockText, lamplit } from './game/environment'
@@ -46,6 +46,8 @@ export class FixedApp {
   private qa=false
   private hero:HeroId='sol'
   private sessionMuted=false
+  private autoWaves=false
+  private nextWaveIn:number|null=null
   private get panelPauses(){return !!this.drawer&&this.drawer!=='tower'}
 
   constructor() {
@@ -60,7 +62,7 @@ export class FixedApp {
       if(target && !target.disabled) { sound.unlock(); this.action(target.dataset.action!) }
     })
     document.addEventListener('keydown',e=>this.key(e))
-    watchAppState(()=>{this.paused=true;this.save();sound.suspend();this.refresh()})
+    watchAppState(()=>{this.nextWaveIn=null;this.paused=true;this.save();sound.suspend();this.refresh()})
     this.home()
     if(this.qa) {
       const bar=document.createElement('nav');bar.className='qa-bar';bar.innerHTML=[0,15,30,39].map(n=>button('fixture:'+n,'Test wave '+n)).join('')+button('fixture:day','Test day')+button('fixture:night','Test night');$('app').append(bar)
@@ -96,6 +98,7 @@ export class FixedApp {
     $('modal-root').innerHTML=`${live?'':'<div class="scrim" data-action="close"></div>'}<section class="drawer ${kind}" role="dialog" aria-modal="${!live}" aria-labelledby="dialog-title"><header><h2 id="dialog-title">${title}</h2>${button('close',icon('close')+'<span class="sr-only">Close</span>','icon-button')}</header>${live?'<div class="inspector-toolbar"><span id="inspector-state"></span><b id="inspector-glow"></b></div>':''}<div class="drawer-body">${this.kitCopy(content)}</div></section>`
     $('modal-root').querySelector<HTMLButtonElement>('.drawer button')?.focus()
     this.refresh()
+    if(live)this.resize()
   }
   private close() {
     this.drawer='';$('modal-root').innerHTML=''; this.selection=null
@@ -150,13 +153,11 @@ export class FixedApp {
   }
   private begin(sim:Sim,blooms:number[]=[]) {
     document.body.classList.add('playing')
-    this.sim=sim;if(sim.challenge.hero)this.hero=sim.challenge.hero;this.map=sim.challenge.variant??0;this.difficulty=sim.difficulty;this.undo=[];this.selection=null;this.moving=null;this.paused=true;this.endShown=false;this.drawer='';this.recap='';this.lastHUD=''
-    $('app').innerHTML=`<main class="game"><header class="hud"><div class="stat">${icon('heart')}<b id="light"></b><span>Light</span></div><div class="stat">${icon('sparkle')}<b id="glow"></b><span>Glow</span></div><div class="wave-stat" id="wave"></div>${button('menu',icon('gear')+'<span class="sr-only">Watch menu</span>','icon-button')}</header><section id="battlefield" class="battlefield" aria-label="Battlefield"><canvas id="canvas" aria-label="Fixed paths through the district"></canvas><div id="plots" aria-label="Tower plots"></div><button id="sky" class="sky-strip" data-action="sky"></button><div id="board-status" class="board-status"></div><div class="map-caption"><span>${WATCH_NAMES[this.map]}${sim.challenge.hero?" · "+HEROES[sim.challenge.hero].name:""}</span><span id="act"></span></div></section><footer class="playbar"><button data-action="forecast" class="forecast-button" id="forecast"></button><div class="play-actions">${button('undo','Undo','secondary',true)}${button('speed','1×','secondary')}<button id="go" data-action="go" class="primary"></button></div></footer></main><div id="modal-root"></div><div id="live" class="sr-only" aria-live="polite"></div><p id="save-warning" role="status"></p>`
+    this.sim=sim;if(sim.challenge.hero)this.hero=sim.challenge.hero;this.map=sim.challenge.variant??0;this.difficulty=sim.difficulty;this.undo=[];this.selection=null;this.moving=null;this.paused=true;this.endShown=false;this.drawer='';this.recap='';this.lastHUD='';this.nextWaveIn=null
+    $('app').innerHTML=`<main class="game"><header class="hud"><div class="stat">${icon('heart')}<b id="light"></b><span>Light</span></div><div class="stat">${icon('sparkle')}<b id="glow"></b><span>Glow</span></div><div class="wave-stat" id="wave"></div>${button('menu',icon('gear')+'<span class="sr-only">Watch menu</span>','icon-button')}</header><section id="battlefield" class="battlefield" aria-label="Battlefield"><canvas id="canvas" aria-label="Fixed paths through the district"></canvas><div id="plots" aria-label="Tower plots"></div><button id="sky" class="sky-strip" data-action="sky"></button><div id="board-status" class="board-status"></div><div class="map-caption"><span>${WATCH_NAMES[this.map]}${sim.challenge.hero?" · "+HEROES[sim.challenge.hero].name:""}</span><span id="act"></span></div></section><footer class="playbar"><div class="wave-brief"><button data-action="forecast" class="forecast-button" id="forecast"></button><span id="wave-recap" class="wave-recap"></span></div><div class="play-actions">${button('undo','Undo','secondary',true)}${button('speed','1×','secondary')}<button id="go" data-action="go" class="primary"></button></div></footer></main><div id="modal-root"></div><div id="live" class="sr-only" aria-live="polite"></div><p id="save-warning" role="status"></p>`
     this.renderer=new Renderer($<HTMLCanvasElement>('canvas')); this.renderer.attach(sim);if(blooms.length)this.renderer.importBlooms(blooms)
     document.querySelector('.hud .icon-button')?.insertAdjacentHTML('beforebegin','<button id="sound-toggle" data-action="sound" class="sound-toggle"></button>')
-    const renderer=this.renderer
-    renderer.glowTarget=()=>{const glow=$('glow').getBoundingClientRect(),board=$('canvas').getBoundingClientRect();return renderer.toWorld(glow.x+glow.width/2-board.x,glow.y+glow.height/2-board.y)}
-    renderer.onGlowArrive=()=>{if(!this.profile.settings.reducedMotion)$('glow')?.animate([{transform:'scale(1)'},{transform:'scale(1.15)',color:'#fff4b4'},{transform:'scale(1)'}],{duration:220})}
+    document.querySelector('[data-action="speed"]')?.insertAdjacentHTML('afterend',button('auto','Auto off','auto-wave secondary'))
     this.renderer.settlement=Math.max(this.profile.settlement,loadProgress().settlement??0)
     this.renderer.bunting=this.profile.commissions.includes('market')
     this.renderer.keepsakes=[...this.profile.commissions];this.renderer.crest=this.guardian
@@ -165,8 +166,13 @@ export class FixedApp {
   }
   private resize() {
     if(!this.renderer)return
-    this.renderer.fixedTopInset=getComputedStyle($('sky')).position==='fixed'?0:60
-    const r=$('battlefield').getBoundingClientRect();this.renderer.resize(r.width,r.height,Math.min(2,devicePixelRatio));this.plots()
+    this.renderer.fixedLandscape=innerWidth>innerHeight*1.15
+    this.renderer.fixedTopInset=getComputedStyle($('sky')).position==='fixed'?0:48
+    const r=$('battlefield').getBoundingClientRect(),sheet=document.querySelector('.drawer.tower')
+    const focus=innerWidth<=999&&innerHeight>innerWidth&&this.selection?.kind==='tower'&&this.drawer==='tower'
+    this.renderer.fixedFrameHeight=focus?r.height+(sheet?.getBoundingClientRect().height??0):0
+    this.renderer.fixedFocus=focus&&this.selection?.kind==='tower'?this.selection.tower:null
+    this.renderer.resize(r.width,r.height,Math.min(2,devicePixelRatio));this.plots()
   }
   private plots() {
     if(!this.sim||!this.renderer)return
@@ -174,9 +180,12 @@ export class FixedApp {
     $('plots').innerHTML=s.pads.map((p,i)=>{
       if(!s.padRevealed(i)||s.challenge.blockedPad===i)return ''
       const point=this.renderer!.toScreen(p.x,p.y)
+      // A phone inspector frames its selected tower. Off-camera plots return
+      // to the keyboard order when the full board is restored on Close.
+      if(point.y+22<0||point.y-84>this.renderer!.h)return ''
       const label=p.tower?`${p.tower.def.name}, ${STAGES[stageOf(p.tower)]}, plot ${i+1}`:s.padAvailable(i)?`Build on plot ${i+1}`:`Unlock plot ${i+1} for ${s.plotCost(i)} glow`
       const empty=!p.tower,open=s.padAvailable(i)
-      return `<button class="plot-hit${empty?' is-empty':''}${empty&&!open?' is-locked':''}" data-action="plot:${i}" style="left:${point.x}px;top:${point.y}px" aria-label="${label}">${empty?`<span class="plot-marker" aria-hidden="true">${open?icon('plus'):icon('lock')}</span><span class="plot-label" aria-hidden="true">${open?'Build':s.plotCost(i)+' glow'}</span>`:`<span class="plot-number">${i+1}</span>`}</button>`
+      return `<button class="plot-hit${empty?' is-empty':''}${empty&&!open?' is-locked':''}" data-action="plot:${i}" style="left:${point.x}px;top:${point.y}px;--tower-hit:${Math.max(44,Math.min(84,90*this.renderer!.scale))}px" aria-label="${label}">${empty?`<span class="plot-marker" aria-hidden="true">${open?icon('plus'):icon('lock')}</span><span class="plot-label" aria-hidden="true">${open?'Build':s.plotCost(i)+' glow'}</span>`:`<span class="plot-number">${i+1}</span>`}</button>`
     }).join('')
   }
   private refresh() {
@@ -194,14 +203,16 @@ export class FixedApp {
     $('sky').setAttribute('aria-label',`${sky.night?'Night, dawn':'Daylight, nightfall'} in ${clockText(sky.phaseLeft)}. ${WEATHER[sky.weather].name}. Open sky forecast`)
     $('wave').innerHTML=`<span>${s.isChallenge?'Commission':'Wave'}</span><b>${s.wave-s.waveOffset}<small> / ${s.finalWave-s.waveOffset}</small></b>`
     $('act').textContent=ACTS[Math.min(7,Math.floor(Math.max(0,s.planningWave-1)/5))]
-    $('go').textContent=s.over?'View result':s.waveActive?(this.paused?'Resume':'Pause'):`Begin wave ${s.wave+1-s.waveOffset}`
+    $('go').textContent=this.nextWaveIn!==null?`Next wave · ${Math.ceil(this.nextWaveIn)}s`:s.over?'View result':s.waveActive?(this.paused?'Resume':'Pause'):`Begin wave ${s.wave+1-s.waveOffset}`
     ;($('go') as HTMLButtonElement).disabled=!s.waveActive&&!s.over&&!s.towers.length
     const undo=document.querySelector<HTMLButtonElement>('[data-action="undo"]');if(undo)undo.disabled=!this.undo.length||s.waveActive||!!s.over
     const speed=document.querySelector('[data-action="speed"]');if(speed)speed.textContent=this.speed+'×'
+    const auto=document.querySelector<HTMLButtonElement>('[data-action=auto]');if(auto){auto.textContent=this.autoWaves?'Auto on':'Auto off';auto.setAttribute('aria-pressed',String(this.autoWaves));auto.title='Advance ordinary waves after 6 seconds. New threats wait for you. Any planning action stops the countdown.'}
     const groups=s.waveDef(Math.min(s.finalWave,s.wave+(s.waveActive?0:1))).groups
     const unique=[...new Set(groups.map(g=>g.type))]
     $('forecast').innerHTML=`<span class="eyebrow">${s.waveActive?'On the water':s.over?'Watch complete':'Next on the water'} ${icon('caretRight')}</span><b>${unique.slice(0,3).map(e=>ENEMIES[e].name).join(' · ')}${unique.length>3?' +'+(unique.length-3):''}</b>`
-    $('board-status').textContent=this.moving!==null?'Choose an empty plot · 25 glow':s.waveActive&&this.paused?'Paused':!s.towers.length?'Tap a + to build your first tower':this.recap&&!s.waveActive?this.recap:''
+    $('board-status').textContent=this.moving!==null?'Choose an empty plot · 25 glow':s.waveActive&&this.paused?'Paused':!s.towers.length?'Tap a + to build your first tower':''
+    $('wave-recap').textContent=!s.waveActive?this.recap:''
     $('save-warning').textContent=storageMessage
     if(this.drawer==='tower'){
       $('inspector-state').textContent=s.waveActive?(this.paused?'Paused':'Live combat'):'Between waves'
@@ -230,20 +241,12 @@ export class FixedApp {
   }
   private towerUpgrades(t:Tower){
     const s=this.sim!,stage=stageOf(t),path=t.b?1:0
-    const buy=(action:string,label:string,cost:number,wave=0)=>`<button data-action="${action}" data-cost="${cost}" data-wave="${wave}" class="live-purchase primary wide" ${s.glow<cost||s.planningWave<wave?'disabled':''}>${label} · ${cost} glow</button>`
-    const foundation=stage===0?`<div class="foundation"><b>Start smaller</b><p class="small muted">Improve the foundation and keep both streams open.</p>${buy('upgrade:'+t.uid+':0','Improve',upgradePrice(t)!)}</div>`:''
-    const streams=t.def.paths.map((p,i)=>({p,i})).sort((a,b)=>stage>=2?Number(b.i===path)-Number(a.i===path):a.i-b.i).map(({p,i})=>{
-      const branch=i as 0|1,chosen=stage>=2&&path===i,locked=stage>=2&&!chosen
-      const specialised={...t,a:i===0?2:0,b:i===1?2:0,refinement:0,stats:s.towerStats(t.id,i===0?2:0,i===1?2:0)}
-      const mastered={...specialised,a:i===0?3:0,b:i===1?3:0,stats:s.towerStats(t.id,i===0?3:0,i===1?3:0)}
-      const foundationTower={...t,a:1,b:0,refinement:0,stats:s.towerStats(t.id,1,0)}
-      let action=locked?'<p class="stream-locked">Other stream locked</p>':stage===4?'<p class="stream-complete">Fully specialised</p>':stage<2
-        ?buy(`specialise:${t.uid}:${i}`,'Choose',s.specialiseCost(t)!)
-        :buy(`upgrade:${t.uid}:${i}`,stage===2?'Master':'Crown',upgradePrice(t)!,stage===2?16:31)
-      if(chosen&&stage<4&&s.planningWave<(stage===2?16:31))action+=`<p class="small muted">Opens at wave ${stage===2?16:31}.</p>`
-      return `<article class="upgrade-stream ${chosen?'chosen':''} ${locked?'locked':''}"><div class="stream-title"><span>${chosen?'Chosen stream':`Stream ${i+1}`}</span><h4>${p.name}</h4></div><p>${STREAMS[t.id][i]}</p>${action}<details class="stream-preview"><summary>See all upgrades</summary><ol><li class="${chosen?'complete':''}"><b>Specialise · ${Math.round(TOWERS[t.id].cost*1.3)} glow</b><small>${upgradeDetail(s,foundationTower,branch)}</small></li><li class="${chosen&&stage>=3?'complete':''}"><b>Master · ${upgradePrice(specialised)} glow · Wave 16</b><small>${upgradeDetail(s,specialised,branch)}</small></li><li class="${chosen&&stage===4?'complete':''}"><b>Crown · ${upgradePrice(mastered)} glow · Wave 31</b><small>${upgradeDetail(s,mastered,branch)}</small></li></ol></details></article>`
-    }).join('')
-    return `${stage<2?`<p class="upgrade-hint">Choose one stream. ${stage===0?'Prices include the foundation.':'The other stream will lock.'}</p>`:'<h3 class="upgrade-title">Your upgrade stream</h3>'}<div class="upgrade-streams ${stage<2?'choosing':''}">${streams}</div>${foundation}`
+    const buy=(action:string,label:string,cost:number,wave=0)=>`<button data-action="${action}" data-cost="${cost}" data-wave="${wave}" class="live-purchase primary" ${s.glow<cost||s.planningWave<wave?'disabled':''}><span>${label}</span><b>${cost}</b></button>`
+    if(stage>=2){
+      const wave=stage===2?16:31,cost=upgradePrice(t)
+      return `<div class="specialised-upgrade"><div class="upgrade-caption"><b>${t.def.paths[path].name}</b><span>${STAGES[stage]}</span></div><p>${STREAMS[t.id][path]}</p>${cost!==null?`${buy(`upgrade:${t.uid}:${path}`,s.planningWave<wave?`Wave ${wave}`:stage===2?'Master':'Crown',cost,wave)}<details class="upgrade-preview"><summary>What improves?</summary><p>${upgradeDetail(s,t,path)}</p></details>`:'<p class="stream-complete">Fully upgraded</p>'}</div>`
+    }
+    return `<p class="upgrade-hint">Choose a specialisation. ${stage===0?'Foundation included.':'The other path locks.'}</p><div class="quick-branches">${t.def.paths.map((p,i)=>`<article><h3>${p.name}</h3><p>${STREAMS[t.id][i]}</p>${buy(`specialise:${t.uid}:${i}`,'Choose',s.specialiseCost(t)!)}<details class="upgrade-preview"><summary>Details</summary><p>${upgradeDetail(s,{...t,a:1,b:0,refinement:0,stats:s.towerStats(t.id,1,0)},i as 0|1)}</p></details></article>`).join('')}</div>${stage===0?`<div class="foundation-quick"><span>Keep both options open</span>${buy('upgrade:'+t.uid+':0','Improve',upgradePrice(t)!)}</div>`:''}`
   }
   private towerSheet(t:Tower) {
     const s=this.sim!,stage=stageOf(t),active=s.waveActive
@@ -253,10 +256,9 @@ export class FixedApp {
     const bond=s.bonds.find(b=>b.a===t.uid||b.b===t.uid),partner=bond?s.towers.find(q=>q.uid===(bond.a===t.uid?bond.b:bond.a)):null
     const partners=s.towers.filter(q=>q!==t&&bondName(t.id,q.id)&&s.sharedCoverage(t,q)&&!s.bonds.some(b=>[b.a,b.b].includes(q.uid)))
     const income=t.id==='garden'?`<p class="notice">${Math.round(t.stats.income*1.4)} glow in a daylight wave, ${Math.round(t.stats.income*.55)} at night, before rain. A mixed wave pays the time-weighted average; ${s.finalWave-s.wave} remain. Invested: ${t.spent}. Earned: ${Math.floor(t.earned)}.</p>`:''
-    this.show(t.def.name,`<div class="tower-heading"><img src="${fixedTowerIcon(t.id,t.a,t.b,t.refinement,this.sim?.challenge.hero)}" alt="${STAGES[stage]} ${t.def.name}"/><div><p class="eyebrow">${STAGES[stage]} · ${stage+1} of 5</p><h3>${stage>=2?t.def.paths[t.b?1:0].name:role[t.id]}</h3><p class="muted"><span id="tower-reach">${Math.round(s.effRange(t))}</span> current reach · <span id="tower-damage">${Math.round(t.damageDealt??0)}</span> damage dealt</p></div></div>${upgrades}<details class="tower-details"><summary>Tower stats & sky effects</summary>${s.challenge.hero?`<p class="notice">${HEROES[s.challenge.hero].towers[t.id].trait}</p>`:''}${income}${this.towerFacts(t)}<p class="sky-tower-note">${SKY_TOWER_HELP[t.id]}${!lamplit(t.id)?` <b>${s.sheltered(t)?'Sheltered by an Owl.':'Outside Owl shelter.'}</b>`:''}</p></details>
-      ${t.id!=='garden'?`<fieldset><legend>Target priority · change any time</legend><div class="segmented">${(['first','strong','last','close'] as Priority[]).map(p=>button(`priority:${t.uid}:${p}`,p==='close'?'Nearest':p[0].toUpperCase()+p.slice(1),p===t.priority?'selected':'')).join('')}</div></fieldset>`:''}
+    this.show(t.def.name,`<div class="tower-heading compact"><img src="${fixedTowerIcon(t.id,t.a,t.b,t.refinement,this.sim?.challenge.hero)}" alt="${STAGES[stage]} ${t.def.name}"/><div><p class="eyebrow">${role[t.id]}</p><div class="tier-pips" aria-label="Stage ${stage+1} of 5">${[0,1,2,3,4].map(i=>`<i class="${i<=stage?'filled':''}"></i>`).join('')}</div><p class="muted"><span id="tower-reach">${Math.round(s.effRange(t))}</span> current reach · <span id="tower-damage">${Math.round(t.damageDealt??0)}</span> damage dealt</p></div></div>${upgrades}<details class="tower-details"><summary>Stats, sky & tower management</summary>${s.challenge.hero?`<p class="notice">${HEROES[s.challenge.hero].towers[t.id].trait}</p>`:''}${income}${this.towerFacts(t)}<p class="sky-tower-note">${SKY_TOWER_HELP[t.id]}${!lamplit(t.id)?` <b>${s.sheltered(t)?'Sheltered by an Owl.':'Outside Owl shelter.'}</b>`:''}</p>
       ${s.wave>=5?`<div class="bond-section"><h3>Tower Bond</h3>${partner?`<p><b>${bondName(t.id,partner.id)}</b> with ${partner.def.name}.</p><p class="small muted">${BOND_HELP[bondName(t.id,partner.id)!]} Activated ${bond!.activations} times.</p>${button('unbond:'+t.uid,'Remove Bond','secondary',active)}`:partners.length?`<p class="small muted">One tower per Bond. ${s.wave>=20?2:1} Bond slots available for this watch.</p>${partners.map(q=>button(`bond:${t.uid}:${q.uid}`,`${bondName(t.id,q.id)} · ${q.def.name}`,'secondary wide',active||s.bonds.length>=(s.wave>=20?2:1))).join('')}`:'<p class="small muted">A Moonbell and Cracker, or an Owl and Wickling, can bond when their ranges share the stream.</p>'}</div>`:''}
-      <p class="small muted">Building, moving, selling and Bonds happen between waves.</p><div class="utility-actions">${button('move:'+t.uid,'Move · 25','secondary',active||s.glow<25)}${button('sell:'+t.uid,`Sell · ${s.sellValue(t)}`,'secondary',active||s.challenge.commission==='garden'&&t.id==='garden')}</div>`,'tower')
+      <p class="small muted">Building, moving, selling and Bonds happen between waves.</p><div class="utility-actions">${button('move:'+t.uid,'Move · 25','secondary',active||s.glow<25)}${button('sell:'+t.uid,`Sell · ${s.sellValue(t)}`,'secondary',active||s.challenge.commission==='garden'&&t.id==='garden')}</div></details>`,'tower')
     if(replacing){const next=document.querySelector<HTMLElement>('.drawer-body');if(next)next.scrollTop=scroll;document.querySelector<HTMLButtonElement>(`[data-action="${focus}"]`)?.focus({preventScroll:true})}
   }
   private forecast() {
@@ -295,6 +297,7 @@ export class FixedApp {
   }
   private action(action:string) {
     const [cmd,a,b]=action.split(':'),s=this.sim
+    if(!['speed','sound'].includes(cmd))this.nextWaveIn=null
     if(cmd==='fixture'&&import.meta.env.DEV&&['0','15','30','39','day','night'].includes(a)) {
       void fetch(`${import.meta.env.BASE_URL}artifacts/fixed-wave-${a==='day'||a==='night'?'39':a}.json`).then(r=>r.json()).then((snap:SaveSnapshotV2)=>{this.qa=true;if(a==='day'||a==='night')snap.climate={elapsed:a==='day'?0:DAY_SECONDS,waveSeconds:0,gardenExposure:0};snap.challenge.hero=this.hero;this.begin(Sim.restore(snap))})
       return
@@ -325,11 +328,11 @@ export class FixedApp {
     if(cmd==='build'){this.change(()=>s.build(Number(a),b as TowerId));const t=s.pads[Number(a)].tower;if(t){this.close();this.selection={kind:'tower',tower:t};this.recap=`${t.def.name} ready.`}}
     if(cmd==='upgrade'){const t=tower();if(t){this.change(()=>stageOf(t)===3?s.refine(t):s.upgrade(t,Number(b) as 0|1),true);this.towerSheet(t)}}
     if(cmd==='specialise'){const t=tower();if(t){this.change(()=>s.specialise(t,Number(b) as 0|1),true);this.towerSheet(t)}}
-    if(cmd==='priority'){const t=tower();if(t){this.change(()=>{t.priority=b as Priority},true);this.towerSheet(t)}}
     if(cmd==='bond'){const t=tower();this.change(()=>s.bond(t,s.towers.find(q=>q.uid===Number(b))!));this.towerSheet(t)}
     if(cmd==='unbond'){const t=tower();this.change(()=>s.unbond(t));this.towerSheet(t)}
     if(cmd==='move'){this.moving=Number(a);this.close()}
     if(cmd==='sell'){this.change(()=>s.sell(tower()));this.close()}
+    if(cmd==='auto')this.autoWaves=!this.autoWaves
     if(cmd==='speed'){this.speed=this.speed===1?2:1}
     if(cmd==='undo'&&!s.waveActive&&this.undo.length){const snap=this.undo.pop()!,remaining=this.undo;this.begin(Sim.restore(snap),this.renderer!.exportBlooms());this.undo=remaining;this.save()}
     if(cmd==='go') {
@@ -343,7 +346,7 @@ export class FixedApp {
     this.refresh()
   }
   private key(e:KeyboardEvent) {
-    if(e.key==='Escape'){if(this.drawer)this.close();else{this.moving=null;this.paused=true;this.refresh()}return}
+    if(e.key==='Escape'){this.nextWaveIn=null;if(this.drawer)this.close();else{this.moving=null;this.paused=true;this.refresh()}return}
     if(this.panelPauses&&e.key==='Tab') {
       const all=[...document.querySelectorAll<HTMLElement>('.drawer button:not(:disabled), .drawer summary, .drawer a[href], .drawer [tabindex="0"]')],first=all[0],last=all[all.length-1]
       if(e.shiftKey&&document.activeElement===first){e.preventDefault();last?.focus()}
@@ -358,13 +361,17 @@ export class FixedApp {
     const dt=Math.min(.1,(now-(this.lastFrame||now))/1000);this.lastFrame=now
     const s=this.sim,r=this.renderer
     if(s&&r) {
+      if(this.nextWaveIn!==null&&!document.hidden&&!this.drawer&&!s.over){this.nextWaveIn-=dt;if(this.nextWaveIn<=0)this.action('go')}
       if(!this.paused&&!this.panelPauses&&!s.over){this.accumulator+=dt*this.speed;while(this.accumulator>=DT){s.step(DT);this.accumulator-=DT}}
       else this.accumulator=0
       for(const e of s.events) {
         if(e.t==='waveEnd') {
           const damage=s.waveReports.find(q=>q.wave===e.n)?.damage??{}
           const top=Object.entries(damage).sort((a,b)=>(b[1]??0)-(a[1]??0))[0]
-          this.recap=`Wave ${e.n-s.waveOffset} held · +${e.bonus+e.income} glow${top?` · ${this.towerDef(top[0] as TowerId).name} led damage`:''}`
+          this.recap=`Wave ${e.n-s.waveOffset} held · +${e.bonus+e.income} glow${top?` · ${this.towerDef(top[0] as TowerId).name}`:''}`
+          const milestone=[3,6,8,10,11,16,21,26,31,40].includes(s.wave+1)
+          this.nextWaveIn=this.autoWaves&&!milestone&&!s.over&&!this.drawer?6:null
+          if(this.autoWaves&&milestone)this.recap+=' · Check the next forecast'
           this.paused=true;if(!this.qa)recordWatch(this.profile,s);r.settlement=Math.max(r.settlement,this.profile.settlement);this.plots();$('live').textContent=this.recap
           this.save()
           if(this.drawer==='tower'&&this.selection?.kind==='tower')this.towerSheet(this.selection.tower)
@@ -374,7 +381,7 @@ export class FixedApp {
       r.handleEvents(s)
       r.draw(s,dt,{selection:this.selection,preview:null,armed:null,hint:null,paused:this.paused||this.panelPauses})
       if(s.over&&!this.endShown)this.result()
-      const key=`${s.glow}:${s.lives}:${s.wave}:${s.waveActive}:${this.paused}:${Math.floor(s.climate.elapsed)}`
+      const key=`${s.glow}:${s.lives}:${s.wave}:${s.waveActive}:${this.paused}:${Math.floor(s.climate.elapsed)}:${Math.ceil(this.nextWaveIn??-1)}`
       if(key!==this.lastHUD){this.lastHUD=key;this.refresh()}
       if(now-this.lastSave>5000){this.lastSave=now;this.save()}
     }

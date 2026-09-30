@@ -13,7 +13,7 @@ export const FIXED_TIPS: Record<EnemyId, string> = {
   drip: 'A gentle opening. Place a Wickling beside the stream.', skitter: 'Fast. A Moonbell buys your damage towers more time.',
   shell: 'Armoured. Crackers and heavy upgrades break shells.', veil: 'Hidden. An Owl reveals enemies across its sight range.',
   bloat: 'Splits into three Drips. Leave a little coverage downstream.', wisp: 'A close crowd. Cracker blasts catch several at once.',
-  mender: 'Heals nearby enemies. Concentrate damage or target Strong.', vshell: 'Hidden and armoured. Combine sight with heavy damage.',
+  mender: 'Heals nearby enemies. Concentrate damage around a shared bend.', vshell: 'Hidden and armoured. Combine sight with heavy damage.',
   toad: 'Calls an escort burst at half health. Keep splash damage nearby.', gloom: 'Splits at the central stone into two smaller forms on the same path.',
   skiff: 'Accelerates when its armour breaks. Slow it within your firing line.', warden: 'Four escorts shield it. Clear them before focusing the Warden.',
   reedling: 'Grows armour at the meeting stone. Hit early or bring heavy damage.', bloomheart: 'Heals its neighbours after a three-second warning. It cannot heal itself.',

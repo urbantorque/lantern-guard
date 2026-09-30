@@ -1,3 +1,4 @@
+import { upright } from './board-view'
 import type { Sim } from '../game/sim'
 import { block, plant, polygon, windows, setArchitectureLight, lightPool } from './architecture'
 import { districtLayout } from './district-layout'
@@ -10,12 +11,13 @@ export function districtGradient(c:CanvasRenderingContext2D,s:Sim,x=0,y=-105,w=7
 const colours=[['#ce7965','#f3be8a','#8b5360'],['#438a91','#a0d3bd','#2e586c'],['#557eaf','#a9c6df','#354e7b'],['#b58a59','#e9d2a0','#79604e'],['#5b9873','#bfdb9b','#396657']]
 
 /** Paint once per district/lighting change; keep the playable centre free of decoration. */
-export function scenery(s:Sim,stage:number,keepsakes:readonly string[]){
-  const day=!s.sky.night,key=stage+':'+keepsakes.join(',')+':'+day,old=terrain.get(s.level)
+export function scenery(s:Sim,stage:number,keepsakes:readonly string[],wide=false){
+  const day=!s.sky.night,key=stage+':'+keepsakes.join(',')+':'+day+':'+wide,old=terrain.get(s.level)
   if(old?.key===key)return old.canvas
-  const canvas=document.createElement('canvas');canvas.width=1440;canvas.height=1920
-  const c=canvas.getContext('2d')!;c.scale(2,2);c.translate(0,105);setArchitectureLight(c,day)
-  c.fillStyle=districtGradient(c,s);c.fillRect(0,-105,720,960)
+  const canvas=document.createElement('canvas');canvas.width=1840;canvas.height=2140
+  const c=canvas.getContext('2d')!;c.scale(2,2);c.translate(50,140);setArchitectureLight(c,day)
+  // Transparent terrain blends into the full viewport. Extra headroom keeps
+  // upright buildings intact on a turned board.
   for(const [x,y,rx,ry] of [[160,110,120,175],[605,260,85,200],[145,670,110,135],[540,755,145,65]]){
     c.fillStyle=day?'#b8d79224':'#548e7e14';c.beginPath();c.ellipse(x,y,rx,ry,-.35,0,Math.PI*2);c.fill()
   }
@@ -31,14 +33,15 @@ export function scenery(s:Sim,stage:number,keepsakes:readonly string[]){
       if(s.pads.some(pad=>Math.hypot(pad.x-x,pad.y-y)<48))continue
       if([...s.level.segs.values()].some(other=>other!==seg&&other.line.distanceTo(x,y)<32))continue
       if(!day)lightPool(c,x,y,38,'#ffc766',.7)
-      block(c,x,y,5,5,9,day?'#728c81':'#355d71','#c4ccaa','#274757');c.fillStyle=day?'#fbe6a2':'#ffe6a0';c.fillRect(x-2,y-12,4,4)
+      upright(c,x,y,wide,()=>{block(c,x,y,5,5,9,day?'#728c81':'#355d71','#c4ccaa','#274757');c.fillStyle=day?'#fbe6a2':'#ffe6a0';c.fillRect(x-2,y-12,4,4)})
     }}
   }
   for(const prop of districtLayout(s)){
     const {x,y,style}=prop
+    upright(c,x,y,wide,()=>{
     if(prop.kind==='tree'){
       polygon(c,[[x-6,y+5],[x+24,y+5],[x+35,y-5],[x+3,y-14]],'#17475225')
-      c.fillStyle=day?'#796c59':'#40525b';c.fillRect(x-2,y-12,4,18);plant(c,x,y-10,14+style*2);continue
+      c.fillStyle=day?'#796c59':'#40525b';c.fillRect(x-2,y-12,4,18);plant(c,x,y-10,14+style*2);return
     }
     const w=37+style%2*6,h=24+style%3*6,[front,roof,side]=colours[style]
     c.save();c.globalAlpha=.78
@@ -54,6 +57,7 @@ export function scenery(s:Sim,stage:number,keepsakes:readonly string[]){
     if(keepsakes.includes('glass')){c.fillStyle='#94e5df';c.fillRect(x+w/2+6,y-19,3,10)}
     if(stage>=2||keepsakes.includes('garden')){c.fillStyle='#f9c68c';c.fillRect(x-10,y-8,4,4);c.fillRect(x-3,y-10,4,4)}
     c.restore()
+    })
   }
   terrain.set(s.level,{key,canvas});return canvas
 }

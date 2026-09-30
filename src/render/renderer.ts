@@ -14,6 +14,7 @@ import { drawEnemy, drawEnemyIcon, ENEMY_VIS, setEnemySpriteScale } from './enem
 import { Fx } from './fx'
 import { FAMILY_COLOR, glowSprite, P, withAlpha } from './palette'
 import { drawPad, drawTower, PAD_R } from './towers'
+import { boardPoint, worldPoint, boardBounds, elevated, BOARD_DEPTH } from './board-view'
 import { drawFixedWorld } from './fixed-world'
 import { districtGradient } from './fixed-scenery'
 import { fixedMuzzle } from './fixed-towers'
@@ -103,6 +104,9 @@ const cellKey = (x: number, y: number) => Math.floor(x / BLOOM_CELL) * 1000 + Ma
 const FIREWORK_COLS = [P.coral, P.amberHi, P.ice, P.lime, P.lilac, P.gold, P.pink]
 
 export class Renderer {
+  fixedLandscape=false
+  fixedFrameHeight=0
+  fixedFocus:{x:number;y:number}|null=null
   private fixedEdition=false
   fixedTopInset=60
   keepsakes: string[] = []
@@ -222,27 +226,36 @@ export class Renderer {
     this.cv.style.height = h + 'px'
     // keepers on the top pads reach ~80 units above them: keep that headroom on screen
     const top = this.levelBuilt?.segs.has('garden-merge') ? -1020 : -475
-    const bounds = this.zone === 'overview' ? { x: -20, y: top, w: 760, h: WORLD_H + 30 - top }
+    const bounds = this.fixedEdition ? boardBounds(this.fixedLandscape) : this.zone === 'overview' ? { x: -20, y: top, w: 760, h: WORLD_H + 30 - top }
       : this.zone === 'gardens' ? { x: 0, y: -1020, w: 720, h: 750 }
       : this.zone === 'harbour' ? { x: 0, y: -475, w: 720, h: 830 } : this.levelBuilt?.def.bounds ?? { x: 0, y: -36, w: WORLD_W, h: WORLD_H + 36 }
     const mapTop = this.fixedEdition?this.fixedTopInset:this.zone === 'gardens' || this.zone === 'overview' ? 52 : 0
     // Screen-sized build labels need space below the last plot, especially in landscape.
     const mapBottom=this.fixedEdition?(h<=400?32:18):0
-    this.scale = Math.min(w / bounds.w, Math.max(1, h - mapTop - mapBottom) / bounds.h)
+    const frameHeight=this.fixedEdition?Math.max(h,this.fixedFrameHeight):h
+    this.scale = Math.min(w / bounds.w, Math.max(1, frameHeight - mapTop - mapBottom) / bounds.h)
     this.ox = (w - bounds.w * this.scale) / 2 - bounds.x * this.scale
     this.oy = mapTop + (h - mapTop - mapBottom - bounds.h * this.scale) / 2 - bounds.y * this.scale
+    if(this.fixedEdition&&this.fixedFocus){
+      const focus=boardPoint(this.fixedFocus.x,this.fixedFocus.y,this.fixedLandscape)
+      const desired=mapTop+(h-mapTop-mapBottom)/2-focus.y*this.scale
+      this.oy=Math.max(h-mapBottom-(bounds.y+bounds.h)*this.scale,Math.min(mapTop-bounds.y*this.scale,desired))
+    }
     this.fx.textScale = Math.max(1, Math.min(1.9, 0.62 / this.scale))
     this.fx.minText = this.minText / this.scale
+    this.fx.viewRotation=this.fixedEdition&&this.fixedLandscape?-Math.PI/2:0
+    this.fx.viewDepth=this.fixedEdition&&this.fixedLandscape?BOARD_DEPTH:1
     setEnemySpriteScale(this.scale * dpr)
     this.bgKey = ''
   }
 
   toWorld(cx: number, cy: number) {
-    return { x: (cx - this.ox) / this.scale, y: (cy - this.oy) / this.scale }
+    return worldPoint((cx-this.ox)/this.scale,(cy-this.oy)/this.scale,this.fixedEdition&&this.fixedLandscape)
   }
 
   toScreen(wx: number, wy: number) {
-    return { x: wx * this.scale + this.ox, y: wy * this.scale + this.oy }
+    const p=boardPoint(wx,wy,this.fixedEdition&&this.fixedLandscape)
+    return { x: p.x*this.scale+this.ox, y: p.y*this.scale+this.oy }
   }
 
   /** World font size for a label: its design size, floored so it never renders under 13 CSS px. */
@@ -323,10 +336,10 @@ export class Renderer {
             this.addBloom(ev)
             if (!this.settings.reduceMotion && (ev.boss || pops < 5)) {
               fx.ring(ev.x,ev.y,ev.boss?82:25,withAlpha(col,.9),.4,2.5)
-              fx.flash(ev.x,ev.y-8,ev.boss?75:28,col,.22)
-              fx.petals(ev.x,ev.y-6,col,ev.boss?18:7,ev.boss?6:4,ev.boss?170:105)
+              const hit=elevated(ev.x,ev.y,8,this.fixedLandscape)
+              fx.flash(hit.x,hit.y,ev.boss?75:28,col,.22)
+              fx.petals(ev.x,ev.y-6,col,ev.boss?14:4,ev.boss?5:3,ev.boss?140:65)
               fx.burst(ev.x,ev.y-8,P.cream,ev.boss?12:3,ev.boss?180:100,3,.35)
-              if(pops<3&&fx.list.filter(p=>p.kind==='firefly').length<12)this.firefly(ev.x,ev.y-8,vrand(-55,55),-100)
               if(ev.boss)fx.burst(ev.x,ev.y-8,P.amberHi,26,200,4,.7)
             }
             sound.pop(big)
@@ -382,14 +395,15 @@ export class Renderer {
             fx.flash(ev.x, ev.y, 18, c, 0.2)
             fx.burst(ev.x, ev.y, c, calm ? 1 : 3, 90, 2.2, 0.3)
           } else if (sim.challenge.fixed && !this.settings.reduceMotion) {
-            fx.flash(ev.x,ev.y-8,21,ev.hue,.16)
+            const hit=elevated(ev.x,ev.y,8,this.fixedLandscape)
+            fx.flash(hit.x,hit.y,21,ev.hue,.16)
             // A short contact ring reads as a hit; long shards looked like
             // another projectile ricocheting away from a still-living enemy.
-            fx.ring(ev.x,ev.y-8,9,ev.hue,.14,2)
+            fx.ring(hit.x,hit.y,9,ev.hue,.14,2)
           } else if (!calm && Math.random() < 0.6) fx.burst(ev.x, ev.y, ev.hue, 2, 110, 2.5, 0.25)
           break
         case 'shoot':
-          if(sim.challenge.fixed&&!this.settings.reduceMotion){const tower=sim.towers.find(t=>t.x===ev.x&&t.y===ev.y),muzzle=tower?fixedMuzzle(tower):{x:0,y:-44};fx.flash(ev.x+muzzle.x,ev.y+muzzle.y,ev.tower==='cracker'?30:20,ev.tower==='storm'?P.ice:ev.tower==='owl'?P.lime:P.amberHi,.17)}
+          if(sim.challenge.fixed&&!this.settings.reduceMotion){const tower=sim.towers.find(t=>t.x===ev.x&&t.y===ev.y),muzzle=tower?fixedMuzzle({...tower,angle:tower.angle-(this.fixedLandscape?Math.PI/2:0)}):{x:0,y:-44},offset=worldPoint(muzzle.x,muzzle.y,this.fixedLandscape);fx.flash(ev.x+offset.x,ev.y+offset.y,ev.tower==='cracker'?30:20,ev.tower==='storm'?P.ice:ev.tower==='owl'?P.lime:P.amberHi,.17)}
           if (ev.tower === 'wick') sound.spark()
           else if (ev.tower === 'owl') sound.swoosh()
           else if (ev.tower === 'storm') sound.zap()
@@ -418,7 +432,8 @@ export class Renderer {
           const h = this.levelBuilt!.def.home
           fx.ring(h.x, h.y, 120, withAlpha(P.danger, 0.9), 0.8, 5)
           // stack floaters so several leaks in a row stay readable
-          fx.text(h.x, h.y - 80 - this.leakStack * this.fontPx(24) * 1.1, '-' + ev.weight + ' light', P.danger, 24, 1.3)
+          const leakAt=elevated(h.x,h.y,80+this.leakStack*this.fontPx(24)*1.1,!!sim.challenge.fixed&&this.fixedLandscape)
+          fx.text(leakAt.x,leakAt.y,'-'+ev.weight+' light',P.danger,24,1.3)
           this.leakStack = Math.min(this.leakStack + 1, 4)
           fx.inkSplat(h.x, h.y - 20, 10, 7, P.inkHi)
           this.leakFlash = 1
@@ -444,15 +459,16 @@ export class Renderer {
           break
         case 'waveEnd':
           sound.waveClear()
-          fx.text(this.levelBuilt!.def.home.x, this.levelBuilt!.def.home.y - 120, `+${ev.bonus + ev.income} glow`, P.amberHi, 26, 1.8)
+          if(!sim.challenge.fixed)fx.text(this.levelBuilt!.def.home.x, this.levelBuilt!.def.home.y - 120, `+${ev.bonus + ev.income} glow`, P.amberHi, 26, 1.8)
           fx.ring(this.levelBuilt!.def.home.x, this.levelBuilt!.def.home.y, 200, withAlpha(P.amberHi, 0.7), 1.2, 4)
           haptic(20)
           break
         case 'income':
-          fx.text(ev.x, ev.y - 40, '+' + ev.amount, P.gold, 22, 1.4)
+          const incomeAt=elevated(ev.x,ev.y,40,!!sim.challenge.fixed&&this.fixedLandscape)
+          fx.text(incomeAt.x,incomeAt.y,'+'+ev.amount,P.gold,16,1.1)
           fx.burst(ev.x, ev.y - 20, P.gold, 14, 160, 3, 0.8)
           sound.harvest()
-          for (let i = 0; i < 4; i++) this.firefly(ev.x, ev.y - 20, vrand(-120, 120), vrand(-200, -80))
+          if(!sim.challenge.fixed)for (let i = 0; i < 4; i++) this.firefly(ev.x, ev.y - 20, vrand(-120, 120), vrand(-200, -80))
           break
         case 'spawn':
           if (ev.boss) {
@@ -749,8 +765,9 @@ export class Renderer {
       this.time+=dt;this.fx.update(dt)
       this.leakStack=Math.max(0,this.leakStack-dt*1.2)
       const c=this.ctx;c.setTransform(this.dpr,0,0,this.dpr,0,0);c.fillStyle=districtGradient(c,sim,this.ox,this.oy-105*this.scale,720*this.scale,960*this.scale);c.fillRect(0,0,this.w,this.h)
-      c.translate(this.ox,this.oy);c.scale(this.scale,this.scale)
-      drawFixedWorld(c,sim,view,this.settlement,this.keepsakes,this.crest,this.scale,this.settings.reduceMotion,this.time)
+      c.translate(this.ox,this.oy);c.scale(this.scale,this.scale*(this.fixedLandscape?BOARD_DEPTH:1));if(this.fixedLandscape)c.rotate(-Math.PI/2)
+      this.fx.viewRotation=this.fixedLandscape?-Math.PI/2:0
+      drawFixedWorld(c,sim,view,this.settlement,this.keepsakes,this.crest,this.scale,this.settings.reduceMotion,this.time,this.fixedLandscape)
       this.fx.drawBase(c)
       // The previous fixed renderer omitted this layer, hiding hits, muzzle flashes and rewards.
       if(!this.settings.reduceMotion){c.save();c.globalCompositeOperation='screen';this.fx.drawGlow(c,true);c.restore()}
