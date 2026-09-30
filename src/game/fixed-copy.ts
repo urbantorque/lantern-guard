@@ -1,5 +1,18 @@
 import type { Tower, Sim } from './sim'
 import { stageOf,upgradePrice } from './fixed'
+import type { TowerId } from './defs'
+
+/** Role comparisons stay short; exact next-stage numbers come from the simulator. */
+export const STREAMS:Record<TowerId,readonly [string,string]>={
+  wick:['Fan out across crowds. More sparks, faster volleys.','Pierce a line of enemies. Break armour, then reveal hidden foes.'],
+  cracker:['Cover a wide area. Finish with five smaller blasts.','Track moving targets. Burn them with guided rockets.'],
+  bell:['Stronger slowing and damage. Mastery adds a stunning toll.','Wider support. Weaken armour, then reveal hidden foes.'],
+  owl:['Hunt armoured enemies. Mastery adds a heavy dive.','Shelter a larger area. Give neighbours reach, then firing speed.'],
+  garden:['Invest in harvests. More income, then restore light each wave.','Earn from nearby defeats. Moths attack; mastery adds slowing.'],
+  beam:['Burn through a line. Stronger damage against fewer targets.','Cover more ground. Reveal hidden foes, then fire two beams.'],
+  storm:['Chain across a crowd. More jumps between enemies.','Hit fewer enemies harder. Break armour and reveal hidden foes.'],
+  ballista:['Heavy siege hits. More damage, then burning bolts.','Fire more often. Longer reach and sight of hidden foes.'],
+}
 
 export function upgradeDetail(sim:Sim,t:Tower,branch:0|1) {
   const stage=stageOf(t)

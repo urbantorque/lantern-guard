@@ -104,6 +104,7 @@ const FIREWORK_COLS = [P.coral, P.amberHi, P.ice, P.lime, P.lilac, P.gold, P.pin
 
 export class Renderer {
   private fixedEdition=false
+  fixedTopInset=60
   keepsakes: string[] = []
   crest = 'lantern'
   zone: MapZone = 'canal'
@@ -224,7 +225,7 @@ export class Renderer {
     const bounds = this.zone === 'overview' ? { x: -20, y: top, w: 760, h: WORLD_H + 30 - top }
       : this.zone === 'gardens' ? { x: 0, y: -1020, w: 720, h: 750 }
       : this.zone === 'harbour' ? { x: 0, y: -475, w: 720, h: 830 } : this.levelBuilt?.def.bounds ?? { x: 0, y: -36, w: WORLD_W, h: WORLD_H + 36 }
-    const mapTop = this.fixedEdition&&h>400?60:this.zone === 'gardens' || this.zone === 'overview' ? 52 : 0
+    const mapTop = this.fixedEdition?this.fixedTopInset:this.zone === 'gardens' || this.zone === 'overview' ? 52 : 0
     // Screen-sized build labels need space below the last plot, especially in landscape.
     const mapBottom=this.fixedEdition?(h<=400?32:18):0
     this.scale = Math.min(w / bounds.w, Math.max(1, h - mapTop - mapBottom) / bounds.h)
@@ -374,6 +375,7 @@ export class Renderer {
           sound.clink()
           break
         case 'hit':
+          if(sim.challenge.fixed)sound.impact(ev.kind==='bolt')
           if (ev.kind === 'feather' || ev.kind === 'moth') {
             // a small soft puff where the feather or moth lands
             const c = ev.kind === 'feather' ? P.lime : P.gold
@@ -381,13 +383,17 @@ export class Renderer {
             fx.burst(ev.x, ev.y, c, calm ? 1 : 3, 90, 2.2, 0.3)
           } else if (sim.challenge.fixed && !this.settings.reduceMotion) {
             fx.flash(ev.x,ev.y-8,21,ev.hue,.16)
-            if(Math.random()<.65)fx.burst(ev.x,ev.y-8,ev.hue,4,130,3,.25)
+            // A short contact ring reads as a hit; long shards looked like
+            // another projectile ricocheting away from a still-living enemy.
+            fx.ring(ev.x,ev.y-8,9,ev.hue,.14,2)
           } else if (!calm && Math.random() < 0.6) fx.burst(ev.x, ev.y, ev.hue, 2, 110, 2.5, 0.25)
           break
         case 'shoot':
           if(sim.challenge.fixed&&!this.settings.reduceMotion){const tower=sim.towers.find(t=>t.x===ev.x&&t.y===ev.y),muzzle=tower?fixedMuzzle(tower):{x:0,y:-44};fx.flash(ev.x+muzzle.x,ev.y+muzzle.y,ev.tower==='cracker'?30:20,ev.tower==='storm'?P.ice:ev.tower==='owl'?P.lime:P.amberHi,.17)}
           if (ev.tower === 'wick') sound.spark()
           else if (ev.tower === 'owl') sound.swoosh()
+          else if (ev.tower === 'storm') sound.zap()
+          else if (ev.tower === 'ballista') sound.bolt()
           else if (ev.tower === 'cracker') {
             sound.launch()
             fx.burst(ev.x + Math.cos(ev.angle) * 18, ev.y - 22 + Math.sin(ev.angle) * 18, P.amberHi, 4, 120, 2.5, 0.3)

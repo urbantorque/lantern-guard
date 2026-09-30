@@ -1,7 +1,7 @@
 import type { Sim, Enemy, Tower } from '../game/sim'
 import { ENEMIES, type EnemyId } from '../game/defs'
 import type { ViewState } from './renderer'
-import { drawFixedTower, fixedMuzzle, TOWER_COLOURS } from './fixed-towers'
+import { drawFixedTower, TOWER_COLOURS } from './fixed-towers'
 import { drawFixedEnemy } from './fixed-enemies'
 import { currentPalette } from './palette'
 import { block, polygon, windows, setArchitectureLight, lightPool } from './architecture'
@@ -16,7 +16,7 @@ export function drawFixedWorld(c:CanvasRenderingContext2D,s:Sim,view:ViewState,s
   if(!light){light={canvas:scene,previous:null,at:time};lightChanges.set(s,light)}
   else if(light.canvas!==scene){light.previous=light.canvas;light.canvas=scene;light.at=time}
   c.drawImage(scene,0,-105,720,960)
-  if(light.previous&&!reducedMotion&&time-light.at<.8){c.save();c.globalAlpha=1-(time-light.at)/.8;c.drawImage(light.previous,0,-105,720,960);c.restore()}else light.previous=null
+  if(light.previous&&!reducedMotion&&time-light.at<2){c.save();c.globalAlpha=1-(time-light.at)/2;c.drawImage(light.previous,0,-105,720,960);c.restore()}else light.previous=null
   movingWater(c,s,reducedMotion?0:time)
   livingDistrict(c,s,time,reducedMotion)
   // Show the true footprint of lingering fire below units, so its damage has a visible cause.
@@ -52,8 +52,11 @@ export function drawFixedWorld(c:CanvasRenderingContext2D,s:Sim,view:ViewState,s
     }else drawFixedEnemy(c,item.e!,reducedMotion)
   }
   for(const p of s.projs){
-    c.save();const colour=s.challenge.hero?p.tower.def.hue:TOWER_COLOURS[p.tower.id].accent,travelled=Math.hypot(p.x-p.tower.x,p.y-p.tower.y),lift=Math.max(0,1-travelled/110),muzzle=fixedMuzzle(p.tower)
-    c.translate(p.x+muzzle.x*lift,p.y+muzzle.y*lift);c.rotate(Math.atan2(p.vy,p.vx));c.lineCap='round';c.strokeStyle=colour+'55';c.lineWidth=p.heavy?10:7;c.beginPath();c.moveTo(-23,0);c.lineTo(0,0);c.stroke()
+    if(!p.alive)continue
+    c.save();const colour=s.challenge.hero?p.tower.def.hue:TOWER_COLOURS[p.tower.id].accent
+    // Use the same elevation as impact flashes. Distance-dependent muzzle
+    // offsets made straight sparks appear to curve through, then off, a foe.
+    c.translate(p.x,p.y-8);c.rotate(Math.atan2(p.vy,p.vx));c.lineCap='round';c.strokeStyle=colour+'55';c.lineWidth=p.heavy?10:7;c.beginPath();c.moveTo(-16,0);c.lineTo(0,0);c.stroke()
     c.strokeStyle=colour;c.lineWidth=p.kind==='bolt'?3.5:2.8;c.beginPath();c.moveTo(-19,0);c.lineTo(2,0);c.stroke()
     lightPool(c,0,0,p.heavy?15:10,colour,.6,1)
     if(s.challenge.hero==='ivo'){c.strokeStyle='#e5eaff';c.lineWidth=1.5;c.beginPath();c.moveTo(-16,0);c.lineTo(-11,-3);c.lineTo(-7,3);c.lineTo(0,0);c.stroke()}

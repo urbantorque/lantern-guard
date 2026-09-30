@@ -18,6 +18,11 @@ const exact=(s:Sim)=>{
 for(let v=0;v<4;v++) {
   const s=fresh(v);assert.equal(s.gates.length,0)
   for(const seg of s.level.segs.values()){assert(!('gate' in seg.next));assert(!seg.feature);assert.equal(seg.bonus,1)}
+  for(const seg of s.level.segs.values())if('seg' in seg.next){
+    const next=s.level.segs.get(seg.next.seg)!,a=seg.line.at(seg.line.length,{x:0,y:0,tx:0,ty:0}),b=next.line.at(0,{x:0,y:0,tx:0,ty:0})
+    assert(Math.hypot(a.x-b.x,a.y-b.y)<1e-6,`map ${v}: ${seg.id} joins ${next.id}`)
+    if(seg.id!=='inlet')assert(a.tx*b.tx+a.ty*b.ty>.93,`map ${v}: tangent through ${seg.id} is smooth`)
+  }
   for(const p of s.pads)for(const seg of s.level.segs.values())assert(seg.line.distanceTo(p.x,p.y)>36,`map ${v} plot ${s.pads.indexOf(p)} intersects ${seg.id}`)
   for(let n=1;n<=40;n++)for(const g of s.waveDef(n).groups)assert(s.level.def.sources.some(source=>source.id===(g.src??'north')&&source.openWave<=n))
   exact(s)
@@ -30,12 +35,12 @@ for(const id of TOWER_ORDER)for(const branch of [0,1] as const){
 }
 console.log('PASS every tower and branch has exactly five stages; no crosspaths')
 const busy=fresh();busy.build(0,'wick');busy.startWave();busy.step(DT)
-assert(!busy.canStartWave());assert.equal(busy.earlyBonus(),0);assert(!busy.build(3,'cracker'));assert(!busy.upgrade(busy.towers[0],0));assert(!busy.relocate(busy.towers[0],3));exact(busy)
+assert(!busy.canStartWave());assert.equal(busy.earlyBonus(),0);assert(!busy.build(3,'cracker'));assert(busy.upgrade(busy.towers[0],0));assert(!busy.relocate(busy.towers[0],3));exact(busy)
 const boss=fresh();boss.wave=24;boss.glow=10000;boss.startWave()
 for(let i=0;i<2500;i++){boss.step(DT);boss.events=[]}
 assert(boss.enemies.some(e=>e.def.id==='gloom'&&!e.shrouded));exact(boss)
 assert(boss.enemies.filter(e=>e.def.id==='gloom').every(e=>!e.def.spawn&&!e.def.jams))
-console.log('PASS planning-only actions, no overlapping waves, new boss split and exact mid-boss resume')
+console.log('PASS live upgrades, planning-only construction, no overlapping waves, boss split and exact mid-boss resume')
 
 const bond=fresh();bond.wave=5;bond.glow=10000
 const bell=bond.build(0,'bell')!,cracker=bond.build(3,'cracker')!

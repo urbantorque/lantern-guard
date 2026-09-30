@@ -1,5 +1,6 @@
 import { fixedLevel, fixedWave, fixedStats, FIXED_UNLOCK, stageOf, upgradePrice, bondName, type Bond } from './fixed'
 import { heroStats, heroTower, heroHitSlow, type HeroId } from './heroes'
+import { contactTime } from './projectile-collision'
 import { skyAt, skyReach, skyRate, skyDamage, skySpeed, gardenYield, type ClimateState } from './environment'
 import { compactLevel, compactWave, COMPACT_END, STARTER_PLOTS, PLOTS, REFINEMENTS, refineStats } from './compact'
 import { LATE_REFINEMENTS, LATE_TOWERS, PREPARATIONS, lateRefine, encounterWave, preparationCost, netDamage, type Preparation, type PreparationId } from './depth'
@@ -765,7 +766,7 @@ export class Sim {
 
   refine(t: Tower): boolean {
     const cost = this.refinementCost(t)
-    if (cost === null || this.glow < cost || this.over || !this.towers.includes(t) || (this.challenge.fixed && this.waveActive)) return false
+    if (cost === null || this.glow < cost || this.over || !this.towers.includes(t)) return false
     this.glow -= cost; t.spent += cost; t.refinement = (t.refinement ?? 0) + 1
     t.stats = this.towerStats(t.id, t.a, t.b, t.refinement)
     t.upT = this.time; this.stats.upgrades++
@@ -930,7 +931,7 @@ export class Sim {
 
   upgrade(t: Tower, path: 0 | 1): boolean {
     const cost = this.upgradeCost(t, path)
-    if (cost == null || this.glow < cost || this.over || !this.towers.includes(t) || (this.challenge.fixed && this.waveActive)) return false
+    if (cost == null || this.glow < cost || this.over || !this.towers.includes(t)) return false
     this.glow -= cost
     t.spent += cost
     if (this.challenge.fixed && stageOf(t) === 1) { t.a = path === 0 ? 2 : 0; t.b = path === 1 ? 2 : 0 }
@@ -943,6 +944,19 @@ export class Sim {
     this.recomputeAuras()
     this.events.push({ t: 'upgrade', x: t.x, y: t.y, tier: Math.max(t.a, t.b) })
     return true
+  }
+
+  /** Buy the shared foundation and chosen stream together, with no extra fee. */
+  specialiseCost(t:Tower):number|null {
+    if(!this.challenge.fixed||stageOf(t)>1)return null
+    return Math.round(TOWERS[t.id].cost*1.3)+(stageOf(t)===0?upgradePrice(t)!:0)
+  }
+
+  specialise(t:Tower,path:0|1):boolean {
+    const cost=this.specialiseCost(t)
+    if(cost===null||this.glow<cost||this.over||!this.towers.includes(t))return false
+    if(stageOf(t)===0){this.upgrade(t,0);this.events.pop()} // One visible celebration for the bundled purchase.
+    return this.upgrade(t,path)
   }
 
   sell(t: Tower) {
@@ -1870,7 +1884,9 @@ export class Sim {
     const s = t.stats
     const speed = kind === 'rocket' ? 560 : kind === 'moth' ? 300 : kind === 'feather' ? s.projSpeed : kind === 'firework' ? 0 : s.projSpeed
     const ox = t.x + Math.cos(ang) * 16
-    const oy = t.y - 14 + Math.sin(ang) * 16
+    // Fixed-world sprites use a shared elevation at render time. Physics stays
+    // on the canal plane, including the muzzle and the predicted aim point.
+    const oy = t.y - (this.challenge.fixed ? 0 : 14) + Math.sin(ang) * 16
     return {
       kind,
       x: ox,
@@ -1923,6 +1939,7 @@ export class Sim {
         continue
       }
       // homing
+      if (this.challenge.fixed && p.kind === 'bolt' && p.hit.length) p.target = null
       if (p.target) {
         if (!p.target.alive) {
           const alt = this.near(p.x, p.y, 140, tmpC).find((e) => this.canSee(e, p.detect) && !p.hit.includes(e.uid))
@@ -1940,10 +1957,17 @@ export class Sim {
           p.vy = Math.sin(na) * p.speed
         }
       }
+      const startX=p.x,startY=p.y
       p.x += p.vx * dt
       p.y += p.vy * dt
-      // collisions
-      for (const e of this.near(p.x, p.y, 6, tmpC)) {
+      // Sweep fast fixed-world shots through the full frame and resolve the
+      // first enemy first, rather than tunnelling or relying on grid order.
+      const contacts=this.challenge.fixed
+        ? this.near((startX+p.x)/2,(startY+p.y)/2,Math.hypot(p.x-startX,p.y-startY)/2+6,tmpC)
+          .map(e=>({e,t:contactTime(startX,startY,p.x,p.y,e.x,e.y,e.def.radius+6)}))
+          .filter((v):v is {e:Enemy;t:number}=>v.t!==null).sort((a,b)=>a.t-b.t||a.e.uid-b.e.uid).map(v=>v.e)
+        : this.near(p.x,p.y,6,tmpC)
+      for (const e of contacts) {
         if (p.hit.includes(e.uid) || !this.canSee(e, p.detect)) continue
         if (p.kind === 'rocket') {
           p.alive = false

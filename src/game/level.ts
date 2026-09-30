@@ -9,6 +9,8 @@ export type NextRef = { seg: string } | { gate: string } | { home: true }
 export interface SegmentDef {
   id: string
   pts: Vec[]
+  /** Neighbouring route points preserve the tangent across fixed canal joins. */
+  curve?: { before?:Vec; after?:Vec }
   next: NextRef
   /** Glow multiplier for Mopes cheered up on this channel (rich channels; Mopes that took one leak double light). */
   bonus?: number
@@ -147,6 +149,6 @@ export interface BuiltLevel {
 
 export function buildLevel(def: LevelDef): BuiltLevel {
   const segs = new Map<string, Segment>()
-  for (const s of def.segments) segs.set(s.id, { id: s.id, line: new Polyline(s.pts), next: s.next, toHome: 0, bonus: s.bonus ?? 1, feature: s.feature ?? null })
+  for (const s of def.segments) segs.set(s.id, { id: s.id, line: new Polyline(s.pts,s.curve?32:14,s.curve), next: s.next, toHome: 0, bonus: s.bonus ?? 1, feature: s.feature ?? null })
   return { def, segs }
 }

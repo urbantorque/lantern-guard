@@ -9,8 +9,8 @@ export class Polyline {
   readonly cum: number[]
   readonly length: number
 
-  constructor(control: Vec[], samplesPerSpan = 14) {
-    this.pts = catmullRom(control, samplesPerSpan)
+  constructor(control: Vec[], samplesPerSpan = 14, neighbours?:{before?:Vec;after?:Vec}) {
+    this.pts = catmullRom(control, samplesPerSpan, neighbours)
     this.cum = [0]
     for (let i = 1; i < this.pts.length; i++) {
       const a = this.pts[i - 1]
@@ -67,10 +67,10 @@ export class Polyline {
   }
 }
 
-function catmullRom(p: Vec[], n: number): Vec[] {
-  if (p.length < 3) return p.map((v) => ({ ...v }))
+function catmullRom(p: Vec[], n: number, neighbours?:{before?:Vec;after?:Vec}): Vec[] {
+  if (p.length < 3&&!neighbours) return p.map((v) => ({ ...v }))
   const out: Vec[] = []
-  const get = (i: number) => p[Math.max(0, Math.min(p.length - 1, i))]
+  const get = (i: number) => i<0&&neighbours?.before?neighbours.before:i>=p.length&&neighbours?.after?neighbours.after:p[Math.max(0, Math.min(p.length - 1, i))]
   for (let i = 0; i < p.length - 1; i++) {
     const p0 = get(i - 1)
     const p1 = get(i)

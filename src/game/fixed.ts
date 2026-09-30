@@ -25,6 +25,13 @@ export function fixedLevel(variant = 0) {
   level.segments = level.segments.filter(s => !['e1', 'w2'].includes(s.id)).map(s => ({ ...s, bonus: 1, feature: undefined,
     next: 'gate' in s.next ? { seg: s.next.gate === 'upper' ? 'w1' : 'e2' } : s.next }))
   level.gates = []
+  // The main route shares curve tangents at every join. The inlet blends into
+  // that route without changing its direction or adding a switching mechanic.
+  for(const segment of level.segments){
+    const next='seg' in segment.next?level.segments.find(s=>s.id===(segment.next as {seg:string}).seg):undefined
+    const previous=level.segments.find(s=>s.id!=='inlet'&&'seg' in s.next&&s.next.seg===segment.id)
+    segment.curve={...(previous?{before:previous.pts[previous.pts.length-2]}:{}),...(next?{after:next.pts[1]}:{})}
+  }
   // Reserve headroom for a crowned Lighthouse even on the northernmost plot.
   level.bounds = { x: 0, y: -105, w: 720, h: 960 }
   const mirror = variant === 2
@@ -39,9 +46,9 @@ export function fixedLevel(variant = 0) {
 
 const NOTES: Record<number, string> = {
   1: 'Build a Wickling on the upper bank, then begin. Your range preview shows the stream it can protect.',
-  2: 'Spend glow between waves. You can undo your last planning choice before you begin.',
+  2: 'Upgrade during combat, or pause to think. You can undo planning choices before the wave begins.',
   3: 'Moonbells are ready. Slow enemies where another tower can hit them.',
-  4: 'Improve a tower, then choose one specialisation. Each choice changes its role.',
+  4: 'Compare a tower’s two streams. Choose a specialisation now, or improve its foundation first.',
   5: 'Your first five waves. Keep a reserve for the armoured enemies coming next.',
   6: 'Armour arrives. Crackers break shells. Your first tower Bond and the Lamp Owl are ready.',
   8: 'Hidden Veils arrive. Place an Owl beside your damage towers.',

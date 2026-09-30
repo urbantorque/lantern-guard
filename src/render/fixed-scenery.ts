@@ -19,14 +19,17 @@ export function scenery(s:Sim,stage:number,keepsakes:readonly string[]){
   for(const [x,y,rx,ry] of [[160,110,120,175],[605,260,85,200],[145,670,110,135],[540,755,145,65]]){
     c.fillStyle=day?'#b8d79224':'#548e7e14';c.beginPath();c.ellipse(x,y,rx,ry,-.35,0,Math.PI*2);c.fill()
   }
+  // Stroke the whole network once per layer. A downstream bank must never
+  // paint across upstream water (especially where the side inlet merges).
+  c.lineJoin='round';c.lineCap='round'
+  const network=()=>{c.beginPath();for(const seg of s.level.segs.values())seg.line.pts.forEach((p,i)=>i?c.lineTo(p.x,p.y):c.moveTo(p.x,p.y));c.stroke()}
+  c.save();c.translate(5,8);c.strokeStyle=day?'#3b77736b':'#081f3599';c.lineWidth=62;network();c.restore()
+  for(const [width,colour] of [[60,day?'#e7dabb':'#80a7a7'],[48,day?'#346e78':'#284f6b'],[39,day?'#087d94':'#11566f'],[27,day?'#20aeba':'#167d91'],[13,day?'#59d5ca66':'#49bcbc33']] as const){c.strokeStyle=colour;c.lineWidth=width;network()}
   for(const seg of s.level.segs.values()){
-    c.lineJoin='round';c.lineCap='butt'
-    const path=()=>{c.beginPath();seg.line.pts.forEach((p,i)=>i?c.lineTo(p.x,p.y):c.moveTo(p.x,p.y));c.stroke()}
-    c.save();c.translate(5,8);c.strokeStyle=day?'#3b77736b':'#081f3599';c.lineWidth=62;path();c.restore()
-    for(const [width,colour] of [[60,day?'#e7dabb':'#80a7a7'],[48,day?'#346e78':'#284f6b'],[39,day?'#087d94':'#11566f'],[27,day?'#20aeba':'#167d91'],[13,day?'#59d5ca66':'#49bcbc33']] as const){c.strokeStyle=colour;c.lineWidth=width;path()}
     for(let at=65;at<seg.line.length;at+=150){const p=seg.line.at(at,{x:0,y:0,tx:0,ty:0});for(const side of [-1,1]){
       const x=p.x-p.ty*33*side,y=p.y+p.tx*33*side
       if(s.pads.some(pad=>Math.hypot(pad.x-x,pad.y-y)<48))continue
+      if([...s.level.segs.values()].some(other=>other!==seg&&other.line.distanceTo(x,y)<32))continue
       if(!day)lightPool(c,x,y,38,'#ffc766',.7)
       block(c,x,y,5,5,9,day?'#728c81':'#355d71','#c4ccaa','#274757');c.fillStyle=day?'#fbe6a2':'#ffe6a0';c.fillRect(x-2,y-12,4,4)
     }}

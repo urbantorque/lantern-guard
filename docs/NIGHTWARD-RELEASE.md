@@ -1,5 +1,7 @@
 # Nightward: fixed-path edition
 
+> Original delivery report. The [continuous-combat update](CONTINUOUS-COMBAT-RELEASE.md) supersedes the panel pause, sky timing, route geometry, audio and balance results below.
+
 30 September 2026. Rules version `fixed: 1`.
 
 Nightward is a quiet canal district under watch. The visual brief comes from the user's images of geometric buildings with planted roofs and warm horizontal windows. It replaces the former Lantern Guard branding and cottage direction across the playable interface, code-drawn towers, enemies, scenery, title illustration, loading screen, favicon and iOS display name, icon and launch art. The repository URL and native bundle identifier stay stable so installed data remains accessible.

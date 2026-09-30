@@ -2,20 +2,21 @@ import assert from 'node:assert/strict'
 import { writeFileSync, mkdirSync } from 'node:fs'
 import { Sim, DT, type SaveSnapshotV2 } from '../src/game/sim'
 import { validSnapshot } from '../src/game/save-store'
-import { skyAt,weatherAt,skyReach,skyDamage,skyRate,skySpeed,gardenYield,clockText } from '../src/game/environment'
+import { skyAt,weatherAt,skyReach,skyDamage,skyRate,skySpeed,gardenYield,clockText,DAY_SECONDS,NIGHT_SECONDS,WEATHER_SECONDS } from '../src/game/environment'
 import { runFixed } from './fixed-bot'
 
 const fresh=(variant=0,seed=1047)=>new Sim('standard',{fixed:1,compact:1,guard:1,depth:1,balance:1,variant},seed)
 const near=(a:number,b:number)=>assert(Math.abs(a-b)<1e-6,`${a} ~= ${b}`)
-assert(!skyAt(99.999,1).night);assert(skyAt(100,1).night);assert(!skyAt(180,1).night)
-assert.equal(skyAt(180,1).cycle,2);assert.equal(clockText(100),'1:40')
-assert.equal(skyAt(44.999,1047).nextWeather,skyAt(45,1047).weather)
+const cycle=DAY_SECONDS+NIGHT_SECONDS
+assert(!skyAt(DAY_SECONDS-.001,1).night);assert(skyAt(DAY_SECONDS,1).night);assert(!skyAt(cycle,1).night)
+assert.equal(skyAt(cycle,1).cycle,2);assert.equal(clockText(100),'1:40')
+assert.equal(skyAt(WEATHER_SECONDS-.001,1047).nextWeather,skyAt(WEATHER_SECONDS,1047).weather)
 assert.deepEqual(Array.from({length:100},(_,i)=>weatherAt(1047,i)),Array.from({length:100},(_,i)=>weatherAt(1047,i)))
 assert(new Set(Array.from({length:100},(_,i)=>weatherAt(1047,i))).size===4)
 assert(Array.from({length:10},(_,i)=>weatherAt(1047,i)).some((w,i)=>w!==weatherAt(4099,i)))
-const day={...skyAt(0,1047),weather:'clear' as const},night={...skyAt(100,1047),weather:'clear' as const}
+const day={...skyAt(0,1047),weather:'clear' as const},night={...skyAt(DAY_SECONDS,1047),weather:'clear' as const}
 near(gardenYield(day),1.4);near(gardenYield(night),.55)
-near((100*gardenYield(day)+80*gardenYield(night))/180,184/180)
+near((DAY_SECONDS*gardenYield(day)+NIGHT_SECONDS*gardenYield(night))/cycle,184/180)
 near(skyReach('ballista',day,false),1.12);near(skyReach('ballista',night,false),.85)
 near(skyReach('ballista',night,true),1);near(skyReach('wick',night,false),1)
 near(skyDamage('beam',night),1.12);near(skyRate('wick',night),1.12);near(skySpeed(night),1.08)
@@ -24,7 +25,7 @@ near(skyDamage('storm',{...night,weather:'rain'}),1.08)
 console.log('PASS exact day/night boundaries, seeded forecast and bounded weather effects')
 
 const s=fresh();for(let i=0;i<600;i++)s.step(DT);assert.equal(s.climate.elapsed,0)
-s.wave=30;s.glow=20000;s.climate.elapsed=99.99
+s.wave=30;s.glow=20000;s.climate.elapsed=DAY_SECONDS-.01
 if(!s.padAvailable(1))assert(s.unlockPlot(1))
 const wick=s.build(0,'wick')!,cracker=s.build(1,'cracker')!;s.build(3,'owl')
 assert(s.sheltered(wick));assert(!s.sheltered(cracker))
@@ -43,7 +44,7 @@ console.log('PASS paused/planning clock freeze, no idle farming, persisted harve
 // A controlled one-second wave spends half its time in each light condition.
 const harvest=fresh();harvest.wave=10;harvest.glow=10000;const garden=harvest.build(0,'garden')!
 harvest.startWave();harvest.spawners=[];harvest.enemies=[]
-harvest.climate={elapsed:100.5,waveSeconds:1,gardenExposure:(1.4+.55)/2}
+harvest.climate={elapsed:DAY_SECONDS+.5,waveSeconds:1,gardenExposure:(1.4+.55)/2}
 const saved=harvest.snapshot();assert(validSnapshot(saved));const harvestRestored=Sim.restore(saved)
 harvest.step(DT);harvestRestored.step(DT)
 assert.equal(garden.earned,Math.round(garden.stats.income*.975));assert.deepEqual(harvest.snapshot(),harvestRestored.snapshot())

@@ -32,6 +32,83 @@
 .plot-hit.is-locked .plot-label{color:#d8e9e0;background:#2c4c55e8;font-size:9px}
 .plot-hit:hover .plot-marker,.plot-hit:focus-visible .plot-marker{background:#fff0bf;color:#214956;box-shadow:0 3px 0 #856d48,0 0 0 4px #ffe6a640}
 .plot-hit:focus-visible .plot-label{background:#153642}
+
+/* A live inspector reserves room for the map and keeps Pause within reach. */
+.sound-toggle{display:flex;align-items:center;gap:6px;padding:8px 10px;min-height:44px;min-width:44px;font-size:12px;white-space:nowrap;color:var(--gold)}
+.sound-toggle svg{width:18px;height:18px;flex-shrink:0}.wave-stat{white-space:nowrap}
+.inspector-toolbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 20px;background:#203843;border-bottom:1px solid var(--line);font-size:12px;flex-shrink:0}
+.inspector-toolbar b{color:#ffe4a1;font-variant-numeric:tabular-nums}
+.drawer.tower>header{padding:14px 20px 10px;flex-shrink:0}
+.drawer.tower h2{font-size:25px}
+.drawer.tower .drawer-body{padding:18px 20px}
+.tower .tower-heading{gap:10px;margin-bottom:12px}
+.tower .tower-heading img{width:64px;height:72px}
+.tower .tower-heading h3{font-size:19px}
+.tower .tower-heading p{margin-bottom:4px}
+.upgrade-title{font-size:17px;margin:16px 0 6px}
+.upgrade-hint{font-size:12px;line-height:1.5;color:#ccded8;margin:0 0 10px}
+.upgrade-streams{display:grid;gap:12px;margin-top:14px}
+.upgrade-streams.choosing{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.choosing .upgrade-stream{padding:12px;display:flex;flex-direction:column}
+.choosing .stream-title h4{font-size:19px;overflow-wrap:anywhere}
+.choosing .upgrade-stream>p{font-size:13px;flex:1}
+.choosing .upgrade-stream .primary{font-size:12px;padding:9px 4px}
+.choosing .stream-preview summary{font-size:11px}
+.choosing .stream-preview ol{margin-left:0;padding-left:8px}.choosing .stream-preview li:before{left:-12px}
+.upgrade-stream{border:1px solid #647e86;border-radius:10px;padding:16px;background:#243f4b}
+.stream-title>span{text-transform:uppercase;letter-spacing:.12em;color:#a7c8c6;font-size:10px;font-weight:650}
+.stream-title h4{font-family:'DM Sans Variable',sans-serif;font-weight:500;font-size:22px;color:#ffdda0;margin:5px 0 8px}
+.upgrade-stream>p{font-size:14px;line-height:1.5;color:#d5e5dd;margin-bottom:14px}
+.upgrade-stream .primary{min-height:44px;font-size:14px;padding:10px}
+.upgrade-stream.chosen{border-color:#e2bb72;box-shadow:inset 3px 0 #e2bb72}
+.upgrade-stream.locked{background:transparent;border-color:#506770}
+.upgrade-stream.locked .stream-title h4{color:#b5c9ce}
+.upgrade-stream .stream-locked,.upgrade-stream .stream-complete{font-size:12px;font-weight:600;margin:4px 0;color:#bdd1cc}
+.upgrade-stream .stream-complete{color:#ffdf96}
+.stream-preview{margin-top:12px}
+.stream-preview summary,.tower-details summary{min-height:44px;display:flex;align-items:center;cursor:pointer;gap:8px;font-size:13px;color:#b8ded5}
+.stream-preview summary:before,.tower-details summary:before{content:'+';font-size:19px;color:#e9c483}
+.stream-preview[open] summary:before,.tower-details[open] summary:before{content:'−'}
+.stream-preview ol{list-style:none;padding:0 0 0 12px;border-left:1px solid #698684;margin:8px 0 0 3px}
+.stream-preview li{margin:0 0 18px;position:relative}
+.stream-preview li:before{content:'';position:absolute;left:-16px;top:5px;border-radius:50%;width:7px;height:7px;background:#7aa09a}
+.stream-preview li.complete:before{background:#ffda90}
+.stream-preview li b{display:block;font-size:12px;color:#f3d69e;margin-bottom:6px;font-weight:600}
+.stream-preview li small{font-size:12px;color:#c6d8d7;line-height:1.6;display:block}
+.foundation{border-top:1px solid var(--line);padding-top:18px;margin-top:18px}
+.foundation>b{font-size:14px}.foundation p{margin:8px 0 12px}
+.tower-details{border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-top:20px}
+.sky-strip:after{content:'';position:absolute;left:0;bottom:0;height:3px;width:var(--phase-progress,0%);background:#bb843d;border-radius:3px;pointer-events:none}
+.sky-strip.is-night:after{background:#b1c9ff}
+.sky-strip.sky-soon{border-color:#db994b;box-shadow:0 0 0 2px #efb46a33}
+@media(min-width:1000px){
+  .game.inspecting{grid-template-columns:minmax(0,1fr) 400px}
+  .drawer.tower{width:376px;right:max(12px,calc((100vw - 1520px)/2 + 12px));top:76px;bottom:180px;box-shadow:0 8px 24px #091e3433}
+  .game.inspecting .playbar{padding:18px;justify-content:flex-end}
+  .game.inspecting .forecast-button{display:none}
+}
+@media(max-width:999px){
+  .game.inspecting{padding-bottom:43svh;grid-template-rows:56px minmax(0,1fr) 56px}
+  .game.inspecting .forecast-button,.game.inspecting [data-action="undo"]{display:none}
+  .game.inspecting .playbar{display:block;padding:6px 12px}
+  .game.inspecting .play-actions .primary{flex:1;min-width:0}
+  .drawer.tower{left:0;right:0;top:auto;bottom:0;width:100%;height:43svh;max-height:43svh;border-radius:14px 14px 0 0;padding-bottom:env(safe-area-inset-bottom);box-shadow:0 -3px 18px #061b3426}
+  .drawer.tower>header{padding:7px 16px;min-height:52px}
+  .drawer.tower h2{font-size:23px}.drawer.tower .drawer-body{padding:14px 16px}
+  .inspector-toolbar{padding:8px 16px}
+  .tower .tower-heading{display:none}
+  .tower .upgrade-title{margin-top:0}
+  .sound-toggle{padding:7px;font-size:11px}.hud{gap:8px}
+}
+@media(max-height:500px) and (min-width:601px){
+  .game.inspecting{padding-bottom:env(safe-area-inset-bottom);grid-template-columns:minmax(0,1fr) 300px;grid-template-rows:52px minmax(0,1fr)}
+  .drawer.tower{left:auto;right:6px;top:58px;bottom:60px;width:288px;height:auto;max-height:none}
+  .game.inspecting .playbar{display:flex;justify-content:flex-end;padding:6px}
+  .game.inspecting .sky-strip{position:absolute;top:4px;left:8px;right:8px;width:auto;flex-direction:row;font-size:11px;min-height:36px}
+  .game.inspecting .board-status{position:absolute;left:50%;right:auto;top:45px;transform:translateX(-50%);width:max-content;max-width:90%}
+}
+@media(max-width:600px){.sound-toggle{padding:10px;justify-content:center}.sound-toggle span{display:none}}
+@media(max-width:350px){.hud{gap:6px;padding-left:8px;padding-right:8px}.wave-stat>span{display:none}}
 .wave-active .plot-hit.is-empty .plot-label{display:none}
 .wave-active .plot-hit.is-empty:not(:hover):not(:focus-visible) .plot-marker{opacity:.5}
 @media(max-height:500px) and (min-width:601px){.board-status{position:fixed;top:150px;right:16px;left:auto;transform:none;width:198px;max-width:198px;font-size:12px;padding:8px 10px}}

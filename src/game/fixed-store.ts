@@ -18,14 +18,14 @@ export interface VillageProfile {
   journal: Partial<Record<EnemyId,number>>
   settlement: number
   lastMap: number
-  settings: { largeText:boolean; reducedMotion:boolean; muted:boolean; clearPalette:boolean }
+  settings: { largeText:boolean; reducedMotion:boolean; muted:boolean; clearPalette:boolean; music:boolean; effects:boolean }
 }
 export let storageMessage = ''
 export function readJSON(key:string): unknown { try {return JSON.parse(localStorage.getItem(PREFIX+key) ?? 'null')} catch { return null } }
 export function writeJSON(key:string,value:unknown) { try { localStorage.setItem(PREFIX+key,JSON.stringify(value)); storageChanged(); return true } catch {storageMessage='Saving is unavailable. Keep this tab open to preserve your current watch.'; return false} }
 export function loadVillage(): VillageProfile {
   const legacy=loadSettings()
-  const empty: VillageProfile = {v:1,guardian:legacy.guardian,records:{},credits:{},commissions:[],journal:{},settlement:0,lastMap:0,settings:{largeText:legacy.bigText===true,reducedMotion:legacy.reduceMotion===true||(legacy.reduceMotion===null&&typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches),muted:legacy.muted===true,clearPalette:legacy.palette==='clear'}}
+  const empty: VillageProfile = {v:1,guardian:legacy.guardian,records:{},credits:{},commissions:[],journal:{},settlement:0,lastMap:0,settings:{largeText:legacy.bigText===true,reducedMotion:legacy.reduceMotion===true||(legacy.reduceMotion===null&&typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches),muted:legacy.muted===true,clearPalette:legacy.palette==='clear',music:true,effects:true}}
   const p=readJSON('profile') as VillageProfile | null
   if(!p || p.v!==1 || !p.records || !p.credits || !Array.isArray(p.commissions) || !p.journal || !p.settings) return empty
   const nonnegative=(n:unknown):n is number=>typeof n==='number'&&Number.isFinite(n)&&n>=0

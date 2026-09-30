@@ -6,20 +6,20 @@
     "wave": 40,
     "light": 25,
     "won": true,
-    "combatSeconds": 1195,
-    "cycles": 7,
-    "gardenEarned": 2071
+    "combatSeconds": 1198,
+    "cycles": 12,
+    "gardenEarned": 2004
   },
   {
     "seed": 1047,
     "variant": 0,
     "strategy": "greedy",
-    "wave": 40,
-    "light": 25,
-    "won": true,
-    "combatSeconds": 1259,
-    "cycles": 7,
-    "gardenEarned": 5161
+    "wave": 15,
+    "light": 0,
+    "won": false,
+    "combatSeconds": 416,
+    "cycles": 4,
+    "gardenEarned": 332
   },
   {
     "seed": 1047,
@@ -28,64 +28,64 @@
     "wave": 40,
     "light": 11,
     "won": true,
-    "combatSeconds": 1416,
-    "cycles": 8,
-    "gardenEarned": 1514
+    "combatSeconds": 1425,
+    "cycles": 14,
+    "gardenEarned": 1527
   },
   {
     "seed": 1047,
     "variant": 1,
+    "strategy": "greedy",
+    "wave": 40,
+    "light": 25,
+    "won": true,
+    "combatSeconds": 1488,
+    "cycles": 14,
+    "gardenEarned": 5212
+  },
+  {
+    "seed": 1047,
+    "variant": 2,
+    "strategy": "mixed",
+    "wave": 40,
+    "light": 25,
+    "won": true,
+    "combatSeconds": 1211,
+    "cycles": 12,
+    "gardenEarned": 1995
+  },
+  {
+    "seed": 1047,
+    "variant": 2,
+    "strategy": "greedy",
+    "wave": 40,
+    "light": 25,
+    "won": true,
+    "combatSeconds": 1264,
+    "cycles": 12,
+    "gardenEarned": 5237
+  },
+  {
+    "seed": 1047,
+    "variant": 3,
+    "strategy": "mixed",
+    "wave": 40,
+    "light": 25,
+    "won": true,
+    "combatSeconds": 1485,
+    "cycles": 14,
+    "gardenEarned": 1924
+  },
+  {
+    "seed": 1047,
+    "variant": 3,
     "strategy": "greedy",
     "wave": 16,
     "light": 0,
     "won": false,
-    "combatSeconds": 484,
-    "cycles": 3,
-    "gardenEarned": 470
-  },
-  {
-    "seed": 1047,
-    "variant": 2,
-    "strategy": "mixed",
-    "wave": 40,
-    "light": 25,
-    "won": true,
-    "combatSeconds": 1216,
-    "cycles": 7,
-    "gardenEarned": 1612
-  },
-  {
-    "seed": 1047,
-    "variant": 2,
-    "strategy": "greedy",
-    "wave": 40,
-    "light": 25,
-    "won": true,
-    "combatSeconds": 1250,
-    "cycles": 7,
-    "gardenEarned": 5268
-  },
-  {
-    "seed": 1047,
-    "variant": 3,
-    "strategy": "mixed",
-    "wave": 40,
-    "light": 19,
-    "won": true,
-    "combatSeconds": 1348,
-    "cycles": 8,
-    "gardenEarned": 1489
-  },
-  {
-    "seed": 1047,
-    "variant": 3,
-    "strategy": "greedy",
-    "wave": 15,
-    "light": 0,
-    "won": false,
-    "combatSeconds": 486,
-    "cycles": 3,
-    "gardenEarned": 281
+    "combatSeconds": 636,
+    "cycles": 6,
+    "gardenEarned": 459
   },
   {
     "seed": 4099,
@@ -94,9 +94,9 @@
     "wave": 40,
     "light": 25,
     "won": true,
-    "combatSeconds": 1207,
-    "cycles": 7,
-    "gardenEarned": 1600
+    "combatSeconds": 1197,
+    "cycles": 12,
+    "gardenEarned": 2004
   },
   {
     "seed": 4099,
@@ -105,20 +105,20 @@
     "wave": 15,
     "light": 0,
     "won": false,
-    "combatSeconds": 420,
-    "cycles": 3,
-    "gardenEarned": 256
+    "combatSeconds": 416,
+    "cycles": 4,
+    "gardenEarned": 342
   },
   {
     "seed": 4099,
     "variant": 1,
     "strategy": "mixed",
     "wave": 40,
-    "light": 10,
+    "light": 25,
     "won": true,
-    "combatSeconds": 1431,
-    "cycles": 8,
-    "gardenEarned": 1508
+    "combatSeconds": 1421,
+    "cycles": 14,
+    "gardenEarned": 1991
   },
   {
     "seed": 4099,
@@ -127,9 +127,9 @@
     "wave": 14,
     "light": 0,
     "won": false,
-    "combatSeconds": 412,
-    "cycles": 3,
-    "gardenEarned": 144
+    "combatSeconds": 420,
+    "cycles": 4,
+    "gardenEarned": 198
   },
   {
     "seed": 4099,
@@ -138,9 +138,9 @@
     "wave": 40,
     "light": 25,
     "won": true,
-    "combatSeconds": 1212,
-    "cycles": 7,
-    "gardenEarned": 2100
+    "combatSeconds": 1225,
+    "cycles": 12,
+    "gardenEarned": 2014
   },
   {
     "seed": 4099,
@@ -149,20 +149,20 @@
     "wave": 40,
     "light": 25,
     "won": true,
-    "combatSeconds": 1254,
-    "cycles": 7,
-    "gardenEarned": 5264
+    "combatSeconds": 1271,
+    "cycles": 12,
+    "gardenEarned": 5238
   },
   {
     "seed": 4099,
     "variant": 3,
     "strategy": "mixed",
     "wave": 40,
-    "light": 23,
+    "light": 25,
     "won": true,
-    "combatSeconds": 1327,
-    "cycles": 8,
-    "gardenEarned": 1466
+    "combatSeconds": 1482,
+    "cycles": 14,
+    "gardenEarned": 1959
   },
   {
     "seed": 4099,
@@ -171,8 +171,8 @@
     "wave": 15,
     "light": 0,
     "won": false,
-    "combatSeconds": 488,
-    "cycles": 3,
-    "gardenEarned": 290
+    "combatSeconds": 613,
+    "cycles": 6,
+    "gardenEarned": 291
   }
 ]

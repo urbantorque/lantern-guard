@@ -2,18 +2,19 @@ import { Sim, DT, type Tower, type SaveSnapshotV2 } from './game/sim'
 import { TOWERS, TOWER_ORDER, ENEMIES, DIFFICULTY, type TowerId, type Difficulty, type Priority, type EnemyId } from './game/defs'
 import { ACTS, MAP_HELP, fixedLevel, stageOf, STAGES, upgradePrice, FIXED_UNLOCK, FIXED_TIPS, COMMISSIONS, bondName, BOND_HELP } from './game/fixed'
 import { WATCH_NAMES } from './game/compact'
-import { WEATHER, SKY_TOWER_HELP, clockText, lamplit } from './game/environment'
+import { WEATHER, SKY_TOWER_HELP, DAY_SECONDS, NIGHT_SECONDS, clockText, lamplit } from './game/environment'
 import { Renderer, type Selection } from './render/renderer'
 import { fixedTowerIcon } from './render/fixed-towers'
 import { fixedEnemyIcon as enemyIcon } from './render/fixed-world'
 import { icon } from './ui/icons'
-import { sound } from './core/audio'
+import { sound, profileSound } from './core/audio'
 import { watchAppState } from './core/platform'
-import { upgradeDetail } from './game/fixed-copy'
+import { upgradeDetail, STREAMS } from './game/fixed-copy'
 import { setPalette } from './render/palette'
 import { HEROES, HERO_IDS, isHero, heroTower, type HeroId } from './game/heroes'
 import { heroPortrait } from './render/heroes'
 import { loadProgress } from './game/progress'
+import { buildLevel } from './game/level'
 import { loadVillage, loadWatch, saveWatch, recordWatch, bestWave, legacyExists, storageMessage, writeJSON, loadPlanning, type Slot } from './game/fixed-store'
 
 const role:Record<TowerId,string>={wick:'Reliable sparks',cracker:'Armour & crowds',bell:'Slows groups',owl:'Reveals hidden foes',garden:'Income over time',beam:'Sustained heavy damage',storm:'Chain lightning',ballista:'Heavy single hits'}
@@ -44,10 +45,12 @@ export class FixedApp {
   private guardian='lantern'
   private qa=false
   private hero:HeroId='sol'
+  private sessionMuted=false
+  private get panelPauses(){return !!this.drawer&&this.drawer!=='tower'}
 
   constructor() {
     this.qa=import.meta.env.DEV && new URLSearchParams(location.search).has('qa')
-    if(this.qa||new URLSearchParams(location.search).get('muted')==='1')this.profile.settings.muted=true
+    this.sessionMuted=this.qa||new URLSearchParams(location.search).get('muted')==='1'
     this.map=this.profile.lastMap
     this.hero=this.profile.lastHero??'sol'
     this.guardian=this.profile.guardian??'lantern'
@@ -68,11 +71,12 @@ export class FixedApp {
   private applySettings() {
     document.documentElement.classList.toggle('large-text',this.profile.settings.largeText)
     document.documentElement.classList.toggle('reduced-motion',this.profile.settings.reducedMotion)
-    sound.settings={sfx:.45,music:.22,ambience:.3,muted:this.profile.settings.muted}; sound.applySettings()
+    sound.settings=profileSound(this.profile.settings,this.sessionMuted); sound.applySettings()
     setPalette(this.profile.settings.clearPalette?'clear':'standard')
     if(this.renderer) { this.renderer.settings={calmFx:true,reduceMotion:this.profile.settings.reducedMotion,shake:false}; this.renderer.setBigText(this.profile.settings.largeText) }
   }
   private home() {
+    sound.beam(0)
     document.body.classList.remove('playing')
     this.save(); this.paused=true; this.sim=null; this.renderer=null; this.observer?.disconnect();this.drawer=''
     const saved=loadWatch('campaign'), commission=loadWatch('commission')
@@ -85,15 +89,18 @@ export class FixedApp {
   }
   private show(title:string,content:string,kind='') {
     if(!this.drawer) this.previousFocus=document.activeElement as HTMLElement
-    this.drawer=kind||title; this.paused=true
-    document.querySelector('main')?.setAttribute('inert','')
-    $('modal-root').innerHTML=`<div class="scrim" data-action="close"></div><section class="drawer ${kind}" role="dialog" aria-modal="true" aria-labelledby="dialog-title"><header><h2 id="dialog-title">${title}</h2>${button('close',icon('close')+'<span class="sr-only">Close</span>','icon-button')}</header><div class="drawer-body">${this.kitCopy(content)}</div></section>`
+    this.drawer=kind||title
+    const live=kind==='tower',main=document.querySelector('main')
+    if(!live)this.paused=true
+    main?.toggleAttribute('inert',!live);main?.classList.toggle('inspecting',live)
+    $('modal-root').innerHTML=`${live?'':'<div class="scrim" data-action="close"></div>'}<section class="drawer ${kind}" role="dialog" aria-modal="${!live}" aria-labelledby="dialog-title"><header><h2 id="dialog-title">${title}</h2>${button('close',icon('close')+'<span class="sr-only">Close</span>','icon-button')}</header>${live?'<div class="inspector-toolbar"><span id="inspector-state"></span><b id="inspector-glow"></b></div>':''}<div class="drawer-body">${this.kitCopy(content)}</div></section>`
     $('modal-root').querySelector<HTMLButtonElement>('.drawer button')?.focus()
     this.refresh()
   }
   private close() {
     this.drawer='';$('modal-root').innerHTML=''; this.selection=null
     document.querySelector('main')?.removeAttribute('inert')
+    document.querySelector('main')?.classList.remove('inspecting')
     if(this.previousFocus?.isConnected)this.previousFocus.focus()
     else document.querySelector<HTMLButtonElement>('.plot-hit, .home-actions button')?.focus()
     this.refresh()
@@ -129,8 +136,8 @@ export class FixedApp {
     this.show(h?`${h.name} · ${h.title}`:'The original keepers',`${h?`<div class="hero-intro"><img src="${heroPortrait(id!)}" alt="${h.name}, ${h.title}"/><div><p class="lead">${h.approach}</p><p class="small muted">${h.tradeoff}</p></div></div>`:''}<p class="small muted">All three heroes are available immediately. Towers arrive gradually during a watch; each has two specialisations and five stages. Shared roles make a new roster easy to learn.</p><div class="roster-list">${[...TOWER_ORDER].sort((a,b)=>FIXED_UNLOCK[a]-FIXED_UNLOCK[b]).map(t=>`<article><img src="${fixedTowerIcon(t,1,0,0,id)}" alt=""/><div><h3>${heroTower(t,id).name}</h3><p class="roster-role">${role[t]} · Wave ${FIXED_UNLOCK[t]} · ${TOWERS[t].cost} glow</p><p>${h?h.towers[t].trait:TOWERS[t].blurb}</p><small>${heroTower(t,id).paths.map(p=>p.name).join(' / ')}</small></div></article>`).join('')}</div>${!this.sim?button('choose','Back to watch setup','primary wide'):''}`,'roster')
   }
   private preview(map:number) {
-    const level=fixedLevel(map)
-    return `<svg class="map-preview" viewBox="0 0 720 840" aria-hidden="true">${level.segments.map(s=>`<polyline points="${s.pts.map(p=>p.x+','+p.y).join(' ')}"/>`).join('')}<circle cx="${level.home.x}" cy="${level.home.y}" r="27"/></svg>`
+    const level=buildLevel(fixedLevel(map))
+    return `<svg class="map-preview" viewBox="0 0 720 840" aria-hidden="true">${[...level.segs.values()].map(s=>`<polyline points="${s.line.pts.map(p=>p.x+','+p.y).join(' ')}"/>`).join('')}<circle cx="${level.def.home.x}" cy="${level.def.home.y}" r="27"/></svg>`
   }
   private newWatch(commissionId?:string,sameSeed?:number) {
     const c=COMMISSIONS.find(q=>q.id===commissionId)
@@ -146,6 +153,7 @@ export class FixedApp {
     this.sim=sim;if(sim.challenge.hero)this.hero=sim.challenge.hero;this.map=sim.challenge.variant??0;this.difficulty=sim.difficulty;this.undo=[];this.selection=null;this.moving=null;this.paused=true;this.endShown=false;this.drawer='';this.recap='';this.lastHUD=''
     $('app').innerHTML=`<main class="game"><header class="hud"><div class="stat">${icon('heart')}<b id="light"></b><span>Light</span></div><div class="stat">${icon('sparkle')}<b id="glow"></b><span>Glow</span></div><div class="wave-stat" id="wave"></div>${button('menu',icon('gear')+'<span class="sr-only">Watch menu</span>','icon-button')}</header><section id="battlefield" class="battlefield" aria-label="Battlefield"><canvas id="canvas" aria-label="Fixed paths through the district"></canvas><div id="plots" aria-label="Tower plots"></div><button id="sky" class="sky-strip" data-action="sky"></button><div id="board-status" class="board-status"></div><div class="map-caption"><span>${WATCH_NAMES[this.map]}${sim.challenge.hero?" · "+HEROES[sim.challenge.hero].name:""}</span><span id="act"></span></div></section><footer class="playbar"><button data-action="forecast" class="forecast-button" id="forecast"></button><div class="play-actions">${button('undo','Undo','secondary',true)}${button('speed','1×','secondary')}<button id="go" data-action="go" class="primary"></button></div></footer></main><div id="modal-root"></div><div id="live" class="sr-only" aria-live="polite"></div><p id="save-warning" role="status"></p>`
     this.renderer=new Renderer($<HTMLCanvasElement>('canvas')); this.renderer.attach(sim);if(blooms.length)this.renderer.importBlooms(blooms)
+    document.querySelector('.hud .icon-button')?.insertAdjacentHTML('beforebegin','<button id="sound-toggle" data-action="sound" class="sound-toggle"></button>')
     const renderer=this.renderer
     renderer.glowTarget=()=>{const glow=$('glow').getBoundingClientRect(),board=$('canvas').getBoundingClientRect();return renderer.toWorld(glow.x+glow.width/2-board.x,glow.y+glow.height/2-board.y)}
     renderer.onGlowArrive=()=>{if(!this.profile.settings.reducedMotion)$('glow')?.animate([{transform:'scale(1)'},{transform:'scale(1.15)',color:'#fff4b4'},{transform:'scale(1)'}],{duration:220})}
@@ -157,6 +165,7 @@ export class FixedApp {
   }
   private resize() {
     if(!this.renderer)return
+    this.renderer.fixedTopInset=getComputedStyle($('sky')).position==='fixed'?0:60
     const r=$('battlefield').getBoundingClientRect();this.renderer.resize(r.width,r.height,Math.min(2,devicePixelRatio));this.plots()
   }
   private plots() {
@@ -173,11 +182,15 @@ export class FixedApp {
   private refresh() {
     const s=this.sim;if(!s||!$('light'))return
     $('light').textContent=String(s.lives);$('glow').textContent=String(Math.floor(s.glow))
+    const audio=$('sound-toggle');if(audio){audio.innerHTML=icon(sound.settings.muted?'speakerOff':'speaker')+`<span>Sound ${sound.settings.muted?'off':'on'}</span>`;audio.setAttribute('aria-label',this.sessionMuted?'Sound muted for this playtest':this.profile.settings.muted?'Turn sound on':'Turn sound off');audio.setAttribute('aria-pressed',String(!sound.settings.muted));(audio as HTMLButtonElement).disabled=this.sessionMuted}
     const sky=s.sky
     $('battlefield').classList.toggle('is-day',!sky.night)
     $('battlefield').classList.toggle('wave-active',s.waveActive)
     $('sky').classList.toggle('is-night',sky.night)
-    $('sky').innerHTML=`<span><i class="sky-disc" aria-hidden="true"></i>${sky.night?'Night':'Daylight'} <b>${clockText(sky.phaseLeft)}</b></span><span>${WEATHER[sky.weather].name} ${icon('caretRight')}</span>`
+    const soon=sky.phaseLeft<=10
+    $('sky').classList.toggle('sky-soon',soon)
+    $('sky').style.setProperty('--phase-progress',`${100*(1-sky.phaseLeft/(sky.night?NIGHT_SECONDS:DAY_SECONDS))}%`)
+    $('sky').innerHTML=`<span><i class="sky-disc" aria-hidden="true"></i>${soon?(sky.night?'Dawn in':'Nightfall in'):sky.night?'Night':'Daylight'} <b>${clockText(sky.phaseLeft)}</b></span><span>${sky.weatherLeft<=8?'Next: '+WEATHER[sky.nextWeather].name:WEATHER[sky.weather].name} ${icon('caretRight')}</span>`
     $('sky').setAttribute('aria-label',`${sky.night?'Night, dawn':'Daylight, nightfall'} in ${clockText(sky.phaseLeft)}. ${WEATHER[sky.weather].name}. Open sky forecast`)
     $('wave').innerHTML=`<span>${s.isChallenge?'Commission':'Wave'}</span><b>${s.wave-s.waveOffset}<small> / ${s.finalWave-s.waveOffset}</small></b>`
     $('act').textContent=ACTS[Math.min(7,Math.floor(Math.max(0,s.planningWave-1)/5))]
@@ -190,6 +203,15 @@ export class FixedApp {
     $('forecast').innerHTML=`<span class="eyebrow">${s.waveActive?'On the water':s.over?'Watch complete':'Next on the water'} ${icon('caretRight')}</span><b>${unique.slice(0,3).map(e=>ENEMIES[e].name).join(' · ')}${unique.length>3?' +'+(unique.length-3):''}</b>`
     $('board-status').textContent=this.moving!==null?'Choose an empty plot · 25 glow':s.waveActive&&this.paused?'Paused':!s.towers.length?'Tap a + to build your first tower':this.recap&&!s.waveActive?this.recap:''
     $('save-warning').textContent=storageMessage
+    if(this.drawer==='tower'){
+      $('inspector-state').textContent=s.waveActive?(this.paused?'Paused':'Live combat'):'Between waves'
+      $('inspector-glow').textContent=Math.floor(s.glow)+' glow'
+      document.querySelectorAll<HTMLButtonElement>('.live-purchase').forEach(b=>{b.disabled=s.glow<Number(b.dataset.cost)||s.planningWave<Number(b.dataset.wave)||!!s.over})
+      if(this.selection?.kind==='tower'){
+        const t=this.selection.tower
+        const reach=$('tower-reach'),damage=$('tower-damage');if(reach)reach.textContent=String(Math.round(s.effRange(t)));if(damage)damage.textContent=String(Math.round(t.damageDealt??0))
+      }
+    }
   }
   private selectPlot(i:number) {
     const s=this.sim!,p=s.pads[i];if(!p)return
@@ -206,22 +228,36 @@ export class FixedApp {
     const next=TOWER_ORDER.filter(id=>FIXED_UNLOCK[id]>s.planningWave).sort((a,b)=>FIXED_UNLOCK[a]-FIXED_UNLOCK[b])[0]
     this.show(`Build on plot ${i+1}`,`<p class="muted">${s.waveActive?'Finish this wave before building.':'Choose a role for this part of the stream.'}</p><div class="build-list">${cards}</div>${next?`<p class="small muted">${this.towerDef(next).name} arrives at wave ${FIXED_UNLOCK[next]}.</p>`:''}`,'build')
   }
+  private towerUpgrades(t:Tower){
+    const s=this.sim!,stage=stageOf(t),path=t.b?1:0
+    const buy=(action:string,label:string,cost:number,wave=0)=>`<button data-action="${action}" data-cost="${cost}" data-wave="${wave}" class="live-purchase primary wide" ${s.glow<cost||s.planningWave<wave?'disabled':''}>${label} · ${cost} glow</button>`
+    const foundation=stage===0?`<div class="foundation"><b>Start smaller</b><p class="small muted">Improve the foundation and keep both streams open.</p>${buy('upgrade:'+t.uid+':0','Improve',upgradePrice(t)!)}</div>`:''
+    const streams=t.def.paths.map((p,i)=>({p,i})).sort((a,b)=>stage>=2?Number(b.i===path)-Number(a.i===path):a.i-b.i).map(({p,i})=>{
+      const branch=i as 0|1,chosen=stage>=2&&path===i,locked=stage>=2&&!chosen
+      const specialised={...t,a:i===0?2:0,b:i===1?2:0,refinement:0,stats:s.towerStats(t.id,i===0?2:0,i===1?2:0)}
+      const mastered={...specialised,a:i===0?3:0,b:i===1?3:0,stats:s.towerStats(t.id,i===0?3:0,i===1?3:0)}
+      const foundationTower={...t,a:1,b:0,refinement:0,stats:s.towerStats(t.id,1,0)}
+      let action=locked?'<p class="stream-locked">Other stream locked</p>':stage===4?'<p class="stream-complete">Fully specialised</p>':stage<2
+        ?buy(`specialise:${t.uid}:${i}`,'Choose',s.specialiseCost(t)!)
+        :buy(`upgrade:${t.uid}:${i}`,stage===2?'Master':'Crown',upgradePrice(t)!,stage===2?16:31)
+      if(chosen&&stage<4&&s.planningWave<(stage===2?16:31))action+=`<p class="small muted">Opens at wave ${stage===2?16:31}.</p>`
+      return `<article class="upgrade-stream ${chosen?'chosen':''} ${locked?'locked':''}"><div class="stream-title"><span>${chosen?'Chosen stream':`Stream ${i+1}`}</span><h4>${p.name}</h4></div><p>${STREAMS[t.id][i]}</p>${action}<details class="stream-preview"><summary>See all upgrades</summary><ol><li class="${chosen?'complete':''}"><b>Specialise · ${Math.round(TOWERS[t.id].cost*1.3)} glow</b><small>${upgradeDetail(s,foundationTower,branch)}</small></li><li class="${chosen&&stage>=3?'complete':''}"><b>Master · ${upgradePrice(specialised)} glow · Wave 16</b><small>${upgradeDetail(s,specialised,branch)}</small></li><li class="${chosen&&stage===4?'complete':''}"><b>Crown · ${upgradePrice(mastered)} glow · Wave 31</b><small>${upgradeDetail(s,mastered,branch)}</small></li></ol></details></article>`
+    }).join('')
+    return `${stage<2?`<p class="upgrade-hint">Choose one stream. ${stage===0?'Prices include the foundation.':'The other stream will lock.'}</p>`:'<h3 class="upgrade-title">Your upgrade stream</h3>'}<div class="upgrade-streams ${stage<2?'choosing':''}">${streams}</div>${foundation}`
+  }
   private towerSheet(t:Tower) {
     const s=this.sim!,stage=stageOf(t),active=s.waveActive
+    const replacing=this.drawer==='tower',body=document.querySelector<HTMLElement>('.drawer-body'),scroll=body?.scrollTop??0,focus=(document.activeElement as HTMLElement)?.dataset.action
     this.selection={kind:'tower',tower:t}
-    const price=upgradePrice(t), gate=stage===2?16:stage===3?31:0
-    let upgrades=''
-    if(stage<4) {
-      if(stage===1) upgrades=`<p class="eyebrow">Choose one specialisation</p><div class="branch-list">${t.def.paths.map((p,i)=>button(`upgrade:${t.uid}:${i}`,`<b>${p.name}</b><small>${upgradeDetail(s,t,i as 0|1)}</small><strong>${price} glow</strong>`,'branch',active||s.glow<price!)).join('')}</div>`
-      else upgrades=button(`upgrade:${t.uid}:${t.b?1:0}`,`${STAGES[stage+1]} · ${price} glow`,'primary wide',active||s.glow<price!||s.planningWave<gate)+`<p class="small muted">${upgradeDetail(s,t,t.b?1:0)}${s.planningWave<gate?` Available at wave ${gate}.`:''}</p>`
-    }
+    const upgrades=this.towerUpgrades(t)
     const bond=s.bonds.find(b=>b.a===t.uid||b.b===t.uid),partner=bond?s.towers.find(q=>q.uid===(bond.a===t.uid?bond.b:bond.a)):null
     const partners=s.towers.filter(q=>q!==t&&bondName(t.id,q.id)&&s.sharedCoverage(t,q)&&!s.bonds.some(b=>[b.a,b.b].includes(q.uid)))
     const income=t.id==='garden'?`<p class="notice">${Math.round(t.stats.income*1.4)} glow in a daylight wave, ${Math.round(t.stats.income*.55)} at night, before rain. A mixed wave pays the time-weighted average; ${s.finalWave-s.wave} remain. Invested: ${t.spent}. Earned: ${Math.floor(t.earned)}.</p>`:''
-    this.show(t.def.name,`<div class="tower-heading"><img src="${fixedTowerIcon(t.id,t.a,t.b,t.refinement,this.sim?.challenge.hero)}" alt="${STAGES[stage]} ${t.def.name}"/><div><p class="eyebrow">${STAGES[stage]} · ${stage+1} of 5</p><h3>${stage>=2?t.def.paths[t.b?1:0].name:role[t.id]}</h3><p class="muted">${Math.round(s.effRange(t))} current reach · ${Math.round(t.damageDealt??0)} damage dealt</p></div></div>${s.challenge.hero?`<p class="notice">${HEROES[s.challenge.hero].towers[t.id].trait}</p>`:''}${income}${this.towerFacts(t)}<p class="sky-tower-note">${SKY_TOWER_HELP[t.id]}${!lamplit(t.id)?` <b>${s.sheltered(t)?'Sheltered by an Owl.':'Outside Owl shelter.'}</b>`:''}</p>${upgrades}${active?'<p class="notice">Inspect freely. Upgrades and movement happen between waves.</p>':''}
-      ${t.id!=='garden'?`<fieldset><legend>Target priority</legend><div class="segmented">${(['first','strong','last','close'] as Priority[]).map(p=>button(`priority:${t.uid}:${p}`,p==='close'?'Nearest':p[0].toUpperCase()+p.slice(1),p===t.priority?'selected':'',active)).join('')}</div></fieldset>`:''}
+    this.show(t.def.name,`<div class="tower-heading"><img src="${fixedTowerIcon(t.id,t.a,t.b,t.refinement,this.sim?.challenge.hero)}" alt="${STAGES[stage]} ${t.def.name}"/><div><p class="eyebrow">${STAGES[stage]} · ${stage+1} of 5</p><h3>${stage>=2?t.def.paths[t.b?1:0].name:role[t.id]}</h3><p class="muted"><span id="tower-reach">${Math.round(s.effRange(t))}</span> current reach · <span id="tower-damage">${Math.round(t.damageDealt??0)}</span> damage dealt</p></div></div>${upgrades}<details class="tower-details"><summary>Tower stats & sky effects</summary>${s.challenge.hero?`<p class="notice">${HEROES[s.challenge.hero].towers[t.id].trait}</p>`:''}${income}${this.towerFacts(t)}<p class="sky-tower-note">${SKY_TOWER_HELP[t.id]}${!lamplit(t.id)?` <b>${s.sheltered(t)?'Sheltered by an Owl.':'Outside Owl shelter.'}</b>`:''}</p></details>
+      ${t.id!=='garden'?`<fieldset><legend>Target priority · change any time</legend><div class="segmented">${(['first','strong','last','close'] as Priority[]).map(p=>button(`priority:${t.uid}:${p}`,p==='close'?'Nearest':p[0].toUpperCase()+p.slice(1),p===t.priority?'selected':'')).join('')}</div></fieldset>`:''}
       ${s.wave>=5?`<div class="bond-section"><h3>Tower Bond</h3>${partner?`<p><b>${bondName(t.id,partner.id)}</b> with ${partner.def.name}.</p><p class="small muted">${BOND_HELP[bondName(t.id,partner.id)!]} Activated ${bond!.activations} times.</p>${button('unbond:'+t.uid,'Remove Bond','secondary',active)}`:partners.length?`<p class="small muted">One tower per Bond. ${s.wave>=20?2:1} Bond slots available for this watch.</p>${partners.map(q=>button(`bond:${t.uid}:${q.uid}`,`${bondName(t.id,q.id)} · ${q.def.name}`,'secondary wide',active||s.bonds.length>=(s.wave>=20?2:1))).join('')}`:'<p class="small muted">A Moonbell and Cracker, or an Owl and Wickling, can bond when their ranges share the stream.</p>'}</div>`:''}
-      <div class="utility-actions">${button('move:'+t.uid,'Move · 25','secondary',active||s.glow<25)}${button('sell:'+t.uid,`Sell · ${s.sellValue(t)}`,'secondary',active||s.challenge.commission==='garden'&&t.id==='garden')}</div>`,'tower')
+      <p class="small muted">Building, moving, selling and Bonds happen between waves.</p><div class="utility-actions">${button('move:'+t.uid,'Move · 25','secondary',active||s.glow<25)}${button('sell:'+t.uid,`Sell · ${s.sellValue(t)}`,'secondary',active||s.challenge.commission==='garden'&&t.id==='garden')}</div>`,'tower')
+    if(replacing){const next=document.querySelector<HTMLElement>('.drawer-body');if(next)next.scrollTop=scroll;document.querySelector<HTMLButtonElement>(`[data-action="${focus}"]`)?.focus({preventScroll:true})}
   }
   private forecast() {
     const s=this.sim!,n=Math.min(s.finalWave,s.wave+(s.waveActive?0:1)),w=s.waveDef(n)
@@ -230,7 +266,7 @@ export class FixedApp {
   }
   private skyForecast() {
     const s=this.sim!,sky=s.sky,exposed=s.towers.filter(t=>!lamplit(t.id)&&!s.sheltered(t))
-    this.show('Plan for the sky',`<p class="lead">${sky.night?'Dawn':'Nightfall'} in ${clockText(sky.phaseLeft)}</p><div class="sky-cycle"><div class="${!sky.night?'current':''}"><b>Daylight</b><span>1m 40s</span><small>Income +40%<br>Bolt tower reach +12%</small></div><div class="${sky.night?'current':''}"><b>Night</b><span>1m 20s</span><small>Enemies 8% faster<br>Income −45%</small></div></div><h3>Be ready for night</h3><p>Scout towers shelter nearby defences. Without shelter, blast, lightning and bolt towers lose 15% reach.</p><p class="notice">${exposed.length?exposed.length+' exposed '+(exposed.length===1?'tower':'towers')+'. Check that their night reach still covers the stream.':'Your attack towers are lamplit or sheltered.'}</p><p class="small muted">Spark, chime, scout and beam towers keep their reach. Spark towers fire 12% faster at night; beams deal 12% more damage.</p><h3>${WEATHER[sky.weather].name}</h3><p>${WEATHER[sky.weather].effect}</p><p class="small muted">Next: ${WEATHER[sky.nextWeather].name} in ${clockText(sky.weatherLeft)}.</p><details class="rule-details"><summary>How the clock and income work</summary><p class="small muted">The clock runs only during combat. Planning and pausing stop it; 2× speed also speeds up the sky. Reloading or retrying keeps the same forecast.</p><p class="small muted">Harvests average the day, night and weather fought through in that wave. Waiting cannot earn extra glow.</p></details>`,'sky-forecast')
+    this.show('Plan for the sky',`<p class="lead">${sky.night?'Dawn':'Nightfall'} in ${clockText(sky.phaseLeft)}</p><div class="sky-cycle"><div class="${!sky.night?'current':''}"><b>Daylight</b><span>${clockText(DAY_SECONDS)}</span><small>Income +40%<br>Bolt tower reach +12%</small></div><div class="${sky.night?'current':''}"><b>Night</b><span>${clockText(NIGHT_SECONDS)}</span><small>Enemies 8% faster<br>Income −45%</small></div></div><h3>Be ready for night</h3><p>Scout towers shelter nearby defences. Without shelter, blast, lightning and bolt towers lose 15% reach.</p><p class="notice">${exposed.length?exposed.length+' exposed '+(exposed.length===1?'tower':'towers')+'. Check that their night reach still covers the stream.':'Your attack towers are lamplit or sheltered.'}</p><p class="small muted">Spark, chime, scout and beam towers keep their reach. Spark towers fire 12% faster at night; beams deal 12% more damage.</p><h3>${WEATHER[sky.weather].name}</h3><p>${WEATHER[sky.weather].effect}</p><p class="small muted">Next: ${WEATHER[sky.nextWeather].name} in ${clockText(sky.weatherLeft)}. Weather is checked every 30 seconds.</p><details class="rule-details"><summary>How the clock and income work</summary><p class="small muted">The clock runs only during combat, including while upgrading. Planning and pausing stop it; 2× speed also speeds up the sky. Reloading or retrying keeps the same forecast.</p><p class="small muted">Harvests average the day, night and weather fought through in that wave. Waiting cannot earn extra glow.</p></details>`,'sky-forecast')
   }
   private district() {
     const legacy=loadProgress(),settlement=Math.max(legacy.settlement??0,this.profile.settlement)
@@ -243,7 +279,7 @@ export class FixedApp {
   }
   private settings() {
     const s=this.profile.settings
-    this.show('Make yourself comfortable',`<div class="setting-list">${([['largeText','Larger text'],['reducedMotion','Reduced motion'],['muted','Mute sound'],['clearPalette','Distinct colours']] as const).map(([key,name])=>`<button data-action="setting:${key}" role="switch" aria-checked="${s[key]}"><span>${name}</span><b>${s[key]?'On':'Off'}</b></button>`).join('')}</div><p class="muted">Reduced motion stills the water, weather and tower animation and softens combat effects. Opening a panel pauses the watch. Returning from another app leaves it paused.</p><h3>District crest</h3><p class="small muted">A cosmetic detail on your towers. Your hero stays the same.</p><div class="segmented">${['lantern','ember','reed','tide'].map(g=>button('guardian:'+g,g[0].toUpperCase()+g.slice(1),this.guardian===g?'selected':'')).join('')}</div><p class="small muted">Keyboard: Tab moves between controls and plots. Enter selects. P pauses or resumes. Escape closes a panel.</p>`,'settings')
+    this.show('Make yourself comfortable',`<h3>Sound</h3>${this.sessionMuted?'<p class="notice">This playtest link is silent. Your saved sound preference is unchanged.</p>':''}<div class="setting-list">${button('setting:muted',`<span>Sound</span><b>${s.muted?'Off':'On'}</b>`,'',this.sessionMuted)}${([['music','Soundtrack & atmosphere'],['effects','Combat sounds'],['largeText','Larger text'],['reducedMotion','Reduced motion'],['clearPalette','Distinct colours']] as const).map(([key,name])=>`<button data-action="setting:${key}" role="switch" aria-checked="${s[key]}"><span>${name}</span><b>${s[key]?'On':'Off'}</b></button>`).join('')}</div><p class="muted">Reduced motion stills the water, weather and tower animation and softens combat effects. Tower upgrades keep combat running; menus pause it. Returning from another app leaves it paused and silent until you interact.</p><h3>District crest</h3><p class="small muted">A cosmetic detail on your towers. Your hero stays the same.</p><div class="segmented">${['lantern','ember','reed','tide'].map(g=>button('guardian:'+g,g[0].toUpperCase()+g.slice(1),this.guardian===g?'selected':'')).join('')}</div><p class="small muted">Keyboard: Tab moves between controls and plots. Enter selects. P pauses or resumes. Escape closes a panel.</p>`,'settings')
   }
   private menu() {const s=this.sim!;this.show('Your watch',`${button('roster',s.challenge.hero?HEROES[s.challenge.hero].name+' · View eight towers':'Original district roster','hero-roster-link secondary wide')}<p>${WATCH_NAMES[this.map]} · ${DIFFICULTY[this.difficulty].name}${this.sim?.challenge.practice?' · Practice':''}</p>${button('forecast','Wave forecast','secondary wide')}${button('sky','Day, night & weather','secondary wide')}${button('district','District & journal','secondary wide')}${button('settings','Settings','secondary wide')}${button('home','Save & return to district','secondary wide')}<p class="small muted">Waves never advance while you are away.</p>`,'menu')}
   private result() {
@@ -251,16 +287,16 @@ export class FixedApp {
     const won=s.over==='won'
     this.show(won?'The lantern is still alight':'A little light for next time',`<p class="eyebrow">${WATCH_NAMES[this.map]} · ${DIFFICULTY[s.difficulty].name}${s.challenge.practice?' · Practice':''}</p><p class="result-number">${s.wave-(won?0:1)-s.waveOffset}<small> waves held</small></p><p>${won?'The district remembers your watch.':s.lastLeak?`${ENEMIES[s.lastLeak.enemy].name} reached the lantern${s.lastLeak.armoured?' with armour remaining':''}${s.lastLeak.hidden?' while still hidden':''}. ${FIXED_TIPS[s.lastLeak.enemy]}`:'Try building around a longer shared stretch of the stream.'}</p>${won?button('rematch','Rematch this seed','primary wide'):button('retry',s.difficulty==='nightfall'?'Retry as practice':'Retry this wave','primary wide',!loadPlanning(this.slot))}${won&&!s.isChallenge?button('nextmap','Try the next waterway','secondary wide'):''}${button('home','Return to the district','secondary wide')}`,'result')
   }
-  private change(fn:()=>unknown) {
-    const s=this.sim!;if(s.waveActive||s.over)return
-    const before=s.snapshot();fn()
-    if(JSON.stringify(before)!==JSON.stringify(s.snapshot())){this.undo.push(before);if(this.undo.length>20)this.undo.shift()}
+  private change(fn:()=>unknown,live=false) {
+    const s=this.sim!;if(s.waveActive&&!live||s.over)return
+    const before=s.waveActive?null:s.snapshot();fn()
+    if(before&&JSON.stringify(before)!==JSON.stringify(s.snapshot())){this.undo.push(before);if(this.undo.length>20)this.undo.shift()}
     this.save();this.plots();this.refresh()
   }
   private action(action:string) {
     const [cmd,a,b]=action.split(':'),s=this.sim
     if(cmd==='fixture'&&import.meta.env.DEV&&['0','15','30','39','day','night'].includes(a)) {
-      void fetch(`${import.meta.env.BASE_URL}artifacts/fixed-wave-${a==='day'||a==='night'?'39':a}.json`).then(r=>r.json()).then((snap:SaveSnapshotV2)=>{this.qa=true;if(a==='day'||a==='night')snap.climate={elapsed:a==='day'?0:100,waveSeconds:0,gardenExposure:0};snap.challenge.hero=this.hero;this.begin(Sim.restore(snap))})
+      void fetch(`${import.meta.env.BASE_URL}artifacts/fixed-wave-${a==='day'||a==='night'?'39':a}.json`).then(r=>r.json()).then((snap:SaveSnapshotV2)=>{this.qa=true;if(a==='day'||a==='night')snap.climate={elapsed:a==='day'?0:DAY_SECONDS,waveSeconds:0,gardenExposure:0};snap.challenge.hero=this.hero;this.begin(Sim.restore(snap))})
       return
     }
     if(cmd==='close'){this.close();return}
@@ -276,7 +312,8 @@ export class FixedApp {
     if(cmd==='commissions'){this.commissions();return}
     if(cmd==='commission'){this.difficulty='standard';this.newWatch(a);return}
     if(cmd==='settings'){this.settings();return}
-    if(cmd==='setting'){const k=a as keyof typeof this.profile.settings;this.profile.settings[k]=!this.profile.settings[k];writeJSON('profile',this.profile);this.applySettings();this.settings();return}
+    if(cmd==='setting'){const k=a as keyof typeof this.profile.settings;if(!(k in this.profile.settings))return;this.profile.settings[k]=!this.profile.settings[k];writeJSON('profile',this.profile);this.applySettings();sound.unlock();this.settings();return}
+    if(cmd==='sound'){this.profile.settings.muted=!this.profile.settings.muted;writeJSON('profile',this.profile);this.applySettings();sound.unlock();this.refresh();return}
     if(cmd==='guardian'){this.guardian=a;this.profile.guardian=a;writeJSON('profile',this.profile);if(this.renderer)this.renderer.crest=a;this.settings();return}
     if(!s)return
     const tower=()=>s.towers.find(t=>t.uid===Number(a))!
@@ -286,8 +323,9 @@ export class FixedApp {
     if(cmd==='plot')this.selectPlot(Number(a))
     if(cmd==='unlock'){this.change(()=>s.unlockPlot(Number(a)));this.selectPlot(Number(a))}
     if(cmd==='build'){this.change(()=>s.build(Number(a),b as TowerId));const t=s.pads[Number(a)].tower;if(t){this.close();this.selection={kind:'tower',tower:t};this.recap=`${t.def.name} ready.`}}
-    if(cmd==='upgrade'){const t=tower();this.change(()=>stageOf(t)===3?s.refine(t):s.upgrade(t,Number(b) as 0|1));this.towerSheet(t)}
-    if(cmd==='priority'){const t=tower();this.change(()=>{t.priority=b as Priority});this.towerSheet(t)}
+    if(cmd==='upgrade'){const t=tower();if(t){this.change(()=>stageOf(t)===3?s.refine(t):s.upgrade(t,Number(b) as 0|1),true);this.towerSheet(t)}}
+    if(cmd==='specialise'){const t=tower();if(t){this.change(()=>s.specialise(t,Number(b) as 0|1),true);this.towerSheet(t)}}
+    if(cmd==='priority'){const t=tower();if(t){this.change(()=>{t.priority=b as Priority},true);this.towerSheet(t)}}
     if(cmd==='bond'){const t=tower();this.change(()=>s.bond(t,s.towers.find(q=>q.uid===Number(b))!));this.towerSheet(t)}
     if(cmd==='unbond'){const t=tower();this.change(()=>s.unbond(t));this.towerSheet(t)}
     if(cmd==='move'){this.moving=Number(a);this.close()}
@@ -297,7 +335,7 @@ export class FixedApp {
     if(cmd==='go') {
       if(s.over)this.result()
       else if(s.waveActive)this.paused=!this.paused
-      else if(s.towers.length) {this.writePlanning(s.snapshot());this.undo=[];this.recap='';this.selection=null;if(s.startWave()){this.paused=false;$('live').textContent=`Wave ${s.wave-s.waveOffset} begins.`;this.save()}}
+      else if(s.towers.length) {this.writePlanning(s.snapshot());this.undo=[];this.recap='';if(this.drawer!=='tower')this.selection=null;if(s.startWave()){this.paused=false;$('live').textContent=`Wave ${s.wave-s.waveOffset} begins.`;this.save();if(this.drawer==='tower'&&this.selection?.kind==='tower')this.towerSheet(this.selection.tower)}}
     }
     if(cmd==='retry'){const p=loadPlanning(this.slot);if(p){p.challenge.practice ||=s.difficulty==='nightfall';p.stats.retries=(s.stats.retries??0)+1;this.begin(Sim.restore(p));this.save()}}
     if(cmd==='rematch')this.newWatch(s.challenge.commission,s.seed)
@@ -306,12 +344,12 @@ export class FixedApp {
   }
   private key(e:KeyboardEvent) {
     if(e.key==='Escape'){if(this.drawer)this.close();else{this.moving=null;this.paused=true;this.refresh()}return}
-    if(this.drawer&&e.key==='Tab') {
+    if(this.panelPauses&&e.key==='Tab') {
       const all=[...document.querySelectorAll<HTMLElement>('.drawer button:not(:disabled), .drawer summary, .drawer a[href], .drawer [tabindex="0"]')],first=all[0],last=all[all.length-1]
       if(e.shiftKey&&document.activeElement===first){e.preventDefault();last?.focus()}
       else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first?.focus()}
     }
-    if(e.code==='KeyP'&&!this.drawer&&this.sim){e.preventDefault();this.action('go');return}
+    if(e.code==='KeyP'&&!this.panelPauses&&this.sim){e.preventDefault();this.action('go');return}
     if(e.code==='Space'&&!this.drawer&&this.sim&&!(document.activeElement instanceof HTMLButtonElement)){e.preventDefault();this.action('go')}
   }
   private writePlanning(snapshot:SaveSnapshotV2) {if(!this.qa)writeJSON(this.slot+'.planning',snapshot)}
@@ -320,7 +358,7 @@ export class FixedApp {
     const dt=Math.min(.1,(now-(this.lastFrame||now))/1000);this.lastFrame=now
     const s=this.sim,r=this.renderer
     if(s&&r) {
-      if(!this.paused&&!this.drawer&&!s.over){this.accumulator+=dt*this.speed;while(this.accumulator>=DT){s.step(DT);this.accumulator-=DT}}
+      if(!this.paused&&!this.panelPauses&&!s.over){this.accumulator+=dt*this.speed;while(this.accumulator>=DT){s.step(DT);this.accumulator-=DT}}
       else this.accumulator=0
       for(const e of s.events) {
         if(e.t==='waveEnd') {
@@ -329,17 +367,19 @@ export class FixedApp {
           this.recap=`Wave ${e.n-s.waveOffset} held · +${e.bonus+e.income} glow${top?` · ${this.towerDef(top[0] as TowerId).name} led damage`:''}`
           this.paused=true;if(!this.qa)recordWatch(this.profile,s);r.settlement=Math.max(r.settlement,this.profile.settlement);this.plots();$('live').textContent=this.recap
           this.save()
+          if(this.drawer==='tower'&&this.selection?.kind==='tower')this.towerSheet(this.selection.tower)
         }
         if(e.t==='defeat'||e.t==='victory'){if(!this.qa)recordWatch(this.profile,s);this.save()}
       }
       r.handleEvents(s)
-      r.draw(s,dt,{selection:this.selection,preview:null,armed:null,hint:null,paused:this.paused||!!this.drawer})
+      r.draw(s,dt,{selection:this.selection,preview:null,armed:null,hint:null,paused:this.paused||this.panelPauses})
       if(s.over&&!this.endShown)this.result()
       const key=`${s.glow}:${s.lives}:${s.wave}:${s.waveActive}:${this.paused}:${Math.floor(s.climate.elapsed)}`
       if(key!==this.lastHUD){this.lastHUD=key;this.refresh()}
       if(now-this.lastSave>5000){this.lastSave=now;this.save()}
-      sound.tick(dt,this.paused?0:Math.min(1,s.enemies.length/30))
     }
+    // Title music also starts on the first gesture. Hidden tabs never schedule audio.
+    if(!document.hidden)sound.tick(dt,s&&!this.paused&&!this.panelPauses?Math.min(1,s.enemies.length/30):0,s?.sky)
     requestAnimationFrame(t=>this.frame(t))
   }
 }

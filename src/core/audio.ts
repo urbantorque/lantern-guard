@@ -20,6 +20,11 @@ export interface AudioSettings {
   ambience: number
   muted: boolean
 }
+export interface AudioScene { night:boolean; weather:'clear'|'rain'|'mist'|'breeze' }
+/** A silent test URL overrides this session without changing saved preferences. */
+export const profileSound=(prefs:{muted:boolean;music:boolean;effects:boolean},silent=false):AudioSettings=>({
+  sfx:prefs.effects?.7:0,music:prefs.music?.6:0,ambience:prefs.music?.35:0,muted:silent||prefs.muted,
+})
 
 type Rate = { last: number; count: number }
 
@@ -33,8 +38,10 @@ export class Sound {
   private beamOsc: OscillatorNode | null = null
   private beamGain: GainNode | null = null
   private rates = new Map<string, Rate>()
-  private musicTimer = 0
+  private musicNext = 0
   private musicStep = 0
+  private musicNight:boolean|undefined
+  private weatherGain:GainNode|null=null
   private ambienceStarted = false
   private popCombo = 0
   private popComboAt = 0
@@ -42,11 +49,12 @@ export class Sound {
 
   /** Must be called from a user gesture (iOS). Safe to call repeatedly. */
   suspend() {
+    if(this.beamGain&&this.ctx)this.beamGain.gain.setValueAtTime(0,this.ctx.currentTime)
     if (this.ctx?.state === 'running') void this.ctx.suspend().catch(() => {})
   }
 
   unlock() {
-    if (this.settings.muted) return
+    if (this.settings.muted || typeof document!=='undefined'&&document.hidden) return
     if (!this.ctx) {
       const AC = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
       if (!AC) return
@@ -82,16 +90,17 @@ export class Sound {
     const m = this.settings.muted ? 0 : 1
     this.master.gain.setTargetAtTime(m * 0.9, t, 0.05)
     this.sfxBus.gain.setTargetAtTime(this.settings.sfx, t, 0.05)
-    this.musicBus.gain.setTargetAtTime(this.settings.music * 0.5, t, 0.05)
+    this.musicBus.gain.setTargetAtTime(this.settings.music * 0.8, t, 0.05)
     this.ambBus.gain.setTargetAtTime(this.settings.ambience * 0.5, t, 0.05)
   }
 
+  private get audible(){return !!this.ctx&&this.ctx.state==='running'&&!this.settings.muted&&!(typeof document!=='undefined'&&document.hidden)}
   private ok(key: string, maxPerSec: number): boolean {
-    if (!this.ctx || this.ctx.state !== 'running' || this.settings.muted) return false
-    const now = this.ctx.currentTime
+    if (!this.audible) return false
+    const now = this.ctx!.currentTime
     let r = this.rates.get(key)
     if (!r) {
-      r = { last: now, count: 0 }
+      r = { last: -Infinity, count: 0 }
       this.rates.set(key, r)
     }
     if (now - r.last > 1 / maxPerSec) {
@@ -171,8 +180,29 @@ export class Sound {
   }
 
   spark() {
-    if (!this.ok('spark', 14)) return
-    this.noise(0.03, 'bandpass', 5200 + Math.random() * 800, 3, 0.035)
+    if (!this.ok('spark', 10)) return
+    const {o,t}=this.tone(scaleNote(8),'triangle',.002,.075,.1)
+    o.frequency.exponentialRampToValueAtTime(scaleNote(5),t+.07)
+    this.noise(.025,'bandpass',4200,2,.06)
+  }
+
+  impact(heavy=false){
+    if(!this.ok('impact',9))return
+    const {o,t}=this.tone(heavy?260:740,'sine',.002,.07,heavy?.11:.06)
+    o.frequency.exponentialRampToValueAtTime(heavy?90:370,t+.065)
+    this.noise(.022,'bandpass',heavy?900:2200,1,.055)
+  }
+  zap(){
+    if(!this.ok('zap',6))return
+    const {o,t}=this.tone(460,'triangle',.002,.13,.1)
+    o.frequency.exponentialRampToValueAtTime(140,t+.12)
+    this.noise(.09,'bandpass',2600,2,.12)
+  }
+  bolt(){
+    if(!this.ok('bolt',5))return
+    const {o,t}=this.tone(190,'triangle',.003,.16,.17)
+    o.frequency.exponentialRampToValueAtTime(65,t+.15)
+    this.noise(.055,'bandpass',1200,1,.15)
   }
 
   launch() {
@@ -216,7 +246,7 @@ export class Sound {
 
   /** Continuous lighthouse hum; intensity 0..1 set every frame. */
   beam(intensity: number) {
-    if (!this.ctx) return
+    if (!this.ctx || !this.beamOsc&&intensity<=0) return
     if (!this.beamOsc) {
       const ctx = this.ctx
       this.beamOsc = ctx.createOscillator()
@@ -247,25 +277,25 @@ export class Sound {
   }
 
   gate() {
-    if (!this.ctx) return
+    if (!this.audible) return
     this.noise(0.04, 'bandpass', 1100, 4, 0.35)
     this.noise(0.05, 'bandpass', 700, 4, 0.28, 0.07)
     const { o } = this.tone(140, 'sine', 0.002, 0.1, 0.3, undefined, 0.07)
-    o.frequency.exponentialRampToValueAtTime(90, this.ctx.currentTime + 0.2)
+    o.frequency.exponentialRampToValueAtTime(90, this.ctx!.currentTime + 0.2)
     const n = this.noise(0.35, 'lowpass', 500, 0.7, 0.09, 0.05)
     n.f.frequency.exponentialRampToValueAtTime(1600, n.t + 0.3)
   }
 
   build() {
-    if (!this.ctx) return
+    if (!this.audible) return
     const { o } = this.tone(220, 'sine', 0.002, 0.16, 0.35)
-    o.frequency.exponentialRampToValueAtTime(110, this.ctx.currentTime + 0.14)
+    o.frequency.exponentialRampToValueAtTime(110, this.ctx!.currentTime + 0.14)
     this.noise(0.06, 'lowpass', 900, 1, 0.2)
     for (let i = 0; i < 3; i++) this.tone(scaleNote(12 + i * 2), 'sine', 0.002, 0.18, 0.06, undefined, 0.08 + i * 0.05)
   }
 
   upgrade(tier = 1) {
-    if (!this.ctx) return
+    if (!this.audible) return
     const n = 3 + tier
     for (let i = 0; i < n; i++) this.tone(scaleNote(7 + i * 2), i === n - 1 ? 'triangle' : 'sine', 0.003, 0.3, 0.08, undefined, i * 0.055)
     const s = this.noise(0.5, 'highpass', 5000, 0.5, 0.05, 0.05)
@@ -273,7 +303,7 @@ export class Sound {
   }
 
   sell() {
-    if (!this.ctx) return
+    if (!this.audible) return
     for (let i = 0; i < 4; i++) this.tone(scaleNote(12 - i * 2), 'sine', 0.002, 0.14, 0.06, undefined, i * 0.05)
   }
 
@@ -287,23 +317,23 @@ export class Sound {
   }
 
   waveStart() {
-    if (!this.ctx) return
+    if (!this.audible) return
     this.tone(scaleNote(0, 50), 'triangle', 0.08, 0.9, 0.08)
     this.tone(scaleNote(3, 50), 'triangle', 0.08, 0.9, 0.06, undefined, 0.02)
     this.gate()
   }
 
   waveClear() {
-    if (!this.ctx) return
+    if (!this.audible) return
     const chord = [0, 2, 4, 5, 7]
     chord.forEach((c, i) => this.tone(scaleNote(c + 5), 'sine', 0.004, 1.2, 0.08, undefined, i * 0.07))
     chord.forEach((c, i) => this.tone(scaleNote(c + 10), 'triangle', 0.004, 0.6, 0.025, undefined, 0.2 + i * 0.07))
   }
 
   bossRoar() {
-    if (!this.ctx) return
+    if (!this.audible) return
     const { o, g } = this.tone(55, 'sawtooth', 0.4, 2.2, 0.16)
-    o.frequency.exponentialRampToValueAtTime(38, this.ctx.currentTime + 2.4)
+    o.frequency.exponentialRampToValueAtTime(38, this.ctx!.currentTime + 2.4)
     void g
     this.noise(1.8, 'lowpass', 240, 1, 0.2, 0.1)
   }
@@ -320,14 +350,14 @@ export class Sound {
   }
 
   victory() {
-    if (!this.ctx) return
+    if (!this.audible) return
     const seq = [0, 2, 4, 5, 7, 9, 10]
     seq.forEach((c, i) => this.tone(scaleNote(c + 5), 'triangle', 0.005, 0.8, 0.08, undefined, i * 0.11))
     seq.forEach((c, i) => this.tone(scaleNote(c), 'sine', 0.01, 1.4, 0.05, undefined, 0.6 + i * 0.02))
   }
 
   defeat() {
-    if (!this.ctx) return
+    if (!this.audible) return
     ;[5, 3, 1, 0].forEach((c, i) => this.tone(scaleNote(c, 50), 'triangle', 0.02, 0.9, 0.08, undefined, i * 0.28))
   }
 
@@ -361,35 +391,43 @@ export class Sound {
     src.start()
     lfo.start()
     lfo2.start()
+    const weather=ctx.createBufferSource(),filter=ctx.createBiquadFilter()
+    weather.buffer=this.noiseBuf;weather.loop=true;filter.type='bandpass';filter.frequency.value=1800;filter.Q.value=.5
+    this.weatherGain=ctx.createGain();this.weatherGain.gain.value=.001
+    weather.connect(filter).connect(this.weatherGain).connect(this.ambBus);weather.start()
   }
 
-  /** Called every frame with dt; drives crickets and the generative kalimba. */
-  tick(dt: number, intensity: number) {
-    if (!this.ctx || this.ctx.state !== 'running' || this.settings.muted) return
-    // crickets
-    if (Math.random() < dt * 0.6) {
+  /** A composed four-bar motif, with a quieter minor arrangement after dusk. */
+  tick(dt: number, intensity: number, scene:AudioScene={night:false,weather:'clear'}) {
+    if (!this.audible) return
+    const ctx=this.ctx!,now=ctx.currentTime
+    this.weatherGain?.gain.setTargetAtTime(scene.weather==='rain'?.09:scene.weather==='breeze'?.035:.001,now,.7)
+    if (scene.night && Math.random() < dt * 0.4) {
       const f = 4200 + Math.random() * 900
       for (let i = 0; i < 3; i++) this.tone(f, 'sine', 0.002, 0.02, 0.012, this.ambBus, i * 0.045)
     }
-    // music: soft kalimba plucks on a slow grid, density rises with intensity
-    this.musicTimer -= dt
-    if (this.musicTimer <= 0) {
-      this.musicTimer = 0.42
-      this.musicStep++
-      const bar = Math.floor(this.musicStep / 8) % 4
-      const roots = [0, 3, 4, 2]
-      const root = roots[bar]
-      const beat = this.musicStep % 8
-      if (beat === 0) {
-        this.tone(scaleNote(root, 38), 'sine', 0.3, 3.2, 0.09, this.musicBus)
-        this.tone(scaleNote(root + 2, 38), 'sine', 0.3, 3.2, 0.05, this.musicBus)
+    if(this.musicNight!==scene.night){this.musicNight=scene.night;this.musicStep=0;this.musicNext=now}
+    if(this.settings.music<=0){this.musicNext=now;return}
+    // Audio-clock lookahead keeps a steady rhythm at different frame rates.
+    // Never catch up a backlog after returning from a background tab.
+    if(this.musicNext<now-.2)this.musicNext=now
+    while(this.musicNext<now+.12){
+      const when=Math.max(0,this.musicNext-now),beat=this.musicStep%16,bar=Math.floor(this.musicStep/16)%4
+      const root=(scene.night?[59,55,62,57]:[62,57,59,55])[bar],minor=root===59,third=minor?3:4
+      if(beat===0){
+        this.tone(mtof(root-24),'sine',.06,2.5,.15,this.musicBus,when)
+        for(const note of [0,third,7])this.tone(mtof(root-12+note),'triangle',.24,3,.038,this.musicBus,when)
       }
-      const p = 0.35 + intensity * 0.35
-      if (Math.random() < p) {
-        const idx = root + [0, 2, 4, 5, 7][Math.floor(Math.random() * 5)]
-        this.tone(scaleNote(idx, 62), 'triangle', 0.004, 0.9, 0.05, this.musicBus)
-        this.tone(scaleNote(idx, 62) * 2, 'sine', 0.002, 0.3, 0.015, this.musicBus)
+      const motif=minor?[0,3,7,10,7,3,2,7]:[0,4,7,12,9,7,4,2]
+      if(beat%2===0){
+        const freq=mtof(root+motif[beat/2])
+        this.tone(freq,'triangle',.007,scene.night?1.1:.7,.12,this.musicBus,when)
+        this.tone(freq*2,'sine',.003,.3,.019,this.musicBus,when+.008)
       }
+      const arp=[0,7,third,7][beat%4]
+      this.tone(mtof(root+arp-12),'sine',.005,.3,.035+intensity*.015,this.musicBus,when)
+      if(intensity>.15&&beat%4===0)this.noise(.05,'lowpass',350,.8,.045*intensity,when,this.musicBus)
+      this.musicStep++;this.musicNext+=scene.night?.34:.3
     }
   }
 }

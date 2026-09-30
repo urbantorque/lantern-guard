@@ -1,9 +1,10 @@
 import type { TowerId } from './defs'
 
 /** Only active combat advances the sky. A pause never creates income or rerolls weather. */
-export const DAY_SECONDS = 100
-export const NIGHT_SECONDS = 80
-export const WEATHER_SECONDS = 45
+// Keep the original 5:4 light ratio, so quicker cycles don't buff Garden income.
+export const DAY_SECONDS = 60
+export const NIGHT_SECONDS = 48
+export const WEATHER_SECONDS = 30
 export type Weather = 'clear' | 'rain' | 'mist' | 'breeze'
 export interface ClimateState { elapsed:number; waveSeconds:number; gardenExposure:number }
 export interface Sky {

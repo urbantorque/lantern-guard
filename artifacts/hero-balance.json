@@ -78,7 +78,7 @@
     "seed": 1047,
     "won": true,
     "wave": 40,
-    "light": 17
+    "light": 25
   },
   {
     "hero": "sol",
@@ -87,7 +87,7 @@
     "seed": 4099,
     "won": true,
     "wave": 40,
-    "light": 16
+    "light": 24
   },
   {
     "hero": "sol",
@@ -96,7 +96,7 @@
     "seed": 1047,
     "won": true,
     "wave": 40,
-    "light": 6
+    "light": 15
   },
   {
     "hero": "sol",
@@ -105,7 +105,7 @@
     "seed": 4099,
     "won": true,
     "wave": 40,
-    "light": 3
+    "light": 15
   },
   {
     "hero": "sol",
@@ -294,7 +294,7 @@
     "seed": 1047,
     "won": true,
     "wave": 40,
-    "light": 13
+    "light": 15
   },
   {
     "hero": "mira",
@@ -303,25 +303,25 @@
     "seed": 4099,
     "won": true,
     "wave": 40,
-    "light": 14
+    "light": 1
   },
   {
     "hero": "mira",
     "map": 1,
     "mode": "nightfall",
     "seed": 1047,
-    "won": true,
-    "wave": 40,
-    "light": 4
+    "won": false,
+    "wave": 14,
+    "light": 0
   },
   {
     "hero": "mira",
     "map": 1,
     "mode": "nightfall",
     "seed": 4099,
-    "won": true,
-    "wave": 40,
-    "light": 4
+    "won": false,
+    "wave": 14,
+    "light": 0
   },
   {
     "hero": "mira",
@@ -402,7 +402,7 @@
     "seed": 1047,
     "won": true,
     "wave": 40,
-    "light": 23
+    "light": 25
   },
   {
     "hero": "mira",
@@ -411,7 +411,7 @@
     "seed": 4099,
     "won": true,
     "wave": 40,
-    "light": 23
+    "light": 25
   },
   {
     "hero": "mira",
@@ -510,7 +510,7 @@
     "seed": 1047,
     "won": true,
     "wave": 40,
-    "light": 8
+    "light": 12
   },
   {
     "hero": "ivo",
@@ -519,7 +519,7 @@
     "seed": 4099,
     "won": true,
     "wave": 40,
-    "light": 8
+    "light": 10
   },
   {
     "hero": "ivo",
@@ -535,9 +535,9 @@
     "map": 1,
     "mode": "nightfall",
     "seed": 4099,
-    "won": true,
-    "wave": 40,
-    "light": 3
+    "won": false,
+    "wave": 15,
+    "light": 0
   },
   {
     "hero": "ivo",
@@ -627,7 +627,7 @@
     "seed": 4099,
     "won": true,
     "wave": 40,
-    "light": 23
+    "light": 25
   },
   {
     "hero": "ivo",
