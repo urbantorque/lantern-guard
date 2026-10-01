@@ -46,10 +46,10 @@
 .board-status{position:absolute;top:55px;left:50%;right:auto;transform:translateX(-50%);max-width:90%;width:max-content;font-size:12px;padding:6px 10px}.map-caption{font-size:11px;bottom:7px;left:16px;right:16px}
 .sound-toggle{display:flex;align-items:center;gap:6px;padding:8px;min-height:44px;min-width:44px;font-size:11px;white-space:nowrap;color:var(--gold)}.sound-toggle svg{width:18px;height:18px}.wave-stat{white-space:nowrap}
 .game.inspecting{padding-bottom:env(safe-area-inset-bottom);grid-template-columns:minmax(0,1fr) 296px;grid-template-rows:56px minmax(0,1fr) 76px}
-.drawer.tower{width:280px;right:max(8px,calc((100vw - 1800px)/2 + 8px));top:64px;bottom:84px;left:auto;border-radius:10px;box-shadow:none;background:#283f4d;max-height:none;height:auto;padding-bottom:0}
-.drawer.tower>header{padding:4px 8px 4px 12px;min-height:48px;flex-shrink:0;gap:4px}.drawer.tower h2{font-size:17px;letter-spacing:-.025em}.drawer.tower .icon-button{border:0}.drawer.tower .icon-button svg{width:19px;height:19px}
+.drawer.live-panel{width:280px;right:max(8px,calc((100vw - 1800px)/2 + 8px));top:64px;bottom:84px;left:auto;border-radius:10px;box-shadow:none;background:#283f4d;max-height:none;height:auto;padding-bottom:0}
+.drawer.live-panel>header{padding:4px 8px 4px 12px;min-height:48px;flex-shrink:0;gap:4px}.drawer.live-panel h2{font-size:17px;letter-spacing:-.025em}.drawer.live-panel .icon-button{border:0}.drawer.live-panel .icon-button svg{width:19px;height:19px}
 .inspector-toolbar{display:flex;justify-content:space-between;padding:6px 12px;font-size:10px;line-height:1.3;color:#b8cfcf;background:#213744}.inspector-toolbar b{font-weight:500;color:#ebd6a5;font-variant-numeric:tabular-nums}
-.drawer.tower .drawer-body{padding:10px 12px;min-height:0}.tower .tower-heading{gap:8px;margin:0 0 10px}.tower .tower-heading img{width:42px;height:48px}.tower .tower-heading .eyebrow{font-size:9px;letter-spacing:.04em;margin-bottom:4px}.tower .tower-heading p:last-child{font-size:10px;margin:5px 0 0}.tier-pips{display:flex;gap:4px}.tier-pips i{width:18px;height:3px;background:#526979;border-radius:2px}.tier-pips .filled{background:#f4cf87}
+.drawer.live-panel .drawer-body{padding:10px 12px;min-height:0}.tower .tower-heading{gap:8px;margin:0 0 10px}.tower .tower-heading img{width:42px;height:48px}.tower .tower-heading .eyebrow{font-size:9px;letter-spacing:.04em;margin-bottom:4px}.tower .tower-heading p:last-child{font-size:10px;margin:5px 0 0}.tier-pips{display:flex;gap:4px}.tier-pips i{width:18px;height:3px;background:#526979;border-radius:2px}.tier-pips .filled{background:#f4cf87}
 .upgrade-hint{font-size:11px;line-height:1.4;color:#b8cfcf;margin:0 0 9px}.quick-branches{display:grid;grid-template-columns:1fr 1fr;gap:8px}.quick-branches article{display:flex;flex-direction:column;min-width:0;padding:9px 8px 0;border:1px solid #617881;border-radius:7px;background:#254550}.quick-branches h3{font-size:14px;line-height:1.15;color:#f5dcaa;margin:0 0 6px}.quick-branches p{font-size:11px;line-height:1.45;color:#c9dddd;margin:0 0 8px;flex:1}
 .live-purchase{display:flex;justify-content:space-between;gap:5px;align-items:center;min-height:44px;width:100%;padding:8px;font-size:12px}.live-purchase b{font-variant-numeric:tabular-nums;font-weight:650}.live-purchase:disabled{opacity:.6}
 .upgrade-caption{display:flex;align-items:baseline;justify-content:space-between;gap:6px}.upgrade-caption b{font-size:17px;font-weight:550;color:#f8d993}.upgrade-caption span{font-size:10px;color:#b8cfcf}.specialised-upgrade>p{font-size:12px;line-height:1.45;margin:7px 0 12px;color:#d2e4df}.specialised-upgrade .live-purchase{font-size:13px}
@@ -61,12 +61,43 @@
   .hud{gap:8px;padding:4px 10px}.stat b{font-size:17px}.sound-toggle{padding:10px}.sound-toggle span{display:none}.wave-stat{gap:4px}
   .playbar{display:flex;flex-direction:column;align-items:stretch;gap:4px;padding:5px 10px 8px}.wave-brief{flex:none;min-height:37px}.forecast-button{min-height:34px}.forecast-button b{font-size:11px}.wave-recap{font-size:10px}.wave-recap:not(:empty){margin-top:-2px}.play-actions{gap:5px}.play-actions button{padding:8px 9px;font-size:11px}.play-actions .primary{min-width:0;flex:1}.play-actions [data-action=undo]{display:none}
   .sky-strip{left:10px;max-width:calc(100% - 20px);width:100%;font-size:10px}.map-caption{font-size:10px}
-  .game.inspecting{padding-bottom:clamp(190px,29svh,240px)}.game.inspecting .playbar{grid-row:3}.drawer.tower{left:0;right:0;top:auto;bottom:0;width:100%;height:clamp(190px,29svh,240px);max-height:clamp(190px,29svh,240px);border-radius:12px 12px 0 0;padding-bottom:env(safe-area-inset-bottom)}
-  .drawer.tower>header{min-height:44px;padding:0 8px 0 12px}.drawer.tower h2{font-size:16px}.inspector-toolbar{display:none}.drawer.tower .drawer-body{padding:7px 12px}.tower .tower-heading{display:none}.quick-branches{gap:8px}.quick-branches article{padding:8px}.quick-branches h3{font-size:14px}.quick-branches p{font-size:11px;margin-bottom:6px}.quick-branches .upgrade-preview{display:none}.upgrade-hint{font-size:10px;margin-bottom:6px}.foundation-quick{margin:6px 0}.tower-details{margin-top:4px}.specialised-upgrade .upgrade-preview{margin-top:0}.specialised-upgrade .upgrade-caption b{font-size:16px}
+  .game.inspecting{padding-bottom:clamp(216px,29svh,240px)}.game.inspecting .playbar{grid-row:3}.drawer.live-panel{left:0;right:0;top:auto;bottom:0;width:100%;height:clamp(216px,29svh,240px);max-height:clamp(216px,29svh,240px);border-radius:12px 12px 0 0;padding-bottom:env(safe-area-inset-bottom)}
+  .drawer.live-panel>header{min-height:44px;padding:0 8px 0 12px}.drawer.live-panel h2{font-size:16px}.inspector-toolbar{display:none}.drawer.live-panel .drawer-body{padding:7px 12px}.tower .tower-heading{display:none}.quick-branches{gap:8px}.quick-branches article{padding:8px}.quick-branches h3{font-size:14px}.quick-branches p{font-size:11px;margin-bottom:6px}.quick-branches .upgrade-preview{display:none}.upgrade-hint{font-size:10px;margin-bottom:6px}.foundation-quick{margin:6px 0}.tower-details{margin-top:4px}.specialised-upgrade .upgrade-preview{margin-top:0}.specialised-upgrade .upgrade-caption b{font-size:16px}
 }
 @media(orientation:landscape) and (max-height:500px){
-  .game,.game.inspecting{grid-template-rows:48px minmax(0,1fr) 60px}.game.inspecting{grid-template-columns:minmax(0,1fr) 248px}.drawer.tower{width:236px;right:6px;top:54px;bottom:66px}.hud{padding:2px 12px;gap:12px}.playbar{padding:5px 10px}.sky-strip{min-height:32px;top:5px;width:280px;font-size:10px}.board-status{top:42px}.map-caption{font-size:9px}.tower .tower-heading{display:none}.tower .quick-branches{grid-template-columns:1fr}.sound-toggle span{display:none}.wave-recap{font-size:10px}
+  .game,.game.inspecting{grid-template-rows:48px minmax(0,1fr) 60px}.game.inspecting{grid-template-columns:minmax(0,1fr) 248px}.drawer.live-panel{width:236px;right:6px;top:54px;bottom:66px}.hud{padding:2px 12px;gap:12px}.playbar{padding:5px 10px}.sky-strip{min-height:32px;top:5px;width:280px;font-size:10px}.board-status{top:42px}.map-caption{font-size:9px}.tower .tower-heading{display:none}.tower .quick-branches{grid-template-columns:1fr}.sound-toggle span{display:none}.wave-recap{font-size:10px}
 }
-.large-text .drawer.tower p,.large-text .drawer.tower small{font-size:14px}.large-text .drawer.tower h2{font-size:20px}.large-text .live-purchase{font-size:15px}.large-text .upgrade-preview summary,.large-text .tower-details summary{font-size:13px}
-@media(min-width:1000px) and (min-height:501px){.drawer.tower{bottom:auto;max-height:calc(100svh - 148px)}}
+.large-text .drawer.live-panel p,.large-text .drawer.live-panel small{font-size:14px}.large-text .drawer.live-panel h2{font-size:20px}.large-text .live-purchase{font-size:15px}.large-text .upgrade-preview summary,.large-text .tower-details summary{font-size:13px}
+@media(min-width:1000px) and (min-height:501px){.drawer.live-panel{bottom:auto;max-height:calc(100svh - 148px)}}
 @media(min-width:800px) and (max-height:500px){.sky-strip{position:fixed;z-index:3;top:7px;left:180px;width:260px;max-width:calc(100vw - 480px)}}
+
+/* A single continuous watch leaves room for the water, not transport controls. */
+.game,.game.inspecting{grid-template-rows:56px minmax(0,1fr) 64px}
+.hud{background:#172e40;border-bottom-color:#446575}.playbar{background:#172e40;border-color:#456879}
+.watch-flow{width:190px;flex-shrink:0;display:flex;flex-direction:column;gap:8px;font-size:12px;color:#f9d89c;font-variant-numeric:tabular-nums}
+.wave-progress{height:4px;border-radius:4px;background:#365669;overflow:hidden}.wave-progress i{display:block;width:var(--wave-progress,0%);height:100%;background:linear-gradient(90deg,#73d8c0,#ffdf99);transition:width .35s ease}
+.drawer.live-panel{background:linear-gradient(145deg,#254955,#1c3349);border-color:#65878b;bottom:72px}
+.drawer.live-panel>header{background:#183243aa}.drawer.live-panel h2{font-weight:600}
+.drawer.live-panel .drawer-body>p,.drawer.live-panel .drawer-body>.muted{font-size:12px;line-height:1.5}
+.quick-branches article{background:#153340;border-color:#597d86;padding:9px 8px;gap:3px}
+.quick-branches h3{font-size:13px;line-height:1.25;margin-bottom:4px}
+.upgrade-benefits{padding:0;margin:4px 0 10px;list-style:none;font-size:11px;line-height:1.5;color:#dceee7;flex:1}
+.upgrade-benefits li+li{margin-top:4px}.upgrade-preview{margin-top:0}.quick-branches .upgrade-preview{order:3}
+.quick-branches .live-purchase{font-size:11px}.live-purchase small{font-size:10px;font-weight:400}.quick-branches .live-purchase small{display:none}
+.specialised-upgrade .upgrade-benefits{padding:8px 0;font-size:12px}.specialised-upgrade .upgrade-caption b{font-size:15px}
+.tower-heading img{filter:drop-shadow(0 3px 4px #0004)}
+.build-list{gap:7px}.build-card{min-height:70px;padding:6px;gap:6px;background:#193440;border-color:#4c707b}.build-card img{width:48px;height:56px}.build-card b{font-size:13px}.build-card small{font-size:10px;line-height:1.4}.build-card>strong{font-size:14px}
+.wave-active .plot-hit.is-empty:not(:hover):not(:focus-visible) .plot-marker{opacity:.76}
+.boss-status{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);width:220px;max-width:80%;display:flex;justify-content:space-between;gap:12px;overflow:hidden;background:#192b49ef;border:1px solid #be9de0;border-radius:6px;padding:8px 10px 10px;color:#f3defc;font-size:11px;pointer-events:none}
+.boss-status[hidden]{display:none}.boss-status b{font-weight:500;font-variant-numeric:tabular-nums}.boss-status i{position:absolute;left:0;bottom:0;height:3px;background:linear-gradient(90deg,#ce83de,#ffc29e);transition:width .15s linear}
+@media(min-width:1000px) and (min-height:501px){.drawer.live-panel{bottom:auto;max-height:calc(100svh - 136px)}}
+@media(max-width:999px) and (orientation:portrait){
+ .game,.game.inspecting{grid-template-rows:52px minmax(0,1fr) 66px}.playbar{flex-direction:row;align-items:center;gap:12px;padding:5px 10px}.wave-brief{flex:1;min-width:0}.watch-flow{width:106px;font-size:10px;gap:7px}.forecast-button{min-height:44px}.wave-recap{display:none}
+ .drawer.live-panel{bottom:0}.drawer.live-panel .drawer-body{padding:8px 12px}.quick-branches .upgrade-preview{display:block}.quick-branches .upgrade-preview summary{font-size:10px;min-height:36px}.quick-branches .upgrade-benefits{margin-bottom:7px}.quick-branches .live-purchase{min-height:44px}
+ .build-list{grid-template-columns:1fr 1fr}.build-card{flex-wrap:wrap;gap:4px}.build-card img{width:36px;height:42px}.build-card>span{min-width:76px}.build-card>strong{width:100%;display:flex;gap:4px;justify-content:flex-end}.build-card>strong small{margin:0}.boss-status{bottom:28px;font-size:10px;width:190px}
+}
+@media(orientation:landscape) and (max-height:500px){.game,.game.inspecting{grid-template-rows:48px minmax(0,1fr) 52px}.drawer.live-panel{bottom:58px}.watch-flow{width:154px;font-size:11px}.boss-status{bottom:22px;width:180px;padding:5px 8px 8px;font-size:10px}}
+@media(prefers-reduced-motion:reduce){.wave-progress i,.boss-status i{transition:none}}.reduced-motion .wave-progress i,.reduced-motion .boss-status i{transition:none}
+
+@media(max-width:999px) and (orientation:portrait){.drawer.build .drawer-body>p:first-child{display:none}}
+summary:focus-visible{outline:3px solid var(--gold);outline-offset:2px;border-radius:4px}button,summary{-webkit-tap-highlight-color:#ffd18a33}

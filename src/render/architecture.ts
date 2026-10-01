@@ -8,14 +8,18 @@ export function block(c:CanvasRenderingContext2D,x:number,y:number,w:number,d:nu
   if(daylight.get(c)){if(front===CITY.front)front='#487f94';if(roof===CITY.roof)roof='#c1ded8';if(side===CITY.side)side='#305866'}
   const dx=d*.45,dy=d*.45
   polygon(c,[[x-w/2,y-h],[x+w/2,y-h],[x+w/2,y],[x-w/2,y]],front)
+  // A lit upper edge and a cool foot give these tiny solids a glazed finish.
+  const glaze=c.createLinearGradient(x,y-h,x,y);glaze.addColorStop(0,'#fff4cb20');glaze.addColorStop(.35,'#ffffff00');glaze.addColorStop(1,'#08274838')
+  c.fillStyle=glaze;c.fillRect(x-w/2,y-h,w,h)
   polygon(c,[[x+w/2,y-h],[x+w/2+dx,y-h-dy],[x+w/2+dx,y-dy],[x+w/2,y]],side)
   polygon(c,[[x-w/2,y-h],[x-w/2+dx,y-h-dy],[x+w/2+dx,y-h-dy],[x+w/2,y-h]],roof)
-  c.strokeStyle='#ecffe328';c.lineWidth=1;c.beginPath();c.moveTo(x-w/2,y-h);c.lineTo(x+w/2,y-h);c.lineTo(x+w/2+dx,y-h-dy);c.stroke()
+  c.strokeStyle='#f2ffe47a';c.lineWidth=1;c.beginPath();c.moveTo(x-w/2,y-h);c.lineTo(x+w/2,y-h);c.lineTo(x+w/2+dx,y-h-dy);c.stroke()
 }
 export function windows(c:CanvasRenderingContext2D,x:number,y:number,w:number,h:number,rows=1,on=true){
   for(let i=0;i<rows;i++){
     c.fillStyle=daylight.get(c)?(on?'#c9f7ee':'#285867'):(on?CITY.window:'#417589');c.fillRect(x-w/2+5,y-h+8+i*13,w-10,6)
     c.fillStyle=CITY.front;c.fillRect(x+1,y-h+8+i*13,2,6)
+    c.fillStyle='#ffffff66';c.fillRect(x-w/2+5,y-h+8+i*13,w-10,1)
   }
 }
 export function plant(c:CanvasRenderingContext2D,x:number,y:number,size=10){

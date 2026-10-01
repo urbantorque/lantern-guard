@@ -11,9 +11,9 @@ Build a thoughtful defence through a quiet canal district. Study the next wave, 
 - **Quick, live upgrades.** Compare two compact specialisations, commit to one and upgrade while combat continues. Each tower automatically aims for its role, with imminent leaks taking priority.
 - **Tower Bonds.** Pair a Moonbell with a Cracker, or an Owl with a Wickling, for a bounded shared-range effect.
 - **District Commissions.** Three permanent five-wave challenges award visible cosmetic details in a separate save slot.
-- **Your own pace.** Optional Auto advances ordinary waves after six seconds, and waits at new threats. Planning actions cancel the countdown. Three difficulties, undo, pausing, forecasts and same-seed retries remain available.
-- **Prepare for night.** 60 seconds of daylight favour Gardens and long-range builds; 48-second nights reward lamplit towers and Owl shelter. Weather rolls every 30 combat seconds. Both clocks freeze while planning.
-- **A living soundscape.** Eight-bar day/night arrangements, soft melodic echoes, water and weather ambience, and distinct combat sounds. The speaker button controls sound; Settings separates music from effects.
+- **A continuous watch.** One authored tempo, 30% faster than the former default. The first tower starts a four-second countdown; subsequent waves follow automatically. Build, upgrade, move, sell and form Bonds during combat. The footer previews the next threat and tracks the current wave. Three difficulties and same-seed retries remain available.
+- **Prepare for night.** About 46 real seconds of daylight favour Gardens and long-range builds; 37-second nights reward lamplit towers and Owl shelter. Weather shifts about every 23 combat seconds. Live Gardens earn for the time each tier worked, preventing last-second harvest exploits.
+- **An evolving score.** An original 32-bar form with three hero melodies, a bridge, a varied second pass, later-wave accompaniment and a boss pulse. Night changes instrumentation on bar boundaries. Filtered plucks, glass bells, bass and soft percussion sit alongside water and weather ambience. Sound and music preferences remain separate.
 - **A clearer battlefield.** Wide screens show the canal across the screen. Phones keep it vertical and frame the selected tower during upgrades. Glow updates immediately, without flying reward particles.
 
 ## Play and develop
@@ -25,7 +25,7 @@ npm ci
 npm run dev
 ```
 
-Open the local URL printed by Vite. Add `?muted=1` for a silent preview. Progress stays on the device. Backgrounding pauses the watch and suspends audio.
+Open the local URL printed by Vite. Add `?muted=1` for a silent preview. Progress stays on the device. Backgrounding freezes the watch and suspends audio; returning continues without a resume control. Browsers can require a gesture to restore sound.
 
 ```sh
 npm run check       # Regression suites, saves, sky rules and hero balance
@@ -39,7 +39,7 @@ The [GitHub Pages address](https://urbantorque.github.io/lantern-guard/) keeps i
 
 ## Design and verification
 
-[Battlefield and quick-upgrade revision](docs/BATTLEFIELD-EXPERIENCE-RELEASE.md) · [Continuous combat, upgrade streams and audio fixes](docs/CONTINUOUS-COMBAT-RELEASE.md) · [Three-hero release and visual revision](docs/VIBRANT-HEROES-RELEASE.md) · [Execution roadmap](docs/FIXED-PATH-ROADMAP.md) · [Original fixed-edition delivery](docs/NIGHTWARD-RELEASE.md) · [iOS build guide](docs/IOS-BUILD.md)
+[Continuous watch and expressive district](docs/EXPRESSIVE-WATCH-RELEASE.md) · [Battlefield and quick-upgrade revision](docs/BATTLEFIELD-EXPERIENCE-RELEASE.md) · [Continuous combat, upgrade streams and audio fixes](docs/CONTINUOUS-COMBAT-RELEASE.md) · [Three-hero release and visual revision](docs/VIBRANT-HEROES-RELEASE.md) · [Execution roadmap](docs/FIXED-PATH-ROADMAP.md) · [Original fixed-edition delivery](docs/NIGHTWARD-RELEASE.md) · [iOS build guide](docs/IOS-BUILD.md)
 
 Nightward replaces Lantern Guard's playable routing edition. Old battle snapshots remain archived on the device; journal, settlement, achievements and settings carry forward. New records and saves use a separate rules version.
 

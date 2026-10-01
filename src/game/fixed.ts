@@ -45,8 +45,8 @@ export function fixedLevel(variant = 0) {
 }
 
 const NOTES: Record<number, string> = {
-  1: 'Build a Wickling on the upper bank, then begin. Your range preview shows the stream it can protect.',
-  2: 'Upgrade during combat, or pause to think. You can undo planning choices before the wave begins.',
+  1: 'Build beside the upper bend. The first wave follows in four seconds.',
+  2: 'Build and upgrade as enemies arrive. The next wave follows automatically.',
   3: 'Moonbells are ready. Slow enemies where another tower can hit them.',
   4: 'Compare a tower’s two streams. Choose a specialisation now, or improve its foundation first.',
   5: 'Your first five waves. Keep a reserve for the armoured enemies coming next.',

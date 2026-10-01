@@ -45,6 +45,7 @@ console.log('PASS paused/planning clock freeze, no idle farming, persisted harve
 const harvest=fresh();harvest.wave=10;harvest.glow=10000;const garden=harvest.build(0,'garden')!
 harvest.startWave();harvest.spawners=[];harvest.enemies=[]
 harvest.climate={elapsed:DAY_SECONDS+.5,waveSeconds:1,gardenExposure:(1.4+.55)/2}
+garden.harvest=garden.stats.income*harvest.climate.gardenExposure
 const saved=harvest.snapshot();assert(validSnapshot(saved));const harvestRestored=Sim.restore(saved)
 harvest.step(DT);harvestRestored.step(DT)
 assert.equal(garden.earned,Math.round(garden.stats.income*.975));assert.deepEqual(harvest.snapshot(),harvestRestored.snapshot())

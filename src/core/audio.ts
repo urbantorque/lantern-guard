@@ -4,6 +4,8 @@
  * (every "pop" lands on the same pentatonic scale as the music).
  */
 
+import { scoreStep,scoreInterval,type AudioScene,type ScoreNote } from './watch-score'
+export type { AudioScene } from './watch-score'
 const PENTA = [0, 2, 4, 7, 9] // major pentatonic degrees
 const BASE_MIDI = 62 // D4
 
@@ -20,7 +22,6 @@ export interface AudioSettings {
   ambience: number
   muted: boolean
 }
-export interface AudioScene { night:boolean; weather:'clear'|'rain'|'mist'|'breeze' }
 /** A silent test URL overrides this session without changing saved preferences. */
 export const profileSound=(prefs:{muted:boolean;music:boolean;effects:boolean},silent=false):AudioSettings=>({
   sfx:prefs.effects?.7:0,music:prefs.music?.6:0,ambience:prefs.music?.35:0,muted:silent||prefs.muted,
@@ -40,7 +41,8 @@ export class Sound {
   private rates = new Map<string, Rate>()
   private musicNext = 0
   private musicStep = 0
-  private musicNight:boolean|undefined
+  private musicScene:AudioScene={night:false,weather:'clear'}
+  private musicEnergy=0
   private weatherGain:GainNode|null=null
   private ambienceStarted = false
   private popCombo = 0
@@ -134,6 +136,7 @@ export class Sound {
     o.connect(g).connect(bus ?? this.sfxBus)
     o.start(t)
     o.stop(t + a + d + 0.05)
+    o.onended=()=>{o.disconnect();g.disconnect()}
     return { o, g, t }
   }
 
@@ -151,6 +154,7 @@ export class Sound {
     src.connect(f).connect(g).connect(bus ?? this.sfxBus)
     src.start(t, Math.random() * 1.5)
     src.stop(t + dur + 0.05)
+    src.onended=()=>{src.disconnect();f.disconnect();g.disconnect()}
     return { src, f, g, t }
   }
 
@@ -403,37 +407,42 @@ export class Sound {
     weather.connect(filter).connect(this.weatherGain).connect(this.ambBus);weather.start()
   }
 
-  /** Eight-bar call and response, with a softer minor arrangement after dusk. */
-  tick(dt: number, intensity: number, scene:AudioScene={night:false,weather:'clear'}) {
-    if (!this.audible) return
+  private instrument(note:ScoreNote,when:number,hero:AudioScene['hero']) {
+    if(note.voice==='hat'){this.noise(note.length,'highpass',5600,.5,note.gain,when,this.musicBus);return}
+    const ctx=this.ctx!,at=ctx.currentTime+when,freq=mtof(note.midi)
+    const pan=ctx.createStereoPanner();pan.pan.value=note.pan;pan.connect(this.musicBus)
+    const filter=ctx.createBiquadFilter();filter.type='lowpass';filter.Q.value=.5
+    filter.frequency.setValueAtTime(note.voice==='pad'?1100:note.voice==='bass'?650:hero==='mira'?2600:4200,at)
+    filter.connect(pan)
+    const voice=note.voice,attack=voice==='pad'?.55:voice==='bass'?.018:.006
+    const main=this.tone(freq,voice==='bass'||voice==='bell'||voice==='kick'?'sine':'triangle',attack,note.length,note.gain,filter,when)
+    if(voice==='kick')main.o.frequency.exponentialRampToValueAtTime(42,at+.12)
+    else if(voice==='bell')this.tone(freq*2.001,'sine',.002,note.length*.42,note.gain*.26,filter,when)
+    else if(voice==='pluck'||voice==='lead'){
+      filter.frequency.exponentialRampToValueAtTime(hero==='mira'?650:900,at+note.length*.7)
+      this.tone(freq*2,'sine',.003,note.length*.3,note.gain*.12,filter,when)
+    }else if(voice==='pad')this.tone(freq,'sine',.65,note.length*.7,note.gain*.3,filter,when,4)
+    main.o.onended=()=>{main.o.disconnect();main.g.disconnect();filter.disconnect();pan.disconnect()}
+  }
+
+  /** Continuous musical form. Hero, chapter and dusk arrangements change on bar lines. */
+  tick(dt:number,intensity:number,scene:AudioScene={night:false,weather:'clear'}) {
+    if(!this.audible)return
     const ctx=this.ctx!,now=ctx.currentTime
     this.weatherGain?.gain.setTargetAtTime(scene.weather==='rain'?.09:scene.weather==='breeze'?.035:.001,now,.7)
-    if (scene.night && Math.random() < dt * 0.4) {
-      const f = 4200 + Math.random() * 900
-      for (let i = 0; i < 3; i++) this.tone(f, 'sine', 0.002, 0.02, 0.012, this.ambBus, i * 0.045)
+    this.musicEnergy+=(intensity-this.musicEnergy)*Math.min(1,dt*2)
+    if(scene.night&&this.settings.ambience>0&&Math.random()<dt*.25){
+      const f=4200+Math.random()*900
+      for(let i=0;i<3;i++)this.tone(f,'sine',.002,.02,.009,this.ambBus,i*.045)
     }
-    if(this.musicNight!==scene.night){this.musicNight=scene.night;this.musicStep=0;this.musicNext=now}
     if(this.settings.music<=0){this.musicNext=now;return}
-    // Audio-clock lookahead keeps a steady rhythm at different frame rates.
-    // Never catch up a backlog after returning from a background tab.
+    // A background return resumes the phrase, without scheduling missed beats.
     if(this.musicNext<now-.2)this.musicNext=now
     while(this.musicNext<now+.12){
-      const when=Math.max(0,this.musicNext-now),beat=this.musicStep%16,bar=Math.floor(this.musicStep/16)%8
-      const root=(scene.night?[59,55,62,57,64,59,55,57]:[62,57,59,55,64,57,55,62])[bar],minor=root===59||root===64,third=minor?3:4
-      if(beat===0){
-        this.tone(mtof(root-24),'sine',.06,2.5,.15,this.musicBus,when)
-        for(const note of [0,third,7,minor?10:11])this.tone(mtof(root-12+note),'sine',.28,3,.034,this.musicBus,when)
-      }
-      const motif=bar<4?(minor?[0,3,7,10,7,3,2,7]:[0,4,7,12,9,7,4,2]):(minor?[12,10,7,3,7,2,3,0]:[12,9,7,4,7,2,4,0])
-      if(beat%2===0&&!(bar%2===1&&beat>=12)){
-        const freq=mtof(root+motif[beat/2])
-        this.tone(freq,scene.night?'sine':'triangle',.009,scene.night?1.3:.85,scene.night?.1:.115,this.musicBus,when)
-        this.tone(freq*2,'sine',.003,.3,.019,this.musicBus,when+.008)
-      }
-      const arp=[0,7,third,7][beat%4]
-      if(!scene.night||beat%2===0)this.tone(mtof(root+arp-12),'sine',.005,.3,.032+intensity*.015,this.musicBus,when)
-      if(intensity>.15&&beat%4===0)this.noise(.05,'lowpass',350,.8,.045*intensity,when,this.musicBus)
-      this.musicStep++;this.musicNext+=scene.night?.34:.3
+      if(this.musicStep%16===0)this.musicScene={...scene}
+      const when=Math.max(0,this.musicNext-now)
+      for(const note of scoreStep(this.musicStep,this.musicScene,this.musicEnergy))this.instrument(note,when,this.musicScene.hero)
+      this.musicStep++;this.musicNext+=scoreInterval(this.musicScene)
     }
   }
 }

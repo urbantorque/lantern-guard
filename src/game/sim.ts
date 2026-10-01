@@ -127,6 +127,8 @@ export interface Tower {
   spotted: number
   /** Glow Garden: glow produced, wave income plus its share of lure bonuses. Fractional: floor it for display. */
   earned: number
+  harvest?: number
+  healing?: number
 }
 
 export type ProjKind = 'spark' | 'feather' | 'firework' | 'rocket' | 'moth' | 'mini' | 'bolt'
@@ -308,6 +310,8 @@ export interface SavedTower {
   slowed?: number
   spotted?: number
   earned?: number
+  harvest?: number
+  healing?: number
 }
 
 /** A lock as saved. Everything past the charm is only present in v2 saves. */
@@ -595,7 +599,7 @@ export class Sim {
 
   unlockPlot(index: number): boolean {
     const cost = this.plotCost(index)
-    if (cost === null || this.over || this.waveActive || this.glow < cost) return false
+    if (cost === null || this.over || this.waveActive && !this.challenge.fixed || this.glow < cost) return false
     this.glow -= cost
     this.plots.add(index)
     this.stats.plotsUnlocked = (this.stats.plotsUnlocked ?? 0) + 1
@@ -836,7 +840,7 @@ export class Sim {
   }
 
   canRelocate(t: Tower): boolean {
-    return !!this.challenge.guard && (!this.isChallenge || !!this.challenge.fixed) && !this.over && !this.waveActive && this.towers.includes(t)
+    return !!this.challenge.guard && (!this.isChallenge || !!this.challenge.fixed) && !this.over && (!this.waveActive || !!this.challenge.fixed) && this.towers.includes(t)
   }
 
   /** Preview destination support without moving or resetting the tower. */
@@ -887,7 +891,7 @@ export class Sim {
 
   build(padIndex: number, id: TowerId): Tower | null {
     const pad = this.pads[padIndex]
-    if (!pad || !this.padAvailable(padIndex) || pad.tower || this.over || (this.challenge.fixed && this.waveActive)) return null
+    if (!pad || !this.padAvailable(padIndex) || pad.tower || this.over) return null
     if (!this.keeperAllowed(id)) return null
     const cost = TOWERS[id].cost
     if (this.glow < cost) return null
@@ -919,6 +923,7 @@ export class Sim {
       slowed: 0,
       spotted: 0,
       earned: 0,
+      ...(this.challenge.fixed?{harvest:0,healing:0}:{}),
     }
     pad.tower = t
     this.towers.push(t)
@@ -961,7 +966,7 @@ export class Sim {
   }
 
   sell(t: Tower) {
-    if (!this.towers.includes(t) || this.over || this.challenge.fixed && (this.waveActive || this.challenge.commission === 'garden' && t.id === 'garden')) return
+    if (!this.towers.includes(t) || this.over || this.challenge.fixed && this.challenge.commission === 'garden' && t.id === 'garden') return
     this.bonds = this.bonds.filter(b => b.a !== t.uid && b.b !== t.uid)
     const v = this.sellValue(t)
     this.glow += v
@@ -1019,7 +1024,7 @@ export class Sim {
 
   startWave(): boolean {
     if (!this.canStartWave()) return false
-    if(this.challenge.fixed){this.climate.waveSeconds=0;this.climate.gardenExposure=0}
+    if(this.challenge.fixed){this.climate.waveSeconds=0;this.climate.gardenExposure=0;for(const t of this.towers){t.harvest=0;t.healing=0}}
     this.lastLeak = null
     const early = this.earlyBonus()
     if (early > 0) {
@@ -1056,7 +1061,13 @@ export class Sim {
     if (this.waveActive) {
       this.stats.activeTime += dt
       if(this.challenge.fixed){
-        this.climate.gardenExposure+=gardenYield(this.sky)*dt
+        const exposure=gardenYield(this.sky)*dt
+        this.climate.gardenExposure+=exposure
+        // Live purchases earn only for the time each tier actually worked.
+        for(const t of this.towers)if(t.id==='garden'){
+          t.harvest=(t.harvest??0)+t.stats.income*exposure
+          t.healing=(t.healing??0)+t.stats.lifePerWave*dt
+        }
         this.climate.waveSeconds+=dt
         this.climate.elapsed+=dt
       }
@@ -2076,10 +2087,10 @@ export class Sim {
       let life = 0
       for (const t of this.towers) {
         if (t.id !== 'garden') continue
-        const earned=this.challenge.fixed?Math.round(t.stats.income*(this.climate.waveSeconds>0?this.climate.gardenExposure/this.climate.waveSeconds:1)):t.stats.income
+        const earned=this.challenge.fixed?Math.round((t.harvest??0)/Math.max(DT,this.climate.waveSeconds)):t.stats.income
         income += earned
         t.earned += earned
-        life += t.stats.lifePerWave
+        life += this.challenge.fixed?Math.floor((t.healing??0)/Math.max(DT,this.climate.waveSeconds)+1e-7):t.stats.lifePerWave
         if (earned > 0) this.events.push({ t: 'income', x: t.x, y: t.y, amount: earned })
       }
       this.glow += bonus + income
@@ -2131,11 +2142,12 @@ export class Sim {
   }
   bond(a: Tower,b: Tower): boolean {
     const slots=this.wave>=20?2:this.wave>=5?1:0
-    if(!this.challenge.fixed || this.waveActive || this.over || this.bonds.length>=slots || a===b || !this.towers.includes(a) || !this.towers.includes(b) || !bondName(a.id,b.id) || !this.sharedCoverage(a,b) || this.bonds.some(q=>[q.a,q.b].includes(a.uid)||[q.a,q.b].includes(b.uid))) return false
-    this.bonds.push({a:a.uid,b:b.uid,readyAt:0,activations:0}); return true
+    if(!this.challenge.fixed || this.over || this.bonds.length>=slots || a===b || !this.towers.includes(a) || !this.towers.includes(b) || !bondName(a.id,b.id) || !this.sharedCoverage(a,b) || this.bonds.some(q=>[q.a,q.b].includes(a.uid)||[q.a,q.b].includes(b.uid))) return false
+    // Re-linking in combat cannot reset an armour-breaking cooldown.
+    this.bonds.push({a:a.uid,b:b.uid,readyAt:this.waveActive?this.time+4:0,activations:0}); return true
   }
   unbond(t: Tower): boolean {
-    if(this.waveActive || this.over) return false
+    if(this.waveActive && !this.challenge.fixed || this.over) return false
     const old=this.bonds.length
     this.bonds=this.bonds.filter(b=>b.a!==t.uid&&b.b!==t.uid)
     return old!==this.bonds.length
@@ -2195,6 +2207,7 @@ export class Sim {
         slowed: t.slowed,
         spotted: t.spotted,
         earned: t.earned,
+        ...(this.challenge.fixed?{harvest:t.harvest??0,healing:t.healing??0}:{}),
       })),
       gates: this.gates.map((g) => ({ state: g.state, charm: g.charm && { ...g.charm }, jammed: g.jammed, cd: g.cd, flipT: g.flipT, routeT: [g.routeT[0], g.routeT[1]], flips: g.flips, swingT: g.swingT })),
       stats: JSON.parse(JSON.stringify(this.stats)),
@@ -2334,6 +2347,10 @@ export class Sim {
         slowed: t.slowed ?? 0,
         spotted: t.spotted ?? 0,
         earned: t.earned ?? 0,
+        ...(snap.challenge.fixed?{
+          harvest:t.harvest??sim.towerStats(t.id,t.a,t.b,t.refinement).income*sim.climate.gardenExposure,
+          healing:t.healing??sim.towerStats(t.id,t.a,t.b,t.refinement).lifePerWave*sim.climate.waveSeconds,
+        }:{}),
       }
       pad.tower = tw
       sim.towers.push(tw)

@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict'
 import { Sound,profileSound } from '../src/core/audio'
+import { scoreStep,scoreInterval } from '../src/core/watch-score'
 
 // Exercise the scheduler without playing sound or depending on a sound device.
 class Param {
@@ -10,10 +11,11 @@ class Param {
   exponentialRampToValueAtTime(v:number){assert(v>0);this.setValueAtTime(v)}
 }
 class Node {
-  gain=new Param();frequency=new Param();detune=new Param();Q=new Param();delayTime=new Param()
+  gain=new Param();frequency=new Param();detune=new Param();Q=new Param();delayTime=new Param();pan=new Param()
   threshold=new Param();knee=new Param();ratio=new Param();attack=new Param();release=new Param()
   starts:number[]=[];stops:number[]=[];type='';buffer:unknown;loop=false
   connect<T>(node:T):T{return node}
+  disconnect(){}
   start(t=0){this.starts.push(t)}
   stop(t=0){this.stops.push(t)}
 }
@@ -23,6 +25,7 @@ class Context {
   createDynamicsCompressor(){return this.node()}
   createGain(){return this.node()}
   createDelay(){return this.node()}
+  createStereoPanner(){return this.node()}
   createOscillator(){return this.node()}
   createBiquadFilter(){return this.node()}
   createBufferSource(){return this.node()}
@@ -41,13 +44,15 @@ const sound=new Sound();sound.unlock();const ctx=sound.ctx as unknown as Context
 const noBeam=ctx.nodes.length;sound.beam(0);assert.equal(ctx.nodes.length,noBeam,'idle menus do not start a beam oscillator')
 const ambience=ctx.nodes.length;sound.tick(.016,0);assert(ctx.nodes.length>ambience,'title screen starts a composed melody')
 const first=ctx.nodes.length;sound.tick(.016,0);assert.equal(ctx.nodes.length,first,'same frame cannot duplicate notes')
-ctx.currentTime=.35;sound.tick(.016,.5);assert(ctx.nodes.length>first)
-ctx.currentTime=100;const beforeResume=ctx.nodes.length;sound.tick(.016,0);assert(ctx.nodes.length-beforeResume<25,'a stalled frame never replays a music backlog')
+for(let i=0;i<10;i++){ctx.currentTime+=.1;sound.tick(.1,.5)}
+assert(ctx.nodes.length>first,'notes continue through rests in the first phrase')
+ctx.currentTime=100;const beforeResume=ctx.nodes.length;sound.tick(.016,0);assert(ctx.nodes.length-beforeResume<60,'a stalled frame never replays a music backlog')
 const dayNotes=ctx.nodes.flatMap(n=>n.frequency.values)
-const duskStart=ctx.nodes.length;sound.tick(.016,0,{night:true,weather:'rain'})
+const duskStart=ctx.nodes.length
+for(let i=0;i<40;i++){ctx.currentTime+=.21;sound.tick(.21,0,{night:true,weather:'rain'})}
 const nightNotes=ctx.nodes.slice(duskStart).flatMap(n=>n.frequency.values)
 assert(nightNotes.length>0);assert.notDeepEqual(nightNotes,dayNotes,'dusk changes the arrangement')
-ctx.currentTime=101;const effectStart=ctx.nodes.length;sound.spark();assert(ctx.nodes.length>effectStart,'the first shot is audible')
+ctx.currentTime+=1;const effectStart=ctx.nodes.length;sound.spark();assert(ctx.nodes.length>effectStart,'the first shot is audible')
 const once=ctx.nodes.length;sound.spark();assert.equal(ctx.nodes.length,once,'rapid fire remains capped')
 sound.impact();sound.zap();sound.bolt();assert(ctx.nodes.length>once)
 sound.settings.muted=true;sound.applySettings();const muted=ctx.nodes.length
@@ -58,3 +63,21 @@ sound.suspend();assert.equal(ctx.state,'suspended');sound.unlock();assert.equal(
 visibility.hidden=false;sound.unlock();assert.equal(ctx.state,'running','visible gesture restores sound')
 sound.settings.music=0;ctx.currentTime=200;const noMusic=ctx.nodes.length;sound.tick(.1,0);assert.equal(ctx.nodes.length,noMusic,'soundtrack can be disabled independently')
 console.log('PASS title music, audio-clock timing, day/night arrangements, first-shot feedback, rate caps, mute and background suspension')
+
+const scene={night:false,weather:'clear' as const,hero:'sol' as const,wave:1,playing:true}
+const phrase=(from:number,overrides={})=>Array.from({length:128},(_,i)=>scoreStep(from+i,{...scene,...overrides},.6))
+assert.notDeepEqual(phrase(0),phrase(128),'the answer differs from the opening')
+assert.notDeepEqual(phrase(0),phrase(256),'the bridge changes register and texture')
+assert.notDeepEqual(phrase(0),phrase(512),'the second pass varies the melody')
+assert.notDeepEqual(phrase(0),phrase(0,{hero:'mira'}),'hero melodies differ')
+assert.notDeepEqual(phrase(0),phrase(0,{hero:'ivo'}),'Ivo has a distinct part')
+assert.notDeepEqual(phrase(0),phrase(0,{night:true}),'night switches instrumentation')
+assert.notDeepEqual(phrase(0),phrase(0,{wave:30}),'later chapters add accompaniment')
+assert.notDeepEqual(phrase(0),phrase(0,{boss:true}),'bosses add a pulse and bass response')
+assert(scoreInterval({...scene,boss:true})<scoreInterval(scene))
+for(const hero of ['sol','mira','ivo'] as const)for(const night of [false,true])for(let i=0;i<1024;i++){
+  const notes=scoreStep(i,{...scene,hero,night,wave:35,boss:true},1)
+  assert(notes.length<=8,'bounded simultaneous voices')
+  for(const n of notes){assert(n.gain>0&&n.gain<=.15);assert(n.length>0&&n.length<=4);assert(n.pan>=-1&&n.pan<=1)}
+}
+console.log('PASS original 32-bar form, second-pass variations, three hero parts, chapter layers and boss pulse')

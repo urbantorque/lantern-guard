@@ -4,15 +4,15 @@ import { block, plant, polygon, windows, setArchitectureLight, lightPool } from 
 import { districtLayout } from './district-layout'
 
 const terrain=new WeakMap<Sim['level'],{key:string;canvas:HTMLCanvasElement}>()
-export const districtGround=(s:Sim)=>s.sky.night?['#143b45','#173d47','#1b394f','#163e40'][s.challenge.variant??0]:['#73a98a','#81ad87','#73aba1','#8bad89'][s.challenge.variant??0]
+export const districtGround=(s:Sim)=>s.sky.night?['#143752','#243b58','#223358','#173f4b'][s.challenge.variant??0]:['#5bab87','#7fae75','#62b2ac','#8db680'][s.challenge.variant??0]
 export function districtGradient(c:CanvasRenderingContext2D,s:Sim,x=0,y=-105,w=720,h=960){
-  const ground=c.createLinearGradient(x,y,x+w,y+h);ground.addColorStop(0,s.sky.night?'#255957':'#acd39d');ground.addColorStop(.48,districtGround(s));ground.addColorStop(1,s.sky.night?'#102c40':'#598e7b');return ground
+  const ground=c.createLinearGradient(x,y,x+w,y+h);ground.addColorStop(0,s.sky.night?'#37517a':'#c2df99');ground.addColorStop(.48,districtGround(s));ground.addColorStop(1,s.sky.night?'#141d3c':'#317e82');return ground
 }
 const colours=[['#ce7965','#f3be8a','#8b5360'],['#438a91','#a0d3bd','#2e586c'],['#557eaf','#a9c6df','#354e7b'],['#b58a59','#e9d2a0','#79604e'],['#5b9873','#bfdb9b','#396657']]
 
 /** Paint once per district/lighting change; keep the playable centre free of decoration. */
 export function scenery(s:Sim,stage:number,keepsakes:readonly string[],wide=false){
-  const day=!s.sky.night,key=stage+':'+keepsakes.join(',')+':'+day+':'+wide,old=terrain.get(s.level)
+  const day=!s.sky.night,chapter=Math.min(3,Math.floor(s.wave/10)),key=stage+':'+chapter+':'+keepsakes.join(',')+':'+day+':'+wide,old=terrain.get(s.level)
   if(old?.key===key)return old.canvas
   const canvas=document.createElement('canvas');canvas.width=1840;canvas.height=2140
   const c=canvas.getContext('2d')!;c.scale(2,2);c.translate(50,140);setArchitectureLight(c,day)
@@ -26,7 +26,17 @@ export function scenery(s:Sim,stage:number,keepsakes:readonly string[],wide=fals
   c.lineJoin='round';c.lineCap='round'
   const network=()=>{c.beginPath();for(const seg of s.level.segs.values())seg.line.pts.forEach((p,i)=>i?c.lineTo(p.x,p.y):c.moveTo(p.x,p.y));c.stroke()}
   c.save();c.translate(5,8);c.strokeStyle=day?'#3b77736b':'#081f3599';c.lineWidth=62;network();c.restore()
-  for(const [width,colour] of [[60,day?'#e7dabb':'#80a7a7'],[48,day?'#346e78':'#284f6b'],[39,day?'#087d94':'#11566f'],[27,day?'#20aeba':'#167d91'],[13,day?'#59d5ca66':'#49bcbc33']] as const){c.strokeStyle=colour;c.lineWidth=width;network()}
+  for(const [width,colour] of [[60,day?'#fff0c7':'#829bc3'],[53,day?'#c0cfad':'#475e88'],[46,day?'#215d81':'#182d59'],[37,day?'#098faa':'#175c92'],[25,day?'#24c6c7':'#1996ad'],[11,day?'#8dfff077':'#69e7df44']] as const){c.strokeStyle=colour;c.lineWidth=width;network()}
+  // Small stone seams supply scale and material without adding map obstacles.
+  c.strokeStyle=day?'#64898266':'#ccdafa44';c.lineWidth=1
+  for(const seg of s.level.segs.values())for(let at=20;at<seg.line.length;at+=26){
+    const p=seg.line.at(at,{x:0,y:0,tx:0,ty:0})
+    for(const side of [-1,1]){
+      const x=p.x-p.ty*27*side,y=p.y+p.tx*27*side
+      if([...s.level.segs.values()].some(other=>other!==seg&&other.line.distanceTo(x,y)<32))continue
+      c.beginPath();c.moveTo(x-p.ty*3,y+p.tx*3);c.lineTo(x+p.ty*3,y-p.tx*3);c.stroke()
+    }
+  }
   for(const seg of s.level.segs.values()){
     for(let at=65;at<seg.line.length;at+=150){const p=seg.line.at(at,{x:0,y:0,tx:0,ty:0});for(const side of [-1,1]){
       const x=p.x-p.ty*33*side,y=p.y+p.tx*33*side
@@ -44,7 +54,7 @@ export function scenery(s:Sim,stage:number,keepsakes:readonly string[],wide=fals
       c.fillStyle=day?'#796c59':'#40525b';c.fillRect(x-2,y-12,4,18);plant(c,x,y-10,14+style*2);return
     }
     const w=37+style%2*6,h=24+style%3*6,[front,roof,side]=colours[style]
-    c.save();c.globalAlpha=.78
+    c.save();c.globalAlpha=.92
     c.fillStyle=day?'#c5ccb299':'#638c7b55';c.beginPath();c.ellipse(x+7,y,43,21,-.25,0,Math.PI*2);c.fill()
     polygon(c,[[x-24,y+4],[x+29,y+4],[x+48,y-9],[x-4,y-22]],day?'#234f5d3d':'#061b354d')
     if(!day)lightPool(c,x,y+2,w,'#ffc56c',.4)
@@ -56,6 +66,12 @@ export function scenery(s:Sim,stage:number,keepsakes:readonly string[],wide=fals
     if(style===0&&keepsakes.includes('market'))block(c,x-9,y+8,25,14,11,day?'#bc6b62':'#784f60',day?'#f3b28b':'#c27d79','#704859')
     if(keepsakes.includes('glass')){c.fillStyle='#94e5df';c.fillRect(x+w/2+6,y-19,3,10)}
     if(stage>=2||keepsakes.includes('garden')){c.fillStyle='#f9c68c';c.fillRect(x-10,y-8,4,4);c.fillRect(x-3,y-10,4,4)}
+    if(chapter>=1){
+      c.strokeStyle='#fff0b799';c.lineWidth=1;c.beginPath();c.moveTo(x-w/2,y-7);c.quadraticCurveTo(x,y+3,x+w/2,y-7);c.stroke()
+      for(let j=0;j<3+chapter;j++){const bx=x-w/2+5+j*(w-10)/(2+chapter);polygon(c,[[bx-2,y-5],[bx+3,y-5],[bx,y+1]],['#ffb789','#b4fff0','#e5bdff'][j%3])}
+    }
+    if(chapter>=2){block(c,x+7,y-h-8,14,11,5,front,roof,side);plant(c,x+7,y-h-16,5)}
+    if(chapter>=3){c.fillStyle='#fff0b6';c.fillRect(x+w/2+5,y-22,4,5);if(!day)lightPool(c,x+w/2+7,y-19,24,'#ffe59b',.65)}
     c.restore()
     })
   }

@@ -57,13 +57,14 @@ export async function flushNativeSave() {
   } finally { writing = false }
 }
 
-/** A returning player chooses when to resume; background time never advances a night. */
-export function watchAppState(suspend: () => void) {
+/** Background time never advances a night. Legacy callers can retain manual resume. */
+export function watchAppState(suspend: () => void, resume: () => void = () => {}) {
   const background = () => { suspend(); void flushNativeSave() }
-  document.addEventListener('visibilitychange', () => { if (document.hidden) background() })
+  document.addEventListener('visibilitychange', () => { if (document.hidden) background();else resume() })
   window.addEventListener('pagehide', background)
+  window.addEventListener('pageshow', resume)
   if (Capacitor.isNativePlatform()) {
-    void NativeApp.addListener('appStateChange', ({ isActive }) => { if (!isActive) background() })
+    void NativeApp.addListener('appStateChange', ({ isActive }) => { if (!isActive) background();else resume() })
   }
 }
 

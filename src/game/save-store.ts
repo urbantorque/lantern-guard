@@ -153,6 +153,7 @@ export function validSnapshot(s: unknown): s is SaveSnapshot {
   for (const t of s.towers) {
     if (t.damageDealt !== undefined && !number(t.damageDealt, 0)) return false
     for (const key of ['uid', 'cd', 'diveCd', 'mothCd', 'tolls', 'angle', 'bornT', 'fireT', 'upT', 'slowed', 'spotted', 'earned']) if (t[key] !== undefined && !number(t[key])) return false
+    for (const key of ['harvest', 'healing']) if (t[key] !== undefined && (!number(t[key]) || t[key] < 0)) return false
     if (t.beams !== undefined && (!Array.isArray(t.beams) || t.beams.length !== 2 || !t.beams.every((v: unknown) => integer(v)))) return false
   }
   for (const g of s.gates) {

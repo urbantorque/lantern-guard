@@ -4,6 +4,8 @@ import { TOWER_ORDER } from '../src/game/defs'
 import { HERO_IDS } from '../src/game/heroes'
 import { validSnapshot } from '../src/game/save-store'
 import { contactTime } from '../src/game/projectile-collision'
+import { waveCountdown,WATCH_TEMPO,WAVE_BREATH } from '../src/game/watch-tempo'
+import { upgradeBenefits } from '../src/game/fixed-copy'
 
 const fresh=()=>new Sim('standard',{fixed:1,compact:1,guard:1,depth:1,balance:1,variant:0},1047)
 for(const hero of HERO_IDS)for(const id of TOWER_ORDER)for(const branch of [0,1]as const){
@@ -16,7 +18,7 @@ for(const hero of HERO_IDS)for(const id of TOWER_ORDER)for(const branch of [0,1]
   assert.equal(s.time,time);assert.equal(s.wave,wave);assert(s.waveActive)
   assert.equal(s.upgradeCost(t,branch===0?1:0),null,'the competing stream locks')
   assert(!s.specialise(t,branch));assert(s.upgrade(t,branch));assert(s.refine(t))
-  assert(!s.build(3,'wick'));assert(!s.canRelocate(t));assert(!s.refine(t))
+  assert(s.build(3,'wick'));assert(s.canRelocate(t));assert(!s.refine(t))
   assert(validSnapshot(s.snapshot()))
   const restored=Sim.restore(s.snapshot())
   for(let i=0;i<100;i++){s.step(DT);restored.step(DT);s.events=[];restored.events=[]}
@@ -27,7 +29,41 @@ const before=poor.snapshot();assert(!poor.specialise(t,1));assert.deepEqual(poor
 assert(poor.upgrade(t,0));const improvedCost=poor.specialiseCost(t)!
 poor.glow=improvedCost;assert(poor.specialise(t,1));assert.equal(poor.glow,0,'an improved tower only pays the remaining stage')
 assert.equal(poor.upgradeCost(t,1),null,'mastery still waits until wave 16')
-console.log('PASS 48 live specialisation/mastery/crown paths, atomic costs, lockouts, planning gates and exact saves')
+console.log('PASS 48 live specialisation/mastery/crown paths, live building, atomic costs, unlock gates and exact saves')
+
+assert(WATCH_TEMPO>1&&WATCH_TEMPO<1.5)
+assert.equal(waveCountdown(null,.1,false,false,false,false),null,'first placement has no deadline')
+assert.equal(waveCountdown(null,.1,true,false,false,false),WAVE_BREATH-.1)
+assert.equal(waveCountdown(2,10,true,false,true,false),2,'background time never consumes the countdown')
+assert.equal(waveCountdown(2,10,true,false,false,false),0,'waves advance without a transport control')
+assert.equal(waveCountdown(2,.1,true,true,false,false),null)
+assert.equal(waveCountdown(2,.1,true,false,false,true),null)
+const live=fresh();live.glow=10000;live.wave=15
+const farm=live.build(0,'garden')!,gunLive=live.build(3,'wick')!
+live.startWave();for(let i=0;i<120;i++)live.step(DT)
+const worked=farm.harvest!;assert(worked>0)
+const late=live.build(6,'garden')!;assert.equal(late.harvest,0,'new farms do not inherit elapsed-wave income')
+const originalIncome=farm.stats.income
+assert(live.specialise(farm,0));assert.equal(farm.harvest,worked,'a live upgrade cannot rewrite earned harvest')
+live.step(DT);assert(farm.harvest!>worked);assert(late.harvest!<farm.harvest!)
+assert(upgradeBenefits(live,gunLive,0,true).includes(`Damage ${gunLive.stats.damage} → ${live.towerStats('wick',2,0).damage}`),'bundle preview includes foundation and specialisation')
+const saved=live.snapshot();assert(validSnapshot(saved));assert.deepEqual(Sim.restore(saved).snapshot(),saved)
+const invalid=structuredClone(saved);invalid.towers[0].harvest=-1;assert(!validSnapshot(invalid))
+const oldSave=structuredClone(saved);for(const t of oldSave.towers){delete t.harvest;delete t.healing}
+assert(validSnapshot(oldSave));assert(Sim.restore(oldSave).towers[0].harvest!>0,'old live saves migrate conservatively')
+assert(live.unlockPlot(1),'plots unlock during combat');assert(live.relocate(gunLive,1))
+const glow=live.glow;live.sell(gunLive);assert(live.glow>glow,'selling remains available in combat')
+assert(originalIncome<farm.stats.income)
+const bonded=fresh();bonded.wave=5;bonded.glow=10000
+const chime=bonded.build(0,'bell')!,blast=bonded.build(3,'cracker')!
+bonded.startWave();assert(bonded.bond(chime,blast));assert.equal(bonded.bonds[0].readyAt,bonded.time+4)
+assert(bonded.unbond(chime));bonded.step(DT);assert(bonded.bond(chime,blast));assert.equal(bonded.bonds[0].readyAt,bonded.time+4,'re-linking cannot bypass the combat cooldown')
+const shortHarvest=fresh();shortHarvest.wave=10;shortHarvest.glow=10000
+shortHarvest.startWave();for(let i=0;i<120;i++)shortHarvest.step(DT)
+const lastMoment=shortHarvest.build(0,'garden')!
+shortHarvest.spawners=[];shortHarvest.enemies=[];shortHarvest.waveAlive.set(shortHarvest.wave,0)
+shortHarvest.step(DT);assert.equal(lastMoment.earned,0,'a last-moment build cannot collect a full-wave payout')
+console.log('PASS one-tempo countdown, hidden-tab protection, live purchases, weighted harvest, legacy save migration and exact bundle copy')
 
 assert.equal(contactTime(0,0,100,0,50,0,10),.4)
 assert.equal(contactTime(0,0,100,0,50,20,10),null)

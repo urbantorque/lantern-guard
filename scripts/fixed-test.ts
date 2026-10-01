@@ -34,13 +34,13 @@ for(const id of TOWER_ORDER)for(const branch of [0,1] as const){
   assert(s.upgrade(t,branch));assert(s.refine(t));assert(!s.refine(t));assert(!s.upgrade(t,branch));exact(s)
 }
 console.log('PASS every tower and branch has exactly five stages; no crosspaths')
-const busy=fresh();busy.build(0,'wick');busy.startWave();busy.step(DT)
-assert(!busy.canStartWave());assert.equal(busy.earlyBonus(),0);assert(!busy.build(3,'cracker'));assert(busy.upgrade(busy.towers[0],0));assert(!busy.relocate(busy.towers[0],3));exact(busy)
+const busy=fresh();busy.glow=1000;busy.build(0,'wick');busy.startWave();busy.step(DT)
+assert(!busy.canStartWave());assert.equal(busy.earlyBonus(),0);assert(busy.build(3,'cracker'));assert(busy.upgrade(busy.towers[0],0));assert(!busy.relocate(busy.towers[0],3));assert(busy.relocate(busy.towers[0],6));exact(busy)
 const boss=fresh();boss.wave=24;boss.glow=10000;boss.startWave()
 for(let i=0;i<2500;i++){boss.step(DT);boss.events=[]}
 assert(boss.enemies.some(e=>e.def.id==='gloom'&&!e.shrouded));exact(boss)
 assert(boss.enemies.filter(e=>e.def.id==='gloom').every(e=>!e.def.spawn&&!e.def.jams))
-console.log('PASS live upgrades, planning-only construction, no overlapping waves, boss split and exact mid-boss resume')
+console.log('PASS live upgrades, construction and relocation, no overlapping waves, boss split and exact mid-boss resume')
 
 const bond=fresh();bond.wave=5;bond.glow=10000
 const bell=bond.build(0,'bell')!,cracker=bond.build(3,'cracker')!

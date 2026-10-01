@@ -9,7 +9,7 @@ const colours:Record<EnemyId,string>={drip:'#58d5ca',skitter:'#ffbd59',shell:'#f
 export function drawFixedEnemy(c:CanvasRenderingContext2D,e:Enemy,reducedMotion=false){
   const r=e.def.radius*(e.visScale??1)*1.24,hidden=e.def.hidden&&!e.revealedPerm&&e.seenT<=0
   const phase=(e.age??0)*(e.def.id==='skitter'?14:7)+(e.uid??0)*1.7
-  const moving=!reducedMotion&&!(e.stunT>0),bob=moving?Math.sin(phase)*r*.15:0
+  const moving=!reducedMotion&&!(e.stunT>0),bob=moving?Math.sin(phase)*r*(e.def.boss?.055:e.def.hidden?.19:.12):0
   const hit=!reducedMotion?Math.max(0,e.hitT??0)/.12:0
   const col=currentPalette()==='clear'?ENEMY_MARK[e.def.id]:colours[e.def.id]
   c.save();c.translate(e.x,e.y);c.globalAlpha=hidden?.48:1
@@ -41,6 +41,12 @@ export function drawFixedEnemy(c:CanvasRenderingContext2D,e:Enemy,reducedMotion=
     c.strokeStyle='#aa7460';c.lineWidth=2;c.beginPath();c.moveTo(0,-r*1.55);c.lineTo(0,-r*.95);c.stroke()
   }
   if(boss){
+    // Broad shoulder fins and a faceted crown give bosses a distinct silhouette.
+    for(const side of [-1,1]){
+      const sway=moving?Math.sin(phase*.5)*r*.07:0
+      polygon(c,[[side*r*.75,-r*.8],[side*r*1.38,-r*1.1+sway],[side*r*1.2,-r*.2],[side*r*.75,0]],col)
+      polygon(c,[[side*r*.75,-r*.8],[side*r*1.38,-r*1.1+sway],[side*r,-r*.6]],'#fff0be66')
+    }
     polygon(c,[[-r*.7,-r*1.2],[-r*.8,-r*1.95],[-r*.28,-r*1.65],[0,-r*2.15],[r*.3,-r*1.65],[r*.8,-r*1.95],[r*.7,-r*1.2]],'#ffd075')
     c.fillStyle='#fff2b4';c.fillRect(-3,-r*1.75,6,7)
   }
