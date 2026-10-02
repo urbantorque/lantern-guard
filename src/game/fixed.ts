@@ -10,6 +10,7 @@ export const STAGES = ['Base', 'Improved', 'Specialised', 'Mastered', 'Crowned']
 export const ACTS = ['First lanterns', 'A gathering mist', 'The district wakes', 'Light through armour', 'The long watch', 'Harbour bells', 'Wild gardens', 'Before the dawn']
 export const MAP_HELP = ['Broad bends reward shared coverage.', 'Both entrances meet early. Build around the upper bend.', 'A mirrored reach rewards a fresh opening.', 'The side inlet joins late. Leave room for a lower defence.']
 export const FIXED_TIPS: Record<EnemyId, string> = {
+  dredger: 'Its core opens at marked bends. Overlap damage there; slows extend the opening.',
   drip: 'A gentle opening. Place a Wickling beside the stream.', skitter: 'Fast. A Moonbell buys your damage towers more time.',
   shell: 'Armoured. Crackers and heavy upgrades break shells.', veil: 'Hidden. An Owl reveals enemies across its sight range.',
   bloat: 'Splits into three Drips. Leave a little coverage downstream.', wisp: 'A close crowd. Cracker blasts catch several at once.',

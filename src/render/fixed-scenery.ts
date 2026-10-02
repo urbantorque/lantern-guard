@@ -69,6 +69,9 @@ export function scenery(s:Sim,stage:number,keepsakes:readonly string[],wide=fals
     if(style===0&&keepsakes.includes('market'))block(c,x-9,y+8,25,14,11,day?'#bc6b62':'#784f60',day?'#f3b28b':'#c27d79','#704859')
     if(keepsakes.includes('glass')){c.fillStyle='#94e5df';c.fillRect(x+w/2+6,y-19,3,10)}
     if(stage>=2||keepsakes.includes('garden')){c.fillStyle='#f9c68c';c.fillRect(x-10,y-8,4,4);c.fillRect(x-3,y-10,4,4)}
+    if(style===0&&keepsakes.some(k=>k.startsWith('project:market:'))){const col=keepsakes.includes('project:market:1')?'#7dd7c4':'#eead64';polygon(c,[[x-24,y-15],[x+20,y-15],[x+30,y-5],[x-14,y-5]],col)}
+    if(style===2&&keepsakes.some(k=>k.startsWith('project:observatory:'))){c.fillStyle=keepsakes.includes('project:observatory:1')?'#aaa0ee':'#e99973';c.beginPath();c.ellipse(x,y-h-6,13,12,0,Math.PI,Math.PI*2);c.fill();c.fillStyle='#eee1aa';c.fillRect(x-1,y-h-24,2,16)}
+    if(style===4&&keepsakes.some(k=>k.startsWith('project:gardens:'))){c.fillStyle=keepsakes.includes('project:gardens:1')?'#bdf5df':'#f6a7b2';for(let j=0;j<4;j++){c.beginPath();c.arc(x-15+j*9,y-h-10,3,0,Math.PI*2);c.fill()}}
     if(chapter>=1){
       c.strokeStyle='#fff0b799';c.lineWidth=1;c.beginPath();c.moveTo(x-w/2,y-7);c.quadraticCurveTo(x,y+3,x+w/2,y-7);c.stroke()
       for(let j=0;j<3+chapter;j++){const bx=x-w/2+5+j*(w-10)/(2+chapter);polygon(c,[[bx-2,y-5],[bx+3,y-5],[bx,y+1]],['#ffb789','#b4fff0','#e5bdff'][j%3])}

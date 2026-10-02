@@ -1,3 +1,5 @@
+import { techniqueOffers, techniqueStats, hasNeighbour, craftWave, dredgerOpen, type TechniqueId } from './watch-craft'
+import { enemyName } from './bestiary'
 import { automaticTarget } from './auto-target'
 import { fixedLevel, fixedWave, fixedStats, FIXED_UNLOCK, stageOf, upgradePrice, bondName, type Bond } from './fixed'
 import { heroStats, heroTower, heroHitSlow, type HeroId } from './heroes'
@@ -221,6 +223,7 @@ export type SimEvent =
 export interface Challenge {
   fixed?: 1
   watchDepth?: 1
+  watchCraft?: 1
   expedition?: ExpeditionId
   /** Absent on pre-hero watches, whose exact balance is preserved. */
   hero?: HeroId
@@ -403,6 +406,7 @@ export interface SaveSnapshotV1 extends SnapshotBase {
 
 /** Full save, valid at any moment including mid-wave. Restores to an identical simulation. */
 export interface SaveSnapshotV2 extends SnapshotBase {
+  techniques?: TechniqueId[]
   climate?: ClimateState
   bonds?: Bond[]
   preparation?: Preparation | null
@@ -484,6 +488,7 @@ export class Sim {
   freeplayFrom = 0
   stats: RunStats = { pops: 0, leaked: 0, flips: 0, glowEarned: 0, built: 0, upgrades: 0, charms: 0, time: 0, popsBy: {}, towersUsed: [], leaksBy: {}, leakRoutes: {}, firstBuildAt: -1, firstFlipWave: -1, earlyCalls: 0, maxTier: 0, activeTime: 0, cheered: {} }
   bonds: Bond[] = []
+  techniques: TechniqueId[] = []
   private uid = 1
   /** Seeded draws so far, so a restored run can fast-forward the generator. */
   private rngDraws = 0
@@ -712,7 +717,7 @@ export class Sim {
   }
 
   waveDef(n: number): WaveDef {
-    if (this.challenge.expedition) return expeditionWave(this.challenge.expedition,n)
+    if (this.challenge.expedition) {const wave=expeditionWave(this.challenge.expedition,n);return this.challenge.watchCraft?craftWave(wave,n,this.challenge.expedition):wave}
     if (this.challenge.fixed) {
       const wave=fixedWave(n,this.challenge.variant ?? 0,this.seed)
       return this.challenge.watchDepth?depthWave(wave,n,this.seed):wave
@@ -760,7 +765,7 @@ export class Sim {
         if(id==='owl'&&b>=2)stats.damage*=.75
         if(refinement)specialiseCrown(stats,id,b)
       }
-      return stats
+      return this.challenge.watchCraft?techniqueStats(stats,id,this.techniques):stats
     }
     const stats = computeStats(id, a, b)
     if (this.challenge.guard && (id === 'bell' || id === 'owl')) stats.range += 20
@@ -890,8 +895,27 @@ export class Sim {
     return true
   }
 
+  chooseTechnique(id:TechniqueId):boolean {
+    if(this.over||!techniqueOffers(this).some(t=>t.id===id))return false
+    this.techniques.push(id)
+    for(const t of this.towers)t.stats=this.towerStats(t.id,t.a,t.b,t.refinement)
+    this.recomputeAuras();this.syncBonds();return true
+  }
+
+  /** Preview only: no purchase, pairing or aura is committed. */
+  previewBond(pad:number,id:TowerId):Tower|null {
+    if(!this.challenge.watchDepth||this.bonds.length>=this.bondSlots||!this.pads[pad])return null
+    const p=this.pads[pad],candidate={uid:-1,x:p.x,y:p.y,id,stats:this.towerStats(id,0,0),rangeMul:1} as Tower
+    return this.towers.filter(t=>!this.bonds.some(b=>b.a===t.uid||b.b===t.uid)&&bondName(id,t.id,true)&&this.sharedCoverage(candidate,t)).sort((a,b)=>dist2(a.x,a.y,p.x,p.y)-dist2(b.x,b.y,p.x,p.y))[0]??null
+  }
+
+  nightRange(t:Tower):number {
+    const sheltered=this.towers.some(o=>o.id==='owl'&&dist2(o.x,o.y,t.x,t.y)<=o.stats.range**2)
+    return t.stats.range*t.rangeMul*skyReach(t.id,{...this.sky,night:true},sheltered)*(this.techniques.includes('outrider')&&!hasNeighbour(this,t)?1.1:1)
+  }
+
   effRange(t: Tower): number {
-    return t.stats.range * t.rangeMul * (this.challenge.fixed?skyReach(t.id,this.sky,this.sheltered(t)):1)
+    return t.stats.range * t.rangeMul * (this.challenge.fixed?skyReach(t.id,this.sky,this.sheltered(t)):1) * (this.techniques.includes('outrider')&&!hasNeighbour(this,t)?1.1:1)
   }
 
   /** Owl shelter never stacks and uses its base sight, so it cannot recurse through auras. */
@@ -1091,7 +1115,7 @@ export class Sim {
         // Live purchases earn only for the time each tier actually worked.
         for(const t of this.towers)if(t.id==='garden'){
           const terrace=this.challenge.watchDepth&&landmark(this).id==='sunterrace'&&!this.sky.night&&nearLandmark(this,t)?1.12:1
-          t.harvest=(t.harvest??0)+t.stats.income*exposure*terrace
+          t.harvest=(t.harvest??0)+t.stats.income*exposure*terrace*(this.techniques.includes('dividend')?(this.sky.night?.88:1.18):1)
           t.healing=(t.healing??0)+t.stats.lifePerWave*dt
         }
         this.climate.waveSeconds+=dt
@@ -1159,7 +1183,8 @@ export class Sim {
 
   /** silent: no boss 'spawn' event (Old Gloom's twin, restored saves). */
   spawnEnemy(type: EnemyId, seg: Segment, s: number, wave: number, silent = false): Enemy {
-    const def = this.challenge.fixed && (type === 'toad' || type === 'gloom' || this.challenge.watchDepth && type === 'warden') ? { ...ENEMIES[type], jams: false, spawn: undefined } : ENEMIES[type]
+    const base = this.challenge.fixed && (type === 'toad' || type === 'gloom' || this.challenge.watchDepth && type === 'warden') ? { ...ENEMIES[type], jams: false, spawn: undefined } : ENEMIES[type]
+    const def=this.challenge.fixed?{...base,name:enemyName(type)}:base
     // harder modes ease in: full toughness only arrives by wave 15
     const ramp = this.hpMul >= 1 ? 1 + (this.hpMul - 1) * Math.min(1, Math.max(0, wave - (this.challenge.compact ? 8 : 4)) / (this.challenge.compact ? 12 : 11)) : this.hpMul
     // the night deepens: Mopes grow a little tougher each wave after the eleventh, bosses more gently after the tenth
@@ -1583,6 +1608,9 @@ export class Sim {
   damage(e: Enemy, amount: number, heavy: boolean, src: Tower | null, continuous = false): boolean {
     if (!e.alive || amount <= 0) return false
     if(this.challenge.fixed&&src)amount*=skyDamage(src.id,this.sky)
+    if(src&&this.techniques.includes('afterglow'))amount*=this.sky.night?1.08:.96
+    if(src&&this.techniques.includes('outrider')&&hasNeighbour(this,src))amount*=.96
+    if(this.challenge.watchCraft&&e.def.id==='dredger')amount*=dredgerOpen(e)?1.4:.6
     if(this.challenge.watchDepth&&src?.id==='storm'&&landmark(this).id==='stormgarden'&&nearLandmark(this,src))amount*=this.sky.weather==='rain'?1.12:1.05
     if(this.challenge.fixed&&src&&!continuous){const slow=heroHitSlow(this.challenge.hero,src.id);if(slow){e.slowF=Math.max(e.slowF,slow.amount);e.slowT=Math.max(e.slowT,slow.duration)}}
     const before = Math.max(0, e.hp) + Math.max(0, e.shell)
@@ -1741,7 +1769,7 @@ export class Sim {
     for (const t of this.towers) {
       const s = t.stats
       const range = this.effRange(t)
-      const rate = t.rateMul * (this.challenge.fixed?skyRate(t.id,this.sky):1) * (this.sunlit(t)?1.12:1) * (this.activePreparation('oil') && this.waveActive ? 1.15 : 1)
+      const rate = t.rateMul * (this.techniques.includes('circuit')?(hasNeighbour(this,t)?1.1:.95):1) * (this.challenge.fixed?skyRate(t.id,this.sky):1) * (this.sunlit(t)?1.12:1) * (this.activePreparation('oil') && this.waveActive ? 1.15 : 1)
       switch (t.def.kind) {
         case 'arc': {
           t.cd -= dt * rate
@@ -2247,6 +2275,7 @@ export class Sim {
     const alive = (e: Enemy | null) => (e && e.alive ? e.uid : 0)
     return {
       v: 2,
+      ...(this.challenge.watchCraft?{techniques:[...this.techniques]}:{}),
       ...(this.challenge.fixed ? { bonds: this.bonds.map(b => ({...b})),climate:{...this.climate} } : {}),
       ...(this.challenge.guard ? { waveReports: this.waveReports.map(r => ({ ...r, damage: { ...r.damage } })), embers: this.embers.map(p => ({ ...p })), lastLeak: this.lastLeak && { ...this.lastLeak } } : {}),
       ...(this.challenge.expanding ? { canalStage: this.canalStage } : {}),
@@ -2348,6 +2377,7 @@ export class Sim {
     const full = snap.v === 2 ? snap : null
     sim.wave = snap.wave
     if(snap.challenge.fixed&&full)sim.climate={...(full.climate??{elapsed:full.stats.activeTime,waveSeconds:0,gardenExposure:0})}
+    if(snap.challenge.watchCraft&&full)sim.techniques=[...(full.techniques??[])]
     if (snap.challenge.fixed && full) sim.bonds = (full.bonds ?? []).map(b => ({...b}))
     if (snap.challenge.depth && full) {
       sim.preparation = full.preparation ? { ...full.preparation } : null

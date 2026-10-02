@@ -342,7 +342,7 @@ export class Renderer {
               fx.burst(ev.x,ev.y-8,P.cream,ev.boss?12:3,ev.boss?180:100,3,.35)
               if(ev.boss)fx.burst(ev.x,ev.y-8,P.amberHi,26,200,4,.7)
             }
-            sound.pop(big)
+            sound.creaturePop(ev.enemy,big)
             break
           }
           const crowd = sim.enemies.length > 60

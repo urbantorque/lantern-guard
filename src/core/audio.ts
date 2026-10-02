@@ -182,6 +182,25 @@ export class Sound {
     this.tone(3600, 'sine', 0.001, 0.04, 0.03)
   }
 
+  /** Material-led defeat cues share a rate limit so large waves stay restrained. */
+  creaturePop(kind:string,size=1){
+    if(!this.ok('creature-pop',12))return
+    if(['shell','vshell','skiff','warden','dredger'].includes(kind)){
+      this.noise(.065,'bandpass',1400,.8,.1)
+      this.tone(260/Math.sqrt(size),'triangle',.002,.15,.12)
+      this.tone(780,'sine',.003,.08,.035)
+    }else if(['wisp','veil','mender'].includes(kind)){
+      this.tone(kind==='wisp'?1046:784,'sine',.01,.22,.09)
+      this.tone(kind==='wisp'?1568:1176,'sine',.012,.15,.028)
+      this.noise(.07,'highpass',3800,.6,.035)
+    }else{
+      const f=kind==='toad'||kind==='gloom'?145:380
+      const {o}=this.tone(f,'sine',.003,.14,.13)
+      o.frequency.exponentialRampToValueAtTime(f*.68,this.ctx!.currentTime+.1)
+      this.noise(.04,'lowpass',1600,.7,.04)
+    }
+  }
+
   crack() {
     if (!this.ok('crack', 12)) return
     this.noise(0.09, 'bandpass', 1800, 1.2, 0.35)
@@ -409,15 +428,24 @@ export class Sound {
 
   private instrument(note:ScoreNote,when:number,hero:AudioScene['hero']) {
     if(note.voice==='hat'){this.noise(note.length,'highpass',5600,.5,note.gain,when,this.musicBus);return}
+    if(note.voice==='brush'){this.noise(note.length,'bandpass',2100,.8,note.gain,when,this.musicBus);return}
     const ctx=this.ctx!,at=ctx.currentTime+when,freq=mtof(note.midi)
     const pan=ctx.createStereoPanner();pan.pan.value=note.pan;pan.connect(this.musicBus)
     const filter=ctx.createBiquadFilter();filter.type='lowpass';filter.Q.value=.5
     filter.frequency.setValueAtTime(note.voice==='pad'?1100:note.voice==='bass'?650:hero==='mira'?2600:4200,at)
     filter.connect(pan)
-    const voice=note.voice,attack=voice==='pad'?.55:voice==='bass'?.018:.006
-    const main=this.tone(freq,voice==='bass'||voice==='bell'||voice==='kick'?'sine':'triangle',attack,note.length,note.gain,filter,when)
+    const voice=note.voice,attack=voice==='pad'?.55:voice==='reed'?.075:voice==='bass'?.018:.006
+    const main=this.tone(freq,['bass','bell','kick','marimba'].includes(voice)?'sine':'triangle',attack,note.length,note.gain,filter,when)
     if(voice==='kick')main.o.frequency.exponentialRampToValueAtTime(42,at+.12)
     else if(voice==='bell')this.tone(freq*2.001,'sine',.002,note.length*.42,note.gain*.26,filter,when)
+    else if(voice==='marimba'){
+      this.tone(freq*4,'sine',.001,.11,note.gain*.2,filter,when)
+      this.tone(freq*9.2,'sine',.001,.045,note.gain*.05,filter,when)
+      filter.frequency.exponentialRampToValueAtTime(750,at+.2)
+    }else if(voice==='reed'){
+      this.tone(freq*3,'sine',.09,note.length*.6,note.gain*.12,filter,when)
+      this.tone(freq,'sine',.12,note.length*.8,note.gain*.18,filter,when,3)
+    }
     else if(voice==='pluck'||voice==='lead'){
       filter.frequency.exponentialRampToValueAtTime(hero==='mira'?650:900,at+note.length*.7)
       this.tone(freq*2,'sine',.003,note.length*.3,note.gain*.12,filter,when)

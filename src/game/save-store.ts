@@ -1,3 +1,4 @@
+import { validTechniques } from './watch-craft'
 import { compactLevel, PLOTS, STARTER_PLOTS, REFINEMENTS } from './compact'
 import { fixedLevel, COMMISSIONS, FIXED_UNLOCK, bondName } from './fixed'
 import { isHero } from './heroes'
@@ -73,6 +74,8 @@ export function validSnapshot(s: unknown): s is SaveSnapshot {
   if (!object(s.challenge) || s.challenge.chapter !== undefined || s.challenge.campaign !== undefined || !integer(s.wave, 0, 10000) || !number(s.glow, 0) || !number(s.lives) || !number(s.seed) || typeof s.won !== 'boolean' || !object(s.stats) || !allFinite(s)) return false
   if(s.challenge.hero!==undefined&&(!isHero(s.challenge.hero)||s.challenge.fixed!==1))return false
   if(s.challenge.watchDepth!==undefined&&(s.challenge.watchDepth!==1||s.challenge.fixed!==1))return false
+  if(s.challenge.watchCraft!==undefined&&(s.challenge.watchCraft!==1||s.challenge.watchDepth!==1||!isHero(s.challenge.hero)))return false
+  if(s.challenge.watchCraft?!validTechniques(s.techniques,s.challenge.hero as import('./heroes').HeroId,Number(s.wave),!!s.challenge.expedition):s.techniques!==undefined)return false
   if(s.challenge.expedition!==undefined&&(!isExpedition(s.challenge.expedition)||s.challenge.watchDepth!==1||!s.challenge.skirmish||s.challenge.commission!==undefined||s.challenge.blockedPad!==undefined))return false
   if (s.challenge.fixed !== undefined && (s.challenge.fixed !== 1 || s.challenge.compact !== 1 || s.challenge.depth !== 1 || s.challenge.balance !== 1 || s.challenge.guard !== 1 || s.challenge.plans || s.challenge.guardian || s.freeplay || s.wave > 40)) return false
   if (s.challenge.fixed && (s.preparation !== null || s.preparationRound !== 0 || s.challenge.practice !== undefined && typeof s.challenge.practice !== 'boolean' || !s.challenge.skirmish && (s.challenge.commission !== undefined || s.challenge.blockedPad !== undefined))) return false
@@ -199,6 +202,7 @@ export function validSnapshot(s: unknown): s is SaveSnapshot {
   if (!(s.spawners as unknown[]).every(p => object(p) && integer(p.wave, 1, 10000) && integer(p.group, 0, 100) && number(p.t) && integer(p.spawned))) return false
   if (!(s.waveAlive as unknown[]).every(v => Array.isArray(v) && integer(v[0], 1, 10000) && integer(v[1]))) return false
   for (const e of s.enemies as Record<string, unknown>[]) {
+    if(e.type==='dredger'&&(s.challenge.watchCraft!==1||s.challenge.expedition!=='sunforge'))return false
     if (e.escortOf !== undefined && (!integer(e.escortOf, 1) || e.type !== 'skiff' || s.challenge.harbourEncounters !== 1 && s.challenge.compact !== 1)) return false
     if (e.signalT !== undefined && !((e.type === 'warden' && (s.challenge.harbourEncounters === 1 || s.challenge.compact === 1) && number(e.signalT, 0, 2.4)) || (e.type === 'bloomheart' && (s.challenge.gardens === 1 || s.challenge.compact === 1) && number(e.signalT, 0, 3)))) return false
     if (['reedling', 'bloomheart'].includes(String(e.type)) && s.challenge.gardens !== 1 && s.challenge.compact !== 1) return false

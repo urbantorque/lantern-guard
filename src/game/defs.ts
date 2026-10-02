@@ -5,7 +5,7 @@
 
 export type TowerId = 'wick' | 'cracker' | 'bell' | 'beam' | 'owl' | 'garden' | 'storm' | 'ballista'
 export type Priority = 'first' | 'last' | 'strong' | 'close'
-export type EnemyId = 'drip' | 'skitter' | 'shell' | 'veil' | 'bloat' | 'wisp' | 'mender' | 'vshell' | 'toad' | 'gloom' | 'skiff' | 'warden' | 'reedling' | 'bloomheart'
+export type EnemyId = 'drip' | 'skitter' | 'shell' | 'veil' | 'bloat' | 'wisp' | 'mender' | 'vshell' | 'toad' | 'gloom' | 'skiff' | 'warden' | 'reedling' | 'bloomheart' | 'dredger'
 export type CharmTrait = 'shell' | 'veil' | 'swift' | 'heavy'
 export type Family = 'amber' | 'coral' | 'ice' | 'lime' | 'lilac' | 'gold' | 'pink'
 
@@ -354,6 +354,7 @@ export interface EnemyDef {
 }
 
 export const ENEMIES: Record<EnemyId, EnemyDef> = {
+  dredger: { id:'dredger',family:'coral',name:'The Dredger',hp:440,shell:24,speed:28,reward:300,weight:12,radius:37,boss:true,tip:'Its core opens at marked bends. Focus damage there.' },
   reedling: { id: 'reedling', family: 'amber', name: 'Reedling', hp: 22, speed: 58, reward: 13, weight: 3, radius: 17, tip: 'Gains armour where the streams meet. Attack it early or use armour-breaking towers.' },
   bloomheart: { id: 'bloomheart', family: 'lilac', name: 'Bloomheart', hp: 3300, shell: 100, speed: 27, reward: 900, weight: 999, radius: 46, boss: true, tip: 'Heals nearby enemies after a 3-second warning. Defeat them before the timer ends. It cannot heal itself.' },
   skiff: { id: 'skiff', family: 'coral', name: 'Skiff', hp: 7, shell: 8, speed: 50, reward: 12, weight: 2, radius: 17, tip: 'Speeds up when its armour breaks. Moonbells can slow it down.' },

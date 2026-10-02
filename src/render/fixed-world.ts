@@ -8,6 +8,7 @@ import { currentPalette } from './palette'
 import { block, polygon, windows, setArchitectureLight, lightPool } from './architecture'
 
 import { scenery, movingWater, livingDistrict } from './fixed-scenery'
+import { DREDGER_BENDS, DREDGER_WINDOW } from '../game/watch-craft'
 import { drawLandmark, drawSunReserves } from './watch-depth'
 
 const arrivals=new WeakMap<Tower,{born:number;upgrade:number;lastUpgrade:number;fire:number;shot:number;angle:number;frame:number}>()
@@ -24,6 +25,13 @@ export function drawFixedWorld(c:CanvasRenderingContext2D,s:Sim,view:ViewState,s
   livingDistrict(c,s,time,reducedMotion)
   drawLandmark(c,s,time,reducedMotion,wide)
   drawSunReserves(c,s,reducedMotion,wide)
+  if(s.challenge.watchCraft&&s.challenge.expedition==='sunforge'&&s.planningWave>=10){
+    for(const bend of DREDGER_BENDS){const seg=s.level.segs.get(bend.segment);if(!seg)continue
+      c.save();c.strokeStyle='#ffe0a4';c.lineWidth=3;c.setLineDash([4,7]);c.beginPath()
+      for(let d=-DREDGER_WINDOW;d<=DREDGER_WINDOW;d+=5){const p=seg.line.at(seg.line.length*bend.fraction+d,{x:0,y:0,tx:0,ty:0});if(d===-DREDGER_WINDOW)c.moveTo(p.x,p.y);else c.lineTo(p.x,p.y)}c.stroke();c.setLineDash([])
+      const p=seg.line.at(seg.line.length*bend.fraction,{x:0,y:0,tx:0,ty:0});upright(c,p.x,p.y,wide,()=>{c.font='600 12px "DM Sans Variable",sans-serif';c.textAlign='center';c.fillStyle=s.sky.night?'#ffe6ac':'#3c5260';c.fillText('CORE OPENS',p.x,p.y-35)});c.restore()
+    }
+  }
   // Show the true footprint of lingering fire below units, so its damage has a visible cause.
   for(const p of s.embers){
     c.save();c.globalAlpha=Math.min(.35,p.life*.22);c.fillStyle='#ed9554';c.strokeStyle='#ffcf86';c.lineWidth=2;c.beginPath();c.arc(p.x,p.y,p.radius,0,Math.PI*2);c.fill();c.stroke()
@@ -31,6 +39,8 @@ export function drawFixedWorld(c:CanvasRenderingContext2D,s:Sim,view:ViewState,s
   }
   const selected=view.selection?.kind==='tower'?view.selection.tower:null
   if(selected){c.fillStyle='#d1f9e016';c.strokeStyle=s.sky.night?'#a5e8caaf':'#315f76aa';c.lineWidth=1.5;c.beginPath();c.arc(selected.x,selected.y,s.effRange(selected),0,Math.PI*2);c.fill();c.stroke()
+    const nightReach=s.nightRange(selected)
+    if(!s.sky.night&&Math.abs(nightReach-s.effRange(selected))>3){c.save();c.strokeStyle='#9870ad';c.setLineDash([5,5]);c.beginPath();c.arc(selected.x,selected.y,nightReach,0,Math.PI*2);c.stroke();c.restore()}
     for(const bond of s.bonds){if(bond.a!==selected.uid&&bond.b!==selected.uid)continue;const partner=s.towers.find(t=>t.uid===(bond.a===selected.uid?bond.b:bond.a));if(partner){c.strokeStyle='#ffdc8fcc';c.setLineDash([5,5]);c.lineDashOffset=reducedMotion?0:-time*12;c.beginPath();c.moveTo(selected.x,selected.y);c.lineTo(partner.x,partner.y);c.stroke();c.setLineDash([]);c.lineDashOffset=0}}
   }
   for(const [i,p] of s.pads.entries()){
@@ -94,7 +104,7 @@ const icons=new Map<string,string>()
 export function fixedEnemyIcon(id:EnemyId){
   const key=id+':'+currentPalette();if(icons.has(key))return icons.get(key)!
   const cv=document.createElement('canvas');cv.width=96;cv.height=96;const c=cv.getContext('2d')!,def=ENEMIES[id]
-  const k=def.boss?64/(def.radius*1.24*2.45):1.5;c.translate(48,def.boss?76:66);c.scale(k,k)
-  drawFixedEnemy(c,{x:0,y:0,def,hp:1,maxHp:1,shell:def.shell??0,visScale:1,revealedPerm:true,seenT:0,shrouded:false,slowT:0}as Enemy,true)
+  const k=Math.min(1.7,78/(def.radius*(def.boss?1.1:1.32)*(id==='gloom'?4.6:id==='reedling'?3.8:3.6)));c.translate(48,id==='reedling'?66:60);c.scale(k,k)
+  drawFixedEnemy(c,{x:0,y:0,def,hp:1,maxHp:1,shell:def.shell??0,maxShell:def.shell??0,uid:0,age:0,hitT:0,heatT:0,stunT:0,tx:1,ty:0,visScale:1,revealedPerm:true,seenT:0,shrouded:false,slowT:0}as Enemy,true,false)
   const url=cv.toDataURL();icons.set(key,url);return url
 }

@@ -6,8 +6,9 @@ export interface AudioScene {
   playing?:boolean
   boss?:boolean
   overture?:boolean
+  district?:number
 }
-export type Voice='bass'|'pad'|'pluck'|'bell'|'lead'|'kick'|'hat'
+export type Voice='bass'|'pad'|'pluck'|'bell'|'lead'|'kick'|'hat'|'marimba'|'reed'|'brush'
 export interface ScoreNote {voice:Voice; midi:number; length:number; gain:number; pan:number}
 
 // An original 32-bar piece: opening, answer, bridge and return. The second
@@ -27,7 +28,10 @@ const phrases=[
 export function scoreStep(step:number,scene:AudioScene,intensity:number):ScoreNote[] {
   const beat=step%16,bar=Math.floor(step/16)%32,pass=Math.floor(step/512)%2
   const section=Math.floor(bar/8),chapter=Math.min(3,Math.floor((scene.wave??0)/10))
-  const [root,third]=chords[bar],notes:ScoreNote[]=[]
+  const district=Math.max(0,Math.min(3,scene.district??0))
+  // Each waterway has a harmonic route and motif, with a 64-bar return variation.
+  const chordBar=(bar+[0,8,16,24][district])%32
+  const [root,third]=chords[chordBar],notes:ScoreNote[]=[]
   const add=(voice:Voice,midi:number,length:number,gain:number,pan=0)=>notes.push({voice,midi,length,gain,pan})
   const active=scene.playing??false,energy=Math.max(0,Math.min(1,intensity))
   const tones=[0,third,7,12,14,19],hero=scene.hero??'sol'
@@ -36,13 +40,13 @@ export function scoreStep(step:number,scene:AudioScene,intensity:number):ScoreNo
     for(const [i,n]of [0,7,third+12].entries())add('pad',root+n,3.5,.025,[-.5,.1,.5][i])
   }
   if(beat===8&&active&&(chapter>0||scene.boss))add('bass',root-5,1,.065)
-  const phrase=phrases[(bar%8+(hero==='mira'?2:hero==='ivo'?4:0))%8]
+  const phrase=phrases[(bar%8+district+(hero==='mira'?2:hero==='ivo'?4:0))%8]
   // Breathing room at the end of each phrase is part of the composition.
   if(beat%2===0&&!(bar%4===3&&beat>10)){
     const degree=phrase[beat/2]
     if(degree>=0){
       const octave=section===2?-12:pass&&bar%4<2?12:0
-      const voice=scene.night?'bell':hero==='ivo'?'lead':'pluck'
+      const voice=scene.night?(section===2?'reed':'bell'):hero==='ivo'?'lead':hero==='mira'?'reed':'marimba'
       add(voice,root+12+tones[degree]+octave,hero==='mira'?1.7:1.05,.09,Math.sin(bar*1.7)*.22)
     }
   }
@@ -52,11 +56,13 @@ export function scoreStep(step:number,scene:AudioScene,intensity:number):ScoreNo
   }
   if((chapter>=1||section===1)&&beat===14&&bar%2===0)add('bell',root+24+third,1.8,.033,.35)
   if(scene.boss&&beat%4===2)add('lead',root+(beat%8===2?0:7),.28,.042,-.2)
+  // An answering phrase in the second half leaves the lead room to breathe.
+  if(section>=2&&bar%2===1&&(beat===5||beat===13))add(scene.night?'marimba':'reed',root+tones[(bar+district+pass)%4],.85,.04,beat===5?-.38:.38)
   // Earned district arrangement: a restrained answering line, once per phrase.
   if(scene.overture&&bar%4===2&&(beat===5||beat===9||beat===13))add(scene.night?'bell':'lead',root+12+[7,third+12,12][(beat-5)/4],1.25,.038,beat===9?.3:-.3)
   if(active&&energy>.12){
     if(beat===0||beat===8||scene.boss&&beat===10)add('kick',36,.16,.09*(.5+energy*.5))
-    if(beat===4||beat===12)add('hat',0,.07,.018+energy*.013,.15)
+    if(beat===4||beat===12)add(scene.night?'brush':'hat',0,scene.night?.18:.07,.018+energy*.013,.15)
     if((chapter>=2||scene.boss)&&beat%4===2)add('hat',0,.035,.01,-.15)
   }
   return notes

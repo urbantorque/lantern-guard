@@ -23,6 +23,7 @@ import { icon } from './icons'
 import { copyText, downloadBlob, shareImage, shareText, type ShareOutcome } from './share'
 
 const COUNTER_TIP: Record<EnemyId, string> = {
+  dredger: 'Cover the marked bends with damage and slows.',
   reedling: 'Catch Reedlings on the garden approaches, or crack their new shell with heavy hits after the merge.',
   bloomheart: 'Use crowd bursts inside its healing ring before the visible countdown ends.',
   skiff: 'Moonbell slows the burst of speed after a Skiff loses its armour.',

@@ -8,7 +8,7 @@ import { ENEMY_MARK, glowSprite, mix, P, withAlpha } from './palette'
 export const ENEMY_VIS = 1.3
 
 /** Animation loop length (seconds) per Mope; 8 baked frames cover one loop. */
-const PERIOD: Record<EnemyId, number> = { drip: 1.57, skitter: 0.29, shell: 1.57, veil: 1.05, bloat: 1.26, wisp: 0.8, mender: 1.96, vshell: 1.57, toad: 2.86, gloom: 2.6, skiff: 1.57, warden: 2.6, reedling: 1.57, bloomheart: 2.6 }
+const PERIOD: Record<EnemyId, number> = { dredger: 2.6, drip: 1.57, skitter: 0.29, shell: 1.57, veil: 1.05, bloat: 1.26, wisp: 0.8, mender: 1.96, vshell: 1.57, toad: 2.86, gloom: 2.6, skiff: 1.57, warden: 2.6, reedling: 1.57, bloomheart: 2.6 }
 const FRAMES = 8
 
 const GLYPH_INK = '#13212a'
@@ -1235,7 +1235,7 @@ interface Sprite {
   used: number
 }
 
-const ID_IX: Record<EnemyId, number> = { drip: 0, skitter: 1, shell: 2, veil: 3, bloat: 4, wisp: 5, mender: 6, vshell: 7, toad: 8, gloom: 9, skiff: 10, warden: 11, reedling: 12, bloomheart: 13 }
+const ID_IX: Record<EnemyId, number> = { drip: 0, skitter: 1, shell: 2, veil: 3, bloat: 4, wisp: 5, mender: 6, vshell: 7, toad: 8, gloom: 9, skiff: 10, warden: 11, reedling: 12, bloomheart: 13, dredger: 14 }
 /** Canvas memory budget for baked frames (iOS WebKit caps total canvas memory). */
 const SPRITE_BUDGET = 32 * 1024 * 1024
 

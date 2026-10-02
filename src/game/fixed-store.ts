@@ -1,3 +1,4 @@
+import { validStyles, type ProjectId } from './district-projects'
 import { decodeRun, encodeRun, storageChanged, validSnapshot } from './save-store'
 import { Sim, type SaveSnapshotV2 } from './sim'
 import type { Difficulty, EnemyId } from './defs'
@@ -11,6 +12,8 @@ export type Slot = 'campaign' | 'commission'
 export interface FixedRecord { wave: number; light: number; won: boolean; practice: boolean }
 export interface VillageProfile {
   v: 1
+  districtStyles?: Partial<Record<ProjectId,0|1>>
+  lessons?: string[]
   guardian?: string
   lastHero?: HeroId
   records: Record<string,FixedRecord>
@@ -34,7 +37,7 @@ export function loadVillage(): VillageProfile {
   if(!nonnegative(p.settlement)||p.settlement>4||!Number.isInteger(p.lastMap)||p.lastMap<0||p.lastMap>3||!journal(p.journal)||!Object.values(p.settings).every(v=>typeof v==='boolean'))return empty
   if(!Object.values(p.records).every(r=>r&&nonnegative(r.wave)&&r.wave<=40&&nonnegative(r.light)&&typeof r.won==='boolean'&&typeof r.practice==='boolean'))return empty
   if(!Object.values(p.credits).every(c=>c&&nonnegative(c.wave)&&journal(c.journal)))return empty
-  return {...empty,...p,lastHero:isHero(p.lastHero)?p.lastHero:'sol',guardian:['lantern','ember','reed','tide'].includes(p.guardian??'')?p.guardian:'lantern',commissions:p.commissions.filter(id=>['market','glass','garden'].includes(id)||isExpedition(id)),settings:{...empty.settings,...p.settings}}
+  return {...empty,...p,districtStyles:validStyles(p.districtStyles),lessons:Array.isArray(p.lessons)?p.lessons.filter(k=>typeof k==='string').slice(0,20):[],lastHero:isHero(p.lastHero)?p.lastHero:'sol',guardian:['lantern','ember','reed','tide'].includes(p.guardian??'')?p.guardian:'lantern',commissions:p.commissions.filter(id=>['market','glass','garden'].includes(id)||isExpedition(id)),settings:{...empty.settings,...p.settings}}
 }
 export function loadWatch(slot:Slot): {snapshot:SaveSnapshotV2;blooms:number[]} | null {
   try {

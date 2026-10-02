@@ -1,0 +1,434 @@
+[
+  {
+    "mode": "sunforge",
+    "hero": "sol",
+    "choices": "00",
+    "map": 0,
+    "won": true,
+    "wave": 12,
+    "light": 25
+  },
+  {
+    "mode": "moonwake",
+    "hero": "sol",
+    "choices": "00",
+    "map": 2,
+    "won": true,
+    "wave": 12,
+    "light": 25
+  },
+  {
+    "mode": "stormglass",
+    "hero": "sol",
+    "choices": "00",
+    "map": 1,
+    "won": true,
+    "wave": 12,
+    "light": 25
+  },
+  {
+    "mode": "campaign",
+    "hero": "sol",
+    "choices": "00",
+    "map": 0,
+    "won": true,
+    "wave": 40,
+    "light": 25
+  },
+  {
+    "mode": "sunforge",
+    "hero": "sol",
+    "choices": "01",
+    "map": 0,
+    "won": true,
+    "wave": 12,
+    "light": 25
+  },
+  {
+    "mode": "moonwake",
+    "hero": "sol",
+    "choices": "01",
+    "map": 2,
+    "won": true,
+    "wave": 12,
+    "light": 25
+  },
+  {
+    "mode": "stormglass",
+    "hero": "sol",
+    "choices": "01",
+    "map": 1,
+    "won": true,
+    "wave": 12,
+    "light": 25
+  },
+  {
+    "mode": "campaign",
+    "hero": "sol",
+    "choices": "01",
+    "map": 1,
+    "won": true,
+    "wave": 40,
+    "light": 23
+  },
+  {
+    "mode": "sunforge",
+    "hero": "sol",
+    "choices": "10",
+    "map": 0,
+    "won": true,
+    "wave": 12,
+    "light": 25
+  },
+  {
+    "mode": "moonwake",
+    "hero": "sol",
+    "choices": "10",
+    "map": 2,
+    "won": true,
+    "wave": 12,
+    "light": 25
+  },
+  {
+    "mode": "stormglass",
+    "hero": "sol",
+    "choices": "10",
+    "map": 1,
+    "won": true,
+    "wave": 12,
+    "light": 25
+  },
+  {
+    "mode": "campaign",
+    "hero": "sol",
+    "choices": "10",
+    "map": 2,
+    "won": true,
+    "wave": 40,
+    "light": 25
+  },
+  {
+    "mode": "sunforge",
+    "hero": "sol",
+    "choices": "11",
+    "map": 0,
+    "won": true,
+    "wave": 12,
+    "light": 25
+  },
+  {
+    "mode": "moonwake",
+    "hero": "sol",
+    "choices": "11",
+    "map": 2,
+    "won": true,
+    "wave": 12,
+    "light": 25
+  },
+  {
+    "mode": "stormglass",
+    "hero": "sol",
+    "choices": "11",
+    "map": 1,
+    "won": true,
+    "wave": 12,
+    "light": 25
+  },
+  {
+    "mode": "campaign",
+    "hero": "sol",
+    "choices": "11",
+    "map": 3,
+    "won": true,
+    "wave": 40,
+    "light": 25
+  },
+  {
+    "mode": "sunforge",
+    "hero": "mira",
+    "choices": "00",
+    "map": 0,
+    "won": true,
+    "wave": 12,
+    "light": 25
+  },
+  {
+    "mode": "moonwake",
+    "hero": "mira",
+    "choices": "00",
+    "map": 2,
+    "won": true,
+    "wave": 12,
+    "light": 25
+  },
+  {
+    "mode": "stormglass",
+    "hero": "mira",
+    "choices": "00",
+    "map": 1,
+    "won": true,
+    "wave": 12,
+    "light": 25
+  },
+  {
+    "mode": "campaign",
+    "hero": "mira",
+    "choices": "00",
+    "map": 0,
+    "won": true,
+    "wave": 40,
+    "light": 25
+  },
+  {
+    "mode": "sunforge",
+    "hero": "mira",
+    "choices": "01",
+    "map": 0,
+    "won": true,
+    "wave": 12,
+    "light": 25
+  },
+  {
+    "mode": "moonwake",
+    "hero": "mira",
+    "choices": "01",
+    "map": 2,
+    "won": true,
+    "wave": 12,
+    "light": 25
+  },
+  {
+    "mode": "stormglass",
+    "hero": "mira",
+    "choices": "01",
+    "map": 1,
+    "won": true,
+    "wave": 12,
+    "light": 25
+  },
+  {
+    "mode": "campaign",
+    "hero": "mira",
+    "choices": "01",
+    "map": 1,
+    "won": true,
+    "wave": 40,
+    "light": 25
+  },
+  {
+    "mode": "sunforge",
+    "hero": "mira",
+    "choices": "10",
+    "map": 0,
+    "won": true,
+    "wave": 12,
+    "light": 25
+  },
+  {
+    "mode": "moonwake",
+    "hero": "mira",
+    "choices": "10",
+    "map": 2,
+    "won": true,
+    "wave": 12,
+    "light": 25
+  },
+  {
+    "mode": "stormglass",
+    "hero": "mira",
+    "choices": "10",
+    "map": 1,
+    "won": true,
+    "wave": 12,
+    "light": 25
+  },
+  {
+    "mode": "campaign",
+    "hero": "mira",
+    "choices": "10",
+    "map": 2,
+    "won": true,
+    "wave": 40,
+    "light": 25
+  },
+  {
+    "mode": "sunforge",
+    "hero": "mira",
+    "choices": "11",
+    "map": 0,
+    "won": true,
+    "wave": 12,
+    "light": 25
+  },
+  {
+    "mode": "moonwake",
+    "hero": "mira",
+    "choices": "11",
+    "map": 2,
+    "won": true,
+    "wave": 12,
+    "light": 25
+  },
+  {
+    "mode": "stormglass",
+    "hero": "mira",
+    "choices": "11",
+    "map": 1,
+    "won": true,
+    "wave": 12,
+    "light": 25
+  },
+  {
+    "mode": "campaign",
+    "hero": "mira",
+    "choices": "11",
+    "map": 3,
+    "won": true,
+    "wave": 40,
+    "light": 25
+  },
+  {
+    "mode": "sunforge",
+    "hero": "ivo",
+    "choices": "00",
+    "map": 0,
+    "won": true,
+    "wave": 12,
+    "light": 25
+  },
+  {
+    "mode": "moonwake",
+    "hero": "ivo",
+    "choices": "00",
+    "map": 2,
+    "won": true,
+    "wave": 12,
+    "light": 25
+  },
+  {
+    "mode": "stormglass",
+    "hero": "ivo",
+    "choices": "00",
+    "map": 1,
+    "won": true,
+    "wave": 12,
+    "light": 25
+  },
+  {
+    "mode": "campaign",
+    "hero": "ivo",
+    "choices": "00",
+    "map": 0,
+    "won": true,
+    "wave": 40,
+    "light": 25
+  },
+  {
+    "mode": "sunforge",
+    "hero": "ivo",
+    "choices": "01",
+    "map": 0,
+    "won": true,
+    "wave": 12,
+    "light": 25
+  },
+  {
+    "mode": "moonwake",
+    "hero": "ivo",
+    "choices": "01",
+    "map": 2,
+    "won": true,
+    "wave": 12,
+    "light": 25
+  },
+  {
+    "mode": "stormglass",
+    "hero": "ivo",
+    "choices": "01",
+    "map": 1,
+    "won": true,
+    "wave": 12,
+    "light": 25
+  },
+  {
+    "mode": "campaign",
+    "hero": "ivo",
+    "choices": "01",
+    "map": 1,
+    "won": true,
+    "wave": 40,
+    "light": 13
+  },
+  {
+    "mode": "sunforge",
+    "hero": "ivo",
+    "choices": "10",
+    "map": 0,
+    "won": true,
+    "wave": 12,
+    "light": 25
+  },
+  {
+    "mode": "moonwake",
+    "hero": "ivo",
+    "choices": "10",
+    "map": 2,
+    "won": true,
+    "wave": 12,
+    "light": 25
+  },
+  {
+    "mode": "stormglass",
+    "hero": "ivo",
+    "choices": "10",
+    "map": 1,
+    "won": true,
+    "wave": 12,
+    "light": 25
+  },
+  {
+    "mode": "campaign",
+    "hero": "ivo",
+    "choices": "10",
+    "map": 2,
+    "won": true,
+    "wave": 40,
+    "light": 25
+  },
+  {
+    "mode": "sunforge",
+    "hero": "ivo",
+    "choices": "11",
+    "map": 0,
+    "won": true,
+    "wave": 12,
+    "light": 25
+  },
+  {
+    "mode": "moonwake",
+    "hero": "ivo",
+    "choices": "11",
+    "map": 2,
+    "won": true,
+    "wave": 12,
+    "light": 25
+  },
+  {
+    "mode": "stormglass",
+    "hero": "ivo",
+    "choices": "11",
+    "map": 1,
+    "won": true,
+    "wave": 12,
+    "light": 25
+  },
+  {
+    "mode": "campaign",
+    "hero": "ivo",
+    "choices": "11",
+    "map": 3,
+    "won": true,
+    "wave": 40,
+    "light": 25
+  }
+]

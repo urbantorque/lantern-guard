@@ -61,6 +61,8 @@ sound.settings.muted=false;visibility.hidden=true
 sound.tick(.1,1);sound.build();sound.spark();assert.equal(ctx.nodes.length,muted,'background tabs stay silent')
 sound.suspend();assert.equal(ctx.state,'suspended');sound.unlock();assert.equal(ctx.state,'suspended','hidden gesture cannot resume audio')
 visibility.hidden=false;sound.unlock();assert.equal(ctx.state,'running','visible gesture restores sound')
+for(const kind of ['shell','wisp','drip']){ctx.currentTime+=1;const before=ctx.nodes.length;sound.creaturePop(kind);assert(ctx.nodes.length>before,'each material has a defeat sound');const once=ctx.nodes.length;sound.creaturePop(kind);assert.equal(ctx.nodes.length,once,'defeat cues share a rate cap')}
+visibility.hidden=true;const quiet=ctx.nodes.length;sound.creaturePop('warden',3);assert.equal(ctx.nodes.length,quiet,'new material sounds respect background silence');visibility.hidden=false
 sound.settings.music=0;ctx.currentTime=200;const noMusic=ctx.nodes.length;sound.tick(.1,0);assert.equal(ctx.nodes.length,noMusic,'soundtrack can be disabled independently')
 console.log('PASS title music, audio-clock timing, day/night arrangements, first-shot feedback, rate caps, mute and background suspension')
 
