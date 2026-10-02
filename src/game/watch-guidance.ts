@@ -1,5 +1,6 @@
 import type { Sim } from './sim'
 import { enemyName } from './bestiary'
+import { BESTIARY } from './bestiary'
 
 export function watchLesson(s:Sim,seen:readonly string[]=[]){
   if(!s.challenge.watchCraft||s.wave>10)return null
@@ -19,5 +20,6 @@ export function watchInsights(s:Sim):string[]{
   else if(slows)lines.push(`Chimes landed ${slows} slowing hits.`)
   const leak=Object.entries(s.stats.leaksBy).sort((a,b)=>(b[1]??0)-(a[1]??0))[0]
   if(leak)lines.push(`${enemyName(leak[0] as keyof typeof s.stats.leaksBy)} cost the most light: ${leak[1]}.`)
+  if(s.challenge.livingWatch&&leak)return [...lines.slice(0,2),`Next watch: ${BESTIARY[leak[0] as keyof typeof BESTIARY].counter}`]
   return lines.slice(0,3)
 }

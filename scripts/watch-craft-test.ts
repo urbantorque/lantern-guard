@@ -85,7 +85,7 @@ console.log('PASS named projects, alternative unlock paths, valid cosmetic choic
 // Capture vector commands: every creature must render finite geometry and a unique shape.
 function drawing(id:EnemyId,age:number,still:boolean){
   const commands:unknown[]=[];let stack=0
-  const c=new Proxy({globalAlpha:1} as Record<string|symbol,unknown>, {get(_t,key){if(key in _t)return _t[key];if(key==='createRadialGradient')return ()=>({addColorStop(){}});return (...args:unknown[])=>{for(const v of args)if(typeof v==='number')assert(Number.isFinite(v),`${id}: ${String(key)}`);if(key==='save')stack++;if(key==='restore')stack--;commands.push([key,...args])}},set(_t,key,v){if(typeof v==='number')assert(Number.isFinite(v));commands.push([key,v]);_t[key]=v;return true}}) as unknown as CanvasRenderingContext2D
+  const c=new Proxy({globalAlpha:1} as Record<string|symbol,unknown>, {get(_t,key){if(key in _t)return _t[key];if(key==='createRadialGradient'||key==='createLinearGradient')return ()=>({addColorStop(){}});return (...args:unknown[])=>{for(const v of args)if(typeof v==='number')assert(Number.isFinite(v),`${id}: ${String(key)}`);if(key==='save')stack++;if(key==='restore')stack--;commands.push([key,...args])}},set(_t,key,v){if(typeof v==='number')assert(Number.isFinite(v));commands.push([key,v]);_t[key]=v;return true}}) as unknown as CanvasRenderingContext2D
   const unit=boss.spawnEnemy(id,seg,centre,12,true);unit.age=age;unit.uid=1;unit.x=100;unit.y=100;unit.tx=1;unit.ty=0
   drawFixedEnemy(c,unit,still,false);assert.equal(stack,0,'canvas state restored');return JSON.stringify(commands)
 }

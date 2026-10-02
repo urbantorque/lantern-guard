@@ -1,0 +1,164 @@
+[
+  {
+    "week": 7,
+    "hero": "sol",
+    "strategy": "no-garden",
+    "pair": "00",
+    "won": true,
+    "wave": 12,
+    "light": 25
+  },
+  {
+    "week": 7,
+    "hero": "sol",
+    "strategy": "no-garden",
+    "pair": "10",
+    "won": true,
+    "wave": 12,
+    "light": 25
+  },
+  {
+    "week": 7,
+    "hero": "sol",
+    "strategy": "no-garden",
+    "pair": "11",
+    "won": true,
+    "wave": 12,
+    "light": 25
+  },
+  {
+    "week": 7,
+    "hero": "sol",
+    "strategy": "mixed",
+    "pair": "00",
+    "won": false,
+    "wave": 9,
+    "light": 0
+  },
+  {
+    "week": 7,
+    "hero": "sol",
+    "strategy": "mixed",
+    "pair": "10",
+    "won": true,
+    "wave": 12,
+    "light": 3
+  },
+  {
+    "week": 7,
+    "hero": "sol",
+    "strategy": "mixed",
+    "pair": "11",
+    "won": true,
+    "wave": 12,
+    "light": 3
+  },
+  {
+    "week": 7,
+    "hero": "sol",
+    "strategy": "greedy",
+    "pair": "00",
+    "won": false,
+    "wave": 9,
+    "light": 0
+  },
+  {
+    "week": 7,
+    "hero": "sol",
+    "strategy": "greedy",
+    "pair": "10",
+    "won": false,
+    "wave": 8,
+    "light": 0
+  },
+  {
+    "week": 7,
+    "hero": "sol",
+    "strategy": "greedy",
+    "pair": "11",
+    "won": false,
+    "wave": 8,
+    "light": 0
+  },
+  {
+    "week": 8,
+    "hero": "mira",
+    "strategy": "no-garden",
+    "pair": "00",
+    "won": true,
+    "wave": 12,
+    "light": 25
+  },
+  {
+    "week": 8,
+    "hero": "mira",
+    "strategy": "no-garden",
+    "pair": "10",
+    "won": true,
+    "wave": 12,
+    "light": 25
+  },
+  {
+    "week": 8,
+    "hero": "mira",
+    "strategy": "no-garden",
+    "pair": "11",
+    "won": true,
+    "wave": 12,
+    "light": 25
+  },
+  {
+    "week": 8,
+    "hero": "mira",
+    "strategy": "mixed",
+    "pair": "00",
+    "won": false,
+    "wave": 12,
+    "light": 0
+  },
+  {
+    "week": 8,
+    "hero": "mira",
+    "strategy": "mixed",
+    "pair": "10",
+    "won": false,
+    "wave": 12,
+    "light": 0
+  },
+  {
+    "week": 8,
+    "hero": "mira",
+    "strategy": "mixed",
+    "pair": "11",
+    "won": false,
+    "wave": 12,
+    "light": 0
+  },
+  {
+    "week": 8,
+    "hero": "mira",
+    "strategy": "greedy",
+    "pair": "00",
+    "won": false,
+    "wave": 9,
+    "light": 0
+  },
+  {
+    "week": 8,
+    "hero": "mira",
+    "strategy": "greedy",
+    "pair": "10",
+    "won": false,
+    "wave": 8,
+    "light": 0
+  },
+  {
+    "week": 8,
+    "hero": "mira",
+    "strategy": "greedy",
+    "pair": "11",
+    "won": false,
+    "wave": 9,
+    "light": 0
+  }
+]

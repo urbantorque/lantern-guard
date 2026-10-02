@@ -6,6 +6,7 @@ import { ENEMIES } from './defs'
 import { loadSettings } from './progress'
 import { isHero, type HeroId } from './heroes'
 import { isExpedition } from './watch-depth'
+import { earnedMastery, MASTERY, type MasteryId } from './living-watch'
 
 const PREFIX = 'lanternlocks.fixed1.'
 export type Slot = 'campaign' | 'commission'
@@ -14,6 +15,7 @@ export interface VillageProfile {
   v: 1
   districtStyles?: Partial<Record<ProjectId,0|1>>
   lessons?: string[]
+  mastery?: MasteryId[]
   guardian?: string
   lastHero?: HeroId
   records: Record<string,FixedRecord>
@@ -37,7 +39,7 @@ export function loadVillage(): VillageProfile {
   if(!nonnegative(p.settlement)||p.settlement>4||!Number.isInteger(p.lastMap)||p.lastMap<0||p.lastMap>3||!journal(p.journal)||!Object.values(p.settings).every(v=>typeof v==='boolean'))return empty
   if(!Object.values(p.records).every(r=>r&&nonnegative(r.wave)&&r.wave<=40&&nonnegative(r.light)&&typeof r.won==='boolean'&&typeof r.practice==='boolean'))return empty
   if(!Object.values(p.credits).every(c=>c&&nonnegative(c.wave)&&journal(c.journal)))return empty
-  return {...empty,...p,districtStyles:validStyles(p.districtStyles),lessons:Array.isArray(p.lessons)?p.lessons.filter(k=>typeof k==='string').slice(0,20):[],lastHero:isHero(p.lastHero)?p.lastHero:'sol',guardian:['lantern','ember','reed','tide'].includes(p.guardian??'')?p.guardian:'lantern',commissions:p.commissions.filter(id=>['market','glass','garden'].includes(id)||isExpedition(id)),settings:{...empty.settings,...p.settings}}
+  return {...empty,...p,mastery:Array.isArray(p.mastery)?p.mastery.filter(id=>MASTERY.some(m=>m.id===id)):[],districtStyles:validStyles(p.districtStyles),lessons:Array.isArray(p.lessons)?p.lessons.filter(k=>typeof k==='string').slice(0,20):[],lastHero:isHero(p.lastHero)?p.lastHero:'sol',guardian:['lantern','ember','reed','tide'].includes(p.guardian??'')?p.guardian:'lantern',commissions:p.commissions.filter(id=>['market','glass','garden'].includes(id)||isExpedition(id)),settings:{...empty.settings,...p.settings}}
 }
 export function loadWatch(slot:Slot): {snapshot:SaveSnapshotV2;blooms:number[]} | null {
   try {
@@ -58,6 +60,7 @@ export function saveWatch(sim:Sim,blooms:number[],slot:Slot):boolean {
   } catch {storageMessage='Saving is unavailable. Keep this tab open to preserve your current watch.'; return false}
 }
 export function recordWatch(profile:VillageProfile,sim:Sim) {
+  profile.mastery=[...new Set([...(profile.mastery??[]),...earnedMastery(sim)])]
   const held=sim.wave-(sim.waveActive || sim.over==='lost'?1:0)
   const id=`${sim.seed}:${sim.challenge.variant}:${sim.difficulty}:${sim.challenge.id??'campaign'}${sim.challenge.hero?':'+sim.challenge.hero:''}`
   const credit=profile.credits[id] ?? {wave:0,journal:{}}
@@ -72,7 +75,7 @@ export function recordWatch(profile:VillageProfile,sim:Sim) {
   const old=profile.records[recordKey]
   if(!old || held>old.wave || held===old.wave && sim.lives>old.light) profile.records[recordKey]={wave:held,light:sim.lives,won:sim.won,practice:!!sim.challenge.practice}
   if(sim.challenge.commission && sim.won && !profile.commissions.includes(sim.challenge.commission)) profile.commissions.push(sim.challenge.commission)
-  if(sim.challenge.expedition&&sim.won&&!profile.commissions.includes(sim.challenge.expedition))profile.commissions.push(sim.challenge.expedition)
+  if(sim.challenge.expedition&&sim.challenge.weekly===undefined&&sim.won&&!sim.challenge.practice&&!profile.commissions.includes(sim.challenge.expedition))profile.commissions.push(sim.challenge.expedition)
   if(!sim.isChallenge) profile.settlement=Math.max(profile.settlement,[5,10,30,40].filter(n=>held>=n).length)
   writeJSON('profile',profile)
 }

@@ -1,0 +1,130 @@
+[
+  {
+    "width": 1280,
+    "height": 800,
+    "overflow": false,
+    "buttons": [
+      {
+        "x": 1014,
+        "y": 362.8125,
+        "w": 105,
+        "h": 44,
+        "visible": true
+      },
+      {
+        "x": 1145,
+        "y": 362.8125,
+        "w": 105,
+        "h": 44,
+        "visible": true
+      }
+    ],
+    "canvas": {
+      "x": 0,
+      "y": 56,
+      "width": 984,
+      "height": 680,
+      "top": 56,
+      "right": 984,
+      "bottom": 736,
+      "left": 0
+    },
+    "errors": []
+  },
+  {
+    "width": 390,
+    "height": 844,
+    "overflow": false,
+    "buttons": [
+      {
+        "x": 23,
+        "y": 725.421875,
+        "w": 158,
+        "h": 44,
+        "visible": true
+      },
+      {
+        "x": 209,
+        "y": 725.421875,
+        "w": 158,
+        "h": 44,
+        "visible": true
+      }
+    ],
+    "canvas": {
+      "x": 0,
+      "y": 52,
+      "width": 390,
+      "height": 456,
+      "top": 52,
+      "right": 390,
+      "bottom": 508,
+      "left": 0
+    },
+    "errors": []
+  },
+  {
+    "width": 320,
+    "height": 740,
+    "overflow": false,
+    "buttons": [
+      {
+        "x": 21,
+        "y": 625.5625,
+        "w": 125,
+        "h": 44,
+        "visible": true
+      },
+      {
+        "x": 174,
+        "y": 625.5625,
+        "w": 125,
+        "h": 44,
+        "visible": true
+      }
+    ],
+    "canvas": {
+      "x": 0,
+      "y": 52,
+      "width": 320,
+      "height": 342,
+      "top": 52,
+      "right": 320,
+      "bottom": 394,
+      "left": 0
+    },
+    "errors": []
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "overflow": false,
+    "buttons": [
+      {
+        "x": 561,
+        "y": 216.875,
+        "w": 118,
+        "h": 44,
+        "visible": true
+      },
+      {
+        "x": 701,
+        "y": 216.875,
+        "w": 118,
+        "h": 44,
+        "visible": true
+      }
+    ],
+    "canvas": {
+      "x": 0,
+      "y": 48,
+      "width": 536,
+      "height": 290,
+      "top": 48,
+      "right": 536,
+      "bottom": 338,
+      "left": 0
+    },
+    "errors": []
+  }
+]

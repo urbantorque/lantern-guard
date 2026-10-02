@@ -20,12 +20,22 @@ export const FIXED_TIPS: Record<EnemyId, string> = {
   reedling: 'Grows armour at the meeting stone. Hit early or bring heavy damage.', bloomheart: 'Heals its neighbours after a three-second warning. It cannot heal itself.',
 }
 
-export function fixedLevel(variant = 0) {
+export function fixedLevel(variant = 0,living=false) {
   const level = compactLevel(variant)
   // Keep only the authored long route. There are no hidden alternate channels or switches.
   level.segments = level.segments.filter(s => !['e1', 'w2'].includes(s.id)).map(s => ({ ...s, bonus: 1, feature: undefined,
     next: 'gate' in s.next ? { seg: s.next.gate === 'upper' ? 'w1' : 'e2' } : s.next }))
   level.gates = []
+  if(living&&variant!==0){
+    // Authored banks: an open harbour, a tight mirrored crossing and a long basin.
+    // Segment endpoints stay shared so the water and its travel path remain continuous.
+    const banks:Record<number,Record<string,number[][]>>={
+      1:{w1:[[360,132],[150,130],[65,230],[90,335],[235,370],[360,400]],e2:[[360,470],[540,478],[640,540],[620,665],[490,740],[360,686]]},
+      2:{w1:[[360,132],[560,150],[650,235],[615,345],[470,380],[360,400]],e2:[[360,470],[185,510],[105,630],[205,735],[305,745],[360,686]]},
+      3:{w1:[[520,175],[300,100],[75,45],[55,305],[230,355],[325,365]],e2:[[210,475],[390,485],[660,470],[660,645],[570,735],[355,700]]},
+    }
+    for(const segment of level.segments){const pts=banks[variant]?.[segment.id];if(pts)segment.pts=pts.map(([x,y])=>({x,y}))}
+  }
   // The main route shares curve tangents at every join. The inlet blends into
   // that route without changing its direction or adding a switching mechanic.
   for(const segment of level.segments){

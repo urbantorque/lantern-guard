@@ -27,15 +27,15 @@ export function techniqueOffers(s:Pick<Sim,'challenge'|'techniques'|'planningWav
 export function validTechniques(ids:unknown,hero:HeroId|undefined,wave:number,short:boolean){
   return Array.isArray(ids)&&ids.length<=2&&ids.every((id,i)=>TECHNIQUES.some(t=>t.id===id&&t.hero===hero&&t.round===i)&&wave+1>=(short?[4,8]:[6,16])[i])
 }
-export function techniqueStats(stats:TowerStats,id:TowerId,ids:readonly TechniqueId[]){
+export function techniqueStats(stats:TowerStats,id:TowerId,ids:readonly TechniqueId[],living=false){
   if(ids.includes('stillwater')){stats.slowDur*=1.25;stats.damage*=.96}
   if(ids.includes('moon-sight')){if(id==='owl')stats.range*=1.15;if(id==='bell')stats.slow*=.85}
-  if(ids.includes('long-embers')&&stats.burn>0){stats.burnDur+=1.5;stats.burn*=.9}
-  if(ids.includes('flashpoint')&&stats.burn>0){stats.burn*=1.4;stats.burnDur*=.7}
-  if(ids.includes('deep-freeze')&&stats.slow>0){stats.slow=Math.min(.8,stats.slow+.05);stats.slowDur*=.85}
-  if(ids.includes('tidal-echo')&&id==='bell'){stats.stunEvery=stats.stunEvery?Math.min(4,stats.stunEvery):4;stats.stunDur=Math.max(.3,stats.stunDur);stats.interval*=1.08}
-  if(ids.includes('forked-current')&&id==='storm'){stats.count++;stats.damage*=.9}
-  if(ids.includes('capacitor')&&id==='storm'){stats.damage*=1.18;stats.interval*=1.1}
+  if(ids.includes('long-embers')&&stats.burn>0&&!living){stats.burnDur+=1.5;stats.burn*=.9}
+  if(ids.includes('flashpoint')&&stats.burn>0&&!living){stats.burn*=1.4;stats.burnDur*=.7}
+  if(ids.includes('deep-freeze')&&stats.slow>0){if(living){stats.stunEvery=3;stats.stunDur=Math.max(.7,stats.stunDur);stats.interval*=1.15}else{stats.slow=Math.min(.8,stats.slow+.05);stats.slowDur*=.85}}
+  if(ids.includes('tidal-echo')&&id==='bell'){if(!living){stats.stunEvery=stats.stunEvery?Math.min(4,stats.stunEvery):4;stats.stunDur=Math.max(.3,stats.stunDur)}stats.interval*=1.08}
+  if(ids.includes('forked-current')&&id==='storm'){stats.count+=living?2:1;stats.damage*=living?.85:.9}
+  if(ids.includes('capacitor')&&id==='storm'){if(living)stats.count=Math.max(1,stats.count-1);else stats.damage*=1.18;stats.interval*=1.1}
   return stats
 }
 export function hasNeighbour(s:Sim,t:Pick<Tower,'x'|'y'|'uid'>){return s.towers.some(o=>o.uid!==t.uid&&(o.x-t.x)**2+(o.y-t.y)**2<=140**2)}

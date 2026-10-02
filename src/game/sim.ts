@@ -1,4 +1,5 @@
 import { techniqueOffers, techniqueStats, hasNeighbour, craftWave, dredgerOpen, type TechniqueId } from './watch-craft'
+import { livingWave, escortCover, weeklyWatch } from './living-watch'
 import { enemyName } from './bestiary'
 import { automaticTarget } from './auto-target'
 import { fixedLevel, fixedWave, fixedStats, FIXED_UNLOCK, stageOf, upgradePrice, bondName, type Bond } from './fixed'
@@ -135,6 +136,7 @@ export interface Tower {
   sunlight?: number
   sunPulse?: number
   sunCooldown?: number
+  sunUsed?: number
 }
 
 export type ProjKind = 'spark' | 'feather' | 'firework' | 'rocket' | 'moth' | 'mini' | 'bolt'
@@ -224,6 +226,8 @@ export interface Challenge {
   fixed?: 1
   watchDepth?: 1
   watchCraft?: 1
+  livingWatch?: 1
+  weekly?: number
   expedition?: ExpeditionId
   /** Absent on pre-hero watches, whose exact balance is preserved. */
   hero?: HeroId
@@ -324,6 +328,7 @@ export interface SavedTower {
   sunlight?: number
   sunPulse?: number
   sunCooldown?: number
+  sunUsed?: number
 }
 
 /** A lock as saved. Everything past the charm is only present in v2 saves. */
@@ -508,7 +513,7 @@ export class Sim {
     this.maxLives = d.lives
     this.hpMul = d.hp
     this.speedMul = d.speed
-    this.level = buildLevel(challenge.fixed ? fixedLevel(challenge.variant) : challenge.compact ? compactLevel(challenge.variant) : challenge.expanding ? growingCanal(0, !!challenge.guard) : challenge.guard ? growingCanal(2, true) : waterwayLevel(challenge.waterway))
+    this.level = buildLevel(challenge.fixed ? fixedLevel(challenge.variant,!!challenge.livingWatch) : challenge.compact ? compactLevel(challenge.variant) : challenge.expanding ? growingCanal(0, !!challenge.guard) : challenge.guard ? growingCanal(2, true) : waterwayLevel(challenge.waterway))
     this.gates = this.level.def.gates.map((g) => ({ def: g, state: g.lockedDir, charm: null, jammed: false, cd: 0, flipT: -9, routeT: [-9, -9], flips: 0, swingT: 0 }))
     this.pads = this.level.def.pads.map((p) => ({ x: p.x, y: p.y, tower: null }))
     // a tide opens mid-night: the locks and the sluice are already open, and there is a bank to build with
@@ -717,10 +722,11 @@ export class Sim {
   }
 
   waveDef(n: number): WaveDef {
-    if (this.challenge.expedition) {const wave=expeditionWave(this.challenge.expedition,n);return this.challenge.watchCraft?craftWave(wave,n,this.challenge.expedition):wave}
+    if (this.challenge.expedition) {let wave=expeditionWave(this.challenge.expedition,n);if(this.challenge.watchCraft)wave=craftWave(wave,n,this.challenge.expedition);return this.challenge.livingWatch?livingWave(wave,n,true):wave}
     if (this.challenge.fixed) {
-      const wave=fixedWave(n,this.challenge.variant ?? 0,this.seed)
-      return this.challenge.watchDepth?depthWave(wave,n,this.seed):wave
+      let wave=fixedWave(n,this.challenge.variant ?? 0,this.seed)
+      if(this.challenge.watchDepth)wave=depthWave(wave,n,this.seed)
+      return this.challenge.livingWatch?livingWave(wave,n):wave
     }
     if (this.challenge.compact) {
       const wave = compactWave(n, this.challenge.variant ?? 0, this.seed)
@@ -765,7 +771,7 @@ export class Sim {
         if(id==='owl'&&b>=2)stats.damage*=.75
         if(refinement)specialiseCrown(stats,id,b)
       }
-      return this.challenge.watchCraft?techniqueStats(stats,id,this.techniques):stats
+      return this.challenge.watchCraft?techniqueStats(stats,id,this.techniques,!!this.challenge.livingWatch):stats
     }
     const stats = computeStats(id, a, b)
     if (this.challenge.guard && (id === 'bell' || id === 'owl')) stats.range += 20
@@ -924,7 +930,7 @@ export class Sim {
   }
 
   canSee(e: Enemy, detect: boolean): boolean {
-    return !e.def.hidden || e.revealedPerm || e.seenT > 0 || detect || this.sunlit(e) || !!this.challenge.watchDepth&&landmark(this).id==='moonwell'&&this.sky.night&&this.climate.elapsed%12<4&&nearLandmark(this,e)
+    return !e.def.hidden || e.revealedPerm || e.seenT > 0 || detect || this.sunlit(e) || !!this.challenge.watchDepth&&landmark(this).id==='moonwell'&&this.sky.night&&this.climate.elapsed%12<(this.challenge.livingWatch?6:4)&&nearLandmark(this,e)
   }
 
   get charmsAllowed(): boolean {
@@ -1114,7 +1120,7 @@ export class Sim {
         this.climate.gardenExposure+=exposure
         // Live purchases earn only for the time each tier actually worked.
         for(const t of this.towers)if(t.id==='garden'){
-          const terrace=this.challenge.watchDepth&&landmark(this).id==='sunterrace'&&!this.sky.night&&nearLandmark(this,t)?1.12:1
+          const terrace=this.challenge.watchDepth&&landmark(this).id==='sunterrace'&&nearLandmark(this,t)?(this.challenge.livingWatch?(this.sky.night?.85:1.2):(this.sky.night?1:1.12)):1
           t.harvest=(t.harvest??0)+t.stats.income*exposure*terrace*(this.techniques.includes('dividend')?(this.sky.night?.88:1.18):1)
           t.healing=(t.healing??0)+t.stats.lifePerWave*dt
         }
@@ -1211,6 +1217,7 @@ export class Sim {
         else{hp*=1+Math.max(0,wave-5)*.08;shell*=1+Math.max(0,wave-5)*.04}
       }
     }
+    if(this.challenge.weekly!==undefined&&weeklyWatch(this.challenge.weekly).rule.name==='Iron tide')shell*=1.25
     const e: Enemy = {
       uid: this.uid++,
       def,
@@ -1225,7 +1232,7 @@ export class Sim {
       tx: 0,
       ty: 1,
       // a swift current hurries ordinary Mopes; bosses keep their pace
-      speedBase: def.speed * this.speedMul * (def.boss ? 1 : (this.challenge.swift ?? 1)),
+      speedBase: def.speed * this.speedMul * (def.boss ? 1 : (this.challenge.swift ?? 1)) * (this.challenge.weekly!==undefined&&weeklyWatch(this.challenge.weekly).rule.name==='Quick current'&&['skitter','skiff'].includes(type)?1.2:1),
       speedNow: def.speed,
       slowT: 0,
       slowF: 0,
@@ -1314,7 +1321,7 @@ export class Sim {
   private updateVisibility(dt: number) {
     for (const e of this.enemies) if (e.seenT > 0) e.seenT -= dt
     if(this.challenge.watchDepth){
-      const well=landmark(this).id==='moonwell'&&this.sky.night&&this.climate.elapsed%12<4
+      const well=landmark(this).id==='moonwell'&&this.sky.night&&this.climate.elapsed%12<(this.challenge.livingWatch?6:4)
       for(const e of this.enemies)if(e.def.hidden&&(this.sunlit(e)||well&&nearLandmark(this,e)))e.seenT=Math.max(e.seenT,.12)
     }
     for (const t of this.towers) {
@@ -1404,8 +1411,13 @@ export class Sim {
       }
       if (this.challenge.fixed && e.def.id === 'toad' && e.phase === 0 && e.hp <= e.maxHp*.5) {
         e.phase=1
-        for(let i=0;i<6;i++) this.inherit(this.spawnEnemy('drip',e.seg,Math.max(0,e.s-20-i*18),e.wave),e)
+        if(this.challenge.livingWatch)e.signalT=2
+        else for(let i=0;i<6;i++) this.inherit(this.spawnEnemy('drip',e.seg,Math.max(0,e.s-20-i*18),e.wave),e)
         this.events.push({t:'phase',x:e.x,y:e.y})
+      }
+      if(this.challenge.livingWatch&&e.def.id==='toad'&&e.phase===1){
+        e.signalT=Math.max(0,(e.signalT??0)-dt)
+        if(e.signalT===0){e.phase=2;for(let i=0;i<6;i++)this.inherit(this.spawnEnemy('drip',e.seg,Math.max(0,e.s-20-i*18),e.wave),e);this.events.push({t:'phase',x:e.x,y:e.y})}
       }
       // boss minions and phases
       if (e.def.spawn) {
@@ -1461,7 +1473,7 @@ export class Sim {
         for (let i = 0; i < 4; i++) this.inherit(this.spawnEnemy('skiff', e.seg, Math.max(0, e.s - 24 * (i + 1)), e.wave), e)
       }
       let speed = e.speedBase * (1 - slow) * (this.challenge.fixed?skySpeed(this.sky):1)
-      if(this.challenge.watchDepth&&landmark(this).id==='tidebell'&&nearLandmark(this,e))speed*=this.sky.night?.92:.96
+      if(this.challenge.watchDepth&&landmark(this).id==='tidebell'&&nearLandmark(this,e))speed*=this.sky.night?(this.challenge.livingWatch?.86:.92):.96
       if (e.def.id === 'skiff' && e.shell <= 0) speed *= 1.6
       if (e.stunT > 0) {
         e.stunT -= dt
@@ -1611,10 +1623,15 @@ export class Sim {
     if(src&&this.techniques.includes('afterglow'))amount*=this.sky.night?1.08:.96
     if(src&&this.techniques.includes('outrider')&&hasNeighbour(this,src))amount*=.96
     if(this.challenge.watchCraft&&e.def.id==='dredger')amount*=dredgerOpen(e)?1.4:.6
-    if(this.challenge.watchDepth&&src?.id==='storm'&&landmark(this).id==='stormgarden'&&nearLandmark(this,src))amount*=this.sky.weather==='rain'?1.12:1.05
+    if(this.challenge.livingWatch&&src&&heavy&&!continuous&&this.techniques.includes('flashpoint')&&e.burnT>0){
+      amount+=e.burnDps*Math.min(2,e.burnT);e.burnT=0;e.burnDps=0
+      this.events.push({t:'hit',x:e.x,y:e.y,kind:'burn',hue:'#ffb778'})
+    }
+    if(this.challenge.watchDepth&&src?.id==='storm'&&landmark(this).id==='stormgarden'&&nearLandmark(this,src))amount*=this.challenge.livingWatch&&this.sky.night?1.15:this.sky.weather==='rain'?1.12:1.05
     if(this.challenge.fixed&&src&&!continuous){const slow=heroHitSlow(this.challenge.hero,src.id);if(slow){e.slowF=Math.max(e.slowF,slow.amount);e.slowT=Math.max(e.slowT,slow.duration)}}
     const before = Math.max(0, e.hp) + Math.max(0, e.shell)
     if (this.challenge.fixed && src && (!continuous||this.challenge.watchDepth&&src.id==='beam')) heavy = this.applyBond(e,src,heavy)
+    if(!heavy&&escortCover(this,e))amount*=.7
     if (e.brittleT > 0) amount += continuous ? amount * 0.25 : 1
     if (!this.challenge.fixed && src && src.def.family === e.def.family && !(this.challenge.balance && e.def.boss)) amount *= FAMILY_BONUS
     if (e.def.id === 'warden' && wardenEscorts(this, e).length) amount *= WARDEN_GUARD_TAKEN
@@ -1657,6 +1674,11 @@ export class Sim {
 
   private kill(e: Enemy, src: Tower | null) {
     e.alive = false
+    if(this.challenge.livingWatch&&this.techniques.includes('long-embers')&&e.burnT>0&&e.burnDps>=1){
+      const neighbours=this.enemies.filter(o=>o.alive&&o!==e&&dist2(e.x,e.y,o.x,o.y)<=70**2)
+        .sort((a,b)=>dist2(e.x,e.y,a.x,a.y)-dist2(e.x,e.y,b.x,b.y)||a.uid-b.uid).slice(0,2)
+      for(const other of neighbours){other.burnDps=Math.max(other.burnDps,e.burnDps*.5);other.burnT=Math.max(other.burnT,Math.min(2,e.burnT));this.events.push({t:'hit',x:other.x,y:other.y,kind:'burn',hue:'#ffb778'})}
+    }
     this.decWave(e.wave)
     let lure = 0
     let lurer: Tower | null = null
@@ -1777,13 +1799,14 @@ export class Sim {
           let target = this.pickTarget(t, range)
           if (!target) break
           t.cd = s.interval; t.fireT = this.time
+          if(this.challenge.livingWatch)t.tolls++
           t.angle = Math.atan2(target.y - t.y, target.x - t.x)
           const hit = new Set<number>()
           let x = t.x, y = t.y - 25
           for (let i = 0; target && i < s.count; i++) {
             hit.add(target.uid)
             this.events.push({ t: 'arc', x, y, tx: target.x, ty: target.y })
-            this.damage(target, s.damage, s.heavy, t)
+            this.damage(target, s.damage*(this.challenge.livingWatch&&this.techniques.includes('capacitor')&&t.tolls%3===0&&i===0?2:1), s.heavy, t)
             x = target.x; y = target.y
             target = this.enemies.filter(e => e.alive && !hit.has(e.uid) && this.canSee(e, s.detect) && dist2(x, y, e.x, e.y) <= s.splash ** 2)
               .sort((a, b) => dist2(x, y, a.x, a.y) - dist2(x, y, b.x, b.y) || a.uid - b.uid)[0] ?? null
@@ -1887,10 +1910,16 @@ export class Sim {
           t.fireT = this.time
           const stun = s.stunEvery > 0 && t.tolls % s.stunEvery === 0
           for (const e of [...hits]) {
+            if(this.challenge.livingWatch&&this.techniques.includes('tidal-echo')&&t.tolls%4===0&&e.slowT>0&&!e.def.boss){
+              e.s=Math.max(0,e.s-24);const p=e.seg.line.at(e.s,{x:0,y:0,tx:0,ty:0});Object.assign(e,p);e.remaining=e.seg.toHome-e.s
+            }
             e.slowF = Math.max(e.slowF, s.slow)
             e.slowT = Math.max(e.slowT, s.slowDur)
             if (s.brittle) e.brittleT = Math.max(e.brittleT, s.slowDur)
             if (s.revealPerm && e.def.hidden) e.revealedPerm = true
+            if(stun&&this.challenge.livingWatch&&e.def.id==='bloomheart'&&(e.phase===1||e.phase===3)){
+              e.phase++;e.signalT=0;this.events.push({t:'crack',x:e.x,y:e.y})
+            }
             if (stun && !e.def.boss) e.stunT = Math.max(e.stunT, s.stunDur)
             if (s.damage > 0) this.damage(e, s.damage, false, t)
           }
@@ -2208,6 +2237,7 @@ export class Sim {
       if(!this.sky.night)t.sunlight=Math.min(SUN_CAPACITY,(t.sunlight??0)+dt*.5)
       else if((t.sunlight??0)>=SUN_PULSE_COST&&(t.sunCooldown??0)<=0){
         t.sunlight=(t.sunlight??0)-SUN_PULSE_COST;t.sunPulse=SUN_PULSE_SECONDS;t.sunCooldown=6
+        if(this.challenge.livingWatch)t.sunUsed=(t.sunUsed??0)+1
         this.events.push({t:'phase',x:t.x,y:t.y})
       }
     }
@@ -2312,7 +2342,7 @@ export class Sim {
         spotted: t.spotted,
         earned: t.earned,
         ...(this.challenge.fixed?{harvest:t.harvest??0,healing:t.healing??0}:{}),
-        ...(this.challenge.watchDepth?{sunlight:t.sunlight??0,sunPulse:t.sunPulse??0,sunCooldown:t.sunCooldown??0}:{}),
+        ...(this.challenge.watchDepth?{sunlight:t.sunlight??0,sunPulse:t.sunPulse??0,sunCooldown:t.sunCooldown??0,...(this.challenge.livingWatch?{sunUsed:t.sunUsed??0}:{})}:{}),
       })),
       gates: this.gates.map((g) => ({ state: g.state, charm: g.charm && { ...g.charm }, jammed: g.jammed, cd: g.cd, flipT: g.flipT, routeT: [g.routeT[0], g.routeT[1]], flips: g.flips, swingT: g.swingT })),
       stats: JSON.parse(JSON.stringify(this.stats)),
@@ -2457,7 +2487,7 @@ export class Sim {
           harvest:t.harvest??sim.towerStats(t.id,t.a,t.b,t.refinement).income*sim.climate.gardenExposure,
           healing:t.healing??sim.towerStats(t.id,t.a,t.b,t.refinement).lifePerWave*sim.climate.waveSeconds,
         }:{}),
-        ...(snap.challenge.watchDepth?{sunlight:t.sunlight??0,sunPulse:t.sunPulse??0,sunCooldown:t.sunCooldown??0}:{}),
+        ...(snap.challenge.watchDepth?{sunlight:t.sunlight??0,sunPulse:t.sunPulse??0,sunCooldown:t.sunCooldown??0,...(snap.challenge.livingWatch?{sunUsed:t.sunUsed??0}:{})}:{}),
       }
       pad.tower = tw
       sim.towers.push(tw)

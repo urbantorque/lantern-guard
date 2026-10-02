@@ -5,10 +5,24 @@ import { lightPool, polygon } from './architecture'
 import { dredgerOpen } from '../game/watch-craft'
 
 const colours:Record<EnemyId,string>={drip:'#d2ae79',skitter:'#6be6da',shell:'#ee8762',veil:'#8fd9ff',bloat:'#edb85d',wisp:'#ffdb97',mender:'#91e2ba',vshell:'#c3b5fc',toad:'#85b77b',gloom:'#749dd5',skiff:'#edb775',warden:'#829cb3',reedling:'#b0cf73',bloomheart:'#f195b6',dredger:'#e8b781'}
-const oval=(c:CanvasRenderingContext2D,x:number,y:number,rx:number,ry:number,fill:string)=>{c.fillStyle=fill;c.beginPath();c.ellipse(x,y,rx,ry,0,0,Math.PI*2);c.fill()}
+const oval=(c:CanvasRenderingContext2D,x:number,y:number,rx:number,ry:number,fill:string)=>{
+  c.fillStyle=fill;c.beginPath();c.ellipse(x,y,rx,ry,0,0,Math.PI*2);c.fill()
+  if(rx>.45&&rx<3&&fill.length===7){
+    const glaze=c.createLinearGradient(x-rx*.5,y-ry,x+rx*.4,y+ry)
+    glaze.addColorStop(0,'#fff4cf6b');glaze.addColorStop(.38,'#ffffff00');glaze.addColorStop(1,'#12334b70')
+    c.fillStyle=glaze;c.fill();c.strokeStyle='#17334d55';c.lineWidth=.035;c.stroke()
+  }
+}
 const stroke=(c:CanvasRenderingContext2D,points:number[][],colour:string,width=.08)=>{c.strokeStyle=colour;c.lineWidth=width;c.lineCap='round';c.lineJoin='round';c.beginPath();points.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.stroke()}
 const eye=(c:CanvasRenderingContext2D,x:number,y:number,size=.1)=>{oval(c,x,y,size*1.4,size*1.45,'#fff6d7');oval(c,x+.025,y,size*.58,size*.88,'#163340')}
-const fin=(c:CanvasRenderingContext2D,points:number[][],fill:string)=>polygon(c,points,fill)
+const fin=(c:CanvasRenderingContext2D,points:number[][],fill:string)=>{
+  polygon(c,points,fill)
+  if(points.length>=5&&fill.length===7){
+    const top=Math.min(...points.map(p=>p[1])),bottom=Math.max(...points.map(p=>p[1]))
+    const glaze=c.createLinearGradient(-.4,top,.5,bottom);glaze.addColorStop(0,'#ffffdf50');glaze.addColorStop(.35,'#ffffff00');glaze.addColorStop(1,'#18334e65')
+    c.fillStyle=glaze;c.fill();c.strokeStyle='#16344b70';c.lineWidth=.035;c.stroke()
+  }
+}
 
 /** Fifteen independent silhouettes. Animation follows anatomy, rather than a shared bob. */
 export function drawFixedEnemy(c:CanvasRenderingContext2D,e:Enemy,reducedMotion=false,showBars=true){
@@ -134,6 +148,12 @@ export function drawFixedEnemy(c:CanvasRenderingContext2D,e:Enemy,reducedMotion=
   if(e.hitT>0){c.strokeStyle='#fff3c3';c.lineWidth=.065;c.beginPath();c.arc(0,-.4,.72,Math.PI*1.03,Math.PI*1.77);c.stroke()}
   c.restore()
   if(e.heatT>0)lightPool(c,0,-r*.45,r*1.4,'#ffc074',.23,1)
+  if(e.burnT>0){
+    for(const side of [-1,1]){const flicker=reducedMotion?.5:(Math.sin(t*12+side)+1)/2,x=side*r*.54,y=-r*.25;
+      polygon(c,[[x-3,y],[x-4,y-5],[x+side*2,y-12-flicker*5],[x+4,y-4],[x+3,y+1]],'#ffb064')
+      polygon(c,[[x-2,y],[x,y-8-flicker*3],[x+2,y]],'#ffe5a3')
+    }
+  }
   if(e.slowT>0){c.strokeStyle='#d5ffff';c.lineWidth=1.4;c.setLineDash([4,5]);c.beginPath();c.ellipse(0,5,r*1.12,r*.35,0,0,Math.PI*2);c.stroke();c.setLineDash([])}
   if(e.stunT>0)for(let i=0;i<3;i++){const a=i*Math.PI*2/3+(moving?t*4:0),x=Math.cos(a)*r*.65,y=-r*1.85+Math.sin(a)*r*.15;polygon(c,[[x,y-2],[x+2,y],[x,y+2],[x-2,y]],'#fff0a3')}
   if(e.def.hidden){c.strokeStyle=hidden?'#c9dcff':'#fff0b5';c.lineWidth=1.3;c.setLineDash(hidden?[3,4]:[]);c.beginPath();c.ellipse(0,4,r*.8,r*.27,0,0,Math.PI*2);c.stroke();c.setLineDash([])}

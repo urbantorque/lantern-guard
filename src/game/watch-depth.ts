@@ -98,7 +98,7 @@ export const LANDMARKS = [
   {id:'sunterrace',name:'Sun terrace',help:'Nearby Gardens earn +12% during daylight.',colour:'#ffd589',segment:'w1',fraction:.52,dx:48,dy:0,radius:145},
   {id:'tidebell',name:'Tide bell',help:'Nearby foes move 8% slower at night, 4% by day.',colour:'#8df2bd',segment:'e2',fraction:.65,dx:55,dy:0,radius:104},
 ] as const
-type Landmark=typeof LANDMARKS[number]&{x:number;y:number}
+type Landmark=Omit<typeof LANDMARKS[number],'help'>&{help:string;x:number;y:number}
 const landmarkCache=new WeakMap<Sim['level'],Landmark>()
 export function landmark(sim:Sim):Landmark{
   const cached=landmarkCache.get(sim.level);if(cached)return cached
@@ -114,7 +114,13 @@ export function landmark(sim:Sim):Landmark{
     candidates.push({x,y,score:(x-preferred.x)**2+(y-preferred.y)**2})
   }
   candidates.sort((a,b)=>a.score-b.score)
-  const result={...def,...(candidates[0]??preferred)};landmarkCache.set(sim.level,result);return result
+  const help=sim.challenge.livingWatch?[
+    'At night, reveals nearby foes for 6s every 12s. Defend both sides of the spring.',
+    'Nearby Storm damage +5% by day, +15% at night or +12% in rain. Bonuses do not stack.',
+    'Nearby Gardens earn +20% by day, but 15% less at night. Invest before dusk.',
+    'Nearby foes move 14% slower at night, 4% by day. Save the basin for heavy damage.',
+  ][sim.challenge.variant??0]:def.help
+  const result={...def,help,...(candidates[0]??preferred)};landmarkCache.set(sim.level,result);return result
 }
 export function nearLandmark(sim:Sim,p:{x:number;y:number}){
   const l=landmark(sim);return (p.x-l.x)**2+(p.y-l.y)**2<=l.radius**2

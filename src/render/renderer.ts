@@ -105,6 +105,7 @@ const FIREWORK_COLS = [P.coral, P.amberHi, P.ice, P.lime, P.lilac, P.gold, P.pin
 
 export class Renderer {
   fixedLandscape=false
+  fixedBounds:{x:number;y:number;w:number;h:number}|null=null
   fixedFrameHeight=0
   fixedFocus:{x:number;y:number}|null=null
   private fixedEdition=false
@@ -226,7 +227,7 @@ export class Renderer {
     this.cv.style.height = h + 'px'
     // keepers on the top pads reach ~80 units above them: keep that headroom on screen
     const top = this.levelBuilt?.segs.has('garden-merge') ? -1020 : -475
-    const bounds = this.fixedEdition ? boardBounds(this.fixedLandscape) : this.zone === 'overview' ? { x: -20, y: top, w: 760, h: WORLD_H + 30 - top }
+    const bounds = this.fixedEdition ? this.fixedBounds??boardBounds(this.fixedLandscape) : this.zone === 'overview' ? { x: -20, y: top, w: 760, h: WORLD_H + 30 - top }
       : this.zone === 'gardens' ? { x: 0, y: -1020, w: 720, h: 750 }
       : this.zone === 'harbour' ? { x: 0, y: -475, w: 720, h: 830 } : this.levelBuilt?.def.bounds ?? { x: 0, y: -36, w: WORLD_W, h: WORLD_H + 36 }
     const mapTop = this.fixedEdition?this.fixedTopInset:this.zone === 'gardens' || this.zone === 'overview' ? 52 : 0

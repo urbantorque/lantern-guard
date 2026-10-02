@@ -10,6 +10,24 @@ export const STREAM_ROLES:Record<TowerId,readonly [string,string]>={
   garden:['Bigger harvests','Defend & earn'],beam:['Piercing beam','Wider coverage'],
   storm:['Long chains','Heavy arcs'],ballista:['Siege hits','Rapid fire'],
 }
+/** The immediate purchase, with the opportunity cost of choosing this branch. */
+export const STREAM_CHOICE:Record<TowerId,readonly [readonly[string,string],readonly[string,string]]>={
+  wick:[['A wider volley of sparks.','Light hits struggle with armour.'],['Piercing, armour-breaking sparks.','Fewer sparks per volley.']],
+  cracker:[['Wider, faster explosions.','Shots do not track runners.'],['Rockets track and burn foes.','Smaller blasts.']],
+  bell:[['Stronger slows, with damage.','Shorter reach.'],['Wider slows weaken armour.','A gentler slow.']],
+  owl:[['Faster, armour-breaking shots.','Less support for neighbours.'],['More reach and stored sunlight.','Less direct damage.']],
+  garden:[['Larger harvests every wave.','Gives up the defence branch.'],['Moths defend and earn glow.','Smaller harvests.']],
+  beam:[['Heavy damage through a line.','Shorter reach.'],['Long reach, sees hidden foes.','Less damage per target.']],
+  storm:[['Lightning jumps farther.','Light hits struggle with armour.'],['Stronger, armour-breaking arcs.','Shorter jumps.']],
+  ballista:[['Much heavier single hits.','Slower reload.'],['Faster bolts see hidden foes.','Less damage per bolt.']],
+}
+export function streamChoice(sim:Sim,t:Tower,branch:0|1):readonly[string,string]{
+  const copy=STREAM_CHOICE[t.id][branch]
+  if(t.id==='owl'&&branch===1&&!sim.challenge.watchDepth)return ['More reach for nearby towers.',copy[1]]
+  if(t.id==='storm'&&branch===0&&sim.towerStats(t.id,2,0).heavy)return [copy[0],'Less damage per hit.']
+  if(t.id==='garden'&&branch===0)return [copy[0],sim.challenge.hero==='ivo'?'Moths reload more slowly.':'Gives up attacking moths.']
+  return copy
+}
 const n=(v:number)=>String(+v.toFixed(2))
 
 /** Bundles include the foundation in the comparison with the actual tower. */

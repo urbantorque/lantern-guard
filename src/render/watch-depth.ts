@@ -7,7 +7,7 @@ import { upright } from './board-view'
 export function drawLandmark(c:CanvasRenderingContext2D,s:Sim,time:number,still:boolean,wide:boolean){
   if(!s.challenge.watchDepth)return
   const l=landmark(s),{x,y}=l,night=s.sky.night
-  const active=l.id==='moonwell'?night&&s.climate.elapsed%12<4:l.id==='stormgarden'?s.sky.weather==='rain':l.id==='sunterrace'?!night:night
+  const active=l.id==='moonwell'?night&&s.climate.elapsed%12<(s.challenge.livingWatch?6:4):l.id==='stormgarden'?s.sky.weather==='rain':l.id==='sunterrace'?!night:night
   c.save();c.fillStyle=l.colour+(active?'0e':'06');c.strokeStyle=l.colour+(active?'66':'2b');c.lineWidth=1.3;c.setLineDash([3,8]);c.beginPath();c.arc(x,y,l.radius,0,Math.PI*2);c.fill();c.stroke();c.setLineDash([])
   upright(c,x,y,wide,()=>{
     polygon(c,[[x-26,y+3],[x,y+15],[x+29,y-1],[x+3,y-16]],night?'#35596c':'#d8d6b5')

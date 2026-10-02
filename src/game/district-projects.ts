@@ -17,4 +17,4 @@ export function validStyles(value:unknown):Partial<Record<ProjectId,0|1>>{
   if(!value||typeof value!=='object')return {}
   return Object.fromEntries(PROJECTS.flatMap(p=>{const v=(value as Record<string,unknown>)[p.id];return v===0||v===1?[[p.id,v]]:[]}))
 }
-export function districtKeepsakes(p:VillageProfile){return [...p.commissions,...PROJECTS.filter(q=>projectProgress(p,q.id)>=1).map(q=>`project:${q.id}:${p.districtStyles?.[q.id]??0}`)]}
+export function districtKeepsakes(p:VillageProfile){return [...p.commissions,...(p.mastery??[]).map(id=>'mastery:'+id),...PROJECTS.filter(q=>projectProgress(p,q.id)>=1).map(q=>`project:${q.id}:${p.districtStyles?.[q.id]??0}`)]}

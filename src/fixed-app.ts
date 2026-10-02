@@ -1,3 +1,4 @@
+import { LIVING_RULES, currentWeek, weeklyWatch, livingTechnique, MASTERY, nextMastery } from './game/living-watch'
 import { BESTIARY, enemyName, bestiaryText } from './game/bestiary'
 import { TECHNIQUES, CRAFT_RULES, techniqueOffers, towerObstacle, dredgerOpen, type TechniqueId } from './game/watch-craft'
 import { PROJECTS, projectProgress, districtKeepsakes } from './game/district-projects'
@@ -5,16 +6,17 @@ import { districtPanorama } from './render/district-projects'
 import { watchLesson, watchInsights } from './game/watch-guidance'
 import { Sim, DT, type Tower, type SaveSnapshotV2 } from './game/sim'
 import { TOWERS, TOWER_ORDER, ENEMIES, DIFFICULTY, type TowerId, type Difficulty, type EnemyId } from './game/defs'
-import { ACTS, MAP_HELP, fixedLevel, stageOf, STAGES, upgradePrice, FIXED_UNLOCK, FIXED_TIPS, COMMISSIONS, bondName, BOND_HELP } from './game/fixed'
+import { ACTS, fixedLevel, stageOf, STAGES, upgradePrice, FIXED_UNLOCK, FIXED_TIPS, COMMISSIONS, bondName, BOND_HELP } from './game/fixed'
 import { WATCH_NAMES } from './game/compact'
 import { WEATHER, SKY_TOWER_HELP, DAY_SECONDS, NIGHT_SECONDS, clockText, lamplit } from './game/environment'
 import { Renderer, type Selection } from './render/renderer'
+import { livingBoardBounds } from './render/board-view'
 import { fixedTowerIcon } from './render/fixed-towers'
 import { fixedEnemyIcon as enemyIcon } from './render/fixed-world'
 import { icon } from './ui/icons'
 import { sound, profileSound } from './core/audio'
 import { watchAppState } from './core/platform'
-import { upgradeBenefits, STREAM_ROLES } from './game/fixed-copy'
+import { upgradeBenefits, STREAM_ROLES, streamChoice } from './game/fixed-copy'
 import { wardenEscorts } from './game/harbour'
 import { WATCH_TEMPO, waveCountdown } from './game/watch-tempo'
 import { DEPTH_RULES, EXPEDITIONS, EXPEDITION_UNLOCK, expeditionBonus, featuredExpedition, isExpedition, hasSunReserve, landmark, SUN_HELP } from './game/watch-depth'
@@ -91,7 +93,7 @@ export class FixedApp {
       ${saved&&!saved.snapshot.over?button('resume:campaign',`Continue watch <small>Wave ${saved.snapshot.wave || 1} · ${WATCH_NAMES[saved.snapshot.challenge.variant??0]}${saved.snapshot.challenge.hero?" · "+HEROES[saved.snapshot.challenge.hero].name:""}</small>`,'primary'):''}
       ${button('choose','Begin a watch',saved&&!saved.snapshot.over?'secondary':'primary')}
       <div class="home-links">${button('district','The district')}${button('bestiary','Creatures')}${button('expeditions','Expeditions')}${button('settings',icon('gear')+'<span class="sr-only">Settings</span>')}</div>
-      ${commission&&!commission.snapshot.over?button('resume:commission',commission.snapshot.challenge.expedition?'Continue expedition':'Continue commission','text-button'):''}</div><p class="home-note">${best?`Best watch · ${best}/40 waves`:'40 waves · Four waterways · One flowing watch'}</p></div></main><div id="modal-root"></div><div id="live" class="sr-only" aria-live="polite"></div>`
+      ${commission&&!commission.snapshot.over?button('resume:commission',commission.snapshot.challenge.weekly!==undefined?'Continue weekly watch':commission.snapshot.challenge.expedition?'Continue expedition':'Continue commission','text-button'):''}</div><p class="home-note">${best?`Best watch · ${best}/40 waves`:'40 waves · Four waterways · One flowing watch'}</p></div></main><div id="modal-root"></div><div id="live" class="sr-only" aria-live="polite"></div>`
   }
   private show(title:string,content:string,kind='') {
     if(!this.drawer) this.previousFocus=document.activeElement as HTMLElement
@@ -116,7 +118,7 @@ export class FixedApp {
   }
   private choose(focusAction?:string) {
     const scroll=document.querySelector<HTMLElement>(".drawer-body")?.scrollTop??0
-    this.show('Choose your watch',`${this.heroChoices()}<p class="muted">Four fixed waterways. Every entrance has one clear route to the lantern.</p><div class="map-list">${WATCH_NAMES.map((name,i)=>button(`map:${i}`,`${this.preview(i)}<span><b>${name}</b><small>${MAP_HELP[i]}</small><em>${bestWave(this.profile,i,this.difficulty,this.hero)}/40 waves held</em></span>`,this.map===i?'map-choice selected':'map-choice')).join('')}</div><fieldset><legend>Difficulty</legend><div class="segmented">${(['relaxed','standard','nightfall'] as Difficulty[]).map(d=>button('mode:'+d,DIFFICULTY[d].name,this.difficulty===d?'selected':'')).join('')}</div><p class="muted">${this.difficulty==='relaxed'?'50 light. Gentler enemies. Retry any wave.':this.difficulty==='standard'?'25 light. Thoughtful planning, with a retry when you need it.':'15 light. Stronger enemies. Retrying records this watch as practice.'} Build and upgrade while the watch runs.</p></fieldset>${loadWatch('campaign')&&!loadWatch('campaign')!.snapshot.over?'<p class="notice">Beginning replaces your current fixed-path watch. Your records stay in the district.</p>':''}${button('new','Begin in '+WATCH_NAMES[this.map],'primary wide')}${legacyExists()?'<p class="small muted">Your previous edition’s watch is archived on this device. Its routes cannot carry into this edition. Your journal and achievements remain in the district.</p>':''}`,'choose')
+    this.show('Choose your watch',`${this.heroChoices()}<p class="muted">Four fixed waterways. Every entrance has one clear route to the lantern.</p><div class="map-list">${WATCH_NAMES.map((name,i)=>button(`map:${i}`,`${this.preview(i)}<span><b>${name}</b><small>${['Shared bends and a revealing moon spring.','Wide harbour banks. Storm towers thrive at night.','A tight crossing. The sun terrace rewards early income.','A long lower basin. The tide bell slows the night.'][i]}</small><em>${bestWave(this.profile,i,this.difficulty,this.hero)}/40 waves held</em></span>`,this.map===i?'map-choice selected':'map-choice')).join('')}</div><fieldset><legend>Difficulty</legend><div class="segmented">${(['relaxed','standard','nightfall'] as Difficulty[]).map(d=>button('mode:'+d,DIFFICULTY[d].name,this.difficulty===d?'selected':'')).join('')}</div><p class="muted">${this.difficulty==='relaxed'?'50 light. Gentler enemies. Retry any wave.':this.difficulty==='standard'?'25 light. Thoughtful planning, with a retry when you need it.':'15 light. Stronger enemies. Retrying records this watch as practice.'} Build and upgrade while the watch runs.</p></fieldset>${loadWatch('campaign')&&!loadWatch('campaign')!.snapshot.over?'<p class="notice">Beginning replaces your current fixed-path watch. Your records stay in the district.</p>':''}${button('new','Begin in '+WATCH_NAMES[this.map],'primary wide')}${legacyExists()?'<p class="small muted">Your previous edition’s watch is archived on this device. Its routes cannot carry into this edition. Your journal and achievements remain in the district.</p>':''}`,'choose')
     if(focusAction){document.querySelector<HTMLButtonElement>('[data-action="'+focusAction+'"]')?.focus({preventScroll:true});const body=document.querySelector<HTMLElement>('.drawer-body');if(body)body.scrollTop=scroll}
   }
   private towerDef(id:TowerId){return heroTower(id,this.sim?this.sim.challenge.hero:this.hero)}
@@ -147,14 +149,14 @@ export class FixedApp {
     this.show(h?`${h.name} · ${h.title}`:'The original keepers',`${h?`<div class="hero-intro"><img src="${heroPortrait(id!)}" alt="${h.name}, ${h.title}"/><div><p class="lead">${h.approach}</p><p class="small muted">${h.tradeoff}</p></div></div>`:''}<p class="small muted">All three heroes are available immediately. Each tower has two specialisations and five stages.</p><div class="roster-list">${[...TOWER_ORDER].sort((a,b)=>unlocks[a]-unlocks[b]).map(t=>`<article><img src="${fixedTowerIcon(t,1,0,0,id)}" alt=""/><div><h3>${heroTower(t,id).name}</h3><p class="roster-role">${role[t]} · Wave ${unlocks[t]} · ${TOWERS[t].cost} glow</p><p>${h?h.towers[t].trait:TOWERS[t].blurb}</p><small>${heroTower(t,id).paths.map(p=>p.name).join(' / ')}</small></div></article>`).join('')}</div>${!this.sim?button('choose','Back to watch setup','primary wide'):''}`,'roster')
   }
   private preview(map:number) {
-    const level=buildLevel(fixedLevel(map))
+    const level=buildLevel(fixedLevel(map,true))
     return `<svg class="map-preview" viewBox="0 0 720 840" aria-hidden="true">${[...level.segs.values()].map(s=>`<polyline points="${s.line.pts.map(p=>p.x+','+p.y).join(' ')}"/>`).join('')}<circle cx="${level.def.home.x}" cy="${level.def.home.y}" r="27"/></svg>`
   }
   private newWatch(commissionId?:string,sameSeed?:number) {
     const c=COMMISSIONS.find(q=>q.id===commissionId)
     this.slot=c?'commission':'campaign'; this.map=c?.variant??this.map
     const hero=sameSeed!==undefined?this.sim?.challenge.hero??this.hero:this.hero
-    const challenge={fixed:1 as const,compact:1 as const,guard:1 as const,depth:1 as const,balance:1 as const,variant:this.map,...(hero?{hero}:{}),...(c?{commission:c.id,blockedPad:c.blockedPad,id:`commission:${c.id}:fixed1`,skirmish:{from:c.from,to:c.to,glow:c.glow,seed:c.seed}}:{watchDepth:DEPTH_RULES,watchCraft:CRAFT_RULES})}
+    const challenge={fixed:1 as const,compact:1 as const,guard:1 as const,depth:1 as const,balance:1 as const,variant:this.map,...(hero?{hero}:{}),...(c?{commission:c.id,blockedPad:c.blockedPad,id:`commission:${c.id}:fixed1`,skirmish:{from:c.from,to:c.to,glow:c.glow,seed:c.seed}}:{watchDepth:DEPTH_RULES,watchCraft:CRAFT_RULES,livingWatch:LIVING_RULES})}
     this.profile.lastMap=this.map;this.profile.lastHero=this.hero;writeJSON('profile',this.profile)
     this.begin(new Sim(this.difficulty,challenge,sameSeed??Math.floor(Math.random()*4294967295)))
     this.writePlanning(this.sim!.snapshot()); this.save()
@@ -175,12 +177,13 @@ export class FixedApp {
   private resize() {
     if(!this.renderer)return
     this.renderer.fixedLandscape=innerWidth>innerHeight*1.15
+    this.renderer.fixedBounds=this.sim?.challenge.livingWatch?livingBoardBounds(this.sim,this.renderer.fixedLandscape):null
     this.renderer.fixedTopInset=getComputedStyle($('sky')).position==='fixed'?0:48
     const r=$('battlefield').getBoundingClientRect(),sheet=document.querySelector('.drawer.live-panel')
     const focus=innerWidth<=999&&innerHeight>innerWidth&&!!this.selection&&['tower','build','plot'].includes(this.drawer)
-    this.renderer.fixedFrameHeight=focus?r.height+(sheet?.getBoundingClientRect().height??0):0
+    this.renderer.fixedFrameHeight=focus?r.height+Math.min(80,(sheet?.getBoundingClientRect().height??0)*.28):0
     this.renderer.fixedFocus=focus?(this.selection?.kind==='tower'?this.selection.tower:this.selection?.kind==='pad'?this.sim!.pads[this.selection.index]:null):null
-    this.renderer.resize(r.width,r.height,Math.min(2,devicePixelRatio));this.plots()
+    this.renderer.resize(r.width,r.height,Math.min(innerWidth<700?1.6:2,devicePixelRatio));this.plots()
   }
   private plots() {
     if(!this.sim||!this.renderer)return
@@ -211,7 +214,7 @@ export class FixedApp {
     $('sky').style.setProperty('--phase-progress',`${100*(1-sky.phaseLeft/(sky.night?NIGHT_SECONDS:DAY_SECONDS))}%`)
     $('sky').innerHTML=`<span><i class="sky-disc" aria-hidden="true"></i>${soon?(sky.night?'Dawn in':'Nightfall in'):sky.night?'Night':'Daylight'} <b>${clockText(sky.phaseLeft/WATCH_TEMPO)}</b></span><span>${sky.weatherLeft<=8?'Next: '+WEATHER[sky.nextWeather].name:WEATHER[sky.weather].name} ${icon('caretRight')}</span>`
     $('sky').setAttribute('aria-label',`${sky.night?'Night, dawn':'Daylight, nightfall'} in ${clockText(sky.phaseLeft/WATCH_TEMPO)}. ${WEATHER[sky.weather].name}. Open sky forecast`)
-    $('wave').innerHTML=`<span>${s.challenge.expedition?'Expedition':s.isChallenge?'Commission':'Wave'}</span><b>${s.wave-s.waveOffset}<small> / ${s.finalWave-s.waveOffset}</small></b>`
+    $('wave').innerHTML=`<span>${s.challenge.weekly!==undefined?'Weekly':s.challenge.expedition?'Expedition':s.isChallenge?'Commission':'Wave'}</span><b>${s.wave-s.waveOffset}<small> / ${s.finalWave-s.waveOffset}</small></b>`
     $('act').textContent=s.challenge.watchDepth?landmark(s).name+' ›':ACTS[Math.min(7,Math.floor(Math.max(0,s.planningWave-1)/5))]
     const remaining=s.enemies.filter(e=>e.alive).length+s.spawners.reduce((n,sp)=>n+sp.group.count-sp.spawned,0)
     const total=s.waveDef(Math.max(1,s.wave)).groups.reduce((n,g)=>n+g.count,0)
@@ -221,7 +224,7 @@ export class FixedApp {
     $('wave-progress').style.setProperty('--wave-progress',progress+'%')
     const boss=s.enemies.find(e=>e.alive&&e.def.boss),bossStatus=$('boss-status')
     bossStatus.hidden=!boss
-    if(boss){const health=Math.max(0,Math.round(100*boss.hp/boss.maxHp)),phase=boss.def.id==='dredger'?(dredgerOpen(boss)?'Core exposed: +40% damage':'Armour closed: 60% damage'):s.challenge.watchDepth?(boss.def.id==='warden'?(boss.phase===0?'Escorts at 70%':boss.phase===1?'Escorts incoming':boss.phase>=3?'Surging':wardenEscorts(s,boss).length?'Clear escorts':'Shield down'):boss.def.id==='gloom'&&boss.shrouded?'Splits at the stone':boss.def.id==='bloomheart'&&(boss.signalT??0)>0?'Healing pulse incoming':boss.def.id==='toad'&&boss.phase===0?'Escort at half health':''):'';bossStatus.innerHTML=`<span>${boss.def.name}${phase?` · ${phase}`:''}</span><b>${health}%</b><i style="width:${health}%"></i>`;bossStatus.setAttribute('aria-label',`${boss.def.name}: ${health}% health. ${phase}`)}
+    if(boss){const health=Math.max(0,Math.round(100*boss.hp/boss.maxHp)),phase=boss.def.id==='dredger'?(dredgerOpen(boss)?'Core exposed: +40% damage':'Armour closed: 60% damage'):s.challenge.watchDepth?(boss.def.id==='warden'?(boss.phase===0?'Escorts at 70%':boss.phase===1?'Escorts incoming':boss.phase>=3?'Surging':wardenEscorts(s,boss).length?'Clear escorts':'Shield down'):boss.def.id==='gloom'&&boss.shrouded?'Splits at the stone':boss.def.id==='bloomheart'&&(boss.signalT??0)>0?s.challenge.livingWatch?'Healing: stun to interrupt':'Healing pulse incoming':boss.def.id==='toad'&&boss.phase===0?'Escort at half health':boss.def.id==='toad'&&(boss.signalT??0)>0?'Escort incoming':''):'';bossStatus.innerHTML=`<span>${boss.def.name}${phase?` · ${phase}`:''}</span><b>${health}%</b><i style="width:${health}%"></i>`;bossStatus.setAttribute('aria-label',`${boss.def.name}: ${health}% health. ${phase}`)}
     const previewWave=Math.min(s.finalWave,s.wave+1),preview=s.waveDef(previewWave),groups=preview.groups
     const unique=[...new Set(groups.map(g=>g.type))]
     $('forecast').innerHTML=`<span class="eyebrow">${s.over?'Watch complete':s.wave===s.finalWave?'Final wave':`Next · Wave ${previewWave-s.waveOffset}`} ${icon('caretRight')}</span><b>${bestiaryText(preview.encounter??unique.slice(0,3).map(e=>enemyName(e)).join(' · '))}${!preview.encounter&&unique.length>3?' +'+(unique.length-3):''}</b>`
@@ -278,7 +281,7 @@ export class FixedApp {
       const wave=s.challenge.expedition?(stage===2?7:10):(stage===2?16:31),cost=upgradePrice(t)
       return `<div class="specialised-upgrade"><div class="upgrade-caption"><b>${STREAM_ROLES[t.id][path]}</b><span>${STAGES[stage]}</span></div>${cost!==null?`${benefits(path)}${buy(`upgrade:${t.uid}:${path}`,s.planningWave<wave?`Opens wave ${wave}`:stage===2?'Master':'Crown',cost,wave)}`:'<p class="stream-complete">Fully upgraded</p>'}</div>`
     }
-    return `<p class="upgrade-hint">Choose one path.${stage===0?' Includes foundation.':''}</p><div class="quick-branches">${t.def.paths.map((_,i)=>`<article><h3>${STREAM_ROLES[t.id][i]}</h3>${benefits(i as 0|1,true)}${buy(`specialise:${t.uid}:${i}`,'Choose',s.specialiseCost(t)!,0,'Choose '+STREAM_ROLES[t.id][i])}</article>`).join('')}</div>${stage===0?`<div class="foundation-quick"><span>Decide later</span>${buy('upgrade:'+t.uid+':0','Improve',upgradePrice(t)!,0,'Improve foundation')}</div>`:''}`
+    return `<p class="upgrade-hint">Choose one path.${stage===0?' Includes foundation.':''}</p><div class="quick-branches">${t.def.paths.map((_,i)=>`<article><h3>${STREAM_ROLES[t.id][i]}</h3>${`<p class="branch-benefit">${streamChoice(s,t,i as 0|1)[0]}</p><p class="branch-cost">${streamChoice(s,t,i as 0|1)[1]}</p>`}${buy(`specialise:${t.uid}:${i}`,'Choose',s.specialiseCost(t)!,0,'Choose '+STREAM_ROLES[t.id][i])}</article>`).join('')}</div><details class="branch-stats"><summary>Compare numbers</summary><div class="quick-branches">${[0,1].map(i=>`<div><b>${STREAM_ROLES[t.id][i]}</b>${benefits(i as 0|1,true)}</div>`).join('')}</div></details>${stage===0?`<div class="foundation-quick"><span>Decide later</span>${buy('upgrade:'+t.uid+':0','Improve',upgradePrice(t)!,0,'Improve foundation')}</div>`:''}`
   }
   private towerSheet(t:Tower,reset=false) {
     const s=this.sim!,stage=stageOf(t)
@@ -307,13 +310,13 @@ export class FixedApp {
   }
   private techniqueSheet(){
     const s=this.sim!;if(!s.challenge.watchCraft)return
-    const offers=techniqueOffers(s)
-    this.show('Watch techniques',`<p class="small muted">Two choices per watch. Each stays for the run.</p>${s.techniques.map(id=>{const t=TECHNIQUES.find(t=>t.id===id)!;return `<p class="chosen-technique"><b>${t.name}</b><span>${t.benefit} ${t.cost}</span></p>`}).join('')}${offers.length?`<h3>Choice ${s.techniques.length+1} of 2</h3><div class="technique-cards">${offers.map(t=>`<article><h3>${t.name}</h3><p>${t.benefit}</p><p class="tradeoff">${t.cost}</p>${button('technique:'+t.id,'Choose '+t.name,'primary wide')}</article>`).join('')}</div>`:s.techniques.length===2?'<p class="small muted">Both techniques chosen.</p>':`<p class="small muted">Next choice at wave ${(s.challenge.expedition?[4,8]:[6,16])[s.techniques.length]}.</p>`}`,'techniques')
+    const offers=techniqueOffers(s).map(t=>({...t,...(s.challenge.livingWatch?livingTechnique(t.id):{})}))
+    this.show('Watch techniques',`<p class="small muted">Two choices per watch. Each stays for the run.</p>${s.techniques.map(id=>{const base=TECHNIQUES.find(t=>t.id===id)!,t={...base,...(s.challenge.livingWatch?livingTechnique(id):{})};return `<p class="chosen-technique"><b>${t.name}</b><span>${t.benefit} ${t.cost}</span></p>`}).join('')}${offers.length?`<h3>Choice ${s.techniques.length+1} of 2</h3><div class="technique-cards">${offers.map(t=>`<article><h3>${t.name}</h3><p>${t.benefit}</p><p class="tradeoff">${t.cost}</p>${button('technique:'+t.id,'Choose '+t.name,'primary wide')}</article>`).join('')}</div>`:s.techniques.length===2?'<p class="small muted">Both techniques chosen.</p>':`<p class="small muted">Next choice at wave ${(s.challenge.expedition?[4,8]:[6,16])[s.techniques.length]}.</p>`}`,'techniques')
   }
   private district() {
     const legacy=loadProgress()
     const journal={...legacy.journal};for(const [id,n] of Object.entries(this.profile.journal)) journal[id as EnemyId]=(journal[id as EnemyId]??0)+(n??0)
-    this.show('The district',`<img class="district-panorama" src="${districtPanorama(this.profile)}" alt="Night Market, Canal Observatory and Waterfront Gardens; restored buildings glow in your chosen colours"/><p class="small muted">Restore your district. Choose its colours. Rewards are cosmetic.</p><div class="project-list">${PROJECTS.map(p=>{const progress=projectProgress(this.profile,p.id),ready=progress>=1;return `<article><div><h3>${p.name}</h3><span>${ready?'Restored':Math.round(progress*100)+'%'}</span></div><p>${ready?'Choose an appearance.':p.need}</p>${ready?`<div class="segmented">${p.styles.map((name,i)=>`<button data-action="project:${p.id}:${i}" aria-pressed="${(this.profile.districtStyles?.[p.id]??0)===i}" class="${(this.profile.districtStyles?.[p.id]??0)===i?'selected':''}">${name}</button>`).join('')}</div>`:`<progress value="${progress}" max="1" aria-label="${p.name} restoration"></progress>`}</article>`}).join('')}</div>${button('bestiary','Explore the creature guide','secondary wide')}<div class="keepsakes">${[...COMMISSIONS,...EXPEDITIONS].map(c=>`<span class="keepsake ${this.profile.commissions.includes(c.id)?'earned':''}">${this.profile.commissions.includes(c.id)?icon('check'):icon('lock')}${c.reward}</span>`).join('')}</div><h3>Your watches</h3><div class="records">${WATCH_NAMES.map((name,i)=>`<p><b>${name}</b><span>${(['relaxed','standard','nightfall'] as Difficulty[]).map(d=>`${DIFFICULTY[d].name} ${bestWave(this.profile,i,d)}/40`).join(' · ')}</span></p>`).join('')}</div>${Object.entries(this.profile.records).filter(([k,r])=>k.endsWith(':practice')&&r.practice).length?'<p class="small muted">Assisted Nightfall watches are kept separately as practice.</p>':''}<h3>Field journal</h3><div class="enemy-list">${Object.entries(journal).filter(([,n])=>(n??0)>0).map(([id,n])=>`<article><img src="${enemyIcon(id as EnemyId)}" alt=""/><div><h3>${enemyName(id as EnemyId)} · ${Math.floor(n??0)}</h3><p>${BESTIARY[id as EnemyId].counter}</p></div></article>`).join('')||'<p class="muted">Meet the first Drips to begin your journal.</p>'}</div><p class="small muted">Previous edition: ${legacy.runs} watches and ${Object.values(legacy.feats).filter(Boolean).length} achievements retained.</p>`,'district')
+    this.show('The district',`<img class="district-panorama" src="${districtPanorama(this.profile)}" alt="Night Market, Canal Observatory and Waterfront Gardens; restored buildings glow in your chosen colours"/><p class="small muted">Restore your district. Choose its colours. Rewards are cosmetic.</p><div class="project-list">${PROJECTS.map(p=>{const progress=projectProgress(this.profile,p.id),ready=progress>=1;return `<article><div><h3>${p.name}</h3><span>${ready?'Restored':Math.round(progress*100)+'%'}</span></div><p>${ready?'Choose an appearance.':p.need}</p>${ready?`<div class="segmented">${p.styles.map((name,i)=>`<button data-action="project:${p.id}:${i}" aria-pressed="${(this.profile.districtStyles?.[p.id]??0)===i}" class="${(this.profile.districtStyles?.[p.id]??0)===i?'selected':''}">${name}</button>`).join('')}</div>`:`<progress value="${progress}" max="1" aria-label="${p.name} restoration"></progress>`}</article>`}).join('')}</div>${this.masteryCards()}${button('bestiary','Explore the creature guide','secondary wide')}<div class="keepsakes">${[...COMMISSIONS,...EXPEDITIONS].map(c=>`<span class="keepsake ${this.profile.commissions.includes(c.id)?'earned':''}">${this.profile.commissions.includes(c.id)?icon('check'):icon('lock')}${c.reward}</span>`).join('')}</div><h3>Your watches</h3><div class="records">${WATCH_NAMES.map((name,i)=>`<p><b>${name}</b><span>${(['relaxed','standard','nightfall'] as Difficulty[]).map(d=>`${DIFFICULTY[d].name} ${bestWave(this.profile,i,d)}/40`).join(' · ')}</span></p>`).join('')}</div>${Object.entries(this.profile.records).filter(([k,r])=>k.endsWith(':practice')&&r.practice).length?'<p class="small muted">Assisted Nightfall watches are kept separately as practice.</p>':''}<h3>Field journal</h3><div class="enemy-list">${Object.entries(journal).filter(([,n])=>(n??0)>0).map(([id,n])=>`<article><img src="${enemyIcon(id as EnemyId)}" alt=""/><div><h3>${enemyName(id as EnemyId)} · ${Math.floor(n??0)}</h3><p>${BESTIARY[id as EnemyId].counter}</p></div></article>`).join('')||'<p class="muted">Meet the first Drips to begin your journal.</p>'}</div><p class="small muted">Previous edition: ${legacy.runs} watches and ${Object.values(legacy.feats).filter(Boolean).length} achievements retained.</p>`,'district')
   }
   private commissions() {
     this.show('District Commissions',`<p class="lead">A short watch with one thoughtful constraint.</p><p class="small muted">Playing as ${HEROES[this.hero].name}. Choose another hero in watch setup. Every commission stays available.</p>${COMMISSIONS.map(c=>`<article class="commission"><p class="eyebrow">Five waves · ${WATCH_NAMES[c.variant]}</p><h3>${c.name}</h3><p>${c.desc}</p><p class="small muted">Keepsake: ${c.reward}${this.profile.commissions.includes(c.id)?' · earned':''}</p>${button('commission:'+c.id,'Accept commission','secondary wide')}</article>`).join('')}<p class="small muted">Your campaign has its own save slot. Starting a commission replaces your saved short watch, including an expedition.</p>`,'commissions')
@@ -321,14 +324,29 @@ export class FixedApp {
   private expeditions(focusAction?:string){
     const featured=featuredExpedition(),saved=loadWatch('commission'),scroll=document.querySelector<HTMLElement>('.drawer-body')?.scrollTop??0
     const ordered=[featured,...EXPEDITIONS.filter(e=>e!==featured)]
-    this.show('Expeditions',`<p class="lead">Twelve waves. Eight towers. One final encounter.</p><p class="small muted">Every expedition stays available. Finish with each hero to complete its mastery stamps.</p><div class="segmented expedition-heroes" role="group" aria-label="Expedition hero">${HERO_IDS.map(id=>`<button data-action="expedition-hero:${id}" aria-pressed="${id===this.hero}" class="${id===this.hero?'selected':''}">${HEROES[id].name}</button>`).join('')}</div><p class="small muted">${HEROES[this.hero].approach}</p>${saved&&!saved.snapshot.over?`<p class="notice">Starting replaces your saved short watch. Your campaign has its own save.</p>${button('resume:commission','Continue saved short watch','secondary wide')}`:''}<div class="expedition-list">${ordered.map(e=>`<article class="expedition-card expedition-${e.id}"><div class="expedition-map" aria-hidden="true">${this.preview(e.variant)}</div><div><p class="eyebrow">${e===featured?'Featured this week':'Always available'} · ${WATCH_NAMES[e.variant]}</p><h3>${e.name}</h3><p>${e.id==='sunforge'?'Ambush the Dredger at marked bends. Slows keep its core exposed longer.':e.desc}</p><p class="expedition-reward">${this.profile.commissions.includes(e.id)?icon('check')+' Earned':'Keepsake'} · ${e.reward}</p><div class="mastery-stamps" aria-label="Hero victories">${HERO_IDS.map(id=>{const won=this.profile.records[`expedition:${e.id}:depth1:standard:${id}:standard`]?.won;return `<span class="${won?'earned':''}" aria-label="${HEROES[id].name}: ${won?'completed':'not completed'}">${won?icon('check'):icon('sparkle')}${HEROES[id].name}</span>`}).join('')}</div>${button('expedition:'+e.id,'Begin expedition','primary wide',false,'Begin '+e.name)}</div></article>`).join('')}</div><p class="expedition-reward">District overture: ${EXPEDITIONS.filter(e=>this.profile.commissions.includes(e.id)).length}/3 keepsakes. Complete the set to add a new soundtrack accompaniment.</p><p class="small muted">New towers arrive by wave 9. Master upgrades open at 7; crowns at 10. Keepsakes change the district’s appearance, never tower strength.</p>${button('commissions','Five-wave commissions','secondary wide')}`,'expeditions')
+    this.show('Expeditions',`${button('weekly:'+currentWeek(),'Weekly watch · '+weeklyWatch(currentWeek()).rule.name,'weekly-entry wide')}<p class="lead">Twelve waves. Eight towers. One final encounter.</p><p class="small muted">Every expedition stays available. Finish with each hero to complete its mastery stamps.</p><div class="segmented expedition-heroes" role="group" aria-label="Expedition hero">${HERO_IDS.map(id=>`<button data-action="expedition-hero:${id}" aria-pressed="${id===this.hero}" class="${id===this.hero?'selected':''}">${HEROES[id].name}</button>`).join('')}</div><p class="small muted">${HEROES[this.hero].approach}</p>${saved&&!saved.snapshot.over?`<p class="notice">Starting replaces your saved short watch. Your campaign has its own save.</p>${button('resume:commission','Continue saved short watch','secondary wide')}`:''}<div class="expedition-list">${ordered.map(e=>`<article class="expedition-card expedition-${e.id}"><div class="expedition-map" aria-hidden="true">${this.preview(e.variant)}</div><div><p class="eyebrow">${e===featured?'Featured this week':'Always available'} · ${WATCH_NAMES[e.variant]}</p><h3>${e.name}</h3><p>${e.id==='sunforge'?'Ambush the Dredger at marked bends. Slows keep its core exposed longer.':e.desc}</p><p class="expedition-reward">${this.profile.commissions.includes(e.id)?icon('check')+' Earned':'Keepsake'} · ${e.reward}</p><div class="mastery-stamps" aria-label="Hero victories">${HERO_IDS.map(id=>{const won=this.profile.records[`expedition:${e.id}:depth1:standard:${id}:standard`]?.won;return `<span class="${won?'earned':''}" aria-label="${HEROES[id].name}: ${won?'completed':'not completed'}">${won?icon('check'):icon('sparkle')}${HEROES[id].name}</span>`}).join('')}</div>${button('expedition:'+e.id,'Begin expedition','primary wide',false,'Begin '+e.name)}</div></article>`).join('')}</div><p class="expedition-reward">District overture: ${EXPEDITIONS.filter(e=>this.profile.commissions.includes(e.id)).length}/3 keepsakes. Complete the set to add a new soundtrack accompaniment.</p><p class="small muted">New towers arrive by wave 9. Master upgrades open at 7; crowns at 10. Keepsakes change the district’s appearance, never tower strength.</p>${button('commissions','Five-wave commissions','secondary wide')}`,'expeditions')
     if(focusAction){document.querySelector<HTMLButtonElement>(`[data-action="${focusAction}"]`)?.focus({preventScroll:true});const body=document.querySelector<HTMLElement>('.drawer-body');if(body)body.scrollTop=scroll}
+  }
+  private masteryCards(){
+    return `<h3>Master the watch</h3><div class="mastery-goals">${MASTERY.map(m=>{const earned=this.profile.mastery?.includes(m.id);return `<article class="${earned?'earned':''}"><span>${icon(earned?'check':'sparkle')}</span><div><b>${m.name}</b><p>${earned?m.reward+' earned':m.hint}</p>${!earned?`<small>${m.reward}</small>`:''}</div></article>`}).join('')}</div>`
+  }
+  private weekly(week:number){
+    const latest=currentWeek();if(!Number.isInteger(week)||week<0||week>latest)return
+    const w=weeklyWatch(week),record=this.profile.records[`${w.id}:standard:${this.hero}:standard`]
+    this.show('Weekly watch',`<p class="eyebrow">${w.date} · ${WATCH_NAMES[w.variant]}</p><h3>${w.rule.name}</h3><p class="lead">${w.rule.text}</p><p class="small muted">Twelve waves. ${w.expedition.name}. Same seed for every hero and retry.</p><div class="segmented">${HERO_IDS.map(id=>button(`weekly-hero:${id}:${week}`,HEROES[id].name,id===this.hero?'selected':'')).join('')}</div><p class="weekly-best">${record?`Personal best · ${record.wave}/12 waves · ${record.light} light`:'A fresh watch. Set your first personal best.'}</p>${button('weekly-start:'+week,'Begin weekly watch','primary wide')}<p class="small muted">Replaces your saved short watch. Your campaign is kept.</p><div class="weekly-archive">${button('weekly:'+(week-1),'Earlier watch','secondary',week===0)}${button('weekly:'+(week+1),'Later watch','secondary',week===latest)}</div><p class="small muted">Every past week stays available. No streak to maintain.</p>${this.masteryCards()}`,'weekly')
+  }
+  private newWeekly(week:number){
+    if(!Number.isInteger(week)||week<0||week>currentWeek())return
+    const w=weeklyWatch(week)
+    this.slot='commission';this.map=w.variant;this.difficulty='standard';this.profile.lastHero=this.hero;writeJSON('profile',this.profile)
+    this.begin(new Sim('standard',{fixed:1,compact:1,guard:1,depth:1,balance:1,watchDepth:DEPTH_RULES,watchCraft:CRAFT_RULES,livingWatch:LIVING_RULES,weekly:week,hero:this.hero,variant:w.variant,expedition:w.expedition.id,id:w.id,skirmish:{from:0,to:12,glow:w.glow,seed:w.seed}},w.seed))
+    this.writePlanning(this.sim!.snapshot());this.save()
   }
   private newExpedition(id:string){
     if(!isExpedition(id))return
     const e=EXPEDITIONS.find(e=>e.id===id)!
     this.slot='commission';this.map=e.variant;this.difficulty='standard';this.profile.lastHero=this.hero;writeJSON('profile',this.profile)
-    this.begin(new Sim('standard',{fixed:1,compact:1,guard:1,depth:1,balance:1,watchDepth:DEPTH_RULES,watchCraft:CRAFT_RULES,hero:this.hero,variant:e.variant,expedition:id,id:`expedition:${id}:depth1`,skirmish:{from:0,to:e.waves,glow:e.glow,seed:e.seed}},e.seed))
+    this.begin(new Sim('standard',{fixed:1,compact:1,guard:1,depth:1,balance:1,watchDepth:DEPTH_RULES,watchCraft:CRAFT_RULES,livingWatch:LIVING_RULES,hero:this.hero,variant:e.variant,expedition:id,id:`expedition:${id}:depth1`,skirmish:{from:0,to:e.waves,glow:e.glow,seed:e.seed}},e.seed))
     this.writePlanning(this.sim!.snapshot());this.save()
   }
   private landmarkSheet(){
@@ -344,8 +362,8 @@ export class FixedApp {
   private result() {
     const s=this.sim!;this.endShown=true
     const won=s.over==='won'
-    this.show(won?'The lantern is still alight':'A little light for next time',`<p class="eyebrow">${WATCH_NAMES[this.map]} · ${DIFFICULTY[s.difficulty].name}${s.challenge.practice?' · Practice':''}</p><p class="result-number">${s.wave-(won?0:1)-s.waveOffset}<small> waves held</small></p><p>${won?'The district remembers your watch.':s.lastLeak?`${enemyName(s.lastLeak.enemy)} reached the lantern${s.lastLeak.armoured?' with armour remaining':''}${s.lastLeak.hidden?' while still hidden':''}. ${FIXED_TIPS[s.lastLeak.enemy]}`:'Try building around a longer shared stretch of the stream.'}</p><ul class="watch-insights">${watchInsights(s).map(line=>`<li>${line}</li>`).join('')}</ul>${won?button('rematch','Rematch this seed','primary wide'):button('retry',s.difficulty==='nightfall'?'Retry as practice':'Retry this wave','primary wide',!loadPlanning(this.slot))}${won&&!s.isChallenge?button('nextmap','Try the next waterway','secondary wide'):''}${button('home','Return to the district','secondary wide')}`,'result')
-    if(won&&s.challenge.expedition){const e=EXPEDITIONS.find(e=>e.id===s.challenge.expedition)!;document.querySelector('.result .drawer-body')?.insertAdjacentHTML('afterbegin',`<p class="earned-reward">${icon('check')} ${e.reward} earned · ${HEROES[this.hero].name} stamp complete</p>`)}
+    this.show(won?'The lantern is still alight':'A little light for next time',`<p class="eyebrow">${WATCH_NAMES[this.map]} · ${DIFFICULTY[s.difficulty].name}${s.challenge.practice?' · Practice':''}</p><p class="result-number">${s.wave-(won?0:1)-s.waveOffset}<small> waves held</small></p><p>${won?'The district remembers your watch.':s.lastLeak?`${enemyName(s.lastLeak.enemy)} reached the lantern${s.lastLeak.armoured?' with armour remaining':''}${s.lastLeak.hidden?' while still hidden':''}. ${FIXED_TIPS[s.lastLeak.enemy]}`:'Try building around a longer shared stretch of the stream.'}</p><ul class="watch-insights">${watchInsights(s).map(line=>`<li>${line}</li>`).join('')}</ul>${won?button('rematch','Rematch this seed','primary wide'):button('retry',s.difficulty==='nightfall'?'Retry as practice':'Retry this wave','primary wide',!loadPlanning(this.slot))}${won&&!s.isChallenge?button('nextmap','Try the next waterway','secondary wide'):''}${nextMastery(this.profile)?`<p class="next-goal"><b>Next: ${nextMastery(this.profile)!.name}</b><span>${nextMastery(this.profile)!.hint}</span></p>`:''}${button('home','Return to the district','secondary wide')}`,'result')
+    if(won&&s.challenge.expedition&&s.challenge.weekly===undefined){const e=EXPEDITIONS.find(e=>e.id===s.challenge.expedition)!;document.querySelector('.result .drawer-body')?.insertAdjacentHTML('afterbegin',`<p class="earned-reward">${icon('check')} ${e.reward} earned · ${HEROES[this.hero].name} stamp complete</p>`)}
   }
   private change(fn:()=>unknown) {
     if(this.sim!.over)return
@@ -381,6 +399,9 @@ export class FixedApp {
     if(cmd==='project'){const p=PROJECTS.find(p=>p.id===a),style=Number(b);if(p&&projectProgress(this.profile,p.id)>=1&&(style===0||style===1)){this.profile.districtStyles??={};this.profile.districtStyles[p.id]=style;writeJSON('profile',this.profile);if(this.renderer)this.renderer.keepsakes=districtKeepsakes(this.profile);this.district()}return}
     if(cmd==='district'){this.district();return}
     if(cmd==='commissions'){this.commissions();return}
+    if(cmd==='weekly'){this.weekly(Number(a));return}
+    if(cmd==='weekly-start'){this.newWeekly(Number(a));return}
+    if(cmd==='weekly-hero'&&isHero(a)){this.hero=a;this.weekly(Number(b));return}
     if(cmd==='expeditions'){this.expeditions();return}
     if(cmd==='expedition-hero'&&isHero(a)){this.hero=a;this.expeditions(action);return}
     if(cmd==='expedition'){this.newExpedition(a);return}
@@ -392,7 +413,7 @@ export class FixedApp {
     if(!s)return
     if(cmd==='lesson'){const tip=watchLesson(s,this.profile.lessons);if(tip){this.profile.lessons??=[];this.profile.lessons.push(tip.id);if(!this.qa)writeJSON('profile',this.profile)}this.refresh();return}
     if(cmd==='techniques'){this.techniqueSheet();return}
-    if(cmd==='technique'){if(s.chooseTechnique(a as TechniqueId)){this.save();this.close();this.recap=TECHNIQUES.find(t=>t.id===a)!.name+' chosen.'}return}
+    if(cmd==='technique'){if(s.chooseTechnique(a as TechniqueId)){this.save();this.close();this.recap=(s.challenge.livingWatch?livingTechnique(a as TechniqueId)?.name:undefined)??TECHNIQUES.find(t=>t.id===a)!.name;this.recap+=' chosen.'}return}
     const tower=()=>s.towers.find(t=>t.uid===Number(a))!
     if(cmd==='menu')this.menu()
     if(cmd==='landmark')this.landmarkSheet()
@@ -408,7 +429,7 @@ export class FixedApp {
     if(cmd==='move'){this.moving=Number(a);this.close()}
     if(cmd==='sell'){this.change(()=>s.sell(tower()));this.close()}
     if(cmd==='retry'){const p=loadPlanning(this.slot);if(p){p.challenge.practice ||=s.difficulty==='nightfall';p.stats.retries=(s.stats.retries??0)+1;this.begin(Sim.restore(p));this.save()}}
-    if(cmd==='rematch'){if(s.challenge.expedition)this.newExpedition(s.challenge.expedition);else this.newWatch(s.challenge.commission,s.seed)}
+    if(cmd==='rematch'){if(s.challenge.weekly!==undefined)this.newWeekly(s.challenge.weekly);else if(s.challenge.expedition)this.newExpedition(s.challenge.expedition);else this.newWatch(s.challenge.commission,s.seed)}
     if(cmd==='nextmap'){this.map=(this.map+1)%4;this.newWatch()}
     this.refresh()
   }
@@ -439,7 +460,7 @@ export class FixedApp {
           this.nextWaveIn=null
           const unlock=TOWER_ORDER.find(id=>s.keeperWave(id)===s.wave+1)
           if(unlock)this.recap+=` · ${this.towerDef(unlock).name} unlocked`
-          if(!this.qa)recordWatch(this.profile,s);r.settlement=Math.max(r.settlement,this.profile.settlement);r.keepsakes=districtKeepsakes(this.profile);this.plots();$('live').textContent=this.recap
+          if(!this.qa)recordWatch(this.profile,s);r.settlement=Math.max(r.settlement,this.profile.settlement);r.keepsakes=districtKeepsakes(this.profile);this.resize();$('live').textContent=this.recap
           this.save()
           if(this.drawer==='tower'&&this.selection?.kind==='tower')this.towerSheet(this.selection.tower)
         }
@@ -453,7 +474,7 @@ export class FixedApp {
       if(now-this.lastSave>5000){this.lastSave=now;this.save()}
     }
     // Title music also starts on the first gesture. Hidden tabs never schedule audio.
-    if(!document.hidden&&!this.background)sound.tick(dt,s?.waveActive?Math.min(1,s.enemies.length/22):0,{night:s?.sky.night??false,weather:s?.sky.weather??'clear',hero:s?.challenge.hero??this.hero,wave:s?.wave??0,playing:!!s?.waveActive,boss:!!s?.enemies.some(e=>e.alive&&e.def.boss),district:this.map,overture:EXPEDITIONS.every(e=>this.profile.commissions.includes(e.id))})
+    if(!document.hidden&&!this.background)sound.tick(dt,s?.waveActive?Math.min(1,s.enemies.length/22):0,{night:s?.sky.night??false,weather:s?.sky.weather??'clear',hero:s?.challenge.hero??this.hero,wave:s?.wave??0,playing:!!s?.waveActive,boss:!!s?.enemies.some(e=>e.alive&&e.def.boss),district:this.map,outcome:s?.over??null,overture:EXPEDITIONS.every(e=>this.profile.commissions.includes(e.id))})
     requestAnimationFrame(t=>this.frame(t))
   }
 }

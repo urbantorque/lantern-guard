@@ -14,3 +14,14 @@ export function upright(c:CanvasRenderingContext2D,x:number,y:number,wide:boolea
 export function boardBounds(wide:boolean){
   return wide?{x:-50,y:-900*BOARD_DEPTH,w:920,h:900*BOARD_DEPTH}:{x:20,y:-105,w:680,h:970}
 }
+
+/** Frame the water and usable plots; reserve roof space only where a tower stands. */
+export function livingBoardBounds(s:import('../game/sim').Sim,wide:boolean){
+  if(!wide)return boardBounds(false)
+  const points=[...s.level.segs.values()].flatMap(seg=>seg.line.pts.map(p=>({...boardPoint(p.x,p.y,true),roof:38})))
+  for(const [i,p]of s.pads.entries())if(s.padRevealed(i))points.push({...boardPoint(p.x,p.y,true),roof:p.tower?150:26})
+  points.push({...boardPoint(s.level.def.home.x,s.level.def.home.y,true),roof:120})
+  const minX=Math.min(...points.map(p=>p.x))-35,maxX=Math.max(...points.map(p=>p.x))+40
+  const minY=Math.min(...points.map(p=>p.y-p.roof))-14,maxY=Math.max(...points.map(p=>p.y))+38
+  return {x:minX,y:minY,w:maxX-minX,h:maxY-minY}
+}

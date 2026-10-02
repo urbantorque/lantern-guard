@@ -119,5 +119,29 @@ summary:focus-visible{outline:3px solid var(--gold);outline-offset:2px;border-ra
 @media(max-width:999px) and (orientation:portrait){.drawer.techniques.live-panel{height:252px;max-height:252px}.playing:has(.drawer.techniques.live-panel) .game.inspecting{padding-bottom:252px}.techniques.live-panel:has(.technique-cards) .chosen-technique{display:none}}
 .map-caption .landmark-link{pointer-events:auto;min-height:44px;padding:6px 10px;border:0;border-radius:8px;background:#172f4588;color:#fff1cd;font-size:.75rem;white-space:nowrap}
 .bond-recipes p{display:grid;gap:3px;font-size:.8rem;padding:9px 0;border-bottom:1px solid #c8d8d51c}.bond-recipes span{color:#bdcecf}
+.branch-benefit{color:#edf4e7!important;font-size:12px!important;line-height:1.45!important;margin:4px 0!important;flex:none!important}
+.branch-cost{color:#e3bea4!important;font-size:11px!important;line-height:1.4!important;margin:3px 0 9px!important;flex:1!important}
+.branch-stats{order:4;margin-top:6px}.branch-stats>summary{min-height:44px;display:flex;align-items:center;font-size:12px;cursor:pointer;color:#b9d6d2}.branch-stats .quick-branches{font-size:11px;padding:8px;background:#142f3e;border-radius:6px}
+.quick-branches .live-purchase{margin-top:auto;min-height:44px;font-size:12px}
+.weekly-entry{background:#284d5a;border-color:#b1dccc;color:#f8e6b9;text-align:left;font-weight:600;padding:14px}
+.weekly-archive{display:flex;gap:10px;margin:20px 0 8px}.weekly-archive button{flex:1;font-size:13px}.weekly-best{border-left:2px solid #94d7c1;padding:9px 12px;color:#d3ecdf;font-size:14px}
+.mastery-goals{display:grid;margin:14px 0 24px;gap:12px}.mastery-goals article{display:flex;gap:12px;padding:12px;background:#153243;border-radius:8px;border:1px solid #466273}.mastery-goals article>span{color:#829eaf}.mastery-goals article>span svg{width:20px;height:20px}.mastery-goals b{font-size:14px}.mastery-goals p{font-size:12px;line-height:1.45;margin:5px 0}.mastery-goals small{font-size:11px;color:#e0c08e}.mastery-goals .earned{border-color:#7dbca0}.mastery-goals .earned>span{color:#ace5c1}
+.next-goal{display:grid;gap:6px;border-top:1px solid #6d929055;padding-top:16px;margin-top:16px}.next-goal b{color:#eed197;font-size:14px}.next-goal span{font-size:13px;color:#c7dcda}
+/* Dense interactions remain thumb-sized; descriptive copy yields before controls. */
+@media(max-width:999px) and (orientation:portrait){
+ .drawer.tower.live-panel{height:270px;max-height:270px}.playing:has(.drawer.tower.live-panel) .game.inspecting{padding-bottom:270px}
+ .drawer.tower.live-panel:has(.specialised-upgrade){height:210px;max-height:210px}.playing:has(.drawer.tower.live-panel .specialised-upgrade) .game.inspecting{padding-bottom:210px}
+ .tower .quick-branches{gap:8px}.tower .quick-branches article{padding:8px 9px;gap:0}.quick-branches .branch-benefit{font-size:12px!important}.quick-branches .branch-cost{font-size:11px!important;margin-bottom:7px!important}
+ .tower .upgrade-hint{display:none}.tower .foundation-quick{margin:5px 0}.tower .branch-stats{margin-top:3px}.tower .branch-stats>summary{font-size:11px;min-height:36px}
+ .tower .tower-synergy,.tower .tower-obstacle{font-size:11px;margin-bottom:6px}.tower .tower-obstacle:not([hidden])+.upgrade-hint+.quick-branches .branch-cost{margin-bottom:3px!important}
+ .watch-lesson{bottom:52px;background:#173b4bef;max-width:310px}.map-caption{bottom:2px}.plot-hit.is-empty{min-width:44px;min-height:44px}
+}
+@media(max-width:350px) and (orientation:portrait){.drawer.tower.live-panel{height:280px;max-height:280px}.playing:has(.drawer.tower.live-panel) .game.inspecting{padding-bottom:280px}.quick-branches h3{font-size:12px}.drawer.live-panel .drawer-body{padding:8px 10px}}
 .tower-synergy{margin:0 0 12px;font-size:.72rem;line-height:1.4;color:#e9c992}
+@media(orientation:landscape) and (max-height:500px){
+ .game.inspecting{grid-template-columns:minmax(0,1fr) 308px}.drawer.live-panel{width:296px;top:52px;bottom:56px}
+ .drawer.live-panel .inspector-toolbar{display:none}.drawer.live-panel>header{min-height:40px;padding:0 6px 0 10px}.drawer.live-panel .drawer-body{padding:7px 10px}
+ .tower .quick-branches{grid-template-columns:1fr 1fr;gap:6px}.tower .quick-branches article{padding:7px}.tower .quick-branches h3{font-size:12px}.tower .branch-benefit{font-size:11px!important}.tower .branch-cost{font-size:10px!important;margin-bottom:5px!important}
+ .tower .upgrade-hint,.tower .tower-heading{display:none}.tower .branch-stats{margin:0}.tower .branch-stats>summary{min-height:36px}.tower .tower-synergy,.tower .tower-obstacle{margin-bottom:4px}
+}
 @media(max-width:480px){.expedition-card{grid-template-columns:48px minmax(0,1fr);padding:12px;gap:12px}.expedition-map .map-preview{width:40px;height:100px}.expedition-card h3{font-size:1.03rem}.map-caption .landmark-link{font-size:.68rem;padding:6px 8px}}

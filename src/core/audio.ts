@@ -30,6 +30,7 @@ export const profileSound=(prefs:{muted:boolean;music:boolean;effects:boolean},s
 type Rate = { last: number; count: number }
 
 export class Sound {
+  constructor(private contextFactory?:()=>AudioContext){}
   ctx: AudioContext | null = null
   private master!: GainNode
   private sfxBus!: GainNode
@@ -56,11 +57,11 @@ export class Sound {
   }
 
   unlock() {
-    if (this.settings.muted || typeof document!=='undefined'&&document.hidden) return
+    if (this.settings.muted || !this.contextFactory&&typeof document!=='undefined'&&document.hidden) return
     if (!this.ctx) {
       const AC = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
       if (!AC) return
-      this.ctx = new AC()
+      this.ctx = this.contextFactory?.() ?? new AC()
       const ctx = this.ctx
       const comp = ctx.createDynamicsCompressor()
       comp.threshold.value = -16
@@ -434,7 +435,7 @@ export class Sound {
     const filter=ctx.createBiquadFilter();filter.type='lowpass';filter.Q.value=.5
     filter.frequency.setValueAtTime(note.voice==='pad'?1100:note.voice==='bass'?650:hero==='mira'?2600:4200,at)
     filter.connect(pan)
-    const voice=note.voice,attack=voice==='pad'?.55:voice==='reed'?.075:voice==='bass'?.018:.006
+    const voice=note.voice,attack=voice==='pad'?.55:voice==='strings'?.24:voice==='reed'?.075:voice==='bass'?.018:.006
     const main=this.tone(freq,['bass','bell','kick','marimba'].includes(voice)?'sine':'triangle',attack,note.length,note.gain,filter,when)
     if(voice==='kick')main.o.frequency.exponentialRampToValueAtTime(42,at+.12)
     else if(voice==='bell')this.tone(freq*2.001,'sine',.002,note.length*.42,note.gain*.26,filter,when)
@@ -442,6 +443,10 @@ export class Sound {
       this.tone(freq*4,'sine',.001,.11,note.gain*.2,filter,when)
       this.tone(freq*9.2,'sine',.001,.045,note.gain*.05,filter,when)
       filter.frequency.exponentialRampToValueAtTime(750,at+.2)
+    }else if(voice==='strings'){
+      this.tone(freq,'sine',.28,note.length*.85,note.gain*.35,filter,when,-5)
+      this.tone(freq*2,'sine',.34,note.length*.7,note.gain*.12,filter,when,4)
+      filter.frequency.setValueAtTime(1650,at);filter.frequency.exponentialRampToValueAtTime(850,at+note.length)
     }else if(voice==='reed'){
       this.tone(freq*3,'sine',.09,note.length*.6,note.gain*.12,filter,when)
       this.tone(freq,'sine',.12,note.length*.8,note.gain*.18,filter,when,3)
@@ -451,6 +456,20 @@ export class Sound {
       this.tone(freq*2,'sine',.003,note.length*.3,note.gain*.12,filter,when)
     }else if(voice==='pad')this.tone(freq,'sine',.65,note.length*.7,note.gain*.3,filter,when,4)
     main.o.onended=()=>{main.o.disconnect();main.g.disconnect();filter.disconnect();pan.disconnect()}
+  }
+
+  /** Renders the actual instrument graph into memory. Never connects to an audio device. */
+  static async renderPreview(hero:AudioScene['hero']='sol',seconds=48){
+    const offline=new OfflineAudioContext(2,Math.ceil(seconds*22050),22050)
+    const sound=new Sound(()=>offline as unknown as AudioContext)
+    sound.settings=profileSound({muted:false,music:true,effects:true});sound.unlock()
+    let scene:AudioScene={night:false,weather:'clear',hero,playing:true,wave:16}
+    for(let step=0,at=0;at<seconds;step++){
+      if(step%16===0)scene={...scene,night:at>seconds/3,boss:at>seconds*2/3}
+      for(const note of scoreStep(step,scene,.5))sound.instrument(note,at,hero)
+      at+=scoreInterval(scene)
+    }
+    return offline.startRendering()
   }
 
   /** Continuous musical form. Hero, chapter and dusk arrangements change on bar lines. */

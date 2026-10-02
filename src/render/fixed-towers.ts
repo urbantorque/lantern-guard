@@ -1,7 +1,7 @@
 import type { TowerId } from '../game/defs'
 import type { HeroId } from '../game/heroes'
 import { CITY, block, polygon, plant, windows, isDaylit, lightPool } from './architecture'
-export interface Miniature { id:TowerId;a:number;b:number;refinement?:number;angle?:number;crest?:string;time?:number;since?:number;age?:number;upAge?:number;reducedMotion?:boolean;hero?:HeroId }
+export interface Miniature { id:TowerId;a:number;b:number;refinement?:number;angle?:number;crest?:string;time?:number;since?:number;age?:number;upAge?:number;reducedMotion?:boolean;hero?:HeroId;charge?:number;mastery?:readonly string[] }
 export const TOWER_COLOURS:Record<TowerId,{front:string;roof:string;side:string;accent:string}>={
   wick:{front:'#ed9850',roof:'#ffe2a7',side:'#a7464e',accent:'#ffcd63'},
   cracker:{front:'#df657e',roof:'#ffc5aa',side:'#853452',accent:'#ff9c87'},
@@ -40,6 +40,28 @@ export function drawFixedTower(c:CanvasRenderingContext2D,x:number,y:number,t:Mi
     polygon(c,[[cx,cy-r],[cx+r*.65,cy],[cx,cy+r],[cx-r*.65,cy]],colour.accent)
     polygon(c,[[cx,cy-r],[cx,cy+r],[cx-r*.65,cy]],'#fffbe3b0')
     line([[cx,cy-r],[cx+r*.65,cy],[cx,cy+r]],'#fff4d2',1)
+  }
+  // Separate weapon architecture makes a branch recognisable without opening its sheet.
+  if(special){
+    const by=-h-9
+    if(t.id==='wick'&&t.b){
+      c.save();c.translate(4,by-17);c.rotate(t.angle??-.8)
+      polygon(c,[[-5,-6],[29-recoil*7,-6],[39-recoil*7,0],[29-recoil*7,6],[-5,6]],'#f7d78b')
+      line([[2,0],[34-recoil*7,0]],'#774e58',3);c.restore()
+    }
+    if(t.id==='bell'&&!t.b){c.strokeStyle='#67d6e2';c.lineWidth=5;c.beginPath();c.arc(5,-44,22,0,Math.PI*2);c.stroke()}
+    if(t.id==='owl'&&t.b){
+      c.fillStyle='#b9f2db55';c.beginPath();c.arc(0,by-35,27,Math.PI,Math.PI*2);c.fill()
+      line([[-30,by-35],[30,by-35]],'#d7eaa4',3)
+      for(const side of [-1,1])polygon(c,[[side*25,by-18],[side*43,by-28],[side*41,by-13],[side*26,by-8]],'#7abdc3')
+    }
+    if(t.id==='storm'&&t.b){
+      block(c,0,by-18,24,20,29,'#66518e','#cbb0ed','#393d70')
+      crystal(4,by-58,15)
+      c.strokeStyle='#f3e2ff';c.lineWidth=2;c.beginPath();c.ellipse(4,by-54,24,7,-.25,0,Math.PI*2);c.stroke()
+    }
+    if(t.id==='garden'&&!t.b){for(const side of [-1,1]){block(c,side*28,-6,16,20,13,'#539f74','#d3e59d','#285d5c');plant(c,side*28,-23,9)}}
+    if(t.id==='ballista'&&!t.b){for(const side of [-1,1]){block(c,side*27,-6,12,17,18,'#4888a1','#acd6d3','#30475e');line([[side*27,-15],[side*12,-h-8]],'#c4dcd2',4)}}
   }
   if(t.id==='wick'){
     house(0,-2,w,23,h);windows(c,0,-2,w,h,stage>=1?2:1)
@@ -137,6 +159,10 @@ export function drawFixedTower(c:CanvasRenderingContext2D,x:number,y:number,t:Mi
   }
   // Each upgrade adds a readable rank mark to the base, including at phone scale.
   c.fillStyle=colour.accent;for(let i=0;i<=stage;i++)c.fillRect(-13+i*6,0,4,3)
+  if(t.mastery?.includes('mastery:clear-water'))line([[-w/2,2],[w/2,2],[w/2+11,-9]],'#fff3d1',2)
+  if(t.mastery?.includes('mastery:specialists'))for(const side of [-1,1])polygon(c,[[side*21,-1],[side*21+3,-4],[side*21+6,-1],[side*21+3,2]],colour.accent)
+  if(t.mastery?.includes('mastery:night-keeper')){line([[w/2+8,-3],[w/2+8,-26]],'#b3c6ca',1.5);crystal(w/2+8,-21,4)}
+  if((t.charge??0)>.78&&t.id!=='garden'&&!t.reducedMotion){const m=fixedMuzzle(t);lightPool(c,m.x,m.y,9,colour.accent,((t.charge??0)-.78)*1.6,1)}
   if(crown){line([[-28,4],[-28,-10]],'#ffe9aa',2);polygon(c,[[-28,-10],[-28,-22],[-14,-17]],colour.accent)}
   c.restore()
 }
