@@ -1,0 +1,92 @@
+[
+  {
+    "hero": "sol",
+    "strategy": "mixed",
+    "mode": "standard",
+    "map": 2,
+    "seed": 4099,
+    "won": true,
+    "wave": 40,
+    "light": 25
+  },
+  {
+    "hero": "sol",
+    "strategy": "greedy",
+    "mode": "standard",
+    "map": 2,
+    "seed": 4099,
+    "won": true,
+    "wave": 40,
+    "light": 25
+  },
+  {
+    "hero": "sol",
+    "strategy": "mixed",
+    "mode": "nightfall",
+    "map": 0,
+    "seed": 4099,
+    "won": true,
+    "wave": 40,
+    "light": 15
+  },
+  {
+    "hero": "mira",
+    "strategy": "mixed",
+    "mode": "standard",
+    "map": 2,
+    "seed": 4099,
+    "won": true,
+    "wave": 40,
+    "light": 25
+  },
+  {
+    "hero": "mira",
+    "strategy": "greedy",
+    "mode": "standard",
+    "map": 2,
+    "seed": 4099,
+    "won": true,
+    "wave": 40,
+    "light": 25
+  },
+  {
+    "hero": "mira",
+    "strategy": "mixed",
+    "mode": "nightfall",
+    "map": 0,
+    "seed": 4099,
+    "won": true,
+    "wave": 40,
+    "light": 15
+  },
+  {
+    "hero": "ivo",
+    "strategy": "mixed",
+    "mode": "standard",
+    "map": 2,
+    "seed": 4099,
+    "won": true,
+    "wave": 40,
+    "light": 25
+  },
+  {
+    "hero": "ivo",
+    "strategy": "greedy",
+    "mode": "standard",
+    "map": 2,
+    "seed": 4099,
+    "won": true,
+    "wave": 40,
+    "light": 25
+  },
+  {
+    "hero": "ivo",
+    "strategy": "mixed",
+    "mode": "nightfall",
+    "map": 0,
+    "seed": 4099,
+    "won": true,
+    "wave": 40,
+    "light": 15
+  }
+]

@@ -9,12 +9,16 @@ Build a thoughtful defence through a quiet canal district. Study the next wave, 
 - **Four fixed waterways.** Placement and shared coverage shape your defence.
 - **Three heroes, eight towers each.** Sol brings fire and income, Mira brings control and night shelter, Ivo brings speed and electricity. Each roster has different mechanics, names and architecture; every tower has five stages.
 - **Quick, live upgrades.** Compare two compact specialisations, commit to one and upgrade while combat continues. Each tower automatically aims for its role, with imminent leaks taking priority.
-- **Tower Bonds.** Pair a Moonbell with a Cracker, or an Owl with a Wickling, for a bounded shared-range effect.
-- **District Commissions.** Three permanent five-wave challenges award visible cosmetic details in a separate save slot.
-- **A continuous watch.** One authored tempo, 30% faster than the former default. The first tower starts a four-second countdown; subsequent waves follow automatically. Build, upgrade, move, sell and form Bonds during combat. The footer previews the next threat and tracks the current wave. Three difficulties and same-seed retries remain available.
+- **Distinct crowns and automatic Bonds.** Each crown extends its chosen stream. Five compatible tower pairs link automatically over shared coverage, with one partner per tower and at most two active Bonds. The upgrade panel shows the active link.
+- **Three twelve-wave expeditions.** Sunforge, Moonwake and Stormglass offer compressed progression, a final boss and per-hero mastery stamps. Earn copper roofs, moonstone lanterns and prismatic windows; completing the set adds a soundtrack accompaniment. Every expedition remains available.
+- **Useful district landmarks.** The Moon spring reveals nearby hidden foes at night, the Storm garden strengthens nearby lightning, the Sun terrace boosts daylight harvests, and the Tide bell slows passing enemies.
+- **A continuous watch.** One authored tempo, 30% faster than the former default. The first tower starts a four-second countdown; subsequent waves follow automatically. Build, upgrade, move and sell during combat. Named encounters alternate pressure and recovery; the footer previews the next threat and boss bars explain phases. Three difficulties and same-seed retries remain available.
 - **Prepare for night.** About 46 real seconds of daylight favour Gardens and long-range builds; 37-second nights reward lamplit towers and Owl shelter. Weather shifts about every 23 combat seconds. Live Gardens earn for the time each tier worked, preventing last-second harvest exploits.
+- **Store sunlight.** A scout's support stream trades some attack damage for three daylight charges. At night, automatic pulses briefly extend sight and boost nearby fire rate. Stationary pips and a live charge count show the reserve.
 - **An evolving score.** An original 32-bar form with three hero melodies, a bridge, a varied second pass, later-wave accompaniment and a boss pulse. Night changes instrumentation on bar boundaries. Filtered plucks, glass bells, bass and soft percussion sit alongside water and weather ambience. Sound and music preferences remain separate.
 - **A clearer battlefield.** Wide screens show the canal across the screen. Phones keep it vertical and frame the selected tower during upgrades. Glow updates immediately, without flying reward particles.
+
+The original three five-wave District Commissions remain accessible from Expeditions. Expeditions and commissions share the short-watch save slot; the campaign has its own. Cosmetic rewards never increase combat power. Continuing an existing save preserves its rules; start a new campaign or expedition for the new strategic systems.
 
 ## Play and develop
 
@@ -29,6 +33,8 @@ Open the local URL printed by Vite. Add `?muted=1` for a silent preview. Progres
 
 ```sh
 npm run check       # Regression suites, saves, sky rules and hero balance
+npm run balance:watch-depth # 63 paid-build runs across heroes, branches and maps
+npm run balance:watch-economy # Income greed, a second forecast and Nightfall
 npm run build       # Typecheck and produce dist/
 npm run ios:sync    # Build and sync the Capacitor iOS project
 ```
@@ -39,7 +45,7 @@ The [GitHub Pages address](https://urbantorque.github.io/lantern-guard/) keeps i
 
 ## Design and verification
 
-[Continuous watch and expressive district](docs/EXPRESSIVE-WATCH-RELEASE.md) · [Battlefield and quick-upgrade revision](docs/BATTLEFIELD-EXPERIENCE-RELEASE.md) · [Continuous combat, upgrade streams and audio fixes](docs/CONTINUOUS-COMBAT-RELEASE.md) · [Three-hero release and visual revision](docs/VIBRANT-HEROES-RELEASE.md) · [Execution roadmap](docs/FIXED-PATH-ROADMAP.md) · [Original fixed-edition delivery](docs/NIGHTWARD-RELEASE.md) · [iOS build guide](docs/IOS-BUILD.md)
+[Strategic depth, landmarks and expeditions](docs/STRATEGIC-DEPTH-RELEASE.md) · [Continuous watch and expressive district](docs/EXPRESSIVE-WATCH-RELEASE.md) · [Battlefield and quick-upgrade revision](docs/BATTLEFIELD-EXPERIENCE-RELEASE.md) · [Continuous combat, upgrade streams and audio fixes](docs/CONTINUOUS-COMBAT-RELEASE.md) · [Three-hero release and visual revision](docs/VIBRANT-HEROES-RELEASE.md) · [Execution roadmap](docs/FIXED-PATH-ROADMAP.md) · [Original fixed-edition delivery](docs/NIGHTWARD-RELEASE.md) · [iOS build guide](docs/IOS-BUILD.md)
 
 Nightward replaces Lantern Guard's playable routing edition. Old battle snapshots remain archived on the device; journal, settlement, achievements and settings carry forward. New records and saves use a separate rules version.
 

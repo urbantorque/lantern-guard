@@ -8,6 +8,7 @@ import { currentPalette } from './palette'
 import { block, polygon, windows, setArchitectureLight, lightPool } from './architecture'
 
 import { scenery, movingWater, livingDistrict } from './fixed-scenery'
+import { drawLandmark, drawSunReserves } from './watch-depth'
 
 const arrivals=new WeakMap<Tower,{born:number;upgrade:number;lastUpgrade:number;fire:number;shot:number;angle:number;frame:number}>()
 const lightChanges=new WeakMap<Sim,{canvas:HTMLCanvasElement;previous:HTMLCanvasElement|null;at:number;wide:boolean}>()
@@ -21,6 +22,8 @@ export function drawFixedWorld(c:CanvasRenderingContext2D,s:Sim,view:ViewState,s
   }else{light.previous=null;c.drawImage(scene,-50,-140,920,1070)}
   movingWater(c,s,reducedMotion?0:time)
   livingDistrict(c,s,time,reducedMotion)
+  drawLandmark(c,s,time,reducedMotion,wide)
+  drawSunReserves(c,s,reducedMotion,wide)
   // Show the true footprint of lingering fire below units, so its damage has a visible cause.
   for(const p of s.embers){
     c.save();c.globalAlpha=Math.min(.35,p.life*.22);c.fillStyle='#ed9554';c.strokeStyle='#ffcf86';c.lineWidth=2;c.beginPath();c.arc(p.x,p.y,p.radius,0,Math.PI*2);c.fill();c.stroke()
@@ -84,7 +87,7 @@ export function drawFixedWorld(c:CanvasRenderingContext2D,s:Sim,view:ViewState,s
   if(sky.weather==='mist'){c.fillStyle=sky.night?'#bddeef0c':'#f2ffe921';for(let i=0;i<4;i++){const drift=reducedMotion?0:Math.sin(time*.15+i)*30;c.beginPath();c.ellipse(160+i*120+drift,120+i*180,240,40,0,0,Math.PI*2);c.fill()}}
   if(sky.weather==='rain'&&!reducedMotion){c.strokeStyle=sky.night?'#b4e2ee66':'#2c6e7d55';c.lineWidth=1;for(let i=0;i<36;i++){const x=(i*173+time*12)%720,y=(i*97+time*160)%840;c.beginPath();c.moveTo(x,y);c.lineTo(x-3,y+12);c.stroke()}}
   if(sky.weather==='breeze'&&!reducedMotion){c.fillStyle='#ffd594b0';for(let i=0;i<7;i++){const x=(i*173+time*28)%720,y=80+i*105+Math.sin(time+i)*7;c.save();c.translate(x,y);c.rotate(time+i);c.fillRect(-3,-1,6,2);c.restore()}}
-  if(!s.waveActive)for(const source of s.level.def.sources){if(source.openWave>s.planningWave&&source.id!=='west')continue;const p=s.level.segs.get(source.seg)!.line.at(0,{x:0,y:0,tx:0,ty:0});c.fillStyle=sky.night?'#d8efde':'#244f5b';c.font=`550 ${Math.max(15,10/scale)}px "DM Sans Variable",sans-serif`;c.textAlign=source.id==='west'?'left':'center';upright(c,p.x,p.y,wide,()=>c.fillText(source.id==='west'?(s.planningWave<11?'Opens · wave 11':'Side inlet'):'Main inlet',p.x,p.y-44))}
+  if(!s.waveActive)for(const source of s.level.def.sources){if(source.openWave>s.planningWave&&source.id!=='west')continue;const p=s.level.segs.get(source.seg)!.line.at(0,{x:0,y:0,tx:0,ty:0});c.fillStyle=sky.night?'#d8efde':'#244f5b';c.font=`550 ${Math.max(15,10/scale)}px "DM Sans Variable",sans-serif`;c.textAlign=source.id==='west'?'left':'center';upright(c,p.x,p.y,wide,()=>c.fillText(source.id==='west'?(s.planningWave<source.openWave?'Opens · wave '+source.openWave:'Side inlet'):'Main inlet',p.x,p.y-44))}
 }
 
 const icons=new Map<string,string>()

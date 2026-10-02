@@ -60,6 +60,9 @@ export function scenery(s:Sim,stage:number,keepsakes:readonly string[],wide=fals
     if(!day)lightPool(c,x,y+2,w,'#ffc56c',.4)
     block(c,x,y,w,28,h,day?front:side,day?roof:front,day?side:'#233c52');windows(c,x,y,w,h,1,true)
     block(c,x,y-h+1,w+3,30,3,day?roof:front,day?roof:front,side)
+    if(keepsakes.includes('sunforge'))block(c,x,y-h+2,w+3,30,3,'#b46e53',day?'#eeb587':'#b77c77','#875461')
+    if(keepsakes.includes('moonwake')){polygon(c,[[x+w/2+7,y-25],[x+w/2+11,y-20],[x+w/2+7,y-15],[x+w/2+3,y-20]],'#c4f7ff');if(!day)lightPool(c,x+w/2+7,y-20,23,'#aae9ff',.48)}
+    if(keepsakes.includes('stormglass'))for(let i=0;i<3;i++){c.fillStyle=['#ffccae','#9fe9df','#d5bdff'][i];c.fillRect(x-w/2+6+i*9,y-h+7,5,7)}
     c.fillStyle=style%2?'#e6a55b':'#366778';c.fillRect(x-w/2+6,y-12,8,12)
     if(style%2===0){block(c,x+4,y-h-5,w-7,20,4,'#759b75',day?'#8dbf73':'#43806b','#396559');for(let j=0;j<3;j++)plant(c,x-8+j*9,y-h-10,4)}
     else polygon(c,[[x-11,y-h-7],[x-5,y-h-15],[x+13,y-h-15],[x+7,y-h-7]],day?'#356e91':'#234660')

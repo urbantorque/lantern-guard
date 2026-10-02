@@ -66,6 +66,7 @@ console.log('PASS title music, audio-clock timing, day/night arrangements, first
 
 const scene={night:false,weather:'clear' as const,hero:'sol' as const,wave:1,playing:true}
 const phrase=(from:number,overrides={})=>Array.from({length:128},(_,i)=>scoreStep(from+i,{...scene,...overrides},.6))
+assert.notDeepEqual(phrase(0),phrase(0,{overture:true}),'expedition mastery adds an original answering line')
 assert.notDeepEqual(phrase(0),phrase(128),'the answer differs from the opening')
 assert.notDeepEqual(phrase(0),phrase(256),'the bridge changes register and texture')
 assert.notDeepEqual(phrase(0),phrase(512),'the second pass varies the melody')

@@ -5,6 +5,7 @@ export interface AudioScene {
   wave?:number
   playing?:boolean
   boss?:boolean
+  overture?:boolean
 }
 export type Voice='bass'|'pad'|'pluck'|'bell'|'lead'|'kick'|'hat'
 export interface ScoreNote {voice:Voice; midi:number; length:number; gain:number; pan:number}
@@ -51,6 +52,8 @@ export function scoreStep(step:number,scene:AudioScene,intensity:number):ScoreNo
   }
   if((chapter>=1||section===1)&&beat===14&&bar%2===0)add('bell',root+24+third,1.8,.033,.35)
   if(scene.boss&&beat%4===2)add('lead',root+(beat%8===2?0:7),.28,.042,-.2)
+  // Earned district arrangement: a restrained answering line, once per phrase.
+  if(scene.overture&&bar%4===2&&(beat===5||beat===9||beat===13))add(scene.night?'bell':'lead',root+12+[7,third+12,12][(beat-5)/4],1.25,.038,beat===9?.3:-.3)
   if(active&&energy>.12){
     if(beat===0||beat===8||scene.boss&&beat===10)add('kick',36,.16,.09*(.5+energy*.5))
     if(beat===4||beat===12)add('hat',0,.07,.018+energy*.013,.15)

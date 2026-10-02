@@ -101,9 +101,18 @@ export function fixedStats(id: TowerId, a: number, b: number, crown = 0) {
 }
 
 export interface Bond { a: number; b: number; readyAt: number; activations: number }
-export const bondName = (a: TowerId, b: TowerId) => [a,b].includes('bell') && [a,b].includes('cracker') ? 'Shatterburst'
-  : [a,b].includes('owl') && [a,b].includes('wick') ? 'Guiding Light' : null
-export const BOND_HELP = { Shatterburst: 'A Moonbell toll primes a Cracker hit to strip up to 6 armour. Both towers must cover the target. Once every 4 seconds.', 'Guiding Light': 'An Owl guides a Wickling hit through armour inside their shared range. Once every 2 seconds.' }
+export const bondName = (a: TowerId, b: TowerId, expanded=false) => [a,b].includes('bell') && [a,b].includes('cracker') ? 'Shatterburst'
+  : [a,b].includes('owl') && [a,b].includes('wick') ? 'Guiding Light'
+  : expanded&&[a,b].includes('garden')&&[a,b].includes('storm')?'Wild Current'
+  : expanded&&[a,b].includes('owl')&&[a,b].includes('ballista')?'Beacon Volley'
+  : expanded&&[a,b].includes('bell')&&[a,b].includes('beam')?'Moonbeam':null
+export const BOND_HELP = {
+  Shatterburst: 'A blast strips 6 armour from a slowed foe. Every 4s.',
+  'Guiding Light': 'A guided spark breaks armour. Every 2s.',
+  'Wild Current': 'A chain hit slows its target by 25% for 2s. Every 3s.',
+  'Beacon Volley': 'A guided bolt burns for 6 damage/s for 2s. Every 4s.',
+  Moonbeam: 'A beam strips 8 armour from a slowed foe. Every 4s.',
+}
 
 export const COMMISSIONS = [
   { id:'market', name:'Room for the market', from:10,to:15,glow:2600,variant:0,seed:1047,desc:'Protect five waves while leaving plot 7 empty for the market stall.', reward:'Market awnings', blockedPad:6 },

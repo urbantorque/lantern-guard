@@ -1,6 +1,7 @@
 import { compactLevel, PLOTS, STARTER_PLOTS, REFINEMENTS } from './compact'
 import { fixedLevel, COMMISSIONS, FIXED_UNLOCK, bondName } from './fixed'
 import { isHero } from './heroes'
+import { EXPEDITIONS, EXPEDITION_UNLOCK, isExpedition, SUN_CAPACITY } from './watch-depth'
 import { LATE_REFINEMENTS, LATE_TOWERS, PREPARATIONS } from './depth'
 import { BATTLE_PLANS, type BattlePlanId } from './battle-plans'
 import { gardensLevel, GARDENS_PADS } from './gardens'
@@ -71,6 +72,8 @@ export function validSnapshot(s: unknown): s is SaveSnapshot {
   if (!object(s) || (s.v !== 1 && s.v !== 2) || typeof s.difficulty !== 'string' || !Object.hasOwn(DIFFICULTY, s.difficulty)) return false
   if (!object(s.challenge) || s.challenge.chapter !== undefined || s.challenge.campaign !== undefined || !integer(s.wave, 0, 10000) || !number(s.glow, 0) || !number(s.lives) || !number(s.seed) || typeof s.won !== 'boolean' || !object(s.stats) || !allFinite(s)) return false
   if(s.challenge.hero!==undefined&&(!isHero(s.challenge.hero)||s.challenge.fixed!==1))return false
+  if(s.challenge.watchDepth!==undefined&&(s.challenge.watchDepth!==1||s.challenge.fixed!==1))return false
+  if(s.challenge.expedition!==undefined&&(!isExpedition(s.challenge.expedition)||s.challenge.watchDepth!==1||!s.challenge.skirmish||s.challenge.commission!==undefined||s.challenge.blockedPad!==undefined))return false
   if (s.challenge.fixed !== undefined && (s.challenge.fixed !== 1 || s.challenge.compact !== 1 || s.challenge.depth !== 1 || s.challenge.balance !== 1 || s.challenge.guard !== 1 || s.challenge.plans || s.challenge.guardian || s.freeplay || s.wave > 40)) return false
   if (s.challenge.fixed && (s.preparation !== null || s.preparationRound !== 0 || s.challenge.practice !== undefined && typeof s.challenge.practice !== 'boolean' || !s.challenge.skirmish && (s.challenge.commission !== undefined || s.challenge.blockedPad !== undefined))) return false
   for (const key of ['lockedGates', 'noGarden', 'noCharms']) if (s.challenge[key] !== undefined && typeof s.challenge[key] !== 'boolean') return false
@@ -83,7 +86,11 @@ export function validSnapshot(s: unknown): s is SaveSnapshot {
     const q = s.challenge.skirmish
     if (!object(q) || !s.challenge.depth || typeof s.challenge.id !== 'string' || !s.challenge.id.endsWith(s.challenge.balance ? ':compact2' : ':compact1') || ![10, 20].includes(q.from as number) || q.to !== Number(q.from) + 10 || q.glow !== (q.from === 10 ? 4200 : 8500) || !integer(q.seed, 0, 4294967295) || s.seed !== q.seed || s.wave < Number(q.from) || s.wave > Number(q.to) || s.freeplay || s.challenge.tide || s.challenge.plans || s.challenge.guardian) return false
   }
-  if (s.challenge.fixed && s.challenge.skirmish) {
+  if(s.challenge.expedition){
+    const expeditionId=s.challenge.expedition,e=EXPEDITIONS.find(e=>e.id===expeditionId)!,q=s.challenge.skirmish
+    if(!object(q)||q.from!==0||q.to!==e.waves||q.glow!==e.glow||q.seed!==e.seed||s.seed!==e.seed||s.challenge.variant!==e.variant||s.challenge.id!==`expedition:${e.id}:depth1`||s.wave>e.waves)return false
+  }
+  if (s.challenge.fixed && s.challenge.skirmish && !s.challenge.expedition) {
     const commissionId = s.challenge.commission
     const commission = COMMISSIONS.find(c => c.id === commissionId)
     const q = s.challenge.skirmish
@@ -104,7 +111,8 @@ export function validSnapshot(s: unknown): s is SaveSnapshot {
   } else if (s.battlePlans !== undefined) return false
   if (s.challenge.variant !== undefined && !s.challenge.compact) return false
   if (s.challenge.compact) {
-    if (!Array.isArray(s.plots) || s.plots.length > PLOTS.length || new Set(s.plots).size !== s.plots.length || !s.plots.every(p => integer(p, 0, PLOTS.length - 1) && PLOTS[p].wave <= (s.wave as number) + 1) || !STARTER_PLOTS.every(p => (s.plots as number[]).includes(p))) return false
+    const expedition=!!s.challenge.expedition
+    if (!Array.isArray(s.plots) || s.plots.length > PLOTS.length || new Set(s.plots).size !== s.plots.length || !s.plots.every(p => integer(p, 0, PLOTS.length - 1) && (expedition?1+Math.floor((PLOTS[p].wave-1)/2.5):PLOTS[p].wave) <= (s.wave as number) + 1) || !STARTER_PLOTS.every(p => (s.plots as number[]).includes(p))) return false
   } else if (s.plots !== undefined) return false
   if (s.challenge.waterway !== undefined && !Object.hasOwn(WATERWAYS, String(s.challenge.waterway))) return false
   if (s.challenge.expanding !== undefined && (s.challenge.expanding !== 1 || s.v !== 2 || s.challenge.waterway !== undefined || s.challenge.id !== undefined || s.challenge.tide !== undefined || !integer(s.canalStage, 0, 2))) return false
@@ -119,10 +127,10 @@ export function validSnapshot(s: unknown): s is SaveSnapshot {
   for (const t of s.towers) {
     if (!object(t) || typeof t.id !== 'string' || !Object.hasOwn(TOWERS, t.id) || !integer(t.pad, 0, maxPads - 1) || pads.has(t.pad) || !integer(t.a, 0, 3) || !integer(t.b, 0, 3) || (t.a > 1 && t.b > 1) || !number(t.spent, 0) || !number(t.pops, 0) || !['first', 'last', 'strong', 'close'].includes(String(t.priority))) return false
     const ranks = s.challenge.depth ? [...REFINEMENTS, ...LATE_REFINEMENTS] : REFINEMENTS
-    if (LATE_TOWERS.includes(t.id as import('./defs').TowerId) && (!s.challenge.depth || (t.id === 'storm' ? 16 : 26) > s.wave + 1)) return false
-    if (s.challenge.compact && (!(s.plots as number[]).includes(t.pad) || !integer(t.refinement, 0, ranks.length) || (t.refinement > 0 && (Math.max(t.a, t.b) < 3 || ranks[t.refinement - 1].wave > s.wave + 1)))) return false
+    if (LATE_TOWERS.includes(t.id as import('./defs').TowerId) && (!s.challenge.depth || (s.challenge.expedition?EXPEDITION_UNLOCK[t.id as keyof typeof EXPEDITION_UNLOCK]:t.id === 'storm' ? 16 : 26) > s.wave + 1)) return false
+    if (s.challenge.compact && (!(s.plots as number[]).includes(t.pad) || !integer(t.refinement, 0, ranks.length) || (t.refinement > 0 && (Math.max(t.a, t.b) < 3 || (s.challenge.expedition?10:ranks[t.refinement - 1].wave) > s.wave + 1)))) return false
     if (!s.challenge.compact && t.refinement !== undefined) return false
-    if (s.challenge.fixed && (Number(t.a) > 0 && Number(t.b) > 0 || Number(t.b) === 1 || Number(t.refinement) > 1 || Number(t.refinement) > 0 && s.wave < 30 || FIXED_UNLOCK[t.id as keyof typeof FIXED_UNLOCK] > s.wave + 1 || t.pad === s.challenge.blockedPad)) return false
+    if (s.challenge.fixed && (Number(t.a) > 0 && Number(t.b) > 0 || Number(t.b) === 1 || Number(t.refinement) > 1 || Number(t.refinement) > 0 && s.wave < (s.challenge.expedition?9:30) || (s.challenge.expedition?EXPEDITION_UNLOCK:FIXED_UNLOCK)[t.id as keyof typeof FIXED_UNLOCK] > s.wave + 1 || t.pad === s.challenge.blockedPad)) return false
     pads.add(t.pad)
   }
   if (s.challenge.fixed) {
@@ -130,12 +138,12 @@ export function validSnapshot(s: unknown): s is SaveSnapshot {
       const c=s.climate
       if(!object(c)||!number(c.elapsed,0)||!number(c.waveSeconds,0)||!number(c.gardenExposure,0)||c.waveSeconds>c.elapsed+1e-6||c.gardenExposure>c.waveSeconds*1.47+1e-6||c.gardenExposure<c.waveSeconds*.55-1e-6)return false
     }
-    if (!Array.isArray(s.bonds) || s.bonds.length > (s.wave >= 20 ? 2 : s.wave >= 5 ? 1 : 0)) return false
+    if (!Array.isArray(s.bonds) || s.bonds.length > (s.challenge.expedition?(s.wave>=7?2:s.wave>=3?1:0):(s.wave >= 20 ? 2 : s.wave >= 5 ? 1 : 0))) return false
     const used = new Set<unknown>()
     for(const b of s.bonds) {
       if(!object(b) || !number(b.readyAt,0) || !integer(b.activations) || used.has(b.a) || used.has(b.b) || b.a === b.b) return false
       const a=s.towers.find(t=>t.uid===b.a), other=s.towers.find(t=>t.uid===b.b)
-      if(!a || !other || !bondName(a.id as keyof typeof TOWERS,other.id as keyof typeof TOWERS)) return false
+      if(!a || !other || !bondName(a.id as keyof typeof TOWERS,other.id as keyof typeof TOWERS,!!s.challenge.watchDepth)) return false
       used.add(b.a); used.add(b.b)
     }
   }
@@ -154,7 +162,10 @@ export function validSnapshot(s: unknown): s is SaveSnapshot {
     if (t.damageDealt !== undefined && !number(t.damageDealt, 0)) return false
     for (const key of ['uid', 'cd', 'diveCd', 'mothCd', 'tolls', 'angle', 'bornT', 'fireT', 'upT', 'slowed', 'spotted', 'earned']) if (t[key] !== undefined && !number(t[key])) return false
     for (const key of ['harvest', 'healing']) if (t[key] !== undefined && (!number(t[key]) || t[key] < 0)) return false
-    if (t.beams !== undefined && (!Array.isArray(t.beams) || t.beams.length !== 2 || !t.beams.every((v: unknown) => integer(v)))) return false
+    for(const [key,max]of [['sunlight',SUN_CAPACITY],['sunPulse',4],['sunCooldown',6]] as const){
+      if(t[key]!==undefined&&(!s.challenge.watchDepth||!number(t[key],0,max)||(t[key]>0&&(t.id!=='owl'||Number(t.b)<2))))return false
+    }
+    if (t.beams !== undefined && (!Array.isArray(t.beams) || (s.challenge.watchDepth?![2,3].includes(t.beams.length):t.beams.length !== 2) || !t.beams.every((v: unknown) => integer(v)))) return false
   }
   for (const g of s.gates) {
     for (const key of ['cd', 'flipT', 'flips', 'swingT']) if (g[key] !== undefined && !number(g[key])) return false

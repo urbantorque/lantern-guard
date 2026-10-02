@@ -101,3 +101,14 @@
 
 @media(max-width:999px) and (orientation:portrait){.drawer.build .drawer-body>p:first-child{display:none}}
 summary:focus-visible{outline:3px solid var(--gold);outline-offset:2px;border-radius:4px}button,summary{-webkit-tap-highlight-color:#ffd18a33}
+.expedition-list{display:grid;gap:14px;margin:18px 0}
+.expedition-card{display:grid;grid-template-columns:76px minmax(0,1fr);gap:16px;padding:18px;border:1px solid #91aaa23b;border-radius:14px;background:linear-gradient(135deg,#36586666,#20334733)}
+.expedition-card h3{margin:4px 0 8px;font-size:1.15rem}.expedition-card p{font-size:.85rem;line-height:1.45;margin:6px 0}.expedition-card .eyebrow{font-size:.63rem}
+.expedition-map{display:flex;align-items:center;justify-content:center;background:#83c9ba12;border-radius:10px}.expedition-map .map-preview{width:64px;height:130px}
+.expedition-sunforge{border-top:3px solid #e5ac79}.expedition-moonwake{border-top:3px solid #a6dce9}.expedition-stormglass{border-top:3px solid #c3b2f2}
+.expedition-reward{color:#e9c992}.mastery-stamps{display:flex;gap:7px;flex-wrap:wrap;margin:12px 0}.mastery-stamps span{display:inline-flex;align-items:center;gap:4px;font-size:.68rem;color:#a2b3b9;border:1px solid #9aadb32a;border-radius:20px;padding:4px 8px}.mastery-stamps .earned{color:#ffe0a1;border-color:#e6bc7966;background:#ecc47814}
+.earned-reward{display:flex;gap:8px;align-items:center;padding:12px;border-radius:8px;background:#e4c07818;color:#ffe0a1}
+.map-caption .landmark-link{pointer-events:auto;min-height:44px;padding:6px 10px;border:0;border-radius:8px;background:#172f4588;color:#fff1cd;font-size:.75rem;white-space:nowrap}
+.bond-recipes p{display:grid;gap:3px;font-size:.8rem;padding:9px 0;border-bottom:1px solid #c8d8d51c}.bond-recipes span{color:#bdcecf}
+.tower-synergy{margin:0 0 12px;font-size:.72rem;line-height:1.4;color:#e9c992}
+@media(max-width:480px){.expedition-card{grid-template-columns:48px minmax(0,1fr);padding:12px;gap:12px}.expedition-map .map-preview{width:40px;height:100px}.expedition-card h3{font-size:1.03rem}.map-caption .landmark-link{font-size:.68rem;padding:6px 8px}}

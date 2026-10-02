@@ -4,6 +4,7 @@ import type { Difficulty, EnemyId } from './defs'
 import { ENEMIES } from './defs'
 import { loadSettings } from './progress'
 import { isHero, type HeroId } from './heroes'
+import { isExpedition } from './watch-depth'
 
 const PREFIX = 'lanternlocks.fixed1.'
 export type Slot = 'campaign' | 'commission'
@@ -33,7 +34,7 @@ export function loadVillage(): VillageProfile {
   if(!nonnegative(p.settlement)||p.settlement>4||!Number.isInteger(p.lastMap)||p.lastMap<0||p.lastMap>3||!journal(p.journal)||!Object.values(p.settings).every(v=>typeof v==='boolean'))return empty
   if(!Object.values(p.records).every(r=>r&&nonnegative(r.wave)&&r.wave<=40&&nonnegative(r.light)&&typeof r.won==='boolean'&&typeof r.practice==='boolean'))return empty
   if(!Object.values(p.credits).every(c=>c&&nonnegative(c.wave)&&journal(c.journal)))return empty
-  return {...empty,...p,lastHero:isHero(p.lastHero)?p.lastHero:'sol',guardian:['lantern','ember','reed','tide'].includes(p.guardian??'')?p.guardian:'lantern',commissions:p.commissions.filter(id=>['market','glass','garden'].includes(id)),settings:{...empty.settings,...p.settings}}
+  return {...empty,...p,lastHero:isHero(p.lastHero)?p.lastHero:'sol',guardian:['lantern','ember','reed','tide'].includes(p.guardian??'')?p.guardian:'lantern',commissions:p.commissions.filter(id=>['market','glass','garden'].includes(id)||isExpedition(id)),settings:{...empty.settings,...p.settings}}
 }
 export function loadWatch(slot:Slot): {snapshot:SaveSnapshotV2;blooms:number[]} | null {
   try {
@@ -68,6 +69,7 @@ export function recordWatch(profile:VillageProfile,sim:Sim) {
   const old=profile.records[recordKey]
   if(!old || held>old.wave || held===old.wave && sim.lives>old.light) profile.records[recordKey]={wave:held,light:sim.lives,won:sim.won,practice:!!sim.challenge.practice}
   if(sim.challenge.commission && sim.won && !profile.commissions.includes(sim.challenge.commission)) profile.commissions.push(sim.challenge.commission)
+  if(sim.challenge.expedition&&sim.won&&!profile.commissions.includes(sim.challenge.expedition))profile.commissions.push(sim.challenge.expedition)
   if(!sim.isChallenge) profile.settlement=Math.max(profile.settlement,[5,10,30,40].filter(n=>held>=n).length)
   writeJSON('profile',profile)
 }

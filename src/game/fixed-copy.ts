@@ -1,6 +1,7 @@
 import type { Tower, Sim } from './sim'
 import { stageOf } from './fixed'
 import type { TowerId } from './defs'
+import { CROWN_HELP } from './watch-depth'
 
 /** Roles describe the whole stream; benefits describe only the next purchase. */
 export const STREAM_ROLES:Record<TowerId,readonly [string,string]>={
@@ -16,6 +17,8 @@ export function upgradeBenefits(sim:Sim,t:Tower,branch:0|1,bundle=false) {
   const stage=stageOf(t),target=bundle?2:stage+1
   const next=stage===3?sim.towerStats(t.id,t.a,t.b,1):sim.towerStats(t.id,target===1?1:branch===0?target:0,target===1?0:branch===1?target:0)
   const old=t.stats,lines:string[]=[]
+  if(sim.challenge.watchDepth&&stage===3)lines.push(CROWN_HELP[t.id][branch])
+  if(sim.challenge.watchDepth&&t.id==='owl'&&branch===1&&target===2)lines.push('Banks 3 night pulses: wider sight, +12% fire rate')
   if(next.heavy&&!old.heavy)lines.push('Breaks armour')
   if(next.detect&&!old.detect)lines.push('Targets hidden foes')
   if(next.revealPerm&&!old.revealPerm)lines.push('Reveals foes permanently')

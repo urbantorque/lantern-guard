@@ -1,0 +1,632 @@
+[
+  {
+    "mode": "campaign",
+    "hero": "sol",
+    "build": "barrage",
+    "map": 0,
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "seconds": 1175
+  },
+  {
+    "mode": "campaign",
+    "hero": "sol",
+    "build": "barrage",
+    "map": 1,
+    "won": false,
+    "wave": 20,
+    "light": 0,
+    "seconds": 670
+  },
+  {
+    "mode": "campaign",
+    "hero": "sol",
+    "build": "barrage",
+    "map": 2,
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "seconds": 1314
+  },
+  {
+    "mode": "campaign",
+    "hero": "sol",
+    "build": "barrage",
+    "map": 3,
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "seconds": 1571
+  },
+  {
+    "mode": "sunforge",
+    "hero": "sol",
+    "build": "barrage",
+    "map": 0,
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "seconds": 251
+  },
+  {
+    "mode": "moonwake",
+    "hero": "sol",
+    "build": "barrage",
+    "map": 2,
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "seconds": 269
+  },
+  {
+    "mode": "stormglass",
+    "hero": "sol",
+    "build": "barrage",
+    "map": 1,
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "seconds": 309
+  },
+  {
+    "mode": "campaign",
+    "hero": "sol",
+    "build": "precision",
+    "map": 0,
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "seconds": 1214
+  },
+  {
+    "mode": "campaign",
+    "hero": "sol",
+    "build": "precision",
+    "map": 1,
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "seconds": 1311
+  },
+  {
+    "mode": "campaign",
+    "hero": "sol",
+    "build": "precision",
+    "map": 2,
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "seconds": 1339
+  },
+  {
+    "mode": "campaign",
+    "hero": "sol",
+    "build": "precision",
+    "map": 3,
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "seconds": 1384
+  },
+  {
+    "mode": "sunforge",
+    "hero": "sol",
+    "build": "precision",
+    "map": 0,
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "seconds": 256
+  },
+  {
+    "mode": "moonwake",
+    "hero": "sol",
+    "build": "precision",
+    "map": 2,
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "seconds": 278
+  },
+  {
+    "mode": "stormglass",
+    "hero": "sol",
+    "build": "precision",
+    "map": 1,
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "seconds": 275
+  },
+  {
+    "mode": "campaign",
+    "hero": "sol",
+    "build": "shelter",
+    "map": 0,
+    "won": false,
+    "wave": 40,
+    "light": 0,
+    "seconds": 1209
+  },
+  {
+    "mode": "campaign",
+    "hero": "sol",
+    "build": "shelter",
+    "map": 1,
+    "won": true,
+    "wave": 40,
+    "light": 21,
+    "seconds": 1391
+  },
+  {
+    "mode": "campaign",
+    "hero": "sol",
+    "build": "shelter",
+    "map": 2,
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "seconds": 1348
+  },
+  {
+    "mode": "campaign",
+    "hero": "sol",
+    "build": "shelter",
+    "map": 3,
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "seconds": 1383
+  },
+  {
+    "mode": "sunforge",
+    "hero": "sol",
+    "build": "shelter",
+    "map": 0,
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "seconds": 248
+  },
+  {
+    "mode": "moonwake",
+    "hero": "sol",
+    "build": "shelter",
+    "map": 2,
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "seconds": 268
+  },
+  {
+    "mode": "stormglass",
+    "hero": "sol",
+    "build": "shelter",
+    "map": 1,
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "seconds": 261
+  },
+  {
+    "mode": "campaign",
+    "hero": "mira",
+    "build": "barrage",
+    "map": 0,
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "seconds": 1171
+  },
+  {
+    "mode": "campaign",
+    "hero": "mira",
+    "build": "barrage",
+    "map": 1,
+    "won": true,
+    "wave": 40,
+    "light": 21,
+    "seconds": 1273
+  },
+  {
+    "mode": "campaign",
+    "hero": "mira",
+    "build": "barrage",
+    "map": 2,
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "seconds": 1284
+  },
+  {
+    "mode": "campaign",
+    "hero": "mira",
+    "build": "barrage",
+    "map": 3,
+    "won": false,
+    "wave": 19,
+    "light": 0,
+    "seconds": 721
+  },
+  {
+    "mode": "sunforge",
+    "hero": "mira",
+    "build": "barrage",
+    "map": 0,
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "seconds": 301
+  },
+  {
+    "mode": "moonwake",
+    "hero": "mira",
+    "build": "barrage",
+    "map": 2,
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "seconds": 268
+  },
+  {
+    "mode": "stormglass",
+    "hero": "mira",
+    "build": "barrage",
+    "map": 1,
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "seconds": 365
+  },
+  {
+    "mode": "campaign",
+    "hero": "mira",
+    "build": "precision",
+    "map": 0,
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "seconds": 1247
+  },
+  {
+    "mode": "campaign",
+    "hero": "mira",
+    "build": "precision",
+    "map": 1,
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "seconds": 1235
+  },
+  {
+    "mode": "campaign",
+    "hero": "mira",
+    "build": "precision",
+    "map": 2,
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "seconds": 1269
+  },
+  {
+    "mode": "campaign",
+    "hero": "mira",
+    "build": "precision",
+    "map": 3,
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "seconds": 1457
+  },
+  {
+    "mode": "sunforge",
+    "hero": "mira",
+    "build": "precision",
+    "map": 0,
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "seconds": 243
+  },
+  {
+    "mode": "moonwake",
+    "hero": "mira",
+    "build": "precision",
+    "map": 2,
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "seconds": 269
+  },
+  {
+    "mode": "stormglass",
+    "hero": "mira",
+    "build": "precision",
+    "map": 1,
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "seconds": 278
+  },
+  {
+    "mode": "campaign",
+    "hero": "mira",
+    "build": "shelter",
+    "map": 0,
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "seconds": 1265
+  },
+  {
+    "mode": "campaign",
+    "hero": "mira",
+    "build": "shelter",
+    "map": 1,
+    "won": true,
+    "wave": 40,
+    "light": 15,
+    "seconds": 1250
+  },
+  {
+    "mode": "campaign",
+    "hero": "mira",
+    "build": "shelter",
+    "map": 2,
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "seconds": 1256
+  },
+  {
+    "mode": "campaign",
+    "hero": "mira",
+    "build": "shelter",
+    "map": 3,
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "seconds": 1535
+  },
+  {
+    "mode": "sunforge",
+    "hero": "mira",
+    "build": "shelter",
+    "map": 0,
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "seconds": 261
+  },
+  {
+    "mode": "moonwake",
+    "hero": "mira",
+    "build": "shelter",
+    "map": 2,
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "seconds": 267
+  },
+  {
+    "mode": "stormglass",
+    "hero": "mira",
+    "build": "shelter",
+    "map": 1,
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "seconds": 306
+  },
+  {
+    "mode": "campaign",
+    "hero": "ivo",
+    "build": "barrage",
+    "map": 0,
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "seconds": 1154
+  },
+  {
+    "mode": "campaign",
+    "hero": "ivo",
+    "build": "barrage",
+    "map": 1,
+    "won": false,
+    "wave": 19,
+    "light": 0,
+    "seconds": 621
+  },
+  {
+    "mode": "campaign",
+    "hero": "ivo",
+    "build": "barrage",
+    "map": 2,
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "seconds": 1241
+  },
+  {
+    "mode": "campaign",
+    "hero": "ivo",
+    "build": "barrage",
+    "map": 3,
+    "won": false,
+    "wave": 19,
+    "light": 0,
+    "seconds": 689
+  },
+  {
+    "mode": "sunforge",
+    "hero": "ivo",
+    "build": "barrage",
+    "map": 0,
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "seconds": 301
+  },
+  {
+    "mode": "moonwake",
+    "hero": "ivo",
+    "build": "barrage",
+    "map": 2,
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "seconds": 267
+  },
+  {
+    "mode": "stormglass",
+    "hero": "ivo",
+    "build": "barrage",
+    "map": 1,
+    "won": true,
+    "wave": 12,
+    "light": 21,
+    "seconds": 367
+  },
+  {
+    "mode": "campaign",
+    "hero": "ivo",
+    "build": "precision",
+    "map": 0,
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "seconds": 1200
+  },
+  {
+    "mode": "campaign",
+    "hero": "ivo",
+    "build": "precision",
+    "map": 1,
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "seconds": 1321
+  },
+  {
+    "mode": "campaign",
+    "hero": "ivo",
+    "build": "precision",
+    "map": 2,
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "seconds": 1240
+  },
+  {
+    "mode": "campaign",
+    "hero": "ivo",
+    "build": "precision",
+    "map": 3,
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "seconds": 1364
+  },
+  {
+    "mode": "sunforge",
+    "hero": "ivo",
+    "build": "precision",
+    "map": 0,
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "seconds": 228
+  },
+  {
+    "mode": "moonwake",
+    "hero": "ivo",
+    "build": "precision",
+    "map": 2,
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "seconds": 258
+  },
+  {
+    "mode": "stormglass",
+    "hero": "ivo",
+    "build": "precision",
+    "map": 1,
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "seconds": 270
+  },
+  {
+    "mode": "campaign",
+    "hero": "ivo",
+    "build": "shelter",
+    "map": 0,
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "seconds": 1196
+  },
+  {
+    "mode": "campaign",
+    "hero": "ivo",
+    "build": "shelter",
+    "map": 1,
+    "won": true,
+    "wave": 40,
+    "light": 12,
+    "seconds": 1461
+  },
+  {
+    "mode": "campaign",
+    "hero": "ivo",
+    "build": "shelter",
+    "map": 2,
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "seconds": 1184
+  },
+  {
+    "mode": "campaign",
+    "hero": "ivo",
+    "build": "shelter",
+    "map": 3,
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "seconds": 1333
+  },
+  {
+    "mode": "sunforge",
+    "hero": "ivo",
+    "build": "shelter",
+    "map": 0,
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "seconds": 238
+  },
+  {
+    "mode": "moonwake",
+    "hero": "ivo",
+    "build": "shelter",
+    "map": 2,
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "seconds": 258
+  },
+  {
+    "mode": "stormglass",
+    "hero": "ivo",
+    "build": "shelter",
+    "map": 1,
+    "won": true,
+    "wave": 12,
+    "light": 21,
+    "seconds": 315
+  }
+]
