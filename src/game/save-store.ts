@@ -1,3 +1,4 @@
+import {restorationLimit} from './watch-refinement'
 import { validTechniques } from './watch-craft'
 import { weeklyWatch } from './living-watch'
 import { compactLevel, PLOTS, STARTER_PLOTS, REFINEMENTS } from './compact'
@@ -76,6 +77,8 @@ export function validSnapshot(s: unknown): s is SaveSnapshot {
   if(s.challenge.hero!==undefined&&(!isHero(s.challenge.hero)||s.challenge.fixed!==1))return false
   if(s.challenge.watchDepth!==undefined&&(s.challenge.watchDepth!==1||s.challenge.fixed!==1))return false
   if(s.challenge.watchCraft!==undefined&&(s.challenge.watchCraft!==1||s.challenge.watchDepth!==1||!isHero(s.challenge.hero)))return false
+  if(s.challenge.refinedWatch!==undefined&&(s.challenge.refinedWatch!==1||s.challenge.livingWatch!==1||s.challenge.weekly!==undefined))return false
+  if(s.stats.lightRestored!==undefined&&(!s.challenge.refinedWatch||!integer(s.stats.lightRestored,0,restorationLimit(s.difficulty as import('./defs').Difficulty))))return false
   if(s.challenge.livingWatch!==undefined&&(s.challenge.livingWatch!==1||s.challenge.watchCraft!==1))return false
   if(s.challenge.weekly!==undefined&&(!integer(s.challenge.weekly,0,5200)||s.challenge.livingWatch!==1||!s.challenge.expedition))return false
   if(s.challenge.watchCraft?!validTechniques(s.techniques,s.challenge.hero as import('./heroes').HeroId,Number(s.wave),!!s.challenge.expedition):s.techniques!==undefined)return false

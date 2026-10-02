@@ -326,7 +326,7 @@ export class Renderer {
     const fx = this.fx
     const calm = this.settings.calmFx || this.settings.reduceMotion
     fx.density = sim.challenge.fixed ? (this.settings.reduceMotion ? .15 : .85) : calm ? 0.5 : 1
-    let pops = 0
+    let pops = 0,tacticCount=0
     for (const ev of sim.events) {
       switch (ev.t) {
         case 'pop': {
@@ -379,8 +379,18 @@ export class Renderer {
           }
           break
         }
+        case 'tactic': {
+          if(++tacticCount>4&&ev.kind!=='interrupt')break
+          const p=elevated(ev.x,ev.y,ev.kind==='sun'?38:14,this.fixedLandscape)
+          const col=ev.kind==='ignite'||ev.kind==='spread'?'#ffc180':ev.kind==='interrupt'?'#d8ffc6':ev.kind==='charged'?'#d4c7ff':'#9ce9eb'
+          if(ev.kind==='spread'&&ev.tx!==undefined&&ev.ty!==undefined){const q=elevated(ev.tx,ev.ty,12,this.fixedLandscape);fx.add({kind:'link',x:p.x,y:p.y,tx:q.x,ty:q.y,color:col,life:.2,lw:2})}
+          else{fx.ring(p.x,p.y,ev.kind==='sun'?36:ev.kind==='charged'?25:18,col,this.settings.reduceMotion?.12:.32,ev.kind==='charged'?3:2);if(!this.settings.reduceMotion)fx.flash(p.x,p.y,ev.kind==='ignite'?32:23,col,.18)}
+          if(ev.kind==='interrupt')fx.text(p.x,p.y-24,'Interrupted',col,15,.7)
+          sound.tactic(ev.kind)
+          break
+        }
         case 'crack':
-          fx.shards(ev.x, ev.y, P.coral, calm ? 3 : 7)
+          fx.shards(ev.x, ev.y, P.coral, sim.challenge.fixed?3:calm?3:7)
           fx.flash(ev.x, ev.y, 30, P.coral, 0.2)
           sound.crack()
           break

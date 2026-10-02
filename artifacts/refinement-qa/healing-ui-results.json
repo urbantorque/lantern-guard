@@ -1,0 +1,74 @@
+[
+  {
+    "width": 320,
+    "height": 740,
+    "hero": "sol",
+    "tower": "garden",
+    "fits": [
+      true
+    ]
+  },
+  {
+    "width": 320,
+    "height": 740,
+    "hero": "sol",
+    "tower": "garden",
+    "fits": [
+      true
+    ]
+  },
+  {
+    "width": 320,
+    "height": 740,
+    "hero": "ivo",
+    "tower": "garden",
+    "fits": [
+      true
+    ]
+  },
+  {
+    "width": 320,
+    "height": 740,
+    "hero": "ivo",
+    "tower": "garden",
+    "fits": [
+      true
+    ]
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "hero": "sol",
+    "tower": "garden",
+    "fits": [
+      true
+    ]
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "hero": "sol",
+    "tower": "garden",
+    "fits": [
+      true
+    ]
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "hero": "ivo",
+    "tower": "garden",
+    "fits": [
+      true
+    ]
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "hero": "ivo",
+    "tower": "garden",
+    "fits": [
+      true
+    ]
+  }
+]

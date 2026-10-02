@@ -1,0 +1,308 @@
+[
+  {
+    "width": 320,
+    "height": 740,
+    "hero": "sol",
+    "round": 0,
+    "overflow": false,
+    "choices": [
+      {
+        "h": 46.59375,
+        "visible": true
+      },
+      {
+        "h": 46.59375,
+        "visible": true
+      }
+    ]
+  },
+  {
+    "width": 320,
+    "height": 740,
+    "hero": "sol",
+    "round": 1,
+    "overflow": false,
+    "choices": [
+      {
+        "h": 44,
+        "visible": true
+      },
+      {
+        "h": 44,
+        "visible": true
+      }
+    ]
+  },
+  {
+    "width": 320,
+    "height": 740,
+    "hero": "mira",
+    "round": 0,
+    "overflow": false,
+    "choices": [
+      {
+        "h": 44,
+        "visible": true
+      },
+      {
+        "h": 44,
+        "visible": true
+      }
+    ]
+  },
+  {
+    "width": 320,
+    "height": 740,
+    "hero": "mira",
+    "round": 1,
+    "overflow": false,
+    "choices": [
+      {
+        "h": 44,
+        "visible": true
+      },
+      {
+        "h": 44,
+        "visible": true
+      }
+    ]
+  },
+  {
+    "width": 320,
+    "height": 740,
+    "hero": "ivo",
+    "round": 0,
+    "overflow": false,
+    "choices": [
+      {
+        "h": 44,
+        "visible": true
+      },
+      {
+        "h": 44,
+        "visible": true
+      }
+    ]
+  },
+  {
+    "width": 320,
+    "height": 740,
+    "hero": "ivo",
+    "round": 1,
+    "overflow": false,
+    "choices": [
+      {
+        "h": 46.59375,
+        "visible": true
+      },
+      {
+        "h": 44,
+        "visible": true
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "height": 844,
+    "hero": "sol",
+    "round": 0,
+    "overflow": false,
+    "choices": [
+      {
+        "h": 44,
+        "visible": true
+      },
+      {
+        "h": 44,
+        "visible": true
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "height": 844,
+    "hero": "sol",
+    "round": 1,
+    "overflow": false,
+    "choices": [
+      {
+        "h": 44,
+        "visible": true
+      },
+      {
+        "h": 44,
+        "visible": true
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "height": 844,
+    "hero": "mira",
+    "round": 0,
+    "overflow": false,
+    "choices": [
+      {
+        "h": 44,
+        "visible": true
+      },
+      {
+        "h": 44,
+        "visible": true
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "height": 844,
+    "hero": "mira",
+    "round": 1,
+    "overflow": false,
+    "choices": [
+      {
+        "h": 44,
+        "visible": true
+      },
+      {
+        "h": 44,
+        "visible": true
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "height": 844,
+    "hero": "ivo",
+    "round": 0,
+    "overflow": false,
+    "choices": [
+      {
+        "h": 44,
+        "visible": true
+      },
+      {
+        "h": 44,
+        "visible": true
+      }
+    ]
+  },
+  {
+    "width": 390,
+    "height": 844,
+    "hero": "ivo",
+    "round": 1,
+    "overflow": false,
+    "choices": [
+      {
+        "h": 44,
+        "visible": true
+      },
+      {
+        "h": 44,
+        "visible": true
+      }
+    ]
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "hero": "sol",
+    "round": 0,
+    "overflow": false,
+    "choices": [
+      {
+        "h": 44,
+        "visible": true
+      },
+      {
+        "h": 44,
+        "visible": true
+      }
+    ]
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "hero": "sol",
+    "round": 1,
+    "overflow": false,
+    "choices": [
+      {
+        "h": 44,
+        "visible": true
+      },
+      {
+        "h": 44,
+        "visible": true
+      }
+    ]
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "hero": "mira",
+    "round": 0,
+    "overflow": false,
+    "choices": [
+      {
+        "h": 44,
+        "visible": true
+      },
+      {
+        "h": 44,
+        "visible": true
+      }
+    ]
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "hero": "mira",
+    "round": 1,
+    "overflow": false,
+    "choices": [
+      {
+        "h": 44,
+        "visible": true
+      },
+      {
+        "h": 44,
+        "visible": true
+      }
+    ]
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "hero": "ivo",
+    "round": 0,
+    "overflow": false,
+    "choices": [
+      {
+        "h": 44,
+        "visible": true
+      },
+      {
+        "h": 44,
+        "visible": true
+      }
+    ]
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "hero": "ivo",
+    "round": 1,
+    "overflow": false,
+    "choices": [
+      {
+        "h": 44,
+        "visible": true
+      },
+      {
+        "h": 44,
+        "visible": true
+      }
+    ]
+  }
+]

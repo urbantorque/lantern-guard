@@ -1,3 +1,4 @@
+import { restorationLimit, lateRewardScale, lateUpgradeScale, refinedWave } from './watch-refinement'
 import { techniqueOffers, techniqueStats, hasNeighbour, craftWave, dredgerOpen, type TechniqueId } from './watch-craft'
 import { livingWave, escortCover, weeklyWatch } from './living-watch'
 import { enemyName } from './bestiary'
@@ -185,6 +186,7 @@ export interface GateState {
 }
 
 export type SimEvent =
+  | { t:'tactic'; kind:'ignite'|'spread'|'interrupt'|'charged'|'push'|'sun'; x:number;y:number;tx?:number;ty?:number }
   | { t: 'arc'; x: number; y: number; tx: number; ty: number }
   | { t: 'prepare'; id: PreparationId; x: number; y: number }
   | { t: 'pop'; x: number; y: number; tx: number; ty: number; size: number; enemy: EnemyId; family: string; reward: number; lured: boolean; boss: boolean }
@@ -226,6 +228,7 @@ export interface Challenge {
   fixed?: 1
   watchDepth?: 1
   watchCraft?: 1
+  refinedWatch?: 1
   livingWatch?: 1
   weekly?: number
   expedition?: ExpeditionId
@@ -273,6 +276,7 @@ export interface Challenge {
 }
 
 export interface RunStats {
+  lightRestored?: number
   plotsUnlocked?: number
   retries?: number
   routePlans?: number
@@ -722,11 +726,11 @@ export class Sim {
   }
 
   waveDef(n: number): WaveDef {
-    if (this.challenge.expedition) {let wave=expeditionWave(this.challenge.expedition,n);if(this.challenge.watchCraft)wave=craftWave(wave,n,this.challenge.expedition);return this.challenge.livingWatch?livingWave(wave,n,true):wave}
+    if (this.challenge.expedition) {let wave=expeditionWave(this.challenge.expedition,n);if(this.challenge.watchCraft)wave=craftWave(wave,n,this.challenge.expedition);if(this.challenge.livingWatch)wave=livingWave(wave,n,true);return this.challenge.refinedWatch?refinedWave(wave,n,true):wave}
     if (this.challenge.fixed) {
       let wave=fixedWave(n,this.challenge.variant ?? 0,this.seed)
       if(this.challenge.watchDepth)wave=depthWave(wave,n,this.seed)
-      return this.challenge.livingWatch?livingWave(wave,n):wave
+      if(this.challenge.livingWatch)wave=livingWave(wave,n);return this.challenge.refinedWatch?refinedWave(wave,n):wave
     }
     if (this.challenge.compact) {
       const wave = compactWave(n, this.challenge.variant ?? 0, this.seed)
@@ -788,8 +792,13 @@ export class Sim {
     return stats
   }
 
+  fixedPrice(t: Tower): number | null {
+    const base=upgradePrice(t)
+    return base===null?null:Math.round(base*(this.challenge.refinedWatch?lateUpgradeScale(stageOf(t),!!this.challenge.expedition):1))
+  }
+
   refinementCost(t: Tower): number | null {
-    if (this.challenge.fixed) return stageOf(t) === 3 && this.planningWave >= (this.challenge.expedition?10:31) ? upgradePrice(t) : null
+    if (this.challenge.fixed) return stageOf(t) === 3 && this.planningWave >= (this.challenge.expedition?10:31) ? this.fixedPrice(t) : null
     const next = this.refinementOffer(t)
     return this.challenge.compact && next && Math.max(t.a, t.b) === 3 && this.planningWave >= next.wave ? next.cost : null
   }
@@ -864,7 +873,7 @@ export class Sim {
       const stage = stageOf(t)
       if (stage >= 3 || stage === 2 && this.planningWave < (this.challenge.expedition?7:16) || stage === 0 && path === 1) return null
       if (stage === 2 && path !== (t.b ? 1 : 0)) return null
-      return upgradePrice(t)
+      return this.fixedPrice(t)
     }
     if (!canUpgrade(t.a, t.b, path)) return null
     const tier = path === 0 ? t.a : t.b
@@ -1009,7 +1018,7 @@ export class Sim {
   /** Buy the shared foundation and chosen stream together, with no extra fee. */
   specialiseCost(t:Tower):number|null {
     if(!this.challenge.fixed||stageOf(t)>1)return null
-    return Math.round(TOWERS[t.id].cost*1.3)+(stageOf(t)===0?upgradePrice(t)!:0)
+    return Math.round(TOWERS[t.id].cost*1.3)+(stageOf(t)===0?this.fixedPrice(t)!:0)
   }
 
   specialise(t:Tower,path:0|1):boolean {
@@ -1625,7 +1634,7 @@ export class Sim {
     if(this.challenge.watchCraft&&e.def.id==='dredger')amount*=dredgerOpen(e)?1.4:.6
     if(this.challenge.livingWatch&&src&&heavy&&!continuous&&this.techniques.includes('flashpoint')&&e.burnT>0){
       amount+=e.burnDps*Math.min(2,e.burnT);e.burnT=0;e.burnDps=0
-      this.events.push({t:'hit',x:e.x,y:e.y,kind:'burn',hue:'#ffb778'})
+      this.events.push(this.challenge.refinedWatch?{t:'tactic',kind:'ignite',x:e.x,y:e.y}:{t:'hit',x:e.x,y:e.y,kind:'burn',hue:'#ffb778'})
     }
     if(this.challenge.watchDepth&&src?.id==='storm'&&landmark(this).id==='stormgarden'&&nearLandmark(this,src))amount*=this.challenge.livingWatch&&this.sky.night?1.15:this.sky.weather==='rain'?1.12:1.05
     if(this.challenge.fixed&&src&&!continuous){const slow=heroHitSlow(this.challenge.hero,src.id);if(slow){e.slowF=Math.max(e.slowF,slow.amount);e.slowT=Math.max(e.slowT,slow.duration)}}
@@ -1677,7 +1686,7 @@ export class Sim {
     if(this.challenge.livingWatch&&this.techniques.includes('long-embers')&&e.burnT>0&&e.burnDps>=1){
       const neighbours=this.enemies.filter(o=>o.alive&&o!==e&&dist2(e.x,e.y,o.x,o.y)<=70**2)
         .sort((a,b)=>dist2(e.x,e.y,a.x,a.y)-dist2(e.x,e.y,b.x,b.y)||a.uid-b.uid).slice(0,2)
-      for(const other of neighbours){other.burnDps=Math.max(other.burnDps,e.burnDps*.5);other.burnT=Math.max(other.burnT,Math.min(2,e.burnT));this.events.push({t:'hit',x:other.x,y:other.y,kind:'burn',hue:'#ffb778'})}
+      for(const other of neighbours){other.burnDps=Math.max(other.burnDps,e.burnDps*.5);other.burnT=Math.max(other.burnT,Math.min(2,e.burnT));this.events.push(this.challenge.refinedWatch?{t:'tactic',kind:'spread',x:e.x,y:e.y,tx:other.x,ty:other.y}:{t:'hit',x:other.x,y:other.y,kind:'burn',hue:'#ffb778'})}
     }
     this.decWave(e.wave)
     let lure = 0
@@ -1800,6 +1809,7 @@ export class Sim {
           if (!target) break
           t.cd = s.interval; t.fireT = this.time
           if(this.challenge.livingWatch)t.tolls++
+          if(this.challenge.refinedWatch&&this.techniques.includes('capacitor')&&t.tolls%3===0)this.events.push({t:'tactic',kind:'charged',x:target.x,y:target.y})
           t.angle = Math.atan2(target.y - t.y, target.x - t.x)
           const hit = new Set<number>()
           let x = t.x, y = t.y - 25
@@ -1911,6 +1921,7 @@ export class Sim {
           const stun = s.stunEvery > 0 && t.tolls % s.stunEvery === 0
           for (const e of [...hits]) {
             if(this.challenge.livingWatch&&this.techniques.includes('tidal-echo')&&t.tolls%4===0&&e.slowT>0&&!e.def.boss){
+              if(this.challenge.refinedWatch)this.events.push({t:'tactic',kind:'push',x:e.x,y:e.y})
               e.s=Math.max(0,e.s-24);const p=e.seg.line.at(e.s,{x:0,y:0,tx:0,ty:0});Object.assign(e,p);e.remaining=e.seg.toHome-e.s
             }
             e.slowF = Math.max(e.slowF, s.slow)
@@ -1918,7 +1929,7 @@ export class Sim {
             if (s.brittle) e.brittleT = Math.max(e.brittleT, s.slowDur)
             if (s.revealPerm && e.def.hidden) e.revealedPerm = true
             if(stun&&this.challenge.livingWatch&&e.def.id==='bloomheart'&&(e.phase===1||e.phase===3)){
-              e.phase++;e.signalT=0;this.events.push({t:'crack',x:e.x,y:e.y})
+              e.phase++;e.signalT=0;this.events.push(this.challenge.refinedWatch?{t:'tactic',kind:'interrupt',x:e.x,y:e.y}:{t:'crack',x:e.x,y:e.y})
             }
             if (stun && !e.def.boss) e.stunT = Math.max(e.stunT, s.stunDur)
             if (s.damage > 0) this.damage(e, s.damage, false, t)
@@ -2179,7 +2190,7 @@ export class Sim {
       if (this.preparation?.wave === w) this.preparation = null
       cleared = true
       const d = DIFFICULTY[this.difficulty]
-      const bonus = Math.round((this.challenge.expedition ? expeditionBonus(w) : this.challenge.fixed ? 125 + w * 15 : this.challenge.compact ? 90 + w * 8 : 45 + w * 5) * d.bonus)
+      const bonus = Math.round((this.challenge.refinedWatch?lateRewardScale(w,!!this.challenge.expedition):1)*(this.challenge.expedition ? expeditionBonus(w) : this.challenge.fixed ? 125 + w * 15 : this.challenge.compact ? 90 + w * 8 : 45 + w * 5) * d.bonus)
       let income = 0
       let life = 0
       for (const t of this.towers) {
@@ -2192,9 +2203,11 @@ export class Sim {
       }
       this.glow += bonus + income
       this.stats.glowEarned += bonus + income
+      if(this.challenge.refinedWatch)life=Math.min(life,Math.max(0,restorationLimit(this.difficulty)-(this.stats.lightRestored??0)))
       if (life > 0) {
         const before = this.lives
         this.lives = Math.min(this.maxLives, this.lives + life)
+        if(this.challenge.refinedWatch)this.stats.lightRestored=(this.stats.lightRestored??0)+this.lives-before
         if (this.lives > before) this.events.push({ t: 'life', amount: this.lives - before })
       }
       this.events.push({ t: 'waveEnd', n: w, bonus, income })
@@ -2238,7 +2251,7 @@ export class Sim {
       else if((t.sunlight??0)>=SUN_PULSE_COST&&(t.sunCooldown??0)<=0){
         t.sunlight=(t.sunlight??0)-SUN_PULSE_COST;t.sunPulse=SUN_PULSE_SECONDS;t.sunCooldown=6
         if(this.challenge.livingWatch)t.sunUsed=(t.sunUsed??0)+1
-        this.events.push({t:'phase',x:t.x,y:t.y})
+        this.events.push(this.challenge.refinedWatch?{t:'tactic',kind:'sun',x:t.x,y:t.y}:{t:'phase',x:t.x,y:t.y})
       }
     }
     if(Math.floor(this.time*2)!==Math.floor((this.time-dt)*2))this.syncBonds()

@@ -1,0 +1,4554 @@
+[
+  {
+    "hero": "sol",
+    "build": "Wildfire",
+    "buildIndex": 0,
+    "mode": "campaign",
+    "map": 0,
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "glow": 925,
+    "techniques": [
+      "dividend",
+      "long-embers"
+    ],
+    "roster": [
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 3749,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 0,
+        "b": 3,
+        "damage": 13387,
+        "volleys": 0
+      },
+      {
+        "id": "bell",
+        "a": 3,
+        "b": 0,
+        "damage": 2277,
+        "volleys": 384
+      },
+      {
+        "id": "owl",
+        "a": 3,
+        "b": 0,
+        "damage": 0,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 0,
+        "b": 3,
+        "damage": 7713,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 0,
+        "b": 3,
+        "damage": 8517,
+        "volleys": 0
+      },
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 12394,
+        "volleys": 0
+      },
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 884,
+        "volleys": 0
+      },
+      {
+        "id": "beam",
+        "a": 3,
+        "b": 0,
+        "damage": 4023,
+        "volleys": 0
+      },
+      {
+        "id": "ballista",
+        "a": 3,
+        "b": 0,
+        "damage": 1848,
+        "volleys": 0
+      },
+      {
+        "id": "owl",
+        "a": 0,
+        "b": 3,
+        "damage": 64,
+        "volleys": 0
+      }
+    ],
+    "healed": 0,
+    "leaks": 0,
+    "checkpoints": [
+      {
+        "wave": 0,
+        "glow": 81,
+        "light": 25
+      },
+      {
+        "wave": 10,
+        "glow": 222,
+        "light": 25
+      },
+      {
+        "wave": 20,
+        "glow": 60,
+        "light": 25
+      },
+      {
+        "wave": 30,
+        "glow": 192,
+        "light": 25
+      },
+      {
+        "wave": 39,
+        "glow": 451,
+        "light": 25
+      }
+    ]
+  },
+  {
+    "hero": "sol",
+    "build": "Wildfire",
+    "buildIndex": 0,
+    "mode": "campaign",
+    "map": 1,
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "glow": 919,
+    "techniques": [
+      "dividend",
+      "long-embers"
+    ],
+    "roster": [
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 18391,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 0,
+        "b": 3,
+        "damage": 535,
+        "volleys": 0
+      },
+      {
+        "id": "bell",
+        "a": 3,
+        "b": 0,
+        "damage": 2239,
+        "volleys": 226
+      },
+      {
+        "id": "owl",
+        "a": 3,
+        "b": 0,
+        "damage": 0,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 0,
+        "b": 3,
+        "damage": 2155,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 0,
+        "b": 3,
+        "damage": 19053,
+        "volleys": 0
+      },
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 734,
+        "volleys": 0
+      },
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 6541,
+        "volleys": 0
+      },
+      {
+        "id": "beam",
+        "a": 3,
+        "b": 0,
+        "damage": 517,
+        "volleys": 0
+      },
+      {
+        "id": "ballista",
+        "a": 3,
+        "b": 0,
+        "damage": 3502,
+        "volleys": 0
+      },
+      {
+        "id": "owl",
+        "a": 0,
+        "b": 3,
+        "damage": 66,
+        "volleys": 0
+      }
+    ],
+    "healed": 0,
+    "leaks": 0,
+    "checkpoints": [
+      {
+        "wave": 0,
+        "glow": 81,
+        "light": 25
+      },
+      {
+        "wave": 10,
+        "glow": 222,
+        "light": 25
+      },
+      {
+        "wave": 20,
+        "glow": 32,
+        "light": 25
+      },
+      {
+        "wave": 30,
+        "glow": 127,
+        "light": 25
+      },
+      {
+        "wave": 39,
+        "glow": 445,
+        "light": 25
+      }
+    ]
+  },
+  {
+    "hero": "sol",
+    "build": "Wildfire",
+    "buildIndex": 0,
+    "mode": "campaign",
+    "map": 2,
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "glow": 1994,
+    "techniques": [
+      "dividend",
+      "long-embers"
+    ],
+    "roster": [
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 13811,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 0,
+        "b": 3,
+        "damage": 12239,
+        "volleys": 0
+      },
+      {
+        "id": "bell",
+        "a": 3,
+        "b": 0,
+        "damage": 340,
+        "volleys": 84
+      },
+      {
+        "id": "owl",
+        "a": 3,
+        "b": 0,
+        "damage": 0,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 0,
+        "b": 3,
+        "damage": 6103,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 0,
+        "b": 3,
+        "damage": 5433,
+        "volleys": 0
+      },
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 11628,
+        "volleys": 0
+      },
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 1605,
+        "volleys": 0
+      },
+      {
+        "id": "beam",
+        "a": 3,
+        "b": 0,
+        "damage": 1159,
+        "volleys": 0
+      },
+      {
+        "id": "ballista",
+        "a": 3,
+        "b": 0,
+        "damage": 6393,
+        "volleys": 0
+      },
+      {
+        "id": "owl",
+        "a": 0,
+        "b": 3,
+        "damage": 110,
+        "volleys": 0
+      }
+    ],
+    "healed": 0,
+    "leaks": 0,
+    "checkpoints": [
+      {
+        "wave": 0,
+        "glow": 81,
+        "light": 25
+      },
+      {
+        "wave": 10,
+        "glow": 222,
+        "light": 25
+      },
+      {
+        "wave": 20,
+        "glow": 79,
+        "light": 25
+      },
+      {
+        "wave": 30,
+        "glow": 72,
+        "light": 25
+      },
+      {
+        "wave": 39,
+        "glow": 873,
+        "light": 25
+      }
+    ]
+  },
+  {
+    "hero": "sol",
+    "build": "Wildfire",
+    "buildIndex": 0,
+    "mode": "campaign",
+    "map": 3,
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "glow": 956,
+    "techniques": [
+      "dividend",
+      "long-embers"
+    ],
+    "roster": [
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 11166,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 0,
+        "b": 3,
+        "damage": 8738,
+        "volleys": 0
+      },
+      {
+        "id": "bell",
+        "a": 3,
+        "b": 0,
+        "damage": 910,
+        "volleys": 146
+      },
+      {
+        "id": "owl",
+        "a": 3,
+        "b": 0,
+        "damage": 5,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 0,
+        "b": 3,
+        "damage": 7412,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 0,
+        "b": 3,
+        "damage": 6395,
+        "volleys": 0
+      },
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 11032,
+        "volleys": 0
+      },
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 7633,
+        "volleys": 0
+      },
+      {
+        "id": "beam",
+        "a": 3,
+        "b": 0,
+        "damage": 1853,
+        "volleys": 0
+      },
+      {
+        "id": "ballista",
+        "a": 3,
+        "b": 0,
+        "damage": 1745,
+        "volleys": 0
+      },
+      {
+        "id": "owl",
+        "a": 0,
+        "b": 3,
+        "damage": 0,
+        "volleys": 0
+      },
+      {
+        "id": "ballista",
+        "a": 0,
+        "b": 0,
+        "damage": 504,
+        "volleys": 0
+      }
+    ],
+    "healed": 0,
+    "leaks": 0,
+    "checkpoints": [
+      {
+        "wave": 0,
+        "glow": 81,
+        "light": 25
+      },
+      {
+        "wave": 10,
+        "glow": 222,
+        "light": 25
+      },
+      {
+        "wave": 20,
+        "glow": 79,
+        "light": 25
+      },
+      {
+        "wave": 30,
+        "glow": 114,
+        "light": 25
+      },
+      {
+        "wave": 39,
+        "glow": 995,
+        "light": 25
+      }
+    ]
+  },
+  {
+    "hero": "sol",
+    "build": "Wildfire",
+    "buildIndex": 0,
+    "mode": "sunforge",
+    "map": 0,
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "glow": 1322,
+    "techniques": [
+      "dividend",
+      "long-embers"
+    ],
+    "roster": [
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 2,
+        "damage": 240,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 0,
+        "b": 2,
+        "damage": 1074,
+        "volleys": 0
+      },
+      {
+        "id": "bell",
+        "a": 2,
+        "b": 0,
+        "damage": 331,
+        "volleys": 92
+      },
+      {
+        "id": "owl",
+        "a": 2,
+        "b": 0,
+        "damage": 0,
+        "volleys": 0
+      },
+      {
+        "id": "beam",
+        "a": 0,
+        "b": 0,
+        "damage": 8,
+        "volleys": 0
+      },
+      {
+        "id": "owl",
+        "a": 0,
+        "b": 0,
+        "damage": 155,
+        "volleys": 0
+      },
+      {
+        "id": "ballista",
+        "a": 1,
+        "b": 0,
+        "damage": 417,
+        "volleys": 0
+      }
+    ],
+    "healed": 0,
+    "leaks": 0,
+    "checkpoints": [
+      {
+        "wave": 0,
+        "glow": 441,
+        "light": 25
+      },
+      {
+        "wave": 10,
+        "glow": 4,
+        "light": 25
+      },
+      {
+        "wave": 11,
+        "glow": 639,
+        "light": 25
+      }
+    ]
+  },
+  {
+    "hero": "sol",
+    "build": "Wildfire",
+    "buildIndex": 0,
+    "mode": "moonwake",
+    "map": 2,
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "glow": 1253,
+    "techniques": [
+      "dividend",
+      "long-embers"
+    ],
+    "roster": [
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 2,
+        "damage": 852,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 0,
+        "b": 2,
+        "damage": 901,
+        "volleys": 0
+      },
+      {
+        "id": "bell",
+        "a": 2,
+        "b": 0,
+        "damage": 51,
+        "volleys": 20
+      },
+      {
+        "id": "owl",
+        "a": 2,
+        "b": 0,
+        "damage": 0,
+        "volleys": 0
+      },
+      {
+        "id": "beam",
+        "a": 0,
+        "b": 0,
+        "damage": 654,
+        "volleys": 0
+      },
+      {
+        "id": "owl",
+        "a": 0,
+        "b": 0,
+        "damage": 0,
+        "volleys": 0
+      },
+      {
+        "id": "ballista",
+        "a": 1,
+        "b": 0,
+        "damage": 378,
+        "volleys": 0
+      }
+    ],
+    "healed": 0,
+    "leaks": 0,
+    "checkpoints": [
+      {
+        "wave": 0,
+        "glow": 441,
+        "light": 25
+      },
+      {
+        "wave": 10,
+        "glow": 73,
+        "light": 25
+      },
+      {
+        "wave": 11,
+        "glow": 499,
+        "light": 25
+      }
+    ]
+  },
+  {
+    "hero": "sol",
+    "build": "Wildfire",
+    "buildIndex": 0,
+    "mode": "stormglass",
+    "map": 1,
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "glow": 1135,
+    "techniques": [
+      "dividend",
+      "long-embers"
+    ],
+    "roster": [
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 2,
+        "damage": 1830,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 0,
+        "b": 2,
+        "damage": 476,
+        "volleys": 0
+      },
+      {
+        "id": "bell",
+        "a": 2,
+        "b": 0,
+        "damage": 560,
+        "volleys": 76
+      },
+      {
+        "id": "owl",
+        "a": 2,
+        "b": 0,
+        "damage": 0,
+        "volleys": 0
+      },
+      {
+        "id": "beam",
+        "a": 0,
+        "b": 0,
+        "damage": 113,
+        "volleys": 0
+      },
+      {
+        "id": "owl",
+        "a": 0,
+        "b": 0,
+        "damage": 73,
+        "volleys": 0
+      },
+      {
+        "id": "ballista",
+        "a": 1,
+        "b": 0,
+        "damage": 466,
+        "volleys": 0
+      }
+    ],
+    "healed": 0,
+    "leaks": 0,
+    "checkpoints": [
+      {
+        "wave": 0,
+        "glow": 441,
+        "light": 25
+      },
+      {
+        "wave": 10,
+        "glow": 637,
+        "light": 25
+      },
+      {
+        "wave": 11,
+        "glow": 336,
+        "light": 25
+      }
+    ]
+  },
+  {
+    "hero": "sol",
+    "build": "Ignition",
+    "buildIndex": 1,
+    "mode": "campaign",
+    "map": 0,
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "glow": 918,
+    "techniques": [
+      "afterglow",
+      "flashpoint"
+    ],
+    "roster": [
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 1968,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 0,
+        "b": 3,
+        "damage": 24714,
+        "volleys": 0
+      },
+      {
+        "id": "bell",
+        "a": 3,
+        "b": 0,
+        "damage": 881,
+        "volleys": 216
+      },
+      {
+        "id": "owl",
+        "a": 3,
+        "b": 0,
+        "damage": 0,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 0,
+        "b": 3,
+        "damage": 13595,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 0,
+        "b": 3,
+        "damage": 15133,
+        "volleys": 0
+      },
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 11673,
+        "volleys": 0
+      },
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 737,
+        "volleys": 0
+      },
+      {
+        "id": "beam",
+        "a": 0,
+        "b": 3,
+        "damage": 1121,
+        "volleys": 0
+      },
+      {
+        "id": "ballista",
+        "a": 3,
+        "b": 0,
+        "damage": 918,
+        "volleys": 0
+      },
+      {
+        "id": "owl",
+        "a": 0,
+        "b": 3,
+        "damage": 61,
+        "volleys": 0
+      },
+      {
+        "id": "ballista",
+        "a": 0,
+        "b": 0,
+        "damage": 214,
+        "volleys": 0
+      }
+    ],
+    "healed": 0,
+    "leaks": 0,
+    "checkpoints": [
+      {
+        "wave": 0,
+        "glow": 81,
+        "light": 25
+      },
+      {
+        "wave": 10,
+        "glow": 222,
+        "light": 25
+      },
+      {
+        "wave": 20,
+        "glow": 65,
+        "light": 25
+      },
+      {
+        "wave": 30,
+        "glow": 163,
+        "light": 25
+      },
+      {
+        "wave": 39,
+        "glow": 957,
+        "light": 25
+      }
+    ]
+  },
+  {
+    "hero": "sol",
+    "build": "Ignition",
+    "buildIndex": 1,
+    "mode": "campaign",
+    "map": 1,
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "glow": 897,
+    "techniques": [
+      "afterglow",
+      "flashpoint"
+    ],
+    "roster": [
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 20204,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 0,
+        "b": 3,
+        "damage": 1115,
+        "volleys": 0
+      },
+      {
+        "id": "bell",
+        "a": 3,
+        "b": 0,
+        "damage": 620,
+        "volleys": 154
+      },
+      {
+        "id": "owl",
+        "a": 3,
+        "b": 0,
+        "damage": 0,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 0,
+        "b": 3,
+        "damage": 2798,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 0,
+        "b": 3,
+        "damage": 38311,
+        "volleys": 0
+      },
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 377,
+        "volleys": 0
+      },
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 4799,
+        "volleys": 0
+      },
+      {
+        "id": "beam",
+        "a": 0,
+        "b": 3,
+        "damage": 0,
+        "volleys": 0
+      },
+      {
+        "id": "ballista",
+        "a": 3,
+        "b": 0,
+        "damage": 2069,
+        "volleys": 0
+      },
+      {
+        "id": "owl",
+        "a": 0,
+        "b": 3,
+        "damage": 8,
+        "volleys": 0
+      },
+      {
+        "id": "ballista",
+        "a": 0,
+        "b": 0,
+        "damage": 48,
+        "volleys": 0
+      }
+    ],
+    "healed": 0,
+    "leaks": 0,
+    "checkpoints": [
+      {
+        "wave": 0,
+        "glow": 81,
+        "light": 25
+      },
+      {
+        "wave": 10,
+        "glow": 222,
+        "light": 25
+      },
+      {
+        "wave": 20,
+        "glow": 43,
+        "light": 25
+      },
+      {
+        "wave": 30,
+        "glow": 79,
+        "light": 25
+      },
+      {
+        "wave": 39,
+        "glow": 936,
+        "light": 25
+      }
+    ]
+  },
+  {
+    "hero": "sol",
+    "build": "Ignition",
+    "buildIndex": 1,
+    "mode": "campaign",
+    "map": 2,
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "glow": 898,
+    "techniques": [
+      "afterglow",
+      "flashpoint"
+    ],
+    "roster": [
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 14601,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 0,
+        "b": 3,
+        "damage": 21682,
+        "volleys": 0
+      },
+      {
+        "id": "bell",
+        "a": 3,
+        "b": 0,
+        "damage": 125,
+        "volleys": 37
+      },
+      {
+        "id": "owl",
+        "a": 3,
+        "b": 0,
+        "damage": 0,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 0,
+        "b": 3,
+        "damage": 10617,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 0,
+        "b": 3,
+        "damage": 11264,
+        "volleys": 0
+      },
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 9486,
+        "volleys": 0
+      },
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 867,
+        "volleys": 0
+      },
+      {
+        "id": "beam",
+        "a": 0,
+        "b": 3,
+        "damage": 31,
+        "volleys": 0
+      },
+      {
+        "id": "ballista",
+        "a": 3,
+        "b": 0,
+        "damage": 3522,
+        "volleys": 0
+      },
+      {
+        "id": "owl",
+        "a": 0,
+        "b": 3,
+        "damage": 29,
+        "volleys": 0
+      },
+      {
+        "id": "ballista",
+        "a": 0,
+        "b": 0,
+        "damage": 109,
+        "volleys": 0
+      }
+    ],
+    "healed": 0,
+    "leaks": 0,
+    "checkpoints": [
+      {
+        "wave": 0,
+        "glow": 81,
+        "light": 25
+      },
+      {
+        "wave": 10,
+        "glow": 222,
+        "light": 25
+      },
+      {
+        "wave": 20,
+        "glow": 50,
+        "light": 25
+      },
+      {
+        "wave": 30,
+        "glow": 36,
+        "light": 25
+      },
+      {
+        "wave": 39,
+        "glow": 937,
+        "light": 25
+      }
+    ]
+  },
+  {
+    "hero": "sol",
+    "build": "Ignition",
+    "buildIndex": 1,
+    "mode": "campaign",
+    "map": 3,
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "glow": 1860,
+    "techniques": [
+      "afterglow",
+      "flashpoint"
+    ],
+    "roster": [
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 11399,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 0,
+        "b": 3,
+        "damage": 13843,
+        "volleys": 0
+      },
+      {
+        "id": "bell",
+        "a": 3,
+        "b": 0,
+        "damage": 195,
+        "volleys": 66
+      },
+      {
+        "id": "owl",
+        "a": 3,
+        "b": 0,
+        "damage": 1,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 0,
+        "b": 3,
+        "damage": 15487,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 0,
+        "b": 3,
+        "damage": 11043,
+        "volleys": 0
+      },
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 11950,
+        "volleys": 0
+      },
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 8247,
+        "volleys": 0
+      },
+      {
+        "id": "beam",
+        "a": 0,
+        "b": 3,
+        "damage": 402,
+        "volleys": 0
+      },
+      {
+        "id": "ballista",
+        "a": 3,
+        "b": 0,
+        "damage": 131,
+        "volleys": 0
+      },
+      {
+        "id": "owl",
+        "a": 0,
+        "b": 3,
+        "damage": 0,
+        "volleys": 0
+      }
+    ],
+    "healed": 0,
+    "leaks": 0,
+    "checkpoints": [
+      {
+        "wave": 0,
+        "glow": 81,
+        "light": 25
+      },
+      {
+        "wave": 10,
+        "glow": 222,
+        "light": 25
+      },
+      {
+        "wave": 20,
+        "glow": 79,
+        "light": 25
+      },
+      {
+        "wave": 30,
+        "glow": 399,
+        "light": 25
+      },
+      {
+        "wave": 39,
+        "glow": 739,
+        "light": 25
+      }
+    ]
+  },
+  {
+    "hero": "sol",
+    "build": "Ignition",
+    "buildIndex": 1,
+    "mode": "sunforge",
+    "map": 0,
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "glow": 1082,
+    "techniques": [
+      "afterglow",
+      "flashpoint"
+    ],
+    "roster": [
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 2,
+        "damage": 283,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 0,
+        "b": 2,
+        "damage": 1230,
+        "volleys": 0
+      },
+      {
+        "id": "bell",
+        "a": 2,
+        "b": 0,
+        "damage": 326,
+        "volleys": 87
+      },
+      {
+        "id": "owl",
+        "a": 2,
+        "b": 0,
+        "damage": 0,
+        "volleys": 0
+      },
+      {
+        "id": "beam",
+        "a": 0,
+        "b": 0,
+        "damage": 34,
+        "volleys": 0
+      },
+      {
+        "id": "owl",
+        "a": 0,
+        "b": 0,
+        "damage": 174,
+        "volleys": 0
+      },
+      {
+        "id": "ballista",
+        "a": 1,
+        "b": 0,
+        "damage": 276,
+        "volleys": 0
+      }
+    ],
+    "healed": 0,
+    "leaks": 0,
+    "checkpoints": [
+      {
+        "wave": 0,
+        "glow": 441,
+        "light": 25
+      },
+      {
+        "wave": 10,
+        "glow": 924,
+        "light": 25
+      },
+      {
+        "wave": 11,
+        "glow": 399,
+        "light": 25
+      }
+    ]
+  },
+  {
+    "hero": "sol",
+    "build": "Ignition",
+    "buildIndex": 1,
+    "mode": "moonwake",
+    "map": 2,
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "glow": 1231,
+    "techniques": [
+      "afterglow",
+      "flashpoint"
+    ],
+    "roster": [
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 2,
+        "damage": 950,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 0,
+        "b": 2,
+        "damage": 1016,
+        "volleys": 0
+      },
+      {
+        "id": "bell",
+        "a": 2,
+        "b": 0,
+        "damage": 41,
+        "volleys": 17
+      },
+      {
+        "id": "owl",
+        "a": 2,
+        "b": 0,
+        "damage": 0,
+        "volleys": 0
+      },
+      {
+        "id": "beam",
+        "a": 0,
+        "b": 0,
+        "damage": 609,
+        "volleys": 0
+      },
+      {
+        "id": "owl",
+        "a": 0,
+        "b": 0,
+        "damage": 0,
+        "volleys": 0
+      },
+      {
+        "id": "ballista",
+        "a": 1,
+        "b": 0,
+        "damage": 362,
+        "volleys": 0
+      }
+    ],
+    "healed": 0,
+    "leaks": 0,
+    "checkpoints": [
+      {
+        "wave": 0,
+        "glow": 441,
+        "light": 25
+      },
+      {
+        "wave": 10,
+        "glow": 51,
+        "light": 25
+      },
+      {
+        "wave": 11,
+        "glow": 477,
+        "light": 25
+      }
+    ]
+  },
+  {
+    "hero": "sol",
+    "build": "Ignition",
+    "buildIndex": 1,
+    "mode": "stormglass",
+    "map": 1,
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "glow": 1112,
+    "techniques": [
+      "afterglow",
+      "flashpoint"
+    ],
+    "roster": [
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 2,
+        "damage": 1998,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 0,
+        "b": 2,
+        "damage": 488,
+        "volleys": 0
+      },
+      {
+        "id": "bell",
+        "a": 2,
+        "b": 0,
+        "damage": 534,
+        "volleys": 72
+      },
+      {
+        "id": "owl",
+        "a": 2,
+        "b": 0,
+        "damage": 0,
+        "volleys": 0
+      },
+      {
+        "id": "beam",
+        "a": 0,
+        "b": 0,
+        "damage": 100,
+        "volleys": 0
+      },
+      {
+        "id": "owl",
+        "a": 0,
+        "b": 0,
+        "damage": 53,
+        "volleys": 0
+      },
+      {
+        "id": "ballista",
+        "a": 1,
+        "b": 0,
+        "damage": 435,
+        "volleys": 0
+      }
+    ],
+    "healed": 0,
+    "leaks": 0,
+    "checkpoints": [
+      {
+        "wave": 0,
+        "glow": 441,
+        "light": 25
+      },
+      {
+        "wave": 10,
+        "glow": 614,
+        "light": 25
+      },
+      {
+        "wave": 11,
+        "glow": 313,
+        "light": 25
+      }
+    ]
+  },
+  {
+    "hero": "mira",
+    "build": "Still tide",
+    "buildIndex": 0,
+    "mode": "campaign",
+    "map": 0,
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "glow": 899,
+    "techniques": [
+      "stillwater",
+      "deep-freeze"
+    ],
+    "roster": [
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 13396,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 3,
+        "b": 0,
+        "damage": 1885,
+        "volleys": 0
+      },
+      {
+        "id": "bell",
+        "a": 3,
+        "b": 0,
+        "damage": 2182,
+        "volleys": 352
+      },
+      {
+        "id": "owl",
+        "a": 3,
+        "b": 0,
+        "damage": 28,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 3,
+        "b": 0,
+        "damage": 17481,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 3,
+        "b": 0,
+        "damage": 14384,
+        "volleys": 0
+      },
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 17569,
+        "volleys": 0
+      },
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 1002,
+        "volleys": 0
+      },
+      {
+        "id": "beam",
+        "a": 3,
+        "b": 0,
+        "damage": 7012,
+        "volleys": 0
+      },
+      {
+        "id": "ballista",
+        "a": 3,
+        "b": 0,
+        "damage": 1457,
+        "volleys": 0
+      },
+      {
+        "id": "owl",
+        "a": 0,
+        "b": 3,
+        "damage": 20,
+        "volleys": 0
+      }
+    ],
+    "healed": 0,
+    "leaks": 0,
+    "checkpoints": [
+      {
+        "wave": 0,
+        "glow": 81,
+        "light": 25
+      },
+      {
+        "wave": 10,
+        "glow": 222,
+        "light": 25
+      },
+      {
+        "wave": 20,
+        "glow": 79,
+        "light": 25
+      },
+      {
+        "wave": 30,
+        "glow": 275,
+        "light": 25
+      },
+      {
+        "wave": 39,
+        "glow": 425,
+        "light": 25
+      }
+    ]
+  },
+  {
+    "hero": "mira",
+    "build": "Still tide",
+    "buildIndex": 0,
+    "mode": "campaign",
+    "map": 1,
+    "won": true,
+    "wave": 40,
+    "light": 12,
+    "glow": 1584,
+    "techniques": [
+      "stillwater",
+      "deep-freeze"
+    ],
+    "roster": [
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 21348,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 3,
+        "b": 0,
+        "damage": 1633,
+        "volleys": 0
+      },
+      {
+        "id": "bell",
+        "a": 3,
+        "b": 0,
+        "damage": 4641,
+        "volleys": 479
+      },
+      {
+        "id": "owl",
+        "a": 3,
+        "b": 0,
+        "damage": 106,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 3,
+        "b": 0,
+        "damage": 4205,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 3,
+        "b": 0,
+        "damage": 33797,
+        "volleys": 0
+      },
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 3890,
+        "volleys": 0
+      },
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 8633,
+        "volleys": 0
+      },
+      {
+        "id": "beam",
+        "a": 3,
+        "b": 0,
+        "damage": 2091,
+        "volleys": 0
+      },
+      {
+        "id": "ballista",
+        "a": 3,
+        "b": 0,
+        "damage": 1236,
+        "volleys": 0
+      },
+      {
+        "id": "owl",
+        "a": 0,
+        "b": 3,
+        "damage": 26,
+        "volleys": 0
+      }
+    ],
+    "healed": 0,
+    "leaks": 13,
+    "checkpoints": [
+      {
+        "wave": 0,
+        "glow": 81,
+        "light": 25
+      },
+      {
+        "wave": 10,
+        "glow": 222,
+        "light": 25
+      },
+      {
+        "wave": 20,
+        "glow": 64,
+        "light": 12
+      },
+      {
+        "wave": 30,
+        "glow": 302,
+        "light": 12
+      },
+      {
+        "wave": 39,
+        "glow": 463,
+        "light": 12
+      }
+    ]
+  },
+  {
+    "hero": "mira",
+    "build": "Still tide",
+    "buildIndex": 0,
+    "mode": "campaign",
+    "map": 2,
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "glow": 1734,
+    "techniques": [
+      "stillwater",
+      "deep-freeze"
+    ],
+    "roster": [
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 11980,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 3,
+        "b": 0,
+        "damage": 10914,
+        "volleys": 0
+      },
+      {
+        "id": "bell",
+        "a": 3,
+        "b": 0,
+        "damage": 151,
+        "volleys": 64
+      },
+      {
+        "id": "owl",
+        "a": 3,
+        "b": 0,
+        "damage": 25,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 3,
+        "b": 0,
+        "damage": 12482,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 3,
+        "b": 0,
+        "damage": 13117,
+        "volleys": 0
+      },
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 14729,
+        "volleys": 0
+      },
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 1489,
+        "volleys": 0
+      },
+      {
+        "id": "beam",
+        "a": 3,
+        "b": 0,
+        "damage": 819,
+        "volleys": 0
+      },
+      {
+        "id": "ballista",
+        "a": 3,
+        "b": 0,
+        "damage": 10004,
+        "volleys": 0
+      },
+      {
+        "id": "owl",
+        "a": 0,
+        "b": 3,
+        "damage": 40,
+        "volleys": 0
+      }
+    ],
+    "healed": 0,
+    "leaks": 0,
+    "checkpoints": [
+      {
+        "wave": 0,
+        "glow": 81,
+        "light": 25
+      },
+      {
+        "wave": 10,
+        "glow": 222,
+        "light": 25
+      },
+      {
+        "wave": 20,
+        "glow": 39,
+        "light": 25
+      },
+      {
+        "wave": 30,
+        "glow": 378,
+        "light": 25
+      },
+      {
+        "wave": 39,
+        "glow": 613,
+        "light": 25
+      }
+    ]
+  },
+  {
+    "hero": "mira",
+    "build": "Still tide",
+    "buildIndex": 0,
+    "mode": "campaign",
+    "map": 3,
+    "won": true,
+    "wave": 40,
+    "light": 15,
+    "glow": 886,
+    "techniques": [
+      "stillwater",
+      "deep-freeze"
+    ],
+    "roster": [
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 11499,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 3,
+        "b": 0,
+        "damage": 8287,
+        "volleys": 0
+      },
+      {
+        "id": "bell",
+        "a": 3,
+        "b": 0,
+        "damage": 1053,
+        "volleys": 219
+      },
+      {
+        "id": "owl",
+        "a": 3,
+        "b": 0,
+        "damage": 96,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 3,
+        "b": 0,
+        "damage": 15201,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 3,
+        "b": 0,
+        "damage": 13272,
+        "volleys": 0
+      },
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 13700,
+        "volleys": 0
+      },
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 9095,
+        "volleys": 0
+      },
+      {
+        "id": "beam",
+        "a": 3,
+        "b": 0,
+        "damage": 4130,
+        "volleys": 0
+      },
+      {
+        "id": "ballista",
+        "a": 3,
+        "b": 0,
+        "damage": 1031,
+        "volleys": 0
+      },
+      {
+        "id": "owl",
+        "a": 0,
+        "b": 3,
+        "damage": 0,
+        "volleys": 0
+      }
+    ],
+    "healed": 0,
+    "leaks": 10,
+    "checkpoints": [
+      {
+        "wave": 0,
+        "glow": 81,
+        "light": 25
+      },
+      {
+        "wave": 10,
+        "glow": 222,
+        "light": 25
+      },
+      {
+        "wave": 20,
+        "glow": 68,
+        "light": 15
+      },
+      {
+        "wave": 30,
+        "glow": 280,
+        "light": 15
+      },
+      {
+        "wave": 39,
+        "glow": 412,
+        "light": 15
+      }
+    ]
+  },
+  {
+    "hero": "mira",
+    "build": "Still tide",
+    "buildIndex": 0,
+    "mode": "sunforge",
+    "map": 0,
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "glow": 965,
+    "techniques": [
+      "stillwater",
+      "deep-freeze"
+    ],
+    "roster": [
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 2,
+        "damage": 1300,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 2,
+        "b": 0,
+        "damage": 172,
+        "volleys": 0
+      },
+      {
+        "id": "bell",
+        "a": 2,
+        "b": 0,
+        "damage": 213,
+        "volleys": 70
+      },
+      {
+        "id": "owl",
+        "a": 2,
+        "b": 0,
+        "damage": 0,
+        "volleys": 0
+      },
+      {
+        "id": "beam",
+        "a": 0,
+        "b": 0,
+        "damage": 487,
+        "volleys": 0
+      },
+      {
+        "id": "owl",
+        "a": 0,
+        "b": 0,
+        "damage": 10,
+        "volleys": 0
+      },
+      {
+        "id": "ballista",
+        "a": 1,
+        "b": 0,
+        "damage": 692,
+        "volleys": 0
+      }
+    ],
+    "healed": 0,
+    "leaks": 0,
+    "checkpoints": [
+      {
+        "wave": 0,
+        "glow": 441,
+        "light": 25
+      },
+      {
+        "wave": 10,
+        "glow": 807,
+        "light": 25
+      },
+      {
+        "wave": 11,
+        "glow": 282,
+        "light": 25
+      }
+    ]
+  },
+  {
+    "hero": "mira",
+    "build": "Still tide",
+    "buildIndex": 0,
+    "mode": "moonwake",
+    "map": 2,
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "glow": 1366,
+    "techniques": [
+      "stillwater",
+      "deep-freeze"
+    ],
+    "roster": [
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 2,
+        "damage": 1193,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 2,
+        "b": 0,
+        "damage": 960,
+        "volleys": 0
+      },
+      {
+        "id": "bell",
+        "a": 2,
+        "b": 0,
+        "damage": 35,
+        "volleys": 25
+      },
+      {
+        "id": "owl",
+        "a": 2,
+        "b": 0,
+        "damage": 0,
+        "volleys": 0
+      },
+      {
+        "id": "beam",
+        "a": 0,
+        "b": 0,
+        "damage": 574,
+        "volleys": 0
+      },
+      {
+        "id": "owl",
+        "a": 0,
+        "b": 0,
+        "damage": 3,
+        "volleys": 0
+      },
+      {
+        "id": "ballista",
+        "a": 1,
+        "b": 0,
+        "damage": 707,
+        "volleys": 0
+      }
+    ],
+    "healed": 0,
+    "leaks": 0,
+    "checkpoints": [
+      {
+        "wave": 0,
+        "glow": 441,
+        "light": 25
+      },
+      {
+        "wave": 10,
+        "glow": 186,
+        "light": 25
+      },
+      {
+        "wave": 11,
+        "glow": 612,
+        "light": 25
+      }
+    ]
+  },
+  {
+    "hero": "mira",
+    "build": "Still tide",
+    "buildIndex": 0,
+    "mode": "stormglass",
+    "map": 1,
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "glow": 1085,
+    "techniques": [
+      "stillwater",
+      "deep-freeze"
+    ],
+    "roster": [
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 2,
+        "damage": 1701,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 2,
+        "b": 0,
+        "damage": 519,
+        "volleys": 0
+      },
+      {
+        "id": "bell",
+        "a": 2,
+        "b": 0,
+        "damage": 399,
+        "volleys": 103
+      },
+      {
+        "id": "owl",
+        "a": 2,
+        "b": 0,
+        "damage": 22,
+        "volleys": 0
+      },
+      {
+        "id": "beam",
+        "a": 0,
+        "b": 0,
+        "damage": 228,
+        "volleys": 0
+      },
+      {
+        "id": "owl",
+        "a": 0,
+        "b": 0,
+        "damage": 42,
+        "volleys": 0
+      },
+      {
+        "id": "ballista",
+        "a": 1,
+        "b": 0,
+        "damage": 907,
+        "volleys": 0
+      }
+    ],
+    "healed": 0,
+    "leaks": 0,
+    "checkpoints": [
+      {
+        "wave": 0,
+        "glow": 441,
+        "light": 25
+      },
+      {
+        "wave": 10,
+        "glow": 807,
+        "light": 25
+      },
+      {
+        "wave": 11,
+        "glow": 286,
+        "light": 25
+      }
+    ]
+  },
+  {
+    "hero": "mira",
+    "build": "Undertow",
+    "buildIndex": 1,
+    "mode": "campaign",
+    "map": 0,
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "glow": 1718,
+    "techniques": [
+      "moon-sight",
+      "tidal-echo"
+    ],
+    "roster": [
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 13983,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 3,
+        "b": 0,
+        "damage": 1952,
+        "volleys": 0
+      },
+      {
+        "id": "bell",
+        "a": 0,
+        "b": 3,
+        "damage": 0,
+        "volleys": 498
+      },
+      {
+        "id": "owl",
+        "a": 3,
+        "b": 0,
+        "damage": 197,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 3,
+        "b": 0,
+        "damage": 13455,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 3,
+        "b": 0,
+        "damage": 13823,
+        "volleys": 0
+      },
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 19582,
+        "volleys": 0
+      },
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 1929,
+        "volleys": 0
+      },
+      {
+        "id": "beam",
+        "a": 3,
+        "b": 0,
+        "damage": 550,
+        "volleys": 0
+      },
+      {
+        "id": "ballista",
+        "a": 0,
+        "b": 3,
+        "damage": 10402,
+        "volleys": 0
+      },
+      {
+        "id": "owl",
+        "a": 0,
+        "b": 3,
+        "damage": 57,
+        "volleys": 0
+      }
+    ],
+    "healed": 0,
+    "leaks": 0,
+    "checkpoints": [
+      {
+        "wave": 0,
+        "glow": 81,
+        "light": 25
+      },
+      {
+        "wave": 10,
+        "glow": 222,
+        "light": 25
+      },
+      {
+        "wave": 20,
+        "glow": 84,
+        "light": 25
+      },
+      {
+        "wave": 30,
+        "glow": 380,
+        "light": 25
+      },
+      {
+        "wave": 39,
+        "glow": 597,
+        "light": 25
+      }
+    ]
+  },
+  {
+    "hero": "mira",
+    "build": "Undertow",
+    "buildIndex": 1,
+    "mode": "campaign",
+    "map": 1,
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "glow": 1668,
+    "techniques": [
+      "moon-sight",
+      "tidal-echo"
+    ],
+    "roster": [
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 20277,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 3,
+        "b": 0,
+        "damage": 1126,
+        "volleys": 0
+      },
+      {
+        "id": "bell",
+        "a": 0,
+        "b": 3,
+        "damage": 0,
+        "volleys": 576
+      },
+      {
+        "id": "owl",
+        "a": 3,
+        "b": 0,
+        "damage": 170,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 3,
+        "b": 0,
+        "damage": 2240,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 3,
+        "b": 0,
+        "damage": 43813,
+        "volleys": 0
+      },
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 3334,
+        "volleys": 0
+      },
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 4014,
+        "volleys": 0
+      },
+      {
+        "id": "beam",
+        "a": 3,
+        "b": 0,
+        "damage": 14,
+        "volleys": 0
+      },
+      {
+        "id": "ballista",
+        "a": 0,
+        "b": 3,
+        "damage": 3342,
+        "volleys": 0
+      },
+      {
+        "id": "owl",
+        "a": 0,
+        "b": 3,
+        "damage": 31,
+        "volleys": 0
+      }
+    ],
+    "healed": 0,
+    "leaks": 0,
+    "checkpoints": [
+      {
+        "wave": 0,
+        "glow": 81,
+        "light": 25
+      },
+      {
+        "wave": 10,
+        "glow": 222,
+        "light": 25
+      },
+      {
+        "wave": 20,
+        "glow": 21,
+        "light": 25
+      },
+      {
+        "wave": 30,
+        "glow": 300,
+        "light": 25
+      },
+      {
+        "wave": 39,
+        "glow": 547,
+        "light": 25
+      }
+    ]
+  },
+  {
+    "hero": "mira",
+    "build": "Undertow",
+    "buildIndex": 1,
+    "mode": "campaign",
+    "map": 2,
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "glow": 1661,
+    "techniques": [
+      "moon-sight",
+      "tidal-echo"
+    ],
+    "roster": [
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 12224,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 3,
+        "b": 0,
+        "damage": 12024,
+        "volleys": 0
+      },
+      {
+        "id": "bell",
+        "a": 0,
+        "b": 3,
+        "damage": 0,
+        "volleys": 84
+      },
+      {
+        "id": "owl",
+        "a": 3,
+        "b": 0,
+        "damage": 253,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 3,
+        "b": 0,
+        "damage": 11419,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 3,
+        "b": 0,
+        "damage": 11384,
+        "volleys": 0
+      },
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 15024,
+        "volleys": 0
+      },
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 1528,
+        "volleys": 0
+      },
+      {
+        "id": "beam",
+        "a": 3,
+        "b": 0,
+        "damage": 841,
+        "volleys": 0
+      },
+      {
+        "id": "ballista",
+        "a": 0,
+        "b": 3,
+        "damage": 10893,
+        "volleys": 0
+      },
+      {
+        "id": "owl",
+        "a": 0,
+        "b": 3,
+        "damage": 63,
+        "volleys": 0
+      }
+    ],
+    "healed": 0,
+    "leaks": 0,
+    "checkpoints": [
+      {
+        "wave": 0,
+        "glow": 81,
+        "light": 25
+      },
+      {
+        "wave": 10,
+        "glow": 222,
+        "light": 25
+      },
+      {
+        "wave": 20,
+        "glow": 27,
+        "light": 25
+      },
+      {
+        "wave": 30,
+        "glow": 316,
+        "light": 25
+      },
+      {
+        "wave": 39,
+        "glow": 540,
+        "light": 25
+      }
+    ]
+  },
+  {
+    "hero": "mira",
+    "build": "Undertow",
+    "buildIndex": 1,
+    "mode": "campaign",
+    "map": 3,
+    "won": true,
+    "wave": 40,
+    "light": 14,
+    "glow": 874,
+    "techniques": [
+      "moon-sight",
+      "tidal-echo"
+    ],
+    "roster": [
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 12049,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 3,
+        "b": 0,
+        "damage": 7898,
+        "volleys": 0
+      },
+      {
+        "id": "bell",
+        "a": 0,
+        "b": 3,
+        "damage": 0,
+        "volleys": 277
+      },
+      {
+        "id": "owl",
+        "a": 3,
+        "b": 0,
+        "damage": 424,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 3,
+        "b": 0,
+        "damage": 15198,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 3,
+        "b": 0,
+        "damage": 14140,
+        "volleys": 0
+      },
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 13579,
+        "volleys": 0
+      },
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 9479,
+        "volleys": 0
+      },
+      {
+        "id": "beam",
+        "a": 3,
+        "b": 0,
+        "damage": 3667,
+        "volleys": 0
+      },
+      {
+        "id": "ballista",
+        "a": 0,
+        "b": 3,
+        "damage": 593,
+        "volleys": 0
+      },
+      {
+        "id": "owl",
+        "a": 0,
+        "b": 3,
+        "damage": 9,
+        "volleys": 0
+      }
+    ],
+    "healed": 0,
+    "leaks": 11,
+    "checkpoints": [
+      {
+        "wave": 0,
+        "glow": 81,
+        "light": 25
+      },
+      {
+        "wave": 10,
+        "glow": 222,
+        "light": 25
+      },
+      {
+        "wave": 20,
+        "glow": 66,
+        "light": 14
+      },
+      {
+        "wave": 30,
+        "glow": 269,
+        "light": 14
+      },
+      {
+        "wave": 39,
+        "glow": 400,
+        "light": 14
+      }
+    ]
+  },
+  {
+    "hero": "mira",
+    "build": "Undertow",
+    "buildIndex": 1,
+    "mode": "sunforge",
+    "map": 0,
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "glow": 977,
+    "techniques": [
+      "moon-sight",
+      "tidal-echo"
+    ],
+    "roster": [
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 2,
+        "damage": 1458,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 2,
+        "b": 0,
+        "damage": 276,
+        "volleys": 0
+      },
+      {
+        "id": "bell",
+        "a": 0,
+        "b": 2,
+        "damage": 0,
+        "volleys": 112
+      },
+      {
+        "id": "owl",
+        "a": 2,
+        "b": 0,
+        "damage": 0,
+        "volleys": 0
+      },
+      {
+        "id": "beam",
+        "a": 0,
+        "b": 0,
+        "damage": 587,
+        "volleys": 0
+      },
+      {
+        "id": "owl",
+        "a": 0,
+        "b": 0,
+        "damage": 57,
+        "volleys": 0
+      },
+      {
+        "id": "ballista",
+        "a": 1,
+        "b": 0,
+        "damage": 498,
+        "volleys": 0
+      }
+    ],
+    "healed": 0,
+    "leaks": 0,
+    "checkpoints": [
+      {
+        "wave": 0,
+        "glow": 441,
+        "light": 25
+      },
+      {
+        "wave": 10,
+        "glow": 699,
+        "light": 25
+      },
+      {
+        "wave": 11,
+        "glow": 294,
+        "light": 25
+      }
+    ]
+  },
+  {
+    "hero": "mira",
+    "build": "Undertow",
+    "buildIndex": 1,
+    "mode": "moonwake",
+    "map": 2,
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "glow": 1248,
+    "techniques": [
+      "moon-sight",
+      "tidal-echo"
+    ],
+    "roster": [
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 2,
+        "damage": 1234,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 2,
+        "b": 0,
+        "damage": 933,
+        "volleys": 0
+      },
+      {
+        "id": "bell",
+        "a": 0,
+        "b": 2,
+        "damage": 0,
+        "volleys": 40
+      },
+      {
+        "id": "owl",
+        "a": 2,
+        "b": 0,
+        "damage": 1,
+        "volleys": 0
+      },
+      {
+        "id": "beam",
+        "a": 0,
+        "b": 0,
+        "damage": 631,
+        "volleys": 0
+      },
+      {
+        "id": "owl",
+        "a": 0,
+        "b": 0,
+        "damage": 62,
+        "volleys": 0
+      },
+      {
+        "id": "ballista",
+        "a": 1,
+        "b": 0,
+        "damage": 597,
+        "volleys": 0
+      }
+    ],
+    "healed": 0,
+    "leaks": 0,
+    "checkpoints": [
+      {
+        "wave": 0,
+        "glow": 441,
+        "light": 25
+      },
+      {
+        "wave": 10,
+        "glow": 68,
+        "light": 25
+      },
+      {
+        "wave": 11,
+        "glow": 494,
+        "light": 25
+      }
+    ]
+  },
+  {
+    "hero": "mira",
+    "build": "Undertow",
+    "buildIndex": 1,
+    "mode": "stormglass",
+    "map": 1,
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "glow": 1086,
+    "techniques": [
+      "moon-sight",
+      "tidal-echo"
+    ],
+    "roster": [
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 2,
+        "damage": 1911,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 2,
+        "b": 0,
+        "damage": 550,
+        "volleys": 0
+      },
+      {
+        "id": "bell",
+        "a": 0,
+        "b": 2,
+        "damage": 0,
+        "volleys": 140
+      },
+      {
+        "id": "owl",
+        "a": 2,
+        "b": 0,
+        "damage": 4,
+        "volleys": 0
+      },
+      {
+        "id": "beam",
+        "a": 0,
+        "b": 0,
+        "damage": 188,
+        "volleys": 0
+      },
+      {
+        "id": "owl",
+        "a": 0,
+        "b": 0,
+        "damage": 93,
+        "volleys": 0
+      },
+      {
+        "id": "ballista",
+        "a": 1,
+        "b": 0,
+        "damage": 919,
+        "volleys": 0
+      }
+    ],
+    "healed": 0,
+    "leaks": 0,
+    "checkpoints": [
+      {
+        "wave": 0,
+        "glow": 441,
+        "light": 25
+      },
+      {
+        "wave": 10,
+        "glow": 808,
+        "light": 25
+      },
+      {
+        "wave": 11,
+        "glow": 287,
+        "light": 25
+      }
+    ]
+  },
+  {
+    "hero": "ivo",
+    "build": "Chainworks",
+    "buildIndex": 0,
+    "mode": "campaign",
+    "map": 0,
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "glow": 979,
+    "techniques": [
+      "circuit",
+      "forked-current"
+    ],
+    "roster": [
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 5009,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 3,
+        "b": 0,
+        "damage": 2349,
+        "volleys": 0
+      },
+      {
+        "id": "bell",
+        "a": 3,
+        "b": 0,
+        "damage": 1339,
+        "volleys": 303
+      },
+      {
+        "id": "owl",
+        "a": 3,
+        "b": 0,
+        "damage": 116,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 3,
+        "b": 0,
+        "damage": 24090,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 3,
+        "b": 0,
+        "damage": 18151,
+        "volleys": 0
+      },
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 16996,
+        "volleys": 0
+      },
+      {
+        "id": "beam",
+        "a": 3,
+        "b": 0,
+        "damage": 1252,
+        "volleys": 0
+      },
+      {
+        "id": "storm",
+        "a": 2,
+        "b": 0,
+        "damage": 4118,
+        "volleys": 385
+      },
+      {
+        "id": "ballista",
+        "a": 3,
+        "b": 0,
+        "damage": 2159,
+        "volleys": 0
+      },
+      {
+        "id": "owl",
+        "a": 0,
+        "b": 3,
+        "damage": 48,
+        "volleys": 0
+      }
+    ],
+    "healed": 0,
+    "leaks": 0,
+    "checkpoints": [
+      {
+        "wave": 0,
+        "glow": 81,
+        "light": 25
+      },
+      {
+        "wave": 10,
+        "glow": 222,
+        "light": 25
+      },
+      {
+        "wave": 20,
+        "glow": 68,
+        "light": 25
+      },
+      {
+        "wave": 30,
+        "glow": 1395,
+        "light": 25
+      },
+      {
+        "wave": 39,
+        "glow": 505,
+        "light": 25
+      }
+    ]
+  },
+  {
+    "hero": "ivo",
+    "build": "Chainworks",
+    "buildIndex": 0,
+    "mode": "campaign",
+    "map": 1,
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "glow": 979,
+    "techniques": [
+      "circuit",
+      "forked-current"
+    ],
+    "roster": [
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 6638,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 3,
+        "b": 0,
+        "damage": 2614,
+        "volleys": 0
+      },
+      {
+        "id": "bell",
+        "a": 3,
+        "b": 0,
+        "damage": 1610,
+        "volleys": 288
+      },
+      {
+        "id": "owl",
+        "a": 3,
+        "b": 0,
+        "damage": 24,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 3,
+        "b": 0,
+        "damage": 13579,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 3,
+        "b": 0,
+        "damage": 40079,
+        "volleys": 0
+      },
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 851,
+        "volleys": 0
+      },
+      {
+        "id": "beam",
+        "a": 3,
+        "b": 0,
+        "damage": 1170,
+        "volleys": 0
+      },
+      {
+        "id": "storm",
+        "a": 2,
+        "b": 0,
+        "damage": 4901,
+        "volleys": 369
+      },
+      {
+        "id": "ballista",
+        "a": 3,
+        "b": 0,
+        "damage": 6621,
+        "volleys": 0
+      },
+      {
+        "id": "owl",
+        "a": 0,
+        "b": 3,
+        "damage": 36,
+        "volleys": 0
+      }
+    ],
+    "healed": 0,
+    "leaks": 0,
+    "checkpoints": [
+      {
+        "wave": 0,
+        "glow": 81,
+        "light": 25
+      },
+      {
+        "wave": 10,
+        "glow": 222,
+        "light": 25
+      },
+      {
+        "wave": 20,
+        "glow": 68,
+        "light": 25
+      },
+      {
+        "wave": 30,
+        "glow": 1395,
+        "light": 25
+      },
+      {
+        "wave": 39,
+        "glow": 505,
+        "light": 25
+      }
+    ]
+  },
+  {
+    "hero": "ivo",
+    "build": "Chainworks",
+    "buildIndex": 0,
+    "mode": "campaign",
+    "map": 2,
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "glow": 979,
+    "techniques": [
+      "circuit",
+      "forked-current"
+    ],
+    "roster": [
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 5251,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 3,
+        "b": 0,
+        "damage": 12002,
+        "volleys": 0
+      },
+      {
+        "id": "bell",
+        "a": 3,
+        "b": 0,
+        "damage": 193,
+        "volleys": 63
+      },
+      {
+        "id": "owl",
+        "a": 3,
+        "b": 0,
+        "damage": 186,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 3,
+        "b": 0,
+        "damage": 18685,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 3,
+        "b": 0,
+        "damage": 14746,
+        "volleys": 0
+      },
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 15982,
+        "volleys": 0
+      },
+      {
+        "id": "beam",
+        "a": 3,
+        "b": 0,
+        "damage": 1322,
+        "volleys": 0
+      },
+      {
+        "id": "storm",
+        "a": 2,
+        "b": 0,
+        "damage": 4140,
+        "volleys": 396
+      },
+      {
+        "id": "ballista",
+        "a": 3,
+        "b": 0,
+        "damage": 2794,
+        "volleys": 0
+      },
+      {
+        "id": "owl",
+        "a": 0,
+        "b": 3,
+        "damage": 58,
+        "volleys": 0
+      }
+    ],
+    "healed": 0,
+    "leaks": 0,
+    "checkpoints": [
+      {
+        "wave": 0,
+        "glow": 81,
+        "light": 25
+      },
+      {
+        "wave": 10,
+        "glow": 222,
+        "light": 25
+      },
+      {
+        "wave": 20,
+        "glow": 68,
+        "light": 25
+      },
+      {
+        "wave": 30,
+        "glow": 1395,
+        "light": 25
+      },
+      {
+        "wave": 39,
+        "glow": 505,
+        "light": 25
+      }
+    ]
+  },
+  {
+    "hero": "ivo",
+    "build": "Chainworks",
+    "buildIndex": 0,
+    "mode": "campaign",
+    "map": 3,
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "glow": 979,
+    "techniques": [
+      "circuit",
+      "forked-current"
+    ],
+    "roster": [
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 5719,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 3,
+        "b": 0,
+        "damage": 6966,
+        "volleys": 0
+      },
+      {
+        "id": "bell",
+        "a": 3,
+        "b": 0,
+        "damage": 524,
+        "volleys": 147
+      },
+      {
+        "id": "owl",
+        "a": 3,
+        "b": 0,
+        "damage": 1,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 3,
+        "b": 0,
+        "damage": 17410,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 3,
+        "b": 0,
+        "damage": 14923,
+        "volleys": 0
+      },
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 11827,
+        "volleys": 0
+      },
+      {
+        "id": "beam",
+        "a": 3,
+        "b": 0,
+        "damage": 13268,
+        "volleys": 0
+      },
+      {
+        "id": "storm",
+        "a": 2,
+        "b": 0,
+        "damage": 1861,
+        "volleys": 223
+      },
+      {
+        "id": "ballista",
+        "a": 3,
+        "b": 0,
+        "damage": 2086,
+        "volleys": 0
+      },
+      {
+        "id": "owl",
+        "a": 0,
+        "b": 3,
+        "damage": 0,
+        "volleys": 0
+      }
+    ],
+    "healed": 0,
+    "leaks": 0,
+    "checkpoints": [
+      {
+        "wave": 0,
+        "glow": 81,
+        "light": 25
+      },
+      {
+        "wave": 10,
+        "glow": 222,
+        "light": 25
+      },
+      {
+        "wave": 20,
+        "glow": 168,
+        "light": 25
+      },
+      {
+        "wave": 30,
+        "glow": 1395,
+        "light": 25
+      },
+      {
+        "wave": 39,
+        "glow": 505,
+        "light": 25
+      }
+    ]
+  },
+  {
+    "hero": "ivo",
+    "build": "Chainworks",
+    "buildIndex": 0,
+    "mode": "sunforge",
+    "map": 0,
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "glow": 858,
+    "techniques": [
+      "circuit",
+      "forked-current"
+    ],
+    "roster": [
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 2,
+        "damage": 1113,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 2,
+        "b": 0,
+        "damage": 188,
+        "volleys": 0
+      },
+      {
+        "id": "bell",
+        "a": 2,
+        "b": 0,
+        "damage": 119,
+        "volleys": 58
+      },
+      {
+        "id": "owl",
+        "a": 2,
+        "b": 0,
+        "damage": 3,
+        "volleys": 0
+      },
+      {
+        "id": "beam",
+        "a": 1,
+        "b": 0,
+        "damage": 752,
+        "volleys": 0
+      },
+      {
+        "id": "storm",
+        "a": 0,
+        "b": 0,
+        "damage": 331,
+        "volleys": 72
+      },
+      {
+        "id": "ballista",
+        "a": 0,
+        "b": 0,
+        "damage": 315,
+        "volleys": 0
+      },
+      {
+        "id": "owl",
+        "a": 0,
+        "b": 0,
+        "damage": 23,
+        "volleys": 0
+      }
+    ],
+    "healed": 0,
+    "leaks": 0,
+    "checkpoints": [
+      {
+        "wave": 0,
+        "glow": 441,
+        "light": 25
+      },
+      {
+        "wave": 10,
+        "glow": 98,
+        "light": 25
+      },
+      {
+        "wave": 11,
+        "glow": 175,
+        "light": 25
+      }
+    ]
+  },
+  {
+    "hero": "ivo",
+    "build": "Chainworks",
+    "buildIndex": 0,
+    "mode": "moonwake",
+    "map": 2,
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "glow": 680,
+    "techniques": [
+      "circuit",
+      "forked-current"
+    ],
+    "roster": [
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 2,
+        "damage": 1117,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 2,
+        "b": 0,
+        "damage": 648,
+        "volleys": 0
+      },
+      {
+        "id": "bell",
+        "a": 2,
+        "b": 0,
+        "damage": 19,
+        "volleys": 13
+      },
+      {
+        "id": "owl",
+        "a": 2,
+        "b": 0,
+        "damage": 0,
+        "volleys": 0
+      },
+      {
+        "id": "beam",
+        "a": 1,
+        "b": 0,
+        "damage": 994,
+        "volleys": 0
+      },
+      {
+        "id": "storm",
+        "a": 0,
+        "b": 0,
+        "damage": 381,
+        "volleys": 87
+      },
+      {
+        "id": "ballista",
+        "a": 1,
+        "b": 0,
+        "damage": 281,
+        "volleys": 0
+      },
+      {
+        "id": "owl",
+        "a": 0,
+        "b": 0,
+        "damage": 11,
+        "volleys": 0
+      }
+    ],
+    "healed": 0,
+    "leaks": 0,
+    "checkpoints": [
+      {
+        "wave": 0,
+        "glow": 441,
+        "light": 25
+      },
+      {
+        "wave": 10,
+        "glow": 86,
+        "light": 25
+      },
+      {
+        "wave": 11,
+        "glow": 358,
+        "light": 25
+      }
+    ]
+  },
+  {
+    "hero": "ivo",
+    "build": "Chainworks",
+    "buildIndex": 0,
+    "mode": "stormglass",
+    "map": 1,
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "glow": 992,
+    "techniques": [
+      "circuit",
+      "forked-current"
+    ],
+    "roster": [
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 2,
+        "damage": 1067,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 2,
+        "b": 0,
+        "damage": 582,
+        "volleys": 0
+      },
+      {
+        "id": "bell",
+        "a": 2,
+        "b": 0,
+        "damage": 251,
+        "volleys": 62
+      },
+      {
+        "id": "owl",
+        "a": 2,
+        "b": 0,
+        "damage": 35,
+        "volleys": 0
+      },
+      {
+        "id": "beam",
+        "a": 1,
+        "b": 0,
+        "damage": 1038,
+        "volleys": 0
+      },
+      {
+        "id": "storm",
+        "a": 0,
+        "b": 0,
+        "damage": 422,
+        "volleys": 71
+      },
+      {
+        "id": "ballista",
+        "a": 0,
+        "b": 0,
+        "damage": 585,
+        "volleys": 0
+      },
+      {
+        "id": "owl",
+        "a": 0,
+        "b": 0,
+        "damage": 13,
+        "volleys": 0
+      }
+    ],
+    "healed": 0,
+    "leaks": 0,
+    "checkpoints": [
+      {
+        "wave": 0,
+        "glow": 441,
+        "light": 25
+      },
+      {
+        "wave": 10,
+        "glow": 12,
+        "light": 25
+      },
+      {
+        "wave": 11,
+        "glow": 193,
+        "light": 25
+      }
+    ]
+  },
+  {
+    "hero": "ivo",
+    "build": "Capacitor",
+    "buildIndex": 1,
+    "mode": "campaign",
+    "map": 0,
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "glow": 979,
+    "techniques": [
+      "outrider",
+      "capacitor"
+    ],
+    "roster": [
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 4731,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 3,
+        "b": 0,
+        "damage": 2149,
+        "volleys": 0
+      },
+      {
+        "id": "bell",
+        "a": 0,
+        "b": 3,
+        "damage": 0,
+        "volleys": 447
+      },
+      {
+        "id": "owl",
+        "a": 3,
+        "b": 0,
+        "damage": 0,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 3,
+        "b": 0,
+        "damage": 23199,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 3,
+        "b": 0,
+        "damage": 17546,
+        "volleys": 0
+      },
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 18951,
+        "volleys": 0
+      },
+      {
+        "id": "beam",
+        "a": 3,
+        "b": 0,
+        "damage": 882,
+        "volleys": 0
+      },
+      {
+        "id": "storm",
+        "a": 0,
+        "b": 2,
+        "damage": 3391,
+        "volleys": 322
+      },
+      {
+        "id": "ballista",
+        "a": 3,
+        "b": 0,
+        "damage": 4617,
+        "volleys": 0
+      },
+      {
+        "id": "owl",
+        "a": 0,
+        "b": 3,
+        "damage": 77,
+        "volleys": 0
+      }
+    ],
+    "healed": 0,
+    "leaks": 0,
+    "checkpoints": [
+      {
+        "wave": 0,
+        "glow": 81,
+        "light": 25
+      },
+      {
+        "wave": 10,
+        "glow": 222,
+        "light": 25
+      },
+      {
+        "wave": 20,
+        "glow": 68,
+        "light": 25
+      },
+      {
+        "wave": 30,
+        "glow": 1395,
+        "light": 25
+      },
+      {
+        "wave": 39,
+        "glow": 505,
+        "light": 25
+      }
+    ]
+  },
+  {
+    "hero": "ivo",
+    "build": "Capacitor",
+    "buildIndex": 1,
+    "mode": "campaign",
+    "map": 1,
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "glow": 979,
+    "techniques": [
+      "outrider",
+      "capacitor"
+    ],
+    "roster": [
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 6816,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 3,
+        "b": 0,
+        "damage": 1166,
+        "volleys": 0
+      },
+      {
+        "id": "bell",
+        "a": 0,
+        "b": 3,
+        "damage": 0,
+        "volleys": 630
+      },
+      {
+        "id": "owl",
+        "a": 3,
+        "b": 0,
+        "damage": 0,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 3,
+        "b": 0,
+        "damage": 5342,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 3,
+        "b": 0,
+        "damage": 52973,
+        "volleys": 0
+      },
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 441,
+        "volleys": 0
+      },
+      {
+        "id": "beam",
+        "a": 3,
+        "b": 0,
+        "damage": 346,
+        "volleys": 0
+      },
+      {
+        "id": "storm",
+        "a": 0,
+        "b": 2,
+        "damage": 3673,
+        "volleys": 323
+      },
+      {
+        "id": "ballista",
+        "a": 3,
+        "b": 0,
+        "damage": 6578,
+        "volleys": 0
+      },
+      {
+        "id": "owl",
+        "a": 0,
+        "b": 3,
+        "damage": 32,
+        "volleys": 0
+      }
+    ],
+    "healed": 0,
+    "leaks": 0,
+    "checkpoints": [
+      {
+        "wave": 0,
+        "glow": 81,
+        "light": 25
+      },
+      {
+        "wave": 10,
+        "glow": 222,
+        "light": 25
+      },
+      {
+        "wave": 20,
+        "glow": 68,
+        "light": 25
+      },
+      {
+        "wave": 30,
+        "glow": 1395,
+        "light": 25
+      },
+      {
+        "wave": 39,
+        "glow": 505,
+        "light": 25
+      }
+    ]
+  },
+  {
+    "hero": "ivo",
+    "build": "Capacitor",
+    "buildIndex": 1,
+    "mode": "campaign",
+    "map": 2,
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "glow": 979,
+    "techniques": [
+      "outrider",
+      "capacitor"
+    ],
+    "roster": [
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 4902,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 3,
+        "b": 0,
+        "damage": 12892,
+        "volleys": 0
+      },
+      {
+        "id": "bell",
+        "a": 0,
+        "b": 3,
+        "damage": 0,
+        "volleys": 89
+      },
+      {
+        "id": "owl",
+        "a": 3,
+        "b": 0,
+        "damage": 58,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 3,
+        "b": 0,
+        "damage": 17537,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 3,
+        "b": 0,
+        "damage": 14935,
+        "volleys": 0
+      },
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 15622,
+        "volleys": 0
+      },
+      {
+        "id": "beam",
+        "a": 3,
+        "b": 0,
+        "damage": 1124,
+        "volleys": 0
+      },
+      {
+        "id": "storm",
+        "a": 0,
+        "b": 2,
+        "damage": 3073,
+        "volleys": 334
+      },
+      {
+        "id": "ballista",
+        "a": 3,
+        "b": 0,
+        "damage": 5010,
+        "volleys": 0
+      },
+      {
+        "id": "owl",
+        "a": 0,
+        "b": 3,
+        "damage": 85,
+        "volleys": 0
+      }
+    ],
+    "healed": 0,
+    "leaks": 0,
+    "checkpoints": [
+      {
+        "wave": 0,
+        "glow": 81,
+        "light": 25
+      },
+      {
+        "wave": 10,
+        "glow": 222,
+        "light": 25
+      },
+      {
+        "wave": 20,
+        "glow": 68,
+        "light": 25
+      },
+      {
+        "wave": 30,
+        "glow": 1395,
+        "light": 25
+      },
+      {
+        "wave": 39,
+        "glow": 505,
+        "light": 25
+      }
+    ]
+  },
+  {
+    "hero": "ivo",
+    "build": "Capacitor",
+    "buildIndex": 1,
+    "mode": "campaign",
+    "map": 3,
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "glow": 979,
+    "techniques": [
+      "outrider",
+      "capacitor"
+    ],
+    "roster": [
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 5045,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 3,
+        "b": 0,
+        "damage": 6279,
+        "volleys": 0
+      },
+      {
+        "id": "bell",
+        "a": 0,
+        "b": 3,
+        "damage": 0,
+        "volleys": 197
+      },
+      {
+        "id": "owl",
+        "a": 3,
+        "b": 0,
+        "damage": 15,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 3,
+        "b": 0,
+        "damage": 18721,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 3,
+        "b": 0,
+        "damage": 14702,
+        "volleys": 0
+      },
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 3,
+        "damage": 12101,
+        "volleys": 0
+      },
+      {
+        "id": "beam",
+        "a": 3,
+        "b": 0,
+        "damage": 15409,
+        "volleys": 0
+      },
+      {
+        "id": "storm",
+        "a": 0,
+        "b": 2,
+        "damage": 1374,
+        "volleys": 174
+      },
+      {
+        "id": "ballista",
+        "a": 3,
+        "b": 0,
+        "damage": 903,
+        "volleys": 0
+      },
+      {
+        "id": "owl",
+        "a": 0,
+        "b": 3,
+        "damage": 0,
+        "volleys": 0
+      }
+    ],
+    "healed": 0,
+    "leaks": 0,
+    "checkpoints": [
+      {
+        "wave": 0,
+        "glow": 81,
+        "light": 25
+      },
+      {
+        "wave": 10,
+        "glow": 222,
+        "light": 25
+      },
+      {
+        "wave": 20,
+        "glow": 168,
+        "light": 25
+      },
+      {
+        "wave": 30,
+        "glow": 1395,
+        "light": 25
+      },
+      {
+        "wave": 39,
+        "glow": 505,
+        "light": 25
+      }
+    ]
+  },
+  {
+    "hero": "ivo",
+    "build": "Capacitor",
+    "buildIndex": 1,
+    "mode": "sunforge",
+    "map": 0,
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "glow": 858,
+    "techniques": [
+      "outrider",
+      "capacitor"
+    ],
+    "roster": [
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 2,
+        "damage": 1160,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 2,
+        "b": 0,
+        "damage": 192,
+        "volleys": 0
+      },
+      {
+        "id": "bell",
+        "a": 0,
+        "b": 2,
+        "damage": 0,
+        "volleys": 54
+      },
+      {
+        "id": "owl",
+        "a": 2,
+        "b": 0,
+        "damage": 0,
+        "volleys": 0
+      },
+      {
+        "id": "beam",
+        "a": 1,
+        "b": 0,
+        "damage": 881,
+        "volleys": 0
+      },
+      {
+        "id": "storm",
+        "a": 0,
+        "b": 0,
+        "damage": 276,
+        "volleys": 59
+      },
+      {
+        "id": "ballista",
+        "a": 0,
+        "b": 0,
+        "damage": 324,
+        "volleys": 0
+      },
+      {
+        "id": "owl",
+        "a": 0,
+        "b": 0,
+        "damage": 21,
+        "volleys": 0
+      }
+    ],
+    "healed": 0,
+    "leaks": 0,
+    "checkpoints": [
+      {
+        "wave": 0,
+        "glow": 441,
+        "light": 25
+      },
+      {
+        "wave": 10,
+        "glow": 98,
+        "light": 25
+      },
+      {
+        "wave": 11,
+        "glow": 175,
+        "light": 25
+      }
+    ]
+  },
+  {
+    "hero": "ivo",
+    "build": "Capacitor",
+    "buildIndex": 1,
+    "mode": "moonwake",
+    "map": 2,
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "glow": 680,
+    "techniques": [
+      "outrider",
+      "capacitor"
+    ],
+    "roster": [
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 2,
+        "damage": 1080,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 2,
+        "b": 0,
+        "damage": 767,
+        "volleys": 0
+      },
+      {
+        "id": "bell",
+        "a": 0,
+        "b": 2,
+        "damage": 0,
+        "volleys": 33
+      },
+      {
+        "id": "owl",
+        "a": 2,
+        "b": 0,
+        "damage": 0,
+        "volleys": 0
+      },
+      {
+        "id": "beam",
+        "a": 1,
+        "b": 0,
+        "damage": 991,
+        "volleys": 0
+      },
+      {
+        "id": "storm",
+        "a": 0,
+        "b": 0,
+        "damage": 310,
+        "volleys": 74
+      },
+      {
+        "id": "ballista",
+        "a": 1,
+        "b": 0,
+        "damage": 307,
+        "volleys": 0
+      },
+      {
+        "id": "owl",
+        "a": 0,
+        "b": 0,
+        "damage": 14,
+        "volleys": 0
+      }
+    ],
+    "healed": 0,
+    "leaks": 0,
+    "checkpoints": [
+      {
+        "wave": 0,
+        "glow": 441,
+        "light": 25
+      },
+      {
+        "wave": 10,
+        "glow": 86,
+        "light": 25
+      },
+      {
+        "wave": 11,
+        "glow": 358,
+        "light": 25
+      }
+    ]
+  },
+  {
+    "hero": "ivo",
+    "build": "Capacitor",
+    "buildIndex": 1,
+    "mode": "stormglass",
+    "map": 1,
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "glow": 992,
+    "techniques": [
+      "outrider",
+      "capacitor"
+    ],
+    "roster": [
+      {
+        "id": "wick",
+        "a": 0,
+        "b": 2,
+        "damage": 1111,
+        "volleys": 0
+      },
+      {
+        "id": "cracker",
+        "a": 2,
+        "b": 0,
+        "damage": 401,
+        "volleys": 0
+      },
+      {
+        "id": "bell",
+        "a": 0,
+        "b": 2,
+        "damage": 0,
+        "volleys": 116
+      },
+      {
+        "id": "owl",
+        "a": 2,
+        "b": 0,
+        "damage": 35,
+        "volleys": 0
+      },
+      {
+        "id": "beam",
+        "a": 1,
+        "b": 0,
+        "damage": 1306,
+        "volleys": 0
+      },
+      {
+        "id": "storm",
+        "a": 0,
+        "b": 0,
+        "damage": 338,
+        "volleys": 62
+      },
+      {
+        "id": "ballista",
+        "a": 0,
+        "b": 0,
+        "damage": 437,
+        "volleys": 0
+      },
+      {
+        "id": "owl",
+        "a": 0,
+        "b": 0,
+        "damage": 22,
+        "volleys": 0
+      }
+    ],
+    "healed": 0,
+    "leaks": 0,
+    "checkpoints": [
+      {
+        "wave": 0,
+        "glow": 441,
+        "light": 25
+      },
+      {
+        "wave": 10,
+        "glow": 12,
+        "light": 25
+      },
+      {
+        "wave": 11,
+        "glow": 193,
+        "light": 25
+      }
+    ]
+  }
+]

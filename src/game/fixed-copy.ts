@@ -1,3 +1,4 @@
+import {restorationLimit} from './watch-refinement'
 import type { Tower, Sim } from './sim'
 import { stageOf } from './fixed'
 import type { TowerId } from './defs'
@@ -12,20 +13,20 @@ export const STREAM_ROLES:Record<TowerId,readonly [string,string]>={
 }
 /** The immediate purchase, with the opportunity cost of choosing this branch. */
 export const STREAM_CHOICE:Record<TowerId,readonly [readonly[string,string],readonly[string,string]]>={
-  wick:[['A wider volley of sparks.','Light hits struggle with armour.'],['Piercing, armour-breaking sparks.','Fewer sparks per volley.']],
-  cracker:[['Wider, faster explosions.','Shots do not track runners.'],['Rockets track and burn foes.','Smaller blasts.']],
-  bell:[['Stronger slows, with damage.','Shorter reach.'],['Wider slows weaken armour.','A gentler slow.']],
-  owl:[['Faster, armour-breaking shots.','Less support for neighbours.'],['More reach and stored sunlight.','Less direct damage.']],
-  garden:[['Larger harvests every wave.','Gives up the defence branch.'],['Moths defend and earn glow.','Smaller harvests.']],
-  beam:[['Heavy damage through a line.','Shorter reach.'],['Long reach, sees hidden foes.','Less damage per target.']],
-  storm:[['Lightning jumps farther.','Light hits struggle with armour.'],['Stronger, armour-breaking arcs.','Shorter jumps.']],
-  ballista:[['Much heavier single hits.','Slower reload.'],['Faster bolts see hidden foes.','Less damage per bolt.']],
+  wick:[['More sparks per volley.','Weak against armour.'],['Pierce and break armour.','Fewer sparks.']],
+  cracker:[['Wider, faster blasts.','Can miss fast runners.'],['Rockets track and burn.','Smaller blasts.']],
+  bell:[['Stronger, damaging slows.','Shorter reach.'],['Wider armour-weakening tolls.','Weaker slow.']],
+  owl:[['Faster, heavy shots.','Less tower support.'],['Wider sight. Stores sunlight.','Less direct damage.']],
+  garden:[['More glow each wave.','Gives up the defence branch.'],['Moths defend and earn.','Smaller harvests.']],
+  beam:[['Heavy beam through a line.','Shorter reach.'],['Long reach. Sees hidden foes.','Less damage per target.']],
+  storm:[['Lightning jumps farther.','Weak against armour.'],['Stronger, heavy arcs.','Shorter jumps.']],
+  ballista:[['Much heavier single hits.','Slower reload.'],['Fast bolts see hidden foes.','Less damage per bolt.']],
 }
 export function streamChoice(sim:Sim,t:Tower,branch:0|1):readonly[string,string]{
   const copy=STREAM_CHOICE[t.id][branch]
   if(t.id==='owl'&&branch===1&&!sim.challenge.watchDepth)return ['More reach for nearby towers.',copy[1]]
   if(t.id==='storm'&&branch===0&&sim.towerStats(t.id,2,0).heavy)return [copy[0],'Less damage per hit.']
-  if(t.id==='garden'&&branch===0)return [copy[0],sim.challenge.hero==='ivo'?'Moths reload more slowly.':'Gives up attacking moths.']
+  if(t.id==='garden'&&branch===0)return [copy[0],sim.challenge.hero==='ivo'?'Moths reload more slowly.':'No attacking moths.']
   return copy
 }
 const n=(v:number)=>String(+v.toFixed(2))
@@ -44,7 +45,7 @@ export function upgradeBenefits(sim:Sim,t:Tower,branch:0|1,bundle=false) {
   if(next.stunEvery!==old.stunEvery)lines.push(`Stuns every ${next.stunEvery} tolls`)
   if(next.mothEvery&&!old.mothEvery)lines.push('Moths attack nearby foes')
   if(next.income!==old.income)lines.push(`Glow / wave ${n(old.income)} → ${n(next.income)}`)
-  if(next.lifePerWave>old.lifePerWave)lines.push(`Restores ${next.lifePerWave} light / full wave`)
+  if(next.lifePerWave>old.lifePerWave)lines.push(sim.challenge.refinedWatch?`Heals ${next.lifePerWave} / wave · ${Math.max(0,restorationLimit(sim.difficulty)-(sim.stats.lightRestored??0))} light left this watch`:`Restores ${next.lifePerWave} light / full wave`)
   if(next.lure>old.lure)lines.push(`Nearby kills +${Math.round(next.lure*100)}% glow`)
   if(next.auraRange!==old.auraRange)lines.push(`Nearby tower reach +${Math.round(next.auraRange*100)}%`)
   if(next.auraRate!==old.auraRate)lines.push(`Nearby tower fire rate +${Math.round(next.auraRate*100)}%`)

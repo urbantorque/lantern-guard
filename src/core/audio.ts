@@ -30,7 +30,7 @@ export const profileSound=(prefs:{muted:boolean;music:boolean;effects:boolean},s
 type Rate = { last: number; count: number }
 
 export class Sound {
-  constructor(private contextFactory?:()=>AudioContext){}
+  constructor(private contextFactory?:()=>AudioContext,private offlineRendering=false){}
   ctx: AudioContext | null = null
   private master!: GainNode
   private sfxBus!: GainNode
@@ -89,7 +89,7 @@ export class Sound {
       for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1
       this.applySettings()
     }
-    if (this.ctx.state !== 'running') void this.ctx.resume().catch(() => {})
+    if (!this.offlineRendering&&this.ctx.state !== 'running') void this.ctx.resume().catch(() => {})
     if (!this.ambienceStarted) this.startAmbience()
   }
 
@@ -137,7 +137,7 @@ export class Sound {
     o.connect(g).connect(bus ?? this.sfxBus)
     o.start(t)
     o.stop(t + a + d + 0.05)
-    o.onended=()=>{o.disconnect();g.disconnect()}
+    if(!this.offlineRendering)o.onended=()=>{o.disconnect();g.disconnect()}
     return { o, g, t }
   }
 
@@ -155,7 +155,7 @@ export class Sound {
     src.connect(f).connect(g).connect(bus ?? this.sfxBus)
     src.start(t, Math.random() * 1.5)
     src.stop(t + dur + 0.05)
-    src.onended=()=>{src.disconnect();f.disconnect();g.disconnect()}
+    if(!this.offlineRendering)src.onended=()=>{src.disconnect();f.disconnect();g.disconnect()}
     return { src, f, g, t }
   }
 
@@ -200,6 +200,15 @@ export class Sound {
       o.frequency.exponentialRampToValueAtTime(f*.68,this.ctx!.currentTime+.1)
       this.noise(.04,'lowpass',1600,.7,.04)
     }
+  }
+
+  /** Sparse tactical cues stay legible over crowds and never use the boss roar. */
+  tactic(kind:'ignite'|'spread'|'interrupt'|'charged'|'push'|'sun'){
+    if(!this.ok('tactic-'+kind,kind==='interrupt'?2:3))return
+    const note={ignite:50,spread:74,interrupt:81,charged:57,push:62,sun:69}[kind],freq=mtof(note)
+    if(kind==='interrupt'||kind==='sun'){this.tone(freq,'sine',.01,.45,.12);this.tone(freq*1.5,'sine',.015,.35,.045,undefined,.07)}
+    else if(kind==='ignite'||kind==='charged'){const {o,t}=this.tone(freq,'triangle',.008,.2,.13);o.frequency.exponentialRampToValueAtTime(freq*.5,t+.18);this.noise(.06,'bandpass',kind==='ignite'?800:2200,.7,.045)}
+    else{this.tone(freq,'sine',.025,.2,.05);this.noise(.07,'bandpass',kind==='push'?500:1500,.6,.025)}
   }
 
   crack() {
@@ -436,13 +445,23 @@ export class Sound {
     filter.frequency.setValueAtTime(note.voice==='pad'?1100:note.voice==='bass'?650:hero==='mira'?2600:4200,at)
     filter.connect(pan)
     const voice=note.voice,attack=voice==='pad'?.55:voice==='strings'?.24:voice==='reed'?.075:voice==='bass'?.018:.006
-    const main=this.tone(freq,['bass','bell','kick','marimba'].includes(voice)?'sine':'triangle',attack,note.length,note.gain,filter,when)
+    const main=this.tone(freq,['bass','bell','kick','marimba','felt','harp'].includes(voice)?'sine':'triangle',attack,note.length,note.gain,filter,when)
     if(voice==='kick')main.o.frequency.exponentialRampToValueAtTime(42,at+.12)
     else if(voice==='bell')this.tone(freq*2.001,'sine',.002,note.length*.42,note.gain*.26,filter,when)
     else if(voice==='marimba'){
       this.tone(freq*4,'sine',.001,.11,note.gain*.2,filter,when)
       this.tone(freq*9.2,'sine',.001,.045,note.gain*.05,filter,when)
       filter.frequency.exponentialRampToValueAtTime(750,at+.2)
+    }else if(voice==='felt'){
+      // Soft fundamental, short hammer partials and a detuned string pair.
+      this.tone(freq*2,'sine',.004,note.length*.48,note.gain*.24,filter,when)
+      this.tone(freq*3.002,'sine',.003,.16,note.gain*.065,filter,when)
+      this.tone(freq,'sine',.012,note.length*.85,note.gain*.2,filter,when,-3)
+      filter.frequency.setValueAtTime(2400,at);filter.frequency.exponentialRampToValueAtTime(700,at+.28)
+    }else if(voice==='harp'){
+      this.tone(freq*2,'sine',.003,note.length*.5,note.gain*.32,filter,when)
+      this.tone(freq*3,'sine',.002,note.length*.22,note.gain*.1,filter,when)
+      filter.frequency.setValueAtTime(3400,at);filter.frequency.exponentialRampToValueAtTime(900,at+.38)
     }else if(voice==='strings'){
       this.tone(freq,'sine',.28,note.length*.85,note.gain*.35,filter,when,-5)
       this.tone(freq*2,'sine',.34,note.length*.7,note.gain*.12,filter,when,4)
@@ -455,13 +474,13 @@ export class Sound {
       filter.frequency.exponentialRampToValueAtTime(hero==='mira'?650:900,at+note.length*.7)
       this.tone(freq*2,'sine',.003,note.length*.3,note.gain*.12,filter,when)
     }else if(voice==='pad')this.tone(freq,'sine',.65,note.length*.7,note.gain*.3,filter,when,4)
-    main.o.onended=()=>{main.o.disconnect();main.g.disconnect();filter.disconnect();pan.disconnect()}
+    if(!this.offlineRendering)main.o.onended=()=>{main.o.disconnect();main.g.disconnect();filter.disconnect();pan.disconnect()}
   }
 
   /** Renders the actual instrument graph into memory. Never connects to an audio device. */
   static async renderPreview(hero:AudioScene['hero']='sol',seconds=48){
     const offline=new OfflineAudioContext(2,Math.ceil(seconds*22050),22050)
-    const sound=new Sound(()=>offline as unknown as AudioContext)
+    const sound=new Sound(()=>offline as unknown as AudioContext,true)
     sound.settings=profileSound({muted:false,music:true,effects:true});sound.unlock()
     let scene:AudioScene={night:false,weather:'clear',hero,playing:true,wave:16}
     for(let step=0,at=0;at<seconds;step++){

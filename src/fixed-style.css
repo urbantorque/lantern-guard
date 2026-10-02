@@ -145,3 +145,25 @@ summary:focus-visible{outline:3px solid var(--gold);outline-offset:2px;border-ra
  .tower .upgrade-hint,.tower .tower-heading{display:none}.tower .branch-stats{margin:0}.tower .branch-stats>summary{min-height:36px}.tower .tower-synergy,.tower .tower-obstacle{margin-bottom:4px}
 }
 @media(max-width:480px){.expedition-card{grid-template-columns:48px minmax(0,1fr);padding:12px;gap:12px}.expedition-map .map-preview{width:40px;height:100px}.expedition-card h3{font-size:1.03rem}.map-caption .landmark-link{font-size:.68rem;padding:6px 8px}}
+
+/* Legible compact choices: shorter copy carries the larger type. */
+.branch-benefit,.quick-branches .branch-benefit{font-size:13px!important;line-height:1.35!important}
+.branch-cost,.quick-branches .branch-cost{font-size:12px!important;line-height:1.35!important}
+.quick-branches h3{font-size:14px;line-height:1.25}.quick-branches .live-purchase{font-size:13px}
+.technique-pairing{color:#bcdfd4;font-size:12px!important;line-height:1.35!important}
+.plot-hit.teaching{outline:2px solid #ffedb5;outline-offset:6px;box-shadow:0 0 0 11px #ffe4a125}
+@media(max-width:999px) and (orientation:portrait){
+ .drawer.tower.live-panel{height:292px;max-height:292px}.playing:has(.drawer.tower.live-panel) .game.inspecting{padding-bottom:292px}
+ .drawer.tower.live-panel:has(.specialised-upgrade){height:226px;max-height:226px}.playing:has(.drawer.tower.live-panel .specialised-upgrade) .game.inspecting{padding-bottom:226px}
+ .tower .quick-branches article{padding:8px}.tower .branch-cost{margin-bottom:6px!important}.watch-lesson{font-size:13px;line-height:1.4;max-width:calc(100% - 32px)}
+ .drawer.techniques.live-panel{height:304px;max-height:304px}.playing:has(.drawer.techniques.live-panel) .game.inspecting{padding-bottom:304px}
+}
+@media(orientation:landscape) and (max-height:500px){
+ .tower .quick-branches article{padding:6px}.tower .quick-branches h3{font-size:13px}.tower .branch-benefit{font-size:12px!important}.tower .branch-cost{font-size:12px!important}
+ .drawer.techniques.live-panel{width:392px}.playing:has(.drawer.techniques.live-panel) .game.inspecting{grid-template-columns:minmax(0,1fr) 404px}
+}
+
+@media(max-height:600px) and (orientation:landscape){
+ .techniques.live-panel:has(.technique-cards) .chosen-technique,.techniques.live-panel .drawer-body>p:first-child,.techniques.live-panel .drawer-body>h3{display:none}
+ .technique-cards .tradeoff{margin-bottom:7px}.technique-cards h3{margin-bottom:4px}
+}

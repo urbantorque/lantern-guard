@@ -1,0 +1,644 @@
+[
+  {
+    "hero": "sol",
+    "scenario": "seed-a",
+    "seed": 98117,
+    "variant": 0,
+    "build": "Wildfire",
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "healed": 0,
+    "leaks": 0,
+    "lastBoss": {
+      "type": "bloomheart",
+      "hp": 142,
+      "maxHp": 5040.75,
+      "segment": "e2"
+    },
+    "checkpoints": [
+      {
+        "wave": 10,
+        "glow": 224,
+        "light": 25,
+        "spent": 2407
+      },
+      {
+        "wave": 20,
+        "glow": 94,
+        "light": 25,
+        "spent": 6171
+      },
+      {
+        "wave": 30,
+        "glow": 209,
+        "light": 25,
+        "spent": 12439
+      },
+      {
+        "wave": 39,
+        "glow": 456,
+        "light": 25,
+        "spent": 19635
+      }
+    ]
+  },
+  {
+    "hero": "sol",
+    "scenario": "seed-b",
+    "seed": 98117,
+    "variant": 0,
+    "build": "Ignition",
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "healed": 0,
+    "leaks": 0,
+    "lastBoss": {
+      "type": "bloomheart",
+      "hp": 5,
+      "maxHp": 5040.75,
+      "segment": "m1"
+    },
+    "checkpoints": [
+      {
+        "wave": 10,
+        "glow": 224,
+        "light": 25,
+        "spent": 2407
+      },
+      {
+        "wave": 20,
+        "glow": 102,
+        "light": 25,
+        "spent": 6171
+      },
+      {
+        "wave": 30,
+        "glow": 145,
+        "light": 25,
+        "spent": 12491
+      },
+      {
+        "wave": 39,
+        "glow": 1067,
+        "light": 25,
+        "spent": 18987
+      }
+    ]
+  },
+  {
+    "hero": "sol",
+    "scenario": "greedy",
+    "seed": 1047,
+    "variant": 2,
+    "build": "Wildfire",
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "healed": 0,
+    "leaks": 0,
+    "lastBoss": {
+      "type": "bloomheart",
+      "hp": 0,
+      "maxHp": 5040.75,
+      "segment": "e2"
+    },
+    "checkpoints": [
+      {
+        "wave": 10,
+        "glow": 32,
+        "light": 25,
+        "spent": 2377
+      },
+      {
+        "wave": 20,
+        "glow": 112,
+        "light": 25,
+        "spent": 7804
+      },
+      {
+        "wave": 30,
+        "glow": 411,
+        "light": 25,
+        "spent": 15486
+      },
+      {
+        "wave": 39,
+        "glow": 64,
+        "light": 25,
+        "spent": 23827
+      }
+    ]
+  },
+  {
+    "hero": "sol",
+    "scenario": "no-garden",
+    "seed": 1047,
+    "variant": 2,
+    "build": "Wildfire",
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "healed": 0,
+    "leaks": 0,
+    "lastBoss": {
+      "type": "bloomheart",
+      "hp": 1,
+      "maxHp": 5040.75,
+      "segment": "e2"
+    },
+    "checkpoints": [
+      {
+        "wave": 10,
+        "glow": 222,
+        "light": 25,
+        "spent": 2407
+      },
+      {
+        "wave": 20,
+        "glow": 114,
+        "light": 25,
+        "spent": 6328
+      },
+      {
+        "wave": 30,
+        "glow": 1466,
+        "light": 25,
+        "spent": 10087
+      },
+      {
+        "wave": 39,
+        "glow": 134,
+        "light": 25,
+        "spent": 18340
+      }
+    ]
+  },
+  {
+    "hero": "sol",
+    "scenario": "legacy",
+    "seed": 1047,
+    "variant": 2,
+    "build": "Wildfire",
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "healed": 0,
+    "leaks": 0,
+    "lastBoss": {
+      "type": "bloomheart",
+      "hp": 307,
+      "maxHp": 5040.75,
+      "segment": "e2"
+    },
+    "checkpoints": [
+      {
+        "wave": 10,
+        "glow": 82,
+        "light": 25,
+        "spent": 2407
+      },
+      {
+        "wave": 20,
+        "glow": 32,
+        "light": 25,
+        "spent": 5991
+      },
+      {
+        "wave": 30,
+        "glow": 19,
+        "light": 25,
+        "spent": 13053
+      },
+      {
+        "wave": 39,
+        "glow": 920,
+        "light": 25,
+        "spent": 20533
+      }
+    ]
+  },
+  {
+    "hero": "mira",
+    "scenario": "seed-a",
+    "seed": 98117,
+    "variant": 1,
+    "build": "Still tide",
+    "won": false,
+    "wave": 15,
+    "light": 0,
+    "healed": 0,
+    "leaks": 28,
+    "lastBoss": {
+      "type": "toad",
+      "hp": 1,
+      "maxHp": 200,
+      "segment": "e2"
+    },
+    "checkpoints": [
+      {
+        "wave": 10,
+        "glow": 224,
+        "light": 25,
+        "spent": 2407
+      }
+    ]
+  },
+  {
+    "hero": "mira",
+    "scenario": "seed-b",
+    "seed": 98117,
+    "variant": 1,
+    "build": "Undertow",
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "healed": 0,
+    "leaks": 0,
+    "lastBoss": {
+      "type": "bloomheart",
+      "hp": 24,
+      "maxHp": 5040.75,
+      "segment": "e2"
+    },
+    "checkpoints": [
+      {
+        "wave": 10,
+        "glow": 224,
+        "light": 25,
+        "spent": 2407
+      },
+      {
+        "wave": 20,
+        "glow": 53,
+        "light": 25,
+        "spent": 6171
+      },
+      {
+        "wave": 30,
+        "glow": 1823,
+        "light": 25,
+        "spent": 10584
+      },
+      {
+        "wave": 39,
+        "glow": 635,
+        "light": 25,
+        "spent": 18987
+      }
+    ]
+  },
+  {
+    "hero": "mira",
+    "scenario": "greedy",
+    "seed": 1047,
+    "variant": 2,
+    "build": "Still tide",
+    "won": true,
+    "wave": 40,
+    "light": 22,
+    "healed": 6,
+    "leaks": 9,
+    "lastBoss": {
+      "type": "bloomheart",
+      "hp": 78,
+      "maxHp": 5040.75,
+      "segment": "e2"
+    },
+    "checkpoints": [
+      {
+        "wave": 10,
+        "glow": 32,
+        "light": 25,
+        "spent": 2377
+      },
+      {
+        "wave": 20,
+        "glow": 385,
+        "light": 22,
+        "spent": 7224
+      },
+      {
+        "wave": 30,
+        "glow": 152,
+        "light": 22,
+        "spent": 14678
+      },
+      {
+        "wave": 39,
+        "glow": 1117,
+        "light": 22,
+        "spent": 21349
+      }
+    ]
+  },
+  {
+    "hero": "mira",
+    "scenario": "no-garden",
+    "seed": 1047,
+    "variant": 2,
+    "build": "Still tide",
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "healed": 0,
+    "leaks": 0,
+    "lastBoss": {
+      "type": "bloomheart",
+      "hp": 14,
+      "maxHp": 5040.75,
+      "segment": "e2"
+    },
+    "checkpoints": [
+      {
+        "wave": 10,
+        "glow": 222,
+        "light": 25,
+        "spent": 2407
+      },
+      {
+        "wave": 20,
+        "glow": 147,
+        "light": 25,
+        "spent": 5975
+      },
+      {
+        "wave": 30,
+        "glow": 1466,
+        "light": 25,
+        "spent": 10087
+      },
+      {
+        "wave": 39,
+        "glow": 134,
+        "light": 25,
+        "spent": 18340
+      }
+    ]
+  },
+  {
+    "hero": "mira",
+    "scenario": "legacy",
+    "seed": 1047,
+    "variant": 2,
+    "build": "Still tide",
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "healed": 0,
+    "leaks": 0,
+    "lastBoss": {
+      "type": "bloomheart",
+      "hp": 1,
+      "maxHp": 5040.75,
+      "segment": "e2"
+    },
+    "checkpoints": [
+      {
+        "wave": 10,
+        "glow": 82,
+        "light": 25,
+        "spent": 2407
+      },
+      {
+        "wave": 20,
+        "glow": 184,
+        "light": 25,
+        "spent": 5802
+      },
+      {
+        "wave": 30,
+        "glow": 98,
+        "light": 25,
+        "spent": 12679
+      },
+      {
+        "wave": 39,
+        "glow": 375,
+        "light": 25,
+        "spent": 20533
+      }
+    ]
+  },
+  {
+    "hero": "ivo",
+    "scenario": "seed-a",
+    "seed": 98117,
+    "variant": 2,
+    "build": "Chainworks",
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "healed": 0,
+    "leaks": 0,
+    "lastBoss": {
+      "type": "bloomheart",
+      "hp": 9,
+      "maxHp": 5040.75,
+      "segment": "e2"
+    },
+    "checkpoints": [
+      {
+        "wave": 10,
+        "glow": 224,
+        "light": 25,
+        "spent": 2407
+      },
+      {
+        "wave": 20,
+        "glow": 88,
+        "light": 25,
+        "spent": 6274
+      },
+      {
+        "wave": 30,
+        "glow": 1427,
+        "light": 25,
+        "spent": 10253
+      },
+      {
+        "wave": 39,
+        "glow": 541,
+        "light": 25,
+        "spent": 18064
+      }
+    ]
+  },
+  {
+    "hero": "ivo",
+    "scenario": "seed-b",
+    "seed": 98117,
+    "variant": 2,
+    "build": "Capacitor",
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "healed": 0,
+    "leaks": 0,
+    "lastBoss": {
+      "type": "bloomheart",
+      "hp": 0,
+      "maxHp": 5040.75,
+      "segment": "e2"
+    },
+    "checkpoints": [
+      {
+        "wave": 10,
+        "glow": 224,
+        "light": 25,
+        "spent": 2407
+      },
+      {
+        "wave": 20,
+        "glow": 88,
+        "light": 25,
+        "spent": 6274
+      },
+      {
+        "wave": 30,
+        "glow": 1427,
+        "light": 25,
+        "spent": 10253
+      },
+      {
+        "wave": 39,
+        "glow": 541,
+        "light": 25,
+        "spent": 18064
+      }
+    ]
+  },
+  {
+    "hero": "ivo",
+    "scenario": "greedy",
+    "seed": 1047,
+    "variant": 2,
+    "build": "Chainworks",
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "healed": 0,
+    "leaks": 0,
+    "lastBoss": {
+      "type": "bloomheart",
+      "hp": 12,
+      "maxHp": 5040.75,
+      "segment": "e2"
+    },
+    "checkpoints": [
+      {
+        "wave": 10,
+        "glow": 32,
+        "light": 25,
+        "spent": 2377
+      },
+      {
+        "wave": 20,
+        "glow": 11,
+        "light": 25,
+        "spent": 7610
+      },
+      {
+        "wave": 30,
+        "glow": 193,
+        "light": 25,
+        "spent": 14678
+      },
+      {
+        "wave": 39,
+        "glow": 912,
+        "light": 25,
+        "spent": 21181
+      }
+    ]
+  },
+  {
+    "hero": "ivo",
+    "scenario": "no-garden",
+    "seed": 1047,
+    "variant": 2,
+    "build": "Chainworks",
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "healed": 0,
+    "leaks": 0,
+    "lastBoss": {
+      "type": "bloomheart",
+      "hp": 2,
+      "maxHp": 5040.75,
+      "segment": "e2"
+    },
+    "checkpoints": [
+      {
+        "wave": 10,
+        "glow": 222,
+        "light": 25,
+        "spent": 2407
+      },
+      {
+        "wave": 20,
+        "glow": 68,
+        "light": 25,
+        "spent": 6274
+      },
+      {
+        "wave": 30,
+        "glow": 1395,
+        "light": 25,
+        "spent": 10253
+      },
+      {
+        "wave": 39,
+        "glow": 505,
+        "light": 25,
+        "spent": 18064
+      }
+    ]
+  },
+  {
+    "hero": "ivo",
+    "scenario": "legacy",
+    "seed": 1047,
+    "variant": 2,
+    "build": "Chainworks",
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "healed": 0,
+    "leaks": 0,
+    "lastBoss": {
+      "type": "bloomheart",
+      "hp": 0,
+      "maxHp": 5040.75,
+      "segment": "e2"
+    },
+    "checkpoints": [
+      {
+        "wave": 10,
+        "glow": 82,
+        "light": 25,
+        "spent": 2407
+      },
+      {
+        "wave": 20,
+        "glow": 14,
+        "light": 25,
+        "spent": 5991
+      },
+      {
+        "wave": 30,
+        "glow": 110,
+        "light": 25,
+        "spent": 12679
+      },
+      {
+        "wave": 39,
+        "glow": 350,
+        "light": 25,
+        "spent": 20533
+      }
+    ]
+  }
+]

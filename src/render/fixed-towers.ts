@@ -1,7 +1,7 @@
 import type { TowerId } from '../game/defs'
 import type { HeroId } from '../game/heroes'
 import { CITY, block, polygon, plant, windows, isDaylit, lightPool } from './architecture'
-export interface Miniature { id:TowerId;a:number;b:number;refinement?:number;angle?:number;crest?:string;time?:number;since?:number;age?:number;upAge?:number;reducedMotion?:boolean;hero?:HeroId;charge?:number;mastery?:readonly string[] }
+export interface Miniature { id:TowerId;a:number;b:number;refinement?:number;angle?:number;crest?:string;time?:number;since?:number;age?:number;upAge?:number;reducedMotion?:boolean;hero?:HeroId;charge?:number;volleyCharge?:number;mastery?:readonly string[] }
 export const TOWER_COLOURS:Record<TowerId,{front:string;roof:string;side:string;accent:string}>={
   wick:{front:'#ed9850',roof:'#ffe2a7',side:'#a7464e',accent:'#ffcd63'},
   cracker:{front:'#df657e',roof:'#ffc5aa',side:'#853452',accent:'#ff9c87'},
@@ -16,7 +16,7 @@ export const TOWER_COLOURS:Record<TowerId,{front:string;roof:string;side:string;
 /** Shared anchor keeps muzzle flashes and departing shots attached to the actual roof. */
 export function fixedMuzzle(t:Miniature){
   const stage=t.refinement?4:Math.max(t.a,t.b),h=26+stage*3
-  return {x:t.id==='wick'?4:0,y:t.id==='beam'?-64-stage*7:t.id==='bell'?-30:t.id==='storm'?-h-40:t.id==='ballista'?-h-12:-h-24}
+  return {x:t.id==='wick'?4:0,y:t.id==='beam'?-64-stage*7:t.id==='bell'?-30:t.id==='storm'?-(h+(t.b>=2?63:40)):t.id==='ballista'?-h-12:-h-24}
 }
 
 /** Low-poly architectural keepers, drawn as vectors for clear phone-scale silhouettes. */
@@ -40,28 +40,6 @@ export function drawFixedTower(c:CanvasRenderingContext2D,x:number,y:number,t:Mi
     polygon(c,[[cx,cy-r],[cx+r*.65,cy],[cx,cy+r],[cx-r*.65,cy]],colour.accent)
     polygon(c,[[cx,cy-r],[cx,cy+r],[cx-r*.65,cy]],'#fffbe3b0')
     line([[cx,cy-r],[cx+r*.65,cy],[cx,cy+r]],'#fff4d2',1)
-  }
-  // Separate weapon architecture makes a branch recognisable without opening its sheet.
-  if(special){
-    const by=-h-9
-    if(t.id==='wick'&&t.b){
-      c.save();c.translate(4,by-17);c.rotate(t.angle??-.8)
-      polygon(c,[[-5,-6],[29-recoil*7,-6],[39-recoil*7,0],[29-recoil*7,6],[-5,6]],'#f7d78b')
-      line([[2,0],[34-recoil*7,0]],'#774e58',3);c.restore()
-    }
-    if(t.id==='bell'&&!t.b){c.strokeStyle='#67d6e2';c.lineWidth=5;c.beginPath();c.arc(5,-44,22,0,Math.PI*2);c.stroke()}
-    if(t.id==='owl'&&t.b){
-      c.fillStyle='#b9f2db55';c.beginPath();c.arc(0,by-35,27,Math.PI,Math.PI*2);c.fill()
-      line([[-30,by-35],[30,by-35]],'#d7eaa4',3)
-      for(const side of [-1,1])polygon(c,[[side*25,by-18],[side*43,by-28],[side*41,by-13],[side*26,by-8]],'#7abdc3')
-    }
-    if(t.id==='storm'&&t.b){
-      block(c,0,by-18,24,20,29,'#66518e','#cbb0ed','#393d70')
-      crystal(4,by-58,15)
-      c.strokeStyle='#f3e2ff';c.lineWidth=2;c.beginPath();c.ellipse(4,by-54,24,7,-.25,0,Math.PI*2);c.stroke()
-    }
-    if(t.id==='garden'&&!t.b){for(const side of [-1,1]){block(c,side*28,-6,16,20,13,'#539f74','#d3e59d','#285d5c');plant(c,side*28,-23,9)}}
-    if(t.id==='ballista'&&!t.b){for(const side of [-1,1]){block(c,side*27,-6,12,17,18,'#4888a1','#acd6d3','#30475e');line([[side*27,-15],[side*12,-h-8]],'#c4dcd2',4)}}
   }
   if(t.id==='wick'){
     house(0,-2,w,23,h);windows(c,0,-2,w,h,stage>=1?2:1)
@@ -146,6 +124,28 @@ export function drawFixedTower(c:CanvasRenderingContext2D,x:number,y:number,t:Mi
     c.restore()
   }
   c.fillStyle=t.crest==='ember'?'#b58b79':t.crest==='reed'?'#9fae89':t.crest==='tide'?'#91b2bd':'#c3baa0';c.fillRect(-15,-8,5,5)
+  // Separate weapon architecture makes a branch recognisable without opening its sheet.
+  if(special){
+    const by=-h-9
+    if(t.id==='wick'&&t.b){
+      c.save();c.translate(4,by-17);c.rotate(t.angle??-.8)
+      polygon(c,[[-5,-6],[29-recoil*7,-6],[39-recoil*7,0],[29-recoil*7,6],[-5,6]],'#f7d78b')
+      line([[2,0],[34-recoil*7,0]],'#774e58',3);c.restore()
+    }
+    if(t.id==='bell'&&!t.b){c.strokeStyle='#67d6e2';c.lineWidth=5;c.beginPath();c.arc(5,-44,22,0,Math.PI*2);c.stroke()}
+    if(t.id==='owl'&&t.b){
+      c.fillStyle='#b9f2db55';c.beginPath();c.arc(0,by-35,27,Math.PI,Math.PI*2);c.fill()
+      line([[-30,by-35],[30,by-35]],'#d7eaa4',3)
+      for(const side of [-1,1])polygon(c,[[side*25,by-18],[side*43,by-28],[side*41,by-13],[side*26,by-8]],'#7abdc3')
+    }
+    if(t.id==='storm'&&t.b){
+      block(c,0,by-18,24,20,29,'#66518e','#cbb0ed','#393d70')
+      crystal(4,by-58,15)
+      c.strokeStyle='#f3e2ff';c.lineWidth=2;c.beginPath();c.ellipse(4,by-54,24,7,-.25,0,Math.PI*2);c.stroke()
+    }
+    if(t.id==='garden'&&!t.b){for(const side of [-1,1]){block(c,side*28,-6,16,20,13,'#539f74','#d3e59d','#285d5c');plant(c,side*28,-23,9)}}
+    if(t.id==='ballista'&&!t.b){for(const side of [-1,1]){block(c,side*27,-6,12,17,18,'#4888a1','#acd6d3','#30475e');line([[side*27,-15],[side*12,-h-8]],'#c4dcd2',4)}}
+  }
   // Hero architecture changes the silhouette as well as its insignia.
   if(t.hero==='sol'){
     house(-w/2-3,-3,10,14,18+stage*2);c.fillStyle='#ffce85';c.fillRect(-w/2-6,-18,6,5)
@@ -157,6 +157,7 @@ export function drawFixedTower(c:CanvasRenderingContext2D,x:number,y:number,t:Mi
     for(const side of [-1,1]){line([[side*(w/2+3),-4],[side*(w/2+3),-h-12]],'#777db6',3);block(c,side*(w/2+3),-h-11,8,7,7,'#918ece','#dae1fa','#4b557f')}
     polygon(c,[[-4,-24],[6,-24],[0,-15],[7,-15],[-6,-4],[-2,-14],[-7,-14]],'#d5e8ff')
   }
+  if(t.volleyCharge!==undefined){for(let i=0;i<3;i++){const lit=i<t.volleyCharge;c.fillStyle=lit?'#e9f4ff':'#534e7c';c.beginPath();c.arc(-9+i*9,-h-10,3,0,Math.PI*2);c.fill();c.strokeStyle='#c9c4ed';c.lineWidth=1;c.stroke()}if(t.volleyCharge===2&&!t.reducedMotion)lightPool(c,0,-h-10,21,'#dbd8ff',.2+Math.sin(time*4)*.08,1)}
   // Each upgrade adds a readable rank mark to the base, including at phone scale.
   c.fillStyle=colour.accent;for(let i=0;i<=stage;i++)c.fillRect(-13+i*6,0,4,3)
   if(t.mastery?.includes('mastery:clear-water'))line([[-w/2,2],[w/2,2],[w/2+11,-9]],'#fff3d1',2)

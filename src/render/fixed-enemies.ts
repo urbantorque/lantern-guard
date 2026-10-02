@@ -144,6 +144,7 @@ export function drawFixedEnemy(c:CanvasRenderingContext2D,e:Enemy,reducedMotion=
     for(const side of [-1,1]){c.save();c.translate(side*hinge,-hinge*.4);fin(c,[[side*.04,-1.53],[side*.75,-1.28],[side*1.05,-.64],[side*.9,.04],[side*.2,.18],[side*.4,-.48]],col);stroke(c,[[side*.31,-1.35],[side*.67,-.92],[side*.72,-.35],[side*.37,.01]],'#916570',.07);c.restore()}
     for(const side of [-1,1]){stroke(c,[[side*.5,-.13],[side*.9,-.42]],'#aa9c88',.1);eye(c,side*.94,-.42,.105)}
   }
+  if(plated&&e.shell/e.maxShell<.28){stroke(c,[[.48,-1.02],[.26,-.72],[.51,-.47],[.3,-.13]],'#3d354f',.09);stroke(c,[[-.56,-.6],[-.36,-.48],[-.49,-.2]],'#fff0c5',.065)}
   if(fractured){stroke(c,[[-.21,-1],[-.06,-.72],[-.29,-.48],[.09,-.32]],'#503f54',.06);stroke(c,[[-.06,-.72],[.22,-.79]],'#fff0c5',.045)}
   if(e.hitT>0){c.strokeStyle='#fff3c3';c.lineWidth=.065;c.beginPath();c.arc(0,-.4,.72,Math.PI*1.03,Math.PI*1.77);c.stroke()}
   c.restore()

@@ -1,0 +1,482 @@
+[
+  {
+    "width": 320,
+    "height": 740,
+    "hero": "sol",
+    "tower": "wick",
+    "fits": [
+      true,
+      true
+    ]
+  },
+  {
+    "width": 320,
+    "height": 740,
+    "hero": "sol",
+    "tower": "cracker",
+    "fits": [
+      true,
+      true
+    ]
+  },
+  {
+    "width": 320,
+    "height": 740,
+    "hero": "sol",
+    "tower": "bell",
+    "fits": [
+      true,
+      true
+    ]
+  },
+  {
+    "width": 320,
+    "height": 740,
+    "hero": "sol",
+    "tower": "owl",
+    "fits": [
+      true,
+      true
+    ]
+  },
+  {
+    "width": 320,
+    "height": 740,
+    "hero": "sol",
+    "tower": "beam",
+    "fits": [
+      true,
+      true
+    ]
+  },
+  {
+    "width": 320,
+    "height": 740,
+    "hero": "sol",
+    "tower": "garden",
+    "fits": [
+      true,
+      true
+    ]
+  },
+  {
+    "width": 320,
+    "height": 740,
+    "hero": "sol",
+    "tower": "storm",
+    "fits": [
+      true,
+      true
+    ]
+  },
+  {
+    "width": 320,
+    "height": 740,
+    "hero": "sol",
+    "tower": "ballista",
+    "fits": [
+      true,
+      true
+    ]
+  },
+  {
+    "width": 320,
+    "height": 740,
+    "hero": "mira",
+    "tower": "wick",
+    "fits": [
+      true,
+      true
+    ]
+  },
+  {
+    "width": 320,
+    "height": 740,
+    "hero": "mira",
+    "tower": "cracker",
+    "fits": [
+      true,
+      true
+    ]
+  },
+  {
+    "width": 320,
+    "height": 740,
+    "hero": "mira",
+    "tower": "bell",
+    "fits": [
+      true,
+      true
+    ]
+  },
+  {
+    "width": 320,
+    "height": 740,
+    "hero": "mira",
+    "tower": "owl",
+    "fits": [
+      true,
+      true
+    ]
+  },
+  {
+    "width": 320,
+    "height": 740,
+    "hero": "mira",
+    "tower": "beam",
+    "fits": [
+      true,
+      true
+    ]
+  },
+  {
+    "width": 320,
+    "height": 740,
+    "hero": "mira",
+    "tower": "garden",
+    "fits": [
+      true,
+      true
+    ]
+  },
+  {
+    "width": 320,
+    "height": 740,
+    "hero": "mira",
+    "tower": "storm",
+    "fits": [
+      true,
+      true
+    ]
+  },
+  {
+    "width": 320,
+    "height": 740,
+    "hero": "mira",
+    "tower": "ballista",
+    "fits": [
+      true,
+      true
+    ]
+  },
+  {
+    "width": 320,
+    "height": 740,
+    "hero": "ivo",
+    "tower": "wick",
+    "fits": [
+      true,
+      true
+    ]
+  },
+  {
+    "width": 320,
+    "height": 740,
+    "hero": "ivo",
+    "tower": "cracker",
+    "fits": [
+      true,
+      true
+    ]
+  },
+  {
+    "width": 320,
+    "height": 740,
+    "hero": "ivo",
+    "tower": "bell",
+    "fits": [
+      true,
+      true
+    ]
+  },
+  {
+    "width": 320,
+    "height": 740,
+    "hero": "ivo",
+    "tower": "owl",
+    "fits": [
+      true,
+      true
+    ]
+  },
+  {
+    "width": 320,
+    "height": 740,
+    "hero": "ivo",
+    "tower": "beam",
+    "fits": [
+      true,
+      true
+    ]
+  },
+  {
+    "width": 320,
+    "height": 740,
+    "hero": "ivo",
+    "tower": "garden",
+    "fits": [
+      true,
+      true
+    ]
+  },
+  {
+    "width": 320,
+    "height": 740,
+    "hero": "ivo",
+    "tower": "storm",
+    "fits": [
+      true,
+      true
+    ]
+  },
+  {
+    "width": 320,
+    "height": 740,
+    "hero": "ivo",
+    "tower": "ballista",
+    "fits": [
+      true,
+      true
+    ]
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "hero": "sol",
+    "tower": "wick",
+    "fits": [
+      true,
+      true
+    ]
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "hero": "sol",
+    "tower": "cracker",
+    "fits": [
+      true,
+      true
+    ]
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "hero": "sol",
+    "tower": "bell",
+    "fits": [
+      true,
+      true
+    ]
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "hero": "sol",
+    "tower": "owl",
+    "fits": [
+      true,
+      true
+    ]
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "hero": "sol",
+    "tower": "beam",
+    "fits": [
+      true,
+      true
+    ]
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "hero": "sol",
+    "tower": "garden",
+    "fits": [
+      true,
+      true
+    ]
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "hero": "sol",
+    "tower": "storm",
+    "fits": [
+      true,
+      true
+    ]
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "hero": "sol",
+    "tower": "ballista",
+    "fits": [
+      true,
+      true
+    ]
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "hero": "mira",
+    "tower": "wick",
+    "fits": [
+      true,
+      true
+    ]
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "hero": "mira",
+    "tower": "cracker",
+    "fits": [
+      true,
+      true
+    ]
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "hero": "mira",
+    "tower": "bell",
+    "fits": [
+      true,
+      true
+    ]
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "hero": "mira",
+    "tower": "owl",
+    "fits": [
+      true,
+      true
+    ]
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "hero": "mira",
+    "tower": "beam",
+    "fits": [
+      true,
+      true
+    ]
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "hero": "mira",
+    "tower": "garden",
+    "fits": [
+      true,
+      true
+    ]
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "hero": "mira",
+    "tower": "storm",
+    "fits": [
+      true,
+      true
+    ]
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "hero": "mira",
+    "tower": "ballista",
+    "fits": [
+      true,
+      true
+    ]
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "hero": "ivo",
+    "tower": "wick",
+    "fits": [
+      true,
+      true
+    ]
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "hero": "ivo",
+    "tower": "cracker",
+    "fits": [
+      true,
+      true
+    ]
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "hero": "ivo",
+    "tower": "bell",
+    "fits": [
+      true,
+      true
+    ]
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "hero": "ivo",
+    "tower": "owl",
+    "fits": [
+      true,
+      true
+    ]
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "hero": "ivo",
+    "tower": "beam",
+    "fits": [
+      true,
+      true
+    ]
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "hero": "ivo",
+    "tower": "garden",
+    "fits": [
+      true,
+      true
+    ]
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "hero": "ivo",
+    "tower": "storm",
+    "fits": [
+      true,
+      true
+    ]
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "hero": "ivo",
+    "tower": "ballista",
+    "fits": [
+      true,
+      true
+    ]
+  }
+]

@@ -22,7 +22,7 @@
     "balance:reedbank": "tsx scripts/waterway-balance.ts",
     "ios:sync": "npm run build && cap sync ios",
     "ios:open": "cap open ios",
-    "check": "npm run typecheck && npm test && npm run test:release && npm run test:growth && npm run test:guard && npm run test:journey && npm run test:refinement && npm run test:gardens && npm run test:compact && npm run test:replay && npm run test:depth && npm run test:balance && npm run test:integrity && npm run test:fixed-storage && npm run test:fixed && npm run test:environment && npm run test:heroes && npm run test:hero-progression && npm run test:district-layout && npm run test:continuous && npm run test:audio && npm run test:experience && npm run test:watch-depth && npm run test:watch-craft && npm run test:living",
+    "check": "npm run typecheck && npm test && npm run test:release && npm run test:growth && npm run test:guard && npm run test:journey && npm run test:refinement && npm run test:gardens && npm run test:compact && npm run test:replay && npm run test:depth && npm run test:balance && npm run test:integrity && npm run test:fixed-storage && npm run test:fixed && npm run test:environment && npm run test:heroes && npm run test:hero-progression && npm run test:district-layout && npm run test:continuous && npm run test:audio && npm run test:experience && npm run test:watch-depth && npm run test:watch-craft && npm run test:living && npm run test:watch-refinement",
     "qa:fixtures": "tsx scripts/qa-fixtures.ts",
     "qa:gallery": "tsx scripts/gallery-fixtures.ts",
     "test:gardens": "tsx scripts/gardens-test.ts",
@@ -50,7 +50,9 @@
     "test:watch-craft": "tsx scripts/watch-craft-test.ts",
     "balance:watch-craft": "tsx scripts/watch-craft-balance.ts",
     "test:living": "tsx scripts/living-watch-test.ts",
-    "balance:living": "tsx scripts/living-watch-balance.ts"
+    "balance:living": "tsx scripts/living-watch-balance.ts",
+    "test:watch-refinement": "tsx scripts/watch-refinement-test.ts",
+    "balance:refinement": "tsx scripts/refinement-balance.ts"
   },
   "type": "module",
   "devDependencies": {

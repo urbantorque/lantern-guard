@@ -1,0 +1,14 @@
+{
+  "wave": 31,
+  "towers": 11,
+  "enemies": 8,
+  "medianDrawMs": 4.399999976158142,
+  "p95DrawMs": 17.80000001192093,
+  "light": 20,
+  "pressure": {
+    "enemies": 68,
+    "medianDrawMs": 8.899999976158142,
+    "p95DrawMs": 24.80000001192093
+  },
+  "errors": []
+}

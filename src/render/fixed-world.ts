@@ -66,7 +66,7 @@ export function drawFixedWorld(c:CanvasRenderingContext2D,s:Sim,view:ViewState,s
     if(item.t){const t=item.t;let a=arrivals.get(t);if(!a){a={born:s.time-t.bornT<.2?time:-9,upgrade:-9,lastUpgrade:t.upT,fire:t.fireT,shot:s.time-t.fireT<.2?time:-9,angle:t.angle,frame:time};arrivals.set(t,a)}if(a.lastUpgrade!==t.upT){a.lastUpgrade=t.upT;a.upgrade=time}
       if(a.fire!==t.fireT){a.fire=t.fireT;a.shot=time}
       const turn=Math.atan2(Math.sin(t.angle-a.angle),Math.cos(t.angle-a.angle));a.angle+=turn*Math.min(1,(time-a.frame)*18);a.frame=time
-      upright(c,t.x,t.y,wide,()=>drawFixedTower(c,t.x,t.y,{...t,angle:(reducedMotion?t.angle:a.angle)-(wide?Math.PI/2:0),crest,hero:s.challenge.hero,mastery:keepsakes,charge:1-Math.max(0,t.cd)/t.stats.interval,time:reducedMotion?0:time,since:reducedMotion?9:time-a.shot,age:reducedMotion?9:time-a.born,upAge:reducedMotion?9:time-a.upgrade,reducedMotion}))
+      upright(c,t.x,t.y,wide,()=>drawFixedTower(c,t.x,t.y,{...t,angle:(reducedMotion?t.angle:a.angle)-(wide?Math.PI/2:0),crest,hero:s.challenge.hero,mastery:keepsakes,volleyCharge:s.challenge.refinedWatch&&t.id==='storm'&&s.techniques.includes('capacitor')?t.tolls%3:undefined,charge:1-Math.max(0,t.cd)/t.stats.interval,time:reducedMotion?0:time,since:reducedMotion?9:time-a.shot,age:reducedMotion?9:time-a.born,upAge:reducedMotion?9:time-a.upgrade,reducedMotion}))
     }else {const e=item.e!;
       if(escortCover(s,e)){c.save();c.strokeStyle='#ffdda5aa';c.lineWidth=2.5;c.beginPath();c.arc(e.x,e.y,25,-Math.PI*.8,Math.PI*.1);c.stroke();c.restore()}
       upright(c,e.x,e.y,wide,()=>drawFixedEnemy(c,wide?{...e,tx:e.ty,ty:-e.tx}:e,reducedMotion))}
