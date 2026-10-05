@@ -1,0 +1,159 @@
+{
+  "rules": "siege1",
+  "waves": 40,
+  "acts": 5,
+  "bossWaves": [
+    8,
+    16,
+    24,
+    32,
+    40
+  ],
+  "checkpointWaves": [
+    0,
+    8,
+    16,
+    24,
+    32
+  ],
+  "regression": "passed",
+  "productionBuild": "passed",
+  "iosAssetSync": "passed",
+  "standard": {
+    "paidReferences": 12,
+    "wins": 8,
+    "everyKeeperBothPassages": true,
+    "failures": [
+      {
+        "hero": "sol",
+        "build": "Wildfire relay",
+        "passage": "convoy",
+        "wave": 40
+      },
+      {
+        "hero": "mira",
+        "build": "Frozen battery",
+        "passage": "convoy",
+        "wave": 40
+      },
+      {
+        "hero": "ivo",
+        "build": "Chain network",
+        "passage": "convoy",
+        "wave": 32
+      },
+      {
+        "hero": "ivo",
+        "build": "Chain network",
+        "passage": "runners",
+        "wave": 32
+      }
+    ],
+    "firstCrownWaves": [
+      {
+        "hero": "sol",
+        "build": "Wildfire relay",
+        "passage": "convoy",
+        "wave": 23
+      },
+      {
+        "hero": "sol",
+        "build": "Wildfire relay",
+        "passage": "runners",
+        "wave": 21
+      },
+      {
+        "hero": "sol",
+        "build": "Ignition siege",
+        "passage": "convoy",
+        "wave": 23
+      },
+      {
+        "hero": "sol",
+        "build": "Ignition siege",
+        "passage": "runners",
+        "wave": 19
+      },
+      {
+        "hero": "mira",
+        "build": "Frozen battery",
+        "passage": "convoy",
+        "wave": 21
+      },
+      {
+        "hero": "mira",
+        "build": "Frozen battery",
+        "passage": "runners",
+        "wave": 21
+      },
+      {
+        "hero": "mira",
+        "build": "Undertow corridor",
+        "passage": "convoy",
+        "wave": 23
+      },
+      {
+        "hero": "mira",
+        "build": "Undertow corridor",
+        "passage": "runners",
+        "wave": 24
+      },
+      {
+        "hero": "ivo",
+        "build": "Chain network",
+        "passage": "convoy",
+        "wave": 23
+      },
+      {
+        "hero": "ivo",
+        "build": "Chain network",
+        "passage": "runners",
+        "wave": 24
+      },
+      {
+        "hero": "ivo",
+        "build": "Capacitor bastion",
+        "passage": "convoy",
+        "wave": 23
+      },
+      {
+        "hero": "ivo",
+        "build": "Capacitor bastion",
+        "passage": "runners",
+        "wave": 23
+      }
+    ]
+  },
+  "nightfallSol": {
+    "paidReferences": 4,
+    "wins": 2
+  },
+  "browser": {
+    "viewports": [
+      {
+        "width": 1280,
+        "height": 800
+      },
+      {
+        "width": 390,
+        "height": 844
+      },
+      {
+        "width": 320,
+        "height": 740
+      },
+      {
+        "width": 844,
+        "height": 390
+      }
+    ],
+    "allPassed": true,
+    "qaOrigin": "http://127.0.0.1:5178",
+    "existingPreviewVerified": "http://127.0.0.1:5176"
+  },
+  "limits": [
+    "Automated strategies do not establish human win rates or enjoyment.",
+    "Physical iPhone performance and Xcode signing/archive are unverified.",
+    "Vite default 500 kB main-chunk advisory remains (approximately 199 kB gzip)."
+  ]
+}

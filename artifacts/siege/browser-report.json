@@ -1,0 +1,58 @@
+[
+  {
+    "width": 1280,
+    "height": 800,
+    "opening": true,
+    "saveResume": true,
+    "earlierSlots": true,
+    "actContinuity": true,
+    "passage": true,
+    "checkpointRetry": true,
+    "finalCombat": true,
+    "restoration": true,
+    "isolatedPractice": true,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "height": 844,
+    "opening": true,
+    "saveResume": true,
+    "earlierSlots": true,
+    "actContinuity": true,
+    "passage": true,
+    "checkpointRetry": true,
+    "finalCombat": true,
+    "restoration": true,
+    "isolatedPractice": true,
+    "errors": []
+  },
+  {
+    "width": 320,
+    "height": 740,
+    "opening": true,
+    "saveResume": true,
+    "earlierSlots": true,
+    "actContinuity": true,
+    "passage": true,
+    "checkpointRetry": true,
+    "finalCombat": true,
+    "restoration": true,
+    "isolatedPractice": true,
+    "errors": []
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "opening": true,
+    "saveResume": true,
+    "earlierSlots": true,
+    "actContinuity": true,
+    "passage": true,
+    "checkpointRetry": true,
+    "finalCombat": true,
+    "restoration": true,
+    "isolatedPractice": true,
+    "errors": []
+  }
+]

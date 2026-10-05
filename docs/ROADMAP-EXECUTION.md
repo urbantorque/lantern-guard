@@ -1,5 +1,7 @@
 # Nightward roadmap execution
 
+The short-mission campaign described below is the historical release. The primary campaign has since been replaced by [The Long Watch](CONTINUOUS-CAMPAIGN.md), a continuous 40-wave defence with persistent towers and act checkpoints. Earlier missions remain available as optional practice; their saved runs and earned rewards are retained.
+
 Approved 6 October 2026. Checkpoints are committed and pushed to `master`.
 
 ## Delivery ledger

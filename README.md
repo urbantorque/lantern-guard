@@ -2,7 +2,7 @@
 
 The city sleeps. You keep the light.
 
-Build a thoughtful defence through a canal district. Study the next wave, choose where to invest, and keep the city alight through a 24-wave chapter, a 12-wave expedition or 40-wave endurance.
+Build one defence through a continuous 40-wave campaign. Keep your towers, upgrades and remaining light across five escalating acts as the city reopens around the canal. Twelve-wave expeditions, short encounter practice and custom watches remain available.
 
 ![Nightward's lantern tower and nocturnal canal city](public/nightward-nocturne.png)
 
@@ -11,7 +11,7 @@ Build a thoughtful defence through a canal district. Study the next wave, choose
 - **Fifteen hostile invaders.** Guttermaws, Razorfins, Ironclaws, Wraith Rays, Cinderwings, Gallows Stalkers and ironclad rammers have independent anatomy and movement. Five boss silhouettes add thorn crowns, armoured spines, siege stacks and hinged grinding cores. Small luminous eyes, fangs, barbs and scarred plating replace the friendly faces. The Invaders guide explains every counter. Reduced motion freezes decorative animation.
 - **One signature, chosen early.** Choose at wave 4, or wave 3 in expeditions. Sol spreads or consumes fire, Mira freezes or pushes the tide, and Ivo chooses crowd chains or charged hits. The second support-technique choice is removed from new watches. Ivo's lightning arrives at wave 3 for 280 glow; Mira's chimes are available from the start.
 - **A deliberate command.** Bank a tower's shot, then choose its moment: Sol ignites burns, Mira freezes crowds or interrupts a boss signal, Ivo concentrates lightning into a chosen target. Designate the command tower in its inspection panel; highlighted targets and a live burn/interrupt readout preview the effect. Holding stops automatic fire. Q banks/releases; discard resumes fire and spends a held command for that wave.
-- **Choose your passage.** Restore an island jetty for a permanent thirteenth plot and 180 glow, or reopen a longer side canal for extra runner groups and 90 glow after each of three waves. The decision previews the actual plot and route. The decision arrives after wave 6 in expeditions, 12 in chapters and 20 in endurance.
+- **Choose your passage.** Restore an island jetty for a permanent thirteenth plot and 180 glow, or reopen a longer side canal for extra runner groups and 90 glow after each of three waves. The decision previews the actual plot and route. It arrives after campaign wave 16, before the hidden fleets and second entrance. Custom chapters, endurance and expeditions retain their original timing.
 - **Three heroes, eight towers each.** Sol brings fire and income, Mira brings control and shared sight, Ivo brings speed and electricity. Each roster has different mechanics, names and architecture; new watches use three stages: Base, Specialisation and Crown.
 - **Quick, live upgrades.** Compare two compact specialisations, commit to one and upgrade while combat continues. Each tower automatically aims for its role, with imminent leaks taking priority.
 - **Distinct crowns and chosen Bonds.** Compatible towers pair automatically over shared water. Choose a different partner or explicitly replace an occupied slot in the tower panel. Changing partners preserves cooldowns. Armour removal, reveals, interrupted healing and signature hits give support towers visible credit.
@@ -24,9 +24,10 @@ Build a thoughtful defence through a canal district. Study the next wave, choose
 - **A clearer battlefield.** Wide screens show the canal across the screen. Phones keep it vertical and frame the selected tower during upgrades. Glow updates immediately, without flying reward particles.
 - **Preview before spending.** Selecting a tower shows a ghost, covered water, coverage and compatible Bonds. Confirm the placement to pay. A lantern threat indicator remains visible while a phone drawer is open. Local cues mark the first effect of an upgrade, armour breaks and Bonds; the report recognises support contributions.
 - **The Dredger.** Sunforge's new final encounter opens its coral core at two marked bends. It takes 60% damage while closed and 140% while open. Slows extend the opportunity; heavy damage and overlapping coverage both help.
-- **Restore three named places.** The Night Market, Canal Observatory and Waterfront Gardens gain lit stalls, a moving telescope, flowering terraces and residents in the battlefield's existing safe spaces. Restorations announce themselves when earned. A brief, skippable neighbourhood celebration precedes each victory report.
+- **Restore three named places during the defence.** The Night Market, Canal Observatory and Waterfront Gardens gain lit stalls, a moving telescope, flowering terraces and residents in the battlefield's existing safe spaces. Act milestones stay on the board; the full campaign result appears after wave 40.
+- **Resume a long defence.** Live autosaves preserve the battle exactly. Standard and Gentle defeats can rewind to the current act's saved towers, budget and light. Nightfall ends the run on defeat. Closing the game never consumes a checkpoint.
 
-The original three five-wave District Commissions remain accessible from Expeditions. Expeditions and commissions share the short-watch save slot; the campaign has its own. Cosmetic rewards never increase combat power. Continuing an existing save preserves its rules; start a new campaign or expedition for the new strategic systems.
+The original three five-wave District Commissions remain accessible from Expeditions. The continuous campaign, earlier watches, expeditions and short practice have separate save slots. Existing saves keep their original rules, and earned restoration credit is retained. Cosmetic rewards never increase combat power.
 
 ## Play and develop
 
@@ -41,6 +42,9 @@ Open the local URL printed by Vite. Add `?muted=1` for a silent preview. Progres
 
 ```sh
 npm run check       # Regression suites, saves, sky rules and hero balance
+npm run test:siege  # Continuous campaign, act checkpoints and save isolation
+npm run balance:siege # Twelve paid 40-wave builds and exact boss resumes
+npm run qa:siege    # Paid fixtures and four-size browser campaign checks
 npm run test:second-watch # Current rules, map constructions, commands and exact saves
 npm run balance:second-watch # Six paid compositions, both passages and all watch formats
 npm run test:second-contracts # Nine paid contract completions under current rules
@@ -73,6 +77,8 @@ Development-only `?qa=1&muted=1` offers reproducible planning states at waves 0,
 The [GitHub Pages address](https://urbantorque.github.io/lantern-guard/) keeps its existing URL. A silent preview never changes your saved sound preference. Publish a clean, committed checkout with `./scripts/publish-pages.ps1`; the script builds and pushes the static site to `gh-pages`. See [deployment instructions](docs/WEB-DEPLOYMENT.md).
 
 ## Design and verification
+
+[The Long Watch: continuous 40-wave campaign, act checkpoints and in-run restoration](docs/CONTINUOUS-CAMPAIGN.md)
 
 [Second watch: boss counterplay, chosen commands, constructions and three-stage upgrades](docs/SECOND-WATCH-RELEASE.md)
 
