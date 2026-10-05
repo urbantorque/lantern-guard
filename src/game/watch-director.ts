@@ -120,6 +120,7 @@ export function directorLevel(level:LevelDef):LevelDef {
 }
 
 export const MOON_ARCHES=[{seg:'w1',fraction:.47},{seg:'e2',fraction:.38}] as const
+export const hasMoonArches=(c:Challenge)=>!!c.watchDirector&&(c.expedition==='moonwake'||c.mission==='moon-gates'||c.mission==='broken-formation')
 export function directorPreparation(c:Challenge,n:number):string|null {
   if(c.expedition&&n===4&&c.expedition==='moonwake')return 'Hidden fleets approach. Inspect the two revealing moon gates.'
   if(c.expedition&&n===6)return 'The side inlet opens. Prepare a second line of defence.'

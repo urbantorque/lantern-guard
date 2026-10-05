@@ -54,7 +54,7 @@ export function designatedTarget(s: Sim) {
 
 export function commandReadout(s:Sim, tower:Tower|null, targets:Sim['enemies']) {
   if (!tower) return 'Select a command tower in its inspection panel.'
-  const owner=`Plot ${tower.pad+1}`
+  const owner=`Plot ${tower.pad+1}${s.director?.command?.phase==='held'?' · tower paused':''}`
   if (s.challenge.hero==='sol') return `${owner} · ${targets.length} burns${targets.length?` · first expires in ${Math.min(...targets.map(e=>e.burnT)).toFixed(1)}s`:''}`
   if (s.challenge.hero==='mira') return `${owner} · ${targets.length} in reach${targets.some(e=>(e.signalT??0)>0)?' · INTERRUPT NOW':''}`
   const target=designatedTarget(s)

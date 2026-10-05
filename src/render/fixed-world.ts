@@ -1,6 +1,6 @@
 import {heartLantern} from './canal-art'
 import {lowerBend,lowerGuard} from '../game/watch-mastery'
-import {MOON_ARCHES,campaignUnlock,commandTower} from '../game/watch-director'
+import {MOON_ARCHES,hasMoonArches,commandTower} from '../game/watch-director'
 import {drawCanalShot,drawCanalBeam} from './shot-art'
 import { escortCover } from '../game/living-watch'
 import { upright, boardAngle } from './board-view'
@@ -26,7 +26,7 @@ function sharedWater(c:CanvasRenderingContext2D,s:Sim,a:Tower,b:Tower){
   for(const [width,colour] of [[13,'#76ffe14d'],[4,'#c3fff3']] as const){
     c.lineWidth=width;c.strokeStyle=colour
     for(const seg of s.level.segs.values()){
-      if(seg.id==='inlet'&&s.planningWave<(s.challenge.expedition?6:campaignUnlock(s.challenge,11)))continue
+      if(seg.id==='inlet'&&s.planningWave<(s.level.def.sources.find(q=>q.id==='west')?.openWave??99))continue
       let drawing=false;c.beginPath()
       for(let at=0;at<=seg.line.length;at+=4){const p=seg.line.at(at,{x:0,y:0,tx:0,ty:0}),covered=Math.hypot(p.x-a.x,p.y-a.y)<=ar&&Math.hypot(p.x-b.x,p.y-b.y)<=br;if(covered){if(drawing)c.lineTo(p.x,p.y);else c.moveTo(p.x,p.y)}drawing=covered}
       c.stroke()
@@ -47,7 +47,7 @@ export function drawFixedWorld(c:CanvasRenderingContext2D,s:Sim,view:ViewState,s
   drawLandmark(c,s,time,reducedMotion,wide)
   drawSunReserves(c,s,reducedMotion,wide)
   drawSecondWatch(c,s,time,reducedMotion,wide)
-  if(s.director&&s.challenge.expedition==='moonwake')for(const arch of MOON_ARCHES){
+  if(hasMoonArches(s.challenge))for(const arch of MOON_ARCHES){
     const seg=s.level.segs.get(arch.seg)!,p=seg.line.at(seg.line.length*arch.fraction,{x:0,y:0,tx:0,ty:0}),nx=-p.ty,ny=p.tx
     c.save();c.strokeStyle='#b1e7e2';c.lineWidth=3;c.shadowColor='#b5ffef';c.shadowBlur=reducedMotion?0:8
     c.beginPath();c.moveTo(p.x+nx*29,p.y+ny*29);c.lineTo(p.x-nx*29,p.y-ny*29);c.stroke();c.shadowBlur=0
@@ -62,7 +62,7 @@ export function drawFixedWorld(c:CanvasRenderingContext2D,s:Sim,view:ViewState,s
     const p=lowerBend(s),g=lowerGuard(s);c.save();c.strokeStyle=g.damage>=2&&g.scouts>=1?'#c8fff0':'#c6cbe9';c.lineWidth=2;c.setLineDash([5,4]);c.beginPath();c.arc(p.x,p.y,25,0,Math.PI*2);c.stroke();c.setLineDash([])
     upright(c,p.x,p.y,wide,()=>{c.font='600 11px "DM Sans Variable",sans-serif';c.textAlign='center';c.fillStyle=s.sky.night?'#d5edf5':'#2a485c';c.fillText('LAST LANTERN',p.x,p.y+43)});c.restore()
   }
-  if(s.challenge.watchCraft&&s.challenge.expedition==='sunforge'&&s.planningWave>=10){
+  if(s.challenge.watchCraft&&(s.challenge.expedition==='sunforge'&&s.planningWave>=10||!!s.challenge.story&&s.waveDef(Math.min(s.finalWave,s.planningWave)).groups.some(g=>g.type==='dredger'))){
     for(const bend of DREDGER_BENDS){const seg=s.level.segs.get(bend.segment);if(!seg)continue
       c.save();c.strokeStyle='#ffe0a4';c.lineWidth=3;c.setLineDash([4,7]);c.beginPath()
       for(let d=-DREDGER_WINDOW;d<=DREDGER_WINDOW;d+=5){const p=seg.line.at(seg.line.length*bend.fraction+d,{x:0,y:0,tx:0,ty:0});if(d===-DREDGER_WINDOW)c.moveTo(p.x,p.y);else c.lineTo(p.x,p.y)}c.stroke();c.setLineDash([])
@@ -83,7 +83,7 @@ export function drawFixedWorld(c:CanvasRenderingContext2D,s:Sim,view:ViewState,s
     c.setLineDash([5,5]);c.strokeStyle='#b699df';c.beginPath();c.arc(ghost.x,ghost.y,night,0,Math.PI*2);c.stroke();c.setLineDash([])
     c.strokeStyle='#ffe5a1';c.lineWidth=7;c.lineCap='round'
     for(const seg of s.level.segs.values()){
-      if(seg.id==='inlet'&&s.planningWave<(s.challenge.expedition?6:campaignUnlock(s.challenge,11)))continue
+      if(seg.id==='inlet'&&s.planningWave<(s.level.def.sources.find(q=>q.id==='west')?.openWave??99))continue
       let drawing=false;c.beginPath()
       for(let at=0;at<=seg.line.length;at+=5){const p=seg.line.at(at,{x:0,y:0,tx:0,ty:0}),covered=Math.hypot(p.x-ghost.x,p.y-ghost.y)<=reach;if(covered){if(drawing)c.lineTo(p.x,p.y);else c.moveTo(p.x,p.y)}drawing=covered}c.stroke()
     }

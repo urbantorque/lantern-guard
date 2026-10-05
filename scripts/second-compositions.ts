@@ -26,6 +26,7 @@ export const COMPOSITIONS:Record<HeroId,Composition[]>={
  ],
 }
 export function planComposition(s:Sim,index:number){
+ const inlet=s.challenge.story?s.level.def.sources.find(q=>q.id==='west')?.openWave??99:6
  const recipe=COMPOSITIONS[s.challenge.hero!][index],count=(id:TowerId)=>s.towers.filter(t=>t.id===id).length
  const path=(t:Tower)=>recipe.paths[t.id]??0
  const buy=(id:TowerId)=>{
@@ -34,10 +35,10 @@ export function planComposition(s:Sim,index:number){
   const candidates=s.pads.flatMap((p,i)=>!p.tower&&s.padRevealed(i)?[{p,i}]:[]).map(({p,i})=>{
    let score=0
    for(const seg of s.level.segs.values())for(let at=0;at<seg.line.length;at+=16){
-    if(seg.id==='inlet'&&s.planningWave<6)continue
+    if(seg.id==='inlet'&&s.planningWave<(s.challenge.story?inlet-1:inlet))continue
     const q=seg.line.at(at,{x:0,y:0,tx:0,ty:0});if(Math.hypot(p.x-q.x,p.y-q.y)<=stats.range)score+=seg.id==='m1'||seg.id==='e2'?1.5:1
    }
-   if(s.planningWave<7&&p.y>440)score*=.55
+   if(s.planningWave<(s.challenge.story?inlet-1:7)&&p.y>440)score*=.55
    if(id==='bell'||id==='owl')score+=s.towers.filter(t=>t.stats.damage>0&&Math.hypot(p.x-t.x,p.y-t.y)<stats.range).length*12
    if(id==='cracker'&&index===0&&count('cracker'))score+=s.towers.filter(t=>t.id==='cracker'&&Math.hypot(p.x-t.x,p.y-t.y)<stats.range*1.25).length*25
    if(id==='ballista'&&index===1)score+=s.towers.filter(t=>t.id==='cracker'&&Math.hypot(p.x-t.x,p.y-t.y)<stats.range).length*22
@@ -50,7 +51,8 @@ export function planComposition(s:Sim,index:number){
  }
  const needed=()=>{const seen:Partial<Record<TowerId,number>>={};return recipe.roster.find(id=>{seen[id]=(seen[id]??0)+1;return count(id)<seen[id]!&&s.keeperAllowed(id)})}
  for(let n=0;n<24;n++){
-  const want=needed(),limit=s.planningWave<4?2:s.planningWave<7?4:s.planningWave<10?6:recipe.roster.length
+  const hidden=s.challenge.story&&s.waveDef(Math.min(s.finalWave,s.planningWave)).groups.some(g=>['veil','vshell'].includes(g.type))
+  const want=hidden&&!count('owl')?'owl':needed(),limit=s.challenge.story?(s.planningWave<2?2:s.planningWave<3?3:s.planningWave<5?5:s.planningWave<8?7:recipe.roster.length):s.planningWave<4?2:s.planningWave<7?4:s.planningWave<10?6:recipe.roster.length
   if(want&&s.towers.length<limit&&buy(want))continue
   const upgrade=s.towers.filter(t=>{const cost=s.upgradeCost(t,path(t));return cost!==null&&cost<=s.glow}).sort((a,b)=>stageOf(a)-stageOf(b)||recipe.invest.indexOf(a.id)-recipe.invest.indexOf(b.id))[0]
   if(upgrade&&s.upgrade(upgrade,path(upgrade)))continue

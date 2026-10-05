@@ -8,9 +8,9 @@ Approved 6 October 2026. Checkpoints are committed and pushed to `master`.
 | --- | --- | --- |
 | 0 | Restoration repair, shared record decoder, bounded local playtest export | Implemented; typecheck, progression, storage and living-watch tests pass |
 | 1 | Guided First Lights mission, progressive learning, first restoration | Implemented; paid completion, exact saves, build and four browser sizes pass |
-| 2 | Placement consequences, direct targeting, signature counterplay, pacing | Planned |
-| 3 | Eight authored campaign missions across the four waterways | Planned |
-| 4 | Staged district restoration, keeper/resident character and next goals | Planned |
+| 2 | Placement consequences, direct targeting, signature counterplay, pacing | Implemented; release targeting checks pending |
+| 3 | Eight authored campaign missions across the four waterways | Implemented; 54 paid references, exact saves and route timings checked |
+| 4 | Staged district restoration, keeper/resident character and next goals | Implemented; progression invariants and four browser sizes pass |
 | 5 | Battlefield silhouette/material/feedback and mobile polish | Planned |
 | 6 | Automated/browser confirmation, balance reports and human/device test protocol | Planned |
 
@@ -33,3 +33,15 @@ Score targets are design ambitions, not automatically earned by shipping feature
 ## Scope constraints
 
 Eight tower roles, three upgrade stages, three keepers, predictable combat routes and cosmetic permanent rewards remain the foundation. Campaign content uses the existing four waterways. No energy timers, additional currencies, equipment grind or multiplayer are part of this delivery.
+
+## Phases 2–4
+
+Eight missions now alternate armour, hidden fleets, split entrances, repair escorts, close formations and isolated heavies before combining them in Last Bloom. Revealing arches use the actual reveal timers. Passage choices in missions 7 and 8 are permanent between-wave constructions; save restoration preserves their inlet timing. Other missions keep a single authored route.
+
+Placement previews sample the real paths and effective range, showing upper/final/side coverage, shared support water and the position’s tradeoff. Ivo can mark an enemy on the battlefield or use a target list. Held-command readouts explicitly identify the paused tower. Existing six signatures have authored favourable and unfavourable encounters throughout the campaign.
+
+The paid campaign matrix covers three keepers, two compositions and both passages where applicable. It records 49/54 wins. Every keeper has a winning paid reference on every mission. Failures are retained: chain builds struggle against some finales; an overly dispersed Undertow opening fails Last Bloom’s side approach. These are diagnostic bot strategies, not human win-rate estimates. Every run validates planning and mid-wave snapshots, exact continuation, and source timing after passage restoration.
+
+Each district project has three visible stages. Specific mission wins repair shutters, awnings, a lens and dome, terraces and planting before the final illumination. Nessa, Edda and Jori give the results personal context. Older watch achievements retain their restoration credit. Practice earns no permanent progress. The campaign result replaces the timed generic celebration and duplicate report with one restoration scene, a next-mission action and an optional detailed report.
+
+Opening, campaign selection, first restoration, save/resume and local log export pass at 1280×800, 390×844, 320×740 and 844×390. Physical-device and observed-player validation remains separate.

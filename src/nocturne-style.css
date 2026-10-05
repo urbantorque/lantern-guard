@@ -248,3 +248,11 @@
 .command-target-list button[aria-pressed=true]{border-color:#ebcc8d;color:#ffe5a9}
 .passage-map{display:block;width:100%;height:200px;border:1px solid #49666b;border-radius:5px;margin-bottom:16px}
 @media(max-width:480px){.command-readout{font-size:10px}.command-aim{padding:5px 9px}.passage-map{height:155px}}
+.aim-layer{position:absolute;inset:0;pointer-events:none;z-index:18;overflow:hidden}
+.aim-enemy{position:absolute;transform:translate(-50%,-50%);width:44px;height:44px;min-height:44px;pointer-events:auto;border:2px solid #ffdda0;border-radius:50%;background:#0d293963;color:#fff1ca;font-size:24px;line-height:1;text-shadow:0 1px 3px #000;box-shadow:0 0 0 2px #112f3e}
+.aim-enemy[aria-pressed=true]{background:#ad712b99;border-color:#fff}
+.aim-help{position:absolute;z-index:19;left:8px;right:8px;bottom:36px;display:flex;gap:8px;align-items:center;padding:8px;background:#102d3bf5;border:1px solid #b8a77a;color:#fff1cf;border-radius:8px;font-size:12px}
+.aim-help span{flex:1}.aim-help button{min-height:44px;padding:6px 10px;font-size:12px;flex:none}
+.coverage-zones{display:flex;gap:12px;border-bottom:1px solid #839a9b40;padding-bottom:10px}.coverage-zones span{flex:1;display:grid;gap:3px;font-size:11px}.coverage-zones b{font-size:20px;color:#ead3a0;font-variant-numeric:tabular-nums}.placement-tradeoff{background:#102b34;padding:14px;border-left:2px solid #b29c63;border-radius:4px;margin:10px 0}.placement-tradeoff p{margin:9px 0;font-size:13px}.placement-tradeoff small{color:#a9c8c5}
+.project-stages{list-style:none;padding:0;display:grid;gap:7px;margin:12px 0;font-size:12px;color:#92aaa9}.project-stages li{display:flex;align-items:center;gap:8px}.project-stages li.complete{color:#d6e8c4}.project-stages svg{width:16px;height:16px}.mission-report{margin:16px 0;border-top:1px solid #8e9f9640;padding-top:12px}.mission-report summary{min-height:44px;cursor:pointer;color:#b6c8c3}.story-reward .district-panorama{margin:12px 0 18px}.result .story-reward{border:0;padding:0;background:none}.result .story-reward p{font-size:20px;line-height:1.5;color:#efe2c4}.result .story-reward small{color:#a5beba}
+.aim-layer[hidden],.aim-help[hidden]{display:none}

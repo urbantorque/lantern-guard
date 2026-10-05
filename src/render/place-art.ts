@@ -9,17 +9,18 @@ function flower(c:CanvasRenderingContext2D,x:number,y:number,col:string,open:boo
 }
 
 /** The same earned buildings appear in the district portrait and battlefield. */
-export function drawProjectMiniature(c:CanvasRenderingContext2D,x:number,y:number,id:ProjectId,on:boolean,col:string,night:boolean){
- c.save();c.translate(x,y);const m={...pottery,front:on?pottery.front:'#526f70',roof:on?pottery.roof:'#95a99a'},accent=on?col:'#6b8986'
+export function drawProjectMiniature(c:CanvasRenderingContext2D,x:number,y:number,id:ProjectId,stage:number|boolean,col:string,night:boolean){
+ const progress=typeof stage==='boolean'?(stage?3:0):stage,on=progress>=3
+ c.save();c.translate(x,y);const m={...pottery,front:progress?pottery.front:'#526f70',roof:progress?pottery.roof:'#95a99a'},accent=progress>=2?col:'#6b8986'
  oval(c,6,6,40,12,'#0d2c3938');vessel(c,0,3,36,12,6,STONE)
  if(on&&night)lightPool(c,0,-20,60,col,.35)
  if(id==='market'){
   vessel(c,0,-4,27,9,32,m)
-  for(const dx of [-15,0,15])arch(c,dx,-9,7,18,on&&night?'#ffdfa2':'#274e54')
+  for(const dx of [-15,0,15]){arch(c,dx,-9,7,18,progress>0&&night?'#ffdfa2':'#274e54');if(progress===0)for(let j=0;j<3;j++)line(c,[[dx-4,-11-j*5],[dx+4,-11-j*5]],'#859084',2)}
   polygon(c,[[-32,-39],[0,-61],[32,-39],[0,-31]],'#b88167');line(c,[[-32,-39],[0,-31],[32,-39]],BRASS.front,2)
   for(const dx of [-21,0,21]){
    vessel(c,dx,0,10,5,12,m);for(const side of [-1,1])line(c,[[dx+side*9,-6],[dx+side*9,-28]],BRASS.side,1.5)
-   c.fillStyle=accent;c.beginPath();c.moveTo(dx-12,-27);c.quadraticCurveTo(dx,-35,dx+12,-27);c.lineTo(dx+12,-19);c.quadraticCurveTo(dx+8,-15,dx+4,-19);c.quadraticCurveTo(dx,-15,dx-4,-19);c.quadraticCurveTo(dx-8,-15,dx-12,-19);c.closePath();c.fill();line(c,[[dx-4,-28],[dx-4,-19]],'#fff0c477',2)
+   if(progress>=2){c.fillStyle=accent;c.beginPath();c.moveTo(dx-12,-27);c.quadraticCurveTo(dx,-35,dx+12,-27);c.lineTo(dx+12,-19);c.quadraticCurveTo(dx+8,-15,dx+4,-19);c.quadraticCurveTo(dx,-15,dx-4,-19);c.quadraticCurveTo(dx-8,-15,dx-12,-19);c.closePath();c.fill();line(c,[[dx-4,-28],[dx-4,-19]],'#fff0c477',2)}
    if(on)for(let j=0;j<3;j++)orb(c,dx-5+j*5,-11,2.2,j%2?'#e8bf83':'#bfcd87','#697b60')
   }
   if(on){line(c,[[-33,-35],[0,-30],[33,-35]],'#f4d6a590',.8);for(let i=0;i<7;i++)orb(c,-30+i*10,-33+Math.sin(i*Math.PI/6)*3,1.6,BRASS.roof,BRASS.side)}
@@ -29,14 +30,17 @@ export function drawProjectMiniature(c:CanvasRenderingContext2D,x:number,y:numbe
   const g=c.createLinearGradient(-25,0,25,0);g.addColorStop(0,'#455f66');g.addColorStop(.4,accent);g.addColorStop(1,'#566b76');c.fillStyle=g;c.beginPath();c.ellipse(0,-55,25,23,0,Math.PI,TAU);c.fill()
   for(const side of [-1,1]){c.strokeStyle='#f3dfae77';c.lineWidth=1;c.beginPath();c.moveTo(0,-78);c.quadraticCurveTo(side*14,-69,side*16,-55);c.stroke()}
   gem(c,0,-80,3,BRASS);line(c,[[-30,-49],[30,-49]],BRASS.roof,1.5)
+  if(progress<2){for(const dx of [-29,29])line(c,[[dx,0],[dx,-72]],'#9d8a69',2);for(const y of [-18,-38,-60])line(c,[[-29,y],[29,y]],'#9d8a69',1.3)}
+  if(progress>=1){orb(c,0,-39,6,'#c0e7e0','#4a7c85');if(night)lightPool(c,0,-39,13,'#c0e7e0',.4)}
   for(const side of [-1,1]){line(c,[[side*28,-8],[side*28,-40]],BRASS.side,1.2);orb(c,side*28,-41,2.3,on?'#fbe0aa':'#718d89',BRASS.side)}
  }else{
   vessel(c,0,-4,29,10,9,m);oval(c,0,-15,27,9,'#46664e')
-  for(let i=0;i<7;i++)flower(c,(i-3)*8,-14-Math.sin(i)*3,accent,on)
+  if(progress>=2)for(let i=0;i<7;i++)flower(c,(i-3)*8,-14-Math.sin(i)*3,accent,on)
+  if(progress===0)for(let i=0;i<6;i++)leaf(c,(i-3)*10,-10,20,i*.6,'#526d65')
   c.strokeStyle=on?'#bfd9c291':'#748f8b';c.lineWidth=1.7;c.beginPath();c.ellipse(0,-34,30,28,0,Math.PI,TAU);c.lineTo(30,-12);c.stroke()
   c.beginPath();c.ellipse(0,-34,16,28,0,Math.PI,TAU);c.lineTo(16,-11);c.stroke();line(c,[[0,-62],[0,-8]],'#dddcc094',1.3)
   gem(c,0,-64,3,BRASS)
-  for(const side of [-1,1]){vessel(c,side*30,0,7,4,8,BRASS);flower(c,side*30,-10,accent,on)}
+  for(const side of [-1,1]){vessel(c,side*30,0,7,4,8,BRASS);if(progress>=2)flower(c,side*30,-10,accent,on)}
  }
  c.restore()
 }

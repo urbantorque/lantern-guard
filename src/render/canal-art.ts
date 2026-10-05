@@ -53,8 +53,8 @@ export function paintCanalLandscape(c:CanvasRenderingContext2D,s:Sim,stage:numbe
  for(const p of districtLayout(s))upright(c,p.x,p.y,wide,()=>{
   const {x,y,style}=p
   if(p.kind==='tree'){oval(c,x+9,y+3,28,10,day?'#183f4430':'#071e3033');line(c,[[x,y],[x-2,y-31]],day?'#6d6a4f':'#344f52',5);line(c,[[x-1,y-15],[x-12,y-33]],day?'#827653':'#40575a',2.5);return}
-  const project=PROJECTS[houseIndex++%3],restored=keepsakes.find(k=>k.startsWith('project:'+project.id+':'))
-  if(restored){c.save();c.translate(x,y);c.scale(.8,.8);drawProjectMiniature(c,0,0,project.id,true,project.colours[restored.endsWith(':1')?1:0],!day);c.restore();return}
+  const project=PROJECTS[houseIndex++%3],restored=keepsakes.find(k=>k.startsWith('project:'+project.id+':')),restoration=Number(keepsakes.find(k=>k.startsWith('stage:'+project.id+':'))?.split(':')[2]??0)
+  if(restored||restoration){c.save();c.translate(x,y);c.scale(.8,.8);drawProjectMiniature(c,0,0,project.id,restored?3:restoration,project.colours[restored?.endsWith(':1')?1:0],!day);c.restore();return}
   const w=34+style%2*5,h=(urban?46:28)+style%3*5,[front,roof,side]=urban?['#71837f','#a7b3a0','#314f5b']:mat.walls
   oval(c,x+8,y+4,37,15,day?'#294e442b':'#0c283331');vessel(c,x,y+2,31,10,3,STONE)
   if(!day)lightPool(c,x,y,40,'#ffce91',.42)

@@ -9,7 +9,7 @@ import { fixedLevel, fixedWave, fixedStats, FIXED_UNLOCK, stageOf, upgradePrice,
 import { tacticalWave, breachDetail, EXPOSED_BONUS, type BreachDetail } from './watch-tactics'
 import { freshMastery, masteryStats, masteryWave, lowerGuard, commandAvailable, surgeTarget, type WatchMastery, type ContractId } from './watch-mastery'
 import { secondWatch, passageLevel, secondWave, designatedTarget, JETTY_PAD } from './second-watch'
-import { freshDirector, campaignBeat, campaignUnlock, campaignReward, shortCampaign, authoredExpedition, passageWave, passagePending, commandTower, commandTargets, COMMANDS, MOON_ARCHES, type DirectorState, type Passage } from './watch-director'
+import { freshDirector, campaignBeat, campaignUnlock, campaignReward, shortCampaign, authoredExpedition, passageWave, passagePending, commandTower, commandTargets, COMMANDS, MOON_ARCHES,hasMoonArches, type DirectorState, type Passage } from './watch-director'
 import { heroStats, heroTower, heroHitSlow, type HeroId } from './heroes'
 import { contactTime } from './projectile-collision'
 import { skyAt, skyReach, skyRate, skyDamage, skySpeed, gardenYield, type ClimateState } from './environment'
@@ -1595,7 +1595,7 @@ export class Sim {
       const prevS = e.s
       const prevSeg = e.seg
       e.s += speed * dt
-      if(this.director&&this.challenge.expedition==='moonwake')for(const arch of MOON_ARCHES){
+      if(hasMoonArches(this.challenge))for(const arch of MOON_ARCHES){
         const at=e.seg.line.length*arch.fraction
         if(e.seg.id===arch.seg&&prevS<at&&e.s>=at){e.seenT=Math.max(e.seenT,6);if(e.def.hidden)this.events.push({t:'craft',kind:'debut',x:e.x,y:e.y,label:'Moon gate · revealed for 6s'})}
       }
@@ -2500,6 +2500,8 @@ export class Sim {
   private applyPassage(){
     if(!secondWatch(this.challenge)||!this.director?.passage)return
     this.level=buildLevel(passageLevel(fixedLevel(this.challenge.variant,!!this.challenge.livingWatch,true),this.director.passage))
+    const m=storyMission(this.challenge)
+    if(m)this.level.def.sources=this.level.def.sources.map(s=>({...s,openWave:s.id==='west'?m.inlet:s.openWave}))
     while(this.pads.length<this.level.def.pads.length)this.pads.push({...this.level.def.pads[this.pads.length],tower:null})
     this.recomputeRoutes();this.buildGateDistances()
   }
