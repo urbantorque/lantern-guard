@@ -1,4 +1,5 @@
 import { secondWatch, SECOND_STAGES, commandReadout, designatedTarget, passageDescription } from './game/second-watch'
+import { localPlaytest } from './game/playtest-log'
 import { passagePreview, SECOND_SIGNATURES } from './ui/second-watch'
 import { MASTERY_RULES, masteryTechnique, CONTRACTS, contractDef, contractStatus, commandAvailable, cleanupSpeed, type ContractId } from './game/watch-mastery'
 import { FrameBudget } from './render/frame-budget'
@@ -69,6 +70,7 @@ export class FixedApp {
   private momentUntil=0
   private sessionMuted=false
   private frameBudget=new FrameBudget()
+  private playtest=localPlaytest()
   private nextWaveIn:number|null=null
   private buildGhost:TowerId|null=null
   private preparedWave=0
@@ -108,6 +110,7 @@ export class FixedApp {
     if(this.renderer) { this.renderer.settings={calmFx:true,reduceMotion:this.profile.settings.reducedMotion,shake:false}; this.renderer.setBigText(this.profile.settings.largeText) }
   }
   private home() {
+    this.playtest.record('leave-watch',{wave:this.sim?.wave??0});this.playtest.flush()
     sound.beam(0);document.body.classList.remove('playing')
     this.save();this.rehearsal=null;this.sim=null;this.renderer=null;this.observer?.disconnect();this.drawer='';this.nextWaveIn=null
     $('app').innerHTML=titleScreen(this.profile,loadWatch('campaign')?.snapshot,loadWatch('commission')?.snapshot)
@@ -180,6 +183,7 @@ export class FixedApp {
     this.writePlanning(this.sim!.snapshot()); this.save()
   }
   private begin(sim:Sim,blooms:number[]=[]) {
+    this.playtest.start({hero:sim.challenge.hero??'original',map:sim.challenge.variant??0,rules:sim.challenge.watchDirector??0,format:sim.challenge.id??'watch',wave:sim.wave,width:innerWidth,height:innerHeight})
     this.rehearsal=null
     if(!sim.isChallenge)this.endurance=!!sim.challenge.endurance
     document.body.classList.add('playing')
@@ -450,6 +454,7 @@ export class FixedApp {
   private settings() {
     const s=this.profile.settings
     this.show('Make yourself comfortable',`<h3>Sound</h3>${this.sessionMuted?'<p class="notice">This playtest link is silent. Your saved sound preference is unchanged.</p>':''}<div class="setting-list">${button('setting:muted',`<span>Sound</span><b>${s.muted?'Off':'On'}</b>`,'',this.sessionMuted)}${([['music','Soundtrack & atmosphere'],['effects','Combat sounds'],['largeText','Larger text'],['reducedMotion','Reduced motion'],['clearPalette','Distinct colours']] as const).map(([key,name])=>`<button data-action="setting:${key}" role="switch" aria-checked="${s[key]}"><span>${name}</span><b>${s[key]?'On':'Off'}</b></button>`).join('')}</div><p class="muted">Reduced motion stills the water, weather and tower animation and softens combat effects. The watch continues while you build or browse. Switching apps protects your run and silences sound; returning continues it.</p><h3>District crest</h3><p class="small muted">A cosmetic detail on your towers. Your hero stays the same.</p><div class="segmented">${['lantern','ember','reed','tide'].map(g=>button('guardian:'+g,g[0].toUpperCase()+g.slice(1),this.guardian===g?'selected':'')).join('')}</div><p class="small muted">Keyboard: Tab moves between controls and plots. Enter selects. Escape closes a panel.</p>`,'settings')
+    document.querySelector('.settings .drawer-body')?.insertAdjacentHTML('beforeend',`<h3>Local playtest recording</h3><p class="small muted">Optional game events stay on this device. Export them yourself to review purchases, commands and mission timing. Nothing is uploaded.</p><div class="setting-list">${button('playtest-toggle','Recording · '+(this.playtest.enabled?'On':'Off'))}${button('playtest-export','Export playtest log')}${button('playtest-clear','Clear recording')}</div>`)
   }
   private menu() {const s=this.sim!;this.show('Your watch',`${button('roster',s.challenge.hero?HEROES[s.challenge.hero].name+' · View eight towers':'Original district roster','hero-roster-link secondary wide')}<p>${WATCH_NAMES[this.map]} · ${DIFFICULTY[this.difficulty].name}${this.sim?.challenge.practice?' · Practice':''}</p>${s.challenge.contract?button('contract-status','Mastery contract','secondary wide'):''}${s.director||s.challenge.watchMastery&&s.challenge.hero==='ivo'&&s.challenge.expedition==='sunforge'?button('surge-help','Hero command guide','secondary wide'):''}${button('forecast','Wave forecast','secondary wide')}${button('bestiary','Creature guide','secondary wide')}${s.challenge.watchCraft?button('techniques','Watch techniques','secondary wide'):''}${button('sky','Day, night & weather','secondary wide')}${button('district','District & journal','secondary wide')}${button('settings','Settings','secondary wide')}${this.rehearsal?button('practice-return','Leave practice · return to report','secondary wide'):button('home','Save & return to district','secondary wide')}<p class="small muted">Waves never advance while you are away.</p>`,'menu')}
   private result() {
@@ -498,6 +503,10 @@ export class FixedApp {
   }
   private action(action:string) {
     const [cmd,a,b]=action.split(':'),s=this.sim
+    this.playtest.record('action',{action,wave:s?.wave??0,glow:Math.floor(s?.glow??0)})
+    if(cmd==='playtest-toggle'){this.playtest.setEnabled(!this.playtest.enabled);if(this.playtest.enabled)this.playtest.start({format:s?.challenge.id??'menu',wave:s?.wave??0});this.settings();return}
+    if(cmd==='playtest-export'){const url=URL.createObjectURL(new Blob([this.playtest.export()],{type:'application/json'})),link=document.createElement('a');link.href=url;link.download='nightward-playtest.json';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);return}
+    if(cmd==='playtest-clear'){this.playtest.clear();this.settings();return}
     if(cmd==='fixture'&&import.meta.env.DEV&&['0','15','30','39','day','night','dredger'].includes(a)) {
       void fetch(`${import.meta.env.BASE_URL}artifacts/${a==='dredger'?'craft-dredger-active':`fixed-wave-${a==='day'||a==='night'?'39':a}`}.json`).then(r=>r.json()).then((snap:SaveSnapshotV2)=>{this.qa=true;if(a==='day'||a==='night')snap.climate={elapsed:a==='day'?0:DAY_SECONDS,waveSeconds:0,gardenExposure:0};snap.challenge.hero=this.hero;snap.challenge.watchDepth=DEPTH_RULES;snap.challenge.watchCraft=CRAFT_RULES;snap.techniques=[];this.begin(Sim.restore(snap))})
       return
@@ -588,11 +597,13 @@ export class FixedApp {
     if(s&&r) {
       const frameStart=performance.now()
       const hidden=document.hidden||this.background
+      if(!hidden)this.playtest.tick(dt)
       this.nextWaveIn=waveCountdown(this.nextWaveIn,dt,s.towers.length>0||s.wave>s.waveOffset,s.waveActive,hidden||this.preparing,!!s.over)
       if(this.nextWaveIn===0&&!hidden&&!this.preparing)this.startNextWave()
       if(!hidden&&s.waveActive&&!s.over){this.accumulator+=dt*WATCH_TEMPO*(this.drawer?1:cleanupSpeed(s));while(this.accumulator>=DT&&s.waveActive&&!s.over){s.step(DT);this.accumulator-=DT}}
       else this.accumulator=0
       for(const e of s.events) {
+        if(['build','upgrade','sell','leak','waveStart','waveEnd','victory','defeat'].includes(e.t)){this.playtest.record(e.t,{wave:s.wave,glow:Math.floor(s.glow),light:s.lives,...('tower' in e?{tower:e.tower}:{}),...('weight' in e?{lost:e.weight}:{})});if(['waveEnd','victory','defeat'].includes(e.t))this.playtest.flush()}
         if(s.director&&e.t==='craft'&&/Ignition|Stillwater|Discharge|Shatterburst|Beacon Volley/.test(e.label)){this.moment=e.label;this.momentUntil=s.time+2.8}
         if(s.director&&e.t==='tactic'&&e.kind==='interrupt'){this.moment='Interrupted · heavy hits have an opening';this.momentUntil=s.time+3.2}
         if(e.t==='waveEnd') {

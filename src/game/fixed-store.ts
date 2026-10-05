@@ -1,5 +1,6 @@
 import { CONTRACTS, contractStatus } from './watch-mastery'
 import { campaignBeat } from './watch-director'
+import { watchRecord } from './record-view'
 import { validStyles, type ProjectId } from './district-projects'
 import { decodeRun, encodeRun, storageChanged, validSnapshot } from './save-store'
 import { Sim, type SaveSnapshotV2 } from './sim'
@@ -89,6 +90,6 @@ export function recordWatch(profile:VillageProfile,sim:Sim) {
   if(!sim.isChallenge) profile.settlement=Math.max(profile.settlement,[5,10,30,40].filter(n=>held>0&&campaignBeat(sim.challenge,held)>=n).length)
   writeJSON('profile',profile)
 }
-export function bestWave(p:VillageProfile,map:number,mode:Difficulty,hero?:HeroId,format?:'chapter1'|'endurance1'|'chapter2'|'endurance2') { const key=format?`${format}:${map}`:String(map);return hero?p.records[`${key}:${mode}:${hero}:standard`]?.wave??0:Math.max(0,...Object.entries(p.records).filter(([k])=>k.startsWith(`${key}:${mode}:`)&&k.endsWith(':standard')).map(([,record])=>record.wave)) }
+export function bestWave(p:VillageProfile,map:number,mode:Difficulty,hero?:HeroId,format?:'chapter1'|'endurance1'|'chapter2'|'endurance2') {return Math.max(0,...Object.entries(p.records).flatMap(([key,value])=>{const r=watchRecord(key,value.wave);return r&&!r.practice&&!value.practice&&r.format===(format??'original')&&r.map===map&&r.difficulty===mode&&(!hero||r.hero===hero)?[r.wave]:[]}))}
 export function legacyExists() {try {return ['lanternlocks.run.v3','lanternlocks.save.v1','lanternlocks.challenge-run.v1'].some(k=>!!localStorage.getItem(k))} catch {return false} }
 export function loadPlanning(slot:Slot): SaveSnapshotV2|null { const p=readJSON(slot+'.planning'); return validSnapshot(p)&&p.v===2&&p.challenge.fixed===1&&!p.enemies.length&&!p.spawners.length?p:null }
