@@ -8,7 +8,13 @@ import { districtLayout } from './district-layout'
 import { projectDetails } from './place-art'
 
 const terrain=new WeakMap<Sim['level'],{key:string;canvas:HTMLCanvasElement}>()
-const groundTones=(s:Sim)=>secondWatch(s.challenge)?s.sky.night?['#132b37','#203d44','#112733']:['#435b5c','#64756b','#344d53']:s.sky.night?districtStyle(s.challenge.variant).night:districtStyle(s.challenge.variant).day
+const cityGround=[
+ {day:['#2b4849','#4b6056','#263f48'],night:['#0c2531','#183a3e','#0e2430']},
+ {day:['#49433e','#6c6452','#30474c'],night:['#292e37','#383f3e','#162d37']},
+ {day:['#304c50','#546c64','#2c4850'],night:['#193841','#254847','#142f3c']},
+ {day:['#3e4e60','#586c73','#2c4252'],night:['#222e49','#2a4055','#15283d']},
+]
+const groundTones=(s:Sim)=>secondWatch(s.challenge)?cityGround[s.challenge.variant??0][s.sky.night?'night':'day']:s.sky.night?districtStyle(s.challenge.variant).night:districtStyle(s.challenge.variant).day
 export const districtGround=(s:Sim)=>groundTones(s)[1]
 export function districtGradient(c:CanvasRenderingContext2D,s:Sim,x=0,y=-105,w=720,h=960){
   const tones=groundTones(s),ground=c.createLinearGradient(x,y,x+w,y+h);ground.addColorStop(0,tones[0]);ground.addColorStop(.48,tones[1]);ground.addColorStop(1,tones[2]);return ground

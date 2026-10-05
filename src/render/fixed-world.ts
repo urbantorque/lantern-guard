@@ -124,7 +124,7 @@ export function drawFixedWorld(c:CanvasRenderingContext2D,s:Sim,view:ViewState,s
     }else if(item.e){const e=item.e;
       if((e.exposedT??0)>0){c.save();c.strokeStyle='#ffdf91';c.lineWidth=2.5;for(let i=0;i<3;i++){c.beginPath();c.arc(e.x,e.y,e.def.radius+10,i*Math.PI*2/3,i*Math.PI*2/3+1.25);c.stroke()}c.restore()}
       if(escortCover(s,e)){c.save();c.strokeStyle='#ffdda5aa';c.lineWidth=2.5;c.beginPath();c.arc(e.x,e.y,25,-Math.PI*.8,Math.PI*.1);c.stroke();c.restore()}
-      upright(c,e.x,e.y,wide,()=>drawFixedEnemy(c,e,reducedMotion,true,wide))}
+      upright(c,e.x,e.y,wide,()=>drawFixedEnemy(c,e,reducedMotion,true,wide,scale))}
     else upright(c,home.x,home.y,wide,()=>heartLantern(c,home.x,home.y,s.lives>0,s.sky.night,time,reducedMotion))
   }
   for(const p of s.projs){
@@ -136,10 +136,10 @@ export function drawFixedWorld(c:CanvasRenderingContext2D,s:Sim,view:ViewState,s
   const breach=s.lastLeak?.detail
   if(breach&&(!s.waveActive||s.over)&&!selected&&!ghost){upright(c,breach.x,breach.y,wide,()=>{c.save();c.fillStyle='#372c35';c.strokeStyle='#ffbe8e';c.lineWidth=2;c.beginPath();c.arc(breach.x,breach.y,16,0,Math.PI*2);c.fill();c.stroke();c.fillStyle='#ffe5c2';c.font='bold 20px sans-serif';c.textAlign='center';c.fillText('!',breach.x,breach.y+7);c.restore()})}
   const sky=s.sky
-  if(sky.weather==='mist')for(let i=0;i<4;i++){const drift=reducedMotion?0:Math.sin(time*.15+i)*30;lightPool(c,160+i*120+drift,120+i*180,260,sky.night?'#bddeef':'#f2ffe9',sky.night?.14:.2,.2)}
+  if(sky.weather==='mist')for(let i=0;i<4;i++){const drift=reducedMotion?0:Math.sin(time*.15+i)*30;lightPool(c,160+i*120+drift,120+i*180,260,sky.night?'#bddeef':'#f2ffe9',sky.night?.08:.1,.2)}
   if(sky.weather==='rain'&&!reducedMotion){c.strokeStyle=sky.night?'#b4e2ee66':'#2c6e7d55';c.lineWidth=1;for(let i=0;i<36;i++){const x=(i*173+time*12)%720,y=(i*97+time*160)%840;c.beginPath();c.moveTo(x,y);c.lineTo(x-3,y+12);c.stroke()}}
   if(sky.weather==='breeze'&&!reducedMotion){c.fillStyle='#ffd594b0';for(let i=0;i<7;i++){const x=(i*173+time*28)%720,y=80+i*105+Math.sin(time+i)*7;c.save();c.translate(x,y);c.rotate(time+i);c.fillRect(-3,-1,6,2);c.restore()}}
-  if(!s.waveActive)for(const source of s.level.def.sources){if(source.openWave>s.planningWave&&source.id!=='west')continue;const p=s.level.segs.get(source.seg)!.line.at(0,{x:0,y:0,tx:0,ty:0});c.fillStyle=sky.night?'#d8efde':'#244f5b';c.font=`550 ${Math.max(15,10/scale)}px "DM Sans Variable",sans-serif`;c.textAlign=source.id==='west'?'left':'center';upright(c,p.x,p.y,wide,()=>c.fillText(source.id==='west'?(s.planningWave<source.openWave?'Opens · wave '+source.openWave:'Side inlet'):'Main inlet',p.x,p.y-44))}
+  if(!s.waveActive)for(const source of s.level.def.sources){if(source.openWave>s.finalWave||source.openWave>s.planningWave&&source.id!=='west')continue;const p=s.level.segs.get(source.seg)!.line.at(0,{x:0,y:0,tx:0,ty:0});c.fillStyle=sky.night?'#d8efde':'#244f5b';c.font=`550 ${Math.max(15,10/scale)}px "DM Sans Variable",sans-serif`;c.textAlign=source.id==='west'?'left':'center';upright(c,p.x,p.y,wide,()=>c.fillText(source.id==='west'?(s.planningWave<source.openWave?'Opens · wave '+source.openWave:'Side inlet'):'Main inlet',p.x,p.y-44))}
 }
 
 const icons=new Map<string,string>()

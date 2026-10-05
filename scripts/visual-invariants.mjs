@@ -3,12 +3,12 @@ import {mkdirSync,writeFileSync} from 'node:fs'
 import assert from 'node:assert/strict'
 const require=createRequire(import.meta.url)
 const {chromium}=require(process.env.PLAYWRIGHT_PATH||'C:/Users/roger/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright')
-const mastery=process.argv.includes('--mastery'),tactics=mastery||process.argv.includes('--tactics'),out=mastery?'artifacts/mastery-qa':tactics?'artifacts/tactics-qa':'artifacts/visual-overhaul';mkdirSync(out,{recursive:true})
+const story=process.argv.includes('--story'),mastery=story||process.argv.includes('--mastery'),tactics=mastery||process.argv.includes('--tactics'),out=story?'artifacts/story-release':mastery?'artifacts/mastery-qa':tactics?'artifacts/tactics-qa':'artifacts/visual-overhaul';mkdirSync(out,{recursive:true})
 const browser=await chromium.launch({headless:true,executablePath:process.env.EDGE_PATH||'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',args:['--mute-audio']})
 try{
  const page=await browser.newPage({viewport:{width:1440,height:900}}),errors=[];page.on('pageerror',e=>errors.push(e.message))
- await page.goto('http://127.0.0.1:5174/?muted=1')
- const result=await page.evaluate(async({tactics,mastery})=>{
+ await page.goto(process.env.QA_URL||(story?'http://127.0.0.1:5176/?muted=1':'http://127.0.0.1:5174/?muted=1'))
+ const result=await page.evaluate(async({tactics,mastery,story})=>{
   const {Sim}=await import('/src/game/sim.ts'),{TOWER_ORDER,ENEMIES}=await import('/src/game/defs.ts'),{drawFixedTower,fixedTowerIcon,fixedShotOrigin}=await import('/src/render/fixed-towers.ts'),{drawFixedWorld,fixedEnemyIcon}=await import('/src/render/fixed-world.ts'),{setArchitectureLight}=await import('/src/render/architecture.ts'),{shotPose,drawCanalShot,drawCanalBeam}=await import('/src/render/shot-art.ts'),{boardPoint,boardAngle,worldPoint,elevated,BOARD_DEPTH,livingBoardBounds}=await import('/src/render/board-view.ts'),{districtGradient}=await import('/src/render/fixed-scenery.ts')
   const check=(value,why)=>{if(!value)throw Error(why)},close=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y)<.001
   const cv=document.createElement('canvas');cv.width=400;cv.height=400;const c=cv.getContext('2d');setArchitectureLight(c,true)
@@ -33,7 +33,7 @@ try{
    check(close(shotPose({...p,t:1},wide),elevated(p.ex,p.ey,8,wide)),'mortar lands at the hit effect')
    for(let t=0;t<=1;t+=.01)check(Object.values(shotPose({...p,t},wide)).every(Number.isFinite),'finite projectile pose')
   }
-  const rules={fixed:1,compact:1,guard:1,depth:1,balance:1,watchDepth:1,watchCraft:1,livingWatch:1,refinedWatch:1,watchExperience:1,...(tactics?{watchTactics:1}:{}),...(mastery?{watchMastery:1}:{}),hero:'ivo',variant:0}
+  const rules={fixed:1,compact:1,guard:1,depth:1,balance:1,watchDepth:1,watchCraft:1,livingWatch:1,refinedWatch:1,watchExperience:1,...(tactics?{watchTactics:1}:{}),...(mastery?{watchMastery:1}:{}),...(story?{watchDirector:2}:{}),hero:'ivo',variant:0}
   cv.width=1440;cv.height=810;document.body.replaceChildren(cv);cv.style.cssText='width:1440px;height:810px;display:block'
   const scenes=[],profile=[]
   for(let variant=0;variant<4;variant++)for(const wide of [false,true])for(const night of [false,true]){
@@ -52,6 +52,6 @@ try{
    durations.sort((a,b)=>a-b);profile.push({variant,wide,night,towers:s.towers.length,enemies:s.enemies.length,medianMs:durations[22],p95Ms:durations[42]});scenes.push({variant,wide,night})
   }
   return {icons:iconBounds.length,towersAnimated:8,reducedMotion:8,projectilesReducedMotion:14,beamsReducedMotion:2,projectileEndpoints:4,scenes,profile,renderingDoesNotMutateSave:true,masteryCosmetics:mastery}
- },{tactics,mastery})
+ },{tactics,mastery,story})
  assert.deepEqual(errors,[]);writeFileSync(`${out}/invariants.json`,JSON.stringify(result,null,2));console.log(JSON.stringify(result,null,2));console.log('PASS icon bounds, distinct animation, reduced motion, projectile contact, four-map purity and render profiling')
 }finally{await browser.close()}

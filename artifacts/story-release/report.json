@@ -1,0 +1,66 @@
+[
+  {
+    "width": 1280,
+    "height": 800,
+    "largeText": true,
+    "reducedMotion": true,
+    "districtStages": 9,
+    "directTarget": true,
+    "listFallback": true,
+    "release": true,
+    "frameIntervals": {
+      "median": 16.699999999999818,
+      "p95": 16.799999999999272,
+      "samples": 90
+    },
+    "errors": []
+  },
+  {
+    "width": 390,
+    "height": 844,
+    "largeText": true,
+    "reducedMotion": true,
+    "districtStages": 9,
+    "directTarget": true,
+    "listFallback": true,
+    "release": true,
+    "frameIntervals": {
+      "median": 16.699999999999818,
+      "p95": 16.800000000000182,
+      "samples": 90
+    },
+    "errors": []
+  },
+  {
+    "width": 320,
+    "height": 740,
+    "largeText": true,
+    "reducedMotion": true,
+    "districtStages": 9,
+    "directTarget": true,
+    "listFallback": true,
+    "release": true,
+    "frameIntervals": {
+      "median": 16.699999999999818,
+      "p95": 16.800000000000182,
+      "samples": 90
+    },
+    "errors": []
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "largeText": true,
+    "reducedMotion": true,
+    "districtStages": 9,
+    "directTarget": true,
+    "listFallback": true,
+    "release": true,
+    "frameIntervals": {
+      "median": 16.699999999999818,
+      "p95": 16.799999999999272,
+      "samples": 90
+    },
+    "errors": []
+  }
+]

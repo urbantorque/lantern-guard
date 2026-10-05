@@ -11,18 +11,22 @@ const oval=(c:CanvasRenderingContext2D,x:number,y:number,rx:number,ry:number,fil
 const stroke=(c:CanvasRenderingContext2D,points:number[][],colour:string,width=.08)=>{c.strokeStyle=colour;c.lineWidth=width;c.lineCap='round';c.lineJoin='round';c.beginPath();points.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.stroke()}
 const shellPoses=new WeakMap<Enemy,{age:number;open:number}>()
 const headings=new WeakMap<Enemy,number>()
+const locomotion=new WeakMap<Enemy,{age:number;phase:number}>()
 
 /** Hostile anatomy owns the silhouette; this wrapper keeps combat state readable. */
-export function drawFixedEnemy(c:CanvasRenderingContext2D,e:Enemy,reducedMotion=false,showBars=true,wide=false){
-  const id=e.def.id,r=e.def.radius*(e.visScale??1)*(e.def.boss?1.16:1.42)
+export function drawFixedEnemy(c:CanvasRenderingContext2D,e:Enemy,reducedMotion=false,showBars=true,wide=false,viewScale=1){
+  const id=e.def.id,base=e.def.radius*(e.visScale??1)*(e.def.boss?1.16:1.42),r=base*Math.min(1.22,Math.max(1,7/Math.max(1,base*viewScale)))
   const hidden=e.def.hidden&&!e.revealedPerm&&e.seenT<=0,moving=!reducedMotion&&e.stunT<=0
-  const t=moving?e.age:0,phase=t+(moving?e.uid*.37:0),col=currentPalette()==='clear'?ENEMY_MARK[id]:colours[id]
+  const gait=locomotion.get(e)??{age:e.age,phase:e.age+e.uid*.37}
+  if(moving)gait.phase+=Math.max(0,Math.min(.15,e.age-gait.age))*(e.slowT>0?.48:1)
+  gait.age=e.age;locomotion.set(e,gait)
+  const t=reducedMotion?0:gait.phase,phase=t,col=currentPalette()==='clear'?ENEMY_MARK[id]:colours[id]
   const direction=boardPoint(e.tx,e.ty,wide),tx=direction.x,ty=direction.y
   const facing=tx>.18?1:tx<-.18?-1:headings.get(e)??1;headings.set(e,facing)
   const mirrored=['drip','vshell','skiff','warden'].includes(id)?facing:id==='gloom'?-facing:1
   const plated=e.shell>0,fractured=plated&&e.shell<e.maxShell*.5,hit=reducedMotion?0:Math.max(0,e.hitT)/.12
   c.save();c.translate(e.x,e.y)
-  oval(c,2,5,r*(id==='gloom'?1.65:1.05),r*.3,'#08232f65')
+  oval(c,3,6,r*(id==='gloom'?1.65:1.05),r*.34,'#07192191')
   if(!['wisp','mender','reedling'].includes(id)){
     c.strokeStyle='#bcebe85c';c.lineWidth=1;c.beginPath();c.ellipse(0,5,r*1.22,r*.43,0,.15,Math.PI-.15);c.stroke()
     if(moving){c.save();const opacity=c.globalAlpha;c.strokeStyle='#d4f0dd55';c.lineWidth=.8;for(let i=0;i<2;i++){const q=(phase*.8+i*.5)%1;c.globalAlpha=opacity*(1-q)*.45;c.beginPath();c.ellipse(-tx*r*q*.6,5-ty*r*q*.25,r*(1.1+q*.45),r*(.3+q*.16),0,.1,Math.PI-.1);c.stroke()}c.restore()}
@@ -34,6 +38,10 @@ export function drawFixedEnemy(c:CanvasRenderingContext2D,e:Enemy,reducedMotion=
     shellPoses.set(e,{age:e.age,open:shellOpen})
   }
   c.save();c.globalAlpha*=hidden?.58:1;c.scale(r*mirrored,r);c.translate(-hit*.1,0);c.scale(1+hit*.06,1-hit*.065)
+  if(!reducedMotion){
+    if(['shell','vshell','dredger','toad'].includes(id))c.rotate(Math.sin(phase*4)*.023)
+    if(['wisp','veil','mender'].includes(id))c.translate(0,Math.sin(phase*3)*.075)
+  }
   if(id==='skitter')c.rotate(Math.atan2(ty,tx))
   drawInvader(c,e,phase,col,shellOpen)
   if(plated&&e.shell/e.maxShell<.28){stroke(c,[[.48,-1.02],[.26,-.72],[.51,-.47],[.3,-.13]],'#3d354f',.09);stroke(c,[[-.56,-.6],[-.36,-.48],[-.49,-.2]],'#fff0c5',.065)}

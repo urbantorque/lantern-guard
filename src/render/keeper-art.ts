@@ -29,6 +29,35 @@ export function fixedShotOrigin(t:Miniature){
  return {x:0,y:p.y+({bell:12,beam:-1,storm:-3,owl:2,garden:0}[t.id])}
 }
 const bases=new Map<string,HTMLCanvasElement>()
+/** Crown silhouettes use the weapon's function, so the last upgrade reads at phone size. */
+function crownHardware(c:CanvasRenderingContext2D,t:Miniature,y:number,time:number,still:boolean){
+ const m=TOWER_COLOURS[t.id],b=!!t.b
+ if(t.id==='wick')for(const side of [-1,1]){
+  armour(c,[[side*14,y+12],[side*34,y+2],[side*31,y-14],[side*18,y-6]],b?m:BRASS)
+  line(c,[[side*24,y+6],[side*24,y-9]],m.accent,2)
+ }else if(t.id==='cracker')for(const side of [-1,1]){
+  vessel(c,side*29,y+22,7,4,b?22:16,BRASS);vent(c,side*29-3,y+7,3,m.accent)
+  if(b)gem(c,side*29,y-6,5,m)
+ }else if(t.id==='bell'){
+  for(const side of [-1,1]){armour(c,[[side*23,y+7],[side*32,y-5],[side*28,y-38],[side*19,y-25]],BRASS);gem(c,side*28,y-36,5,m)}
+  if(!b)gem(c,0,y-44,12,m)
+ }else if(t.id==='owl')for(const side of [-1,1]){
+  armour(c,[[side*14,y+20],[side*41,y+7],[side*45,y-14],[side*28,y-4]],b?BRASS:m)
+  if(b){orb(c,side*34,y-5,6,m.accent,m.side)}else line(c,[[side*22,y+12],[side*38,y-3]],m.roof,2)
+ }else if(t.id==='garden'){
+  for(const side of [-1,1]){vessel(c,side*31,y+28,8,4,12,BRASS);for(let i=0;i<3;i++)leaf(c,side*31,y+14,15,side*(.3+i*.3),i%2?m.roof:m.front)}
+  if(b){c.strokeStyle=BRASS.roof;c.lineWidth=2;c.beginPath();c.ellipse(0,y-7,31,34,0,Math.PI,TAU);c.stroke()}
+ }else if(t.id==='beam')for(const side of [-1,1]){
+  armour(c,[[side*23,y+18],[side*35,y+3],[side*34,y-30],[side*22,y-20]],m)
+  armour(c,[[side*25,y+10],[side*30,y+1],[side*29,y-24],[side*25,y-16]],{...m,front:'#bddfd9',roof:'#fff8d8'})
+ }else if(t.id==='storm'){
+  if(b){c.strokeStyle=m.roof;c.lineWidth=2.2;c.beginPath();c.ellipse(0,y-2,29,25,still?0:Math.sin(time*.6)*.12,0,TAU);c.stroke();for(const side of [-1,1])gem(c,side*29,y-2,6,m)}
+  else for(const [x,dy] of [[-32,8],[32,8],[0,-28]]){line(c,[[x*.7,y+18],[x,y+dy]],BRASS.front,3);orb(c,x,y+dy,6,m.accent,m.side)}
+ }else for(const side of [-1,1]){
+  armour(c,[[side*18,y+17],[side*35,y+11],[side*38,y-5],[side*28,y-12]],BRASS)
+  line(c,[[side*30,y+8],[side*31,y-4]],m.accent,2)
+ }
+}
 function foundation(c:CanvasRenderingContext2D,t:Miniature,day:boolean){
  const s=rank(t),m=TOWER_COLOURS[t.id],key=[t.id,s,t.b>0,t.hero,day].join(':');let cv=bases.get(key)
  if(!cv){
@@ -58,7 +87,8 @@ export function drawFixedTower(c:CanvasRenderingContext2D,x:number,y:number,t:Mi
  c.save();c.translate(x,y)
  if(!still&&(t.age??9)<.65){const q=Math.min(1,(t.age??9)/.65),rise=1-(1-q)**3;c.translate(0,(1-rise)*24);c.scale(1+Math.sin(q*Math.PI)*.055,Math.max(.1,rise+Math.sin(q*Math.PI)*.1))}
  if(!still&&(t.upAge??9)<.6){const q=Math.sin((t.upAge??9)/.6*Math.PI);c.scale(1+q*.045,1+q*.06)}
- if(!day)lightPool(c,0,-10,40,m.accent,.3);foundation(c,t,day)
+  if(!day)lightPool(c,0,-10,40,m.accent,.3);foundation(c,t,day)
+  if(crown)crownHardware(c,t,mu.y,time,still)
  const badge=t.crest==='ember'?'#d98c70':t.crest==='reed'?'#a4cf99':t.crest==='tide'?'#9bced8':'#ebd39b'
  oval(c,-14,-12,4.5,4.5,BRASS.side);gem(c,-14,-12,3,{...BRASS,accent:badge,front:badge})
  const pipe=(px:number,py:number,r:number,h:number)=>{vessel(c,px,py,r,r*.45,h,m);vessel(c,px,py-h+2,r+1,r*.48,3,BRASS)}
@@ -133,4 +163,4 @@ export function drawFixedTower(c:CanvasRenderingContext2D,x:number,y:number,t:Mi
  c.restore()
 }
 const icons=new Map<string,string>()
-export function fixedTowerIcon(id:TowerId,a=0,b=0,refinement=0,hero?:HeroId){const key=[id,a,b,refinement,hero].join(':');if(icons.has(key))return icons.get(key)!;const cv=document.createElement('canvas');cv.width=cv.height=192;const c=cv.getContext('2d')!;setArchitectureLight(c,true);c.translate(96,165);const k=id==='beam'?1.08:1.4;c.scale(k,k);drawFixedTower(c,0,0,{id,a,b,refinement,hero,angle:-.7,time:0,reducedMotion:true});const url=cv.toDataURL();icons.set(key,url);return url}
+export function fixedTowerIcon(id:TowerId,a=0,b=0,refinement=0,hero?:HeroId){const key=[id,a,b,refinement,hero].join(':');if(icons.has(key))return icons.get(key)!;const cv=document.createElement('canvas');cv.width=cv.height=192;const c=cv.getContext('2d')!;setArchitectureLight(c,true);c.translate(96,165);const k=id==='beam'?1.08:refinement&&id==='bell'?1.26:1.4;c.scale(k,k);drawFixedTower(c,0,0,{id,a,b,refinement,hero,angle:-.7,time:0,reducedMotion:true});const url=cv.toDataURL();icons.set(key,url);return url}

@@ -34,7 +34,11 @@ export function paintCanalLandscape(c:CanvasRenderingContext2D,s:Sim,stage:numbe
  c.save();c.translate(3,8);c.strokeStyle=day?'#264e4945':'#061b3199';c.lineWidth=78;network();c.restore()
  for(const [w,col]of [[112,urban?(day?'#75817a':'#344c53'):'transparent'],[77,day?'#75977a':'#2e5358'],[70,urban?(day?'#b3b3a0':'#718a8c'):day?mat.bank[0]:'#7f9299'],[62,urban?(day?'#7a908b':'#435f69'):day?mat.bank[1]:'#4c676f'],[53,day?'#385c58':'#193b50']]as const){c.lineWidth=w;c.strokeStyle=col;network()}
  const water=c.createLinearGradient(0,0,650,840);water.addColorStop(0,urban?(day?'#396c70':'#1c4d60'):day?mat.water[1]:'#376f78');water.addColorStop(.45,urban?(day?'#234f61':'#12354b'):day?mat.water[0]:'#204c63');water.addColorStop(1,urban?(day?'#507e7d':'#2f6871'):day?mat.water[1]:'#326d79');c.strokeStyle=water;c.lineWidth=47;network()
- c.strokeStyle=day?'#9bc9b22c':'#a6e8dc0e';c.lineWidth=24;network()
+ // A recessed channel separates water from the stone coping at small scales.
+ c.save();c.translate(3,3);c.strokeStyle=day?'#092c3b66':'#06182477';c.lineWidth=40;network();c.restore()
+ c.strokeStyle=day?'#72c1ba20':'#83d6d11c';c.lineWidth=23;network()
+ c.strokeStyle=day?'#91c7bd45':'#8ad8cf38';c.lineWidth=1.2
+ for(const seg of s.level.segs.values()){c.beginPath();for(let at=0;at<seg.line.length;at+=6){const p=seg.line.at(at,{x:0,y:0,tx:0,ty:0}),x=p.x+p.ty*21,y=p.y-p.tx*21;at?c.lineTo(x,y):c.moveTo(x,y)}c.stroke()}
  for(const seg of s.level.segs.values())for(let at=15;at<seg.line.length;at+=21){
   const p=seg.line.at(at,{x:0,y:0,tx:0,ty:0})
   for(const side of [-1,1]){

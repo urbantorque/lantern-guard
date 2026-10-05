@@ -1,0 +1,238 @@
+{
+  "icons": 207,
+  "towersAnimated": 8,
+  "reducedMotion": 8,
+  "projectilesReducedMotion": 14,
+  "beamsReducedMotion": 2,
+  "projectileEndpoints": 4,
+  "scenes": [
+    {
+      "variant": 0,
+      "wide": false,
+      "night": false
+    },
+    {
+      "variant": 0,
+      "wide": false,
+      "night": true
+    },
+    {
+      "variant": 0,
+      "wide": true,
+      "night": false
+    },
+    {
+      "variant": 0,
+      "wide": true,
+      "night": true
+    },
+    {
+      "variant": 1,
+      "wide": false,
+      "night": false
+    },
+    {
+      "variant": 1,
+      "wide": false,
+      "night": true
+    },
+    {
+      "variant": 1,
+      "wide": true,
+      "night": false
+    },
+    {
+      "variant": 1,
+      "wide": true,
+      "night": true
+    },
+    {
+      "variant": 2,
+      "wide": false,
+      "night": false
+    },
+    {
+      "variant": 2,
+      "wide": false,
+      "night": true
+    },
+    {
+      "variant": 2,
+      "wide": true,
+      "night": false
+    },
+    {
+      "variant": 2,
+      "wide": true,
+      "night": true
+    },
+    {
+      "variant": 3,
+      "wide": false,
+      "night": false
+    },
+    {
+      "variant": 3,
+      "wide": false,
+      "night": true
+    },
+    {
+      "variant": 3,
+      "wide": true,
+      "night": false
+    },
+    {
+      "variant": 3,
+      "wide": true,
+      "night": true
+    }
+  ],
+  "profile": [
+    {
+      "variant": 0,
+      "wide": false,
+      "night": false,
+      "towers": 12,
+      "enemies": 80,
+      "medianMs": 13.300000000745058,
+      "p95Ms": 17.300000000745058
+    },
+    {
+      "variant": 0,
+      "wide": false,
+      "night": true,
+      "towers": 12,
+      "enemies": 80,
+      "medianMs": 12.099999997764826,
+      "p95Ms": 16
+    },
+    {
+      "variant": 0,
+      "wide": true,
+      "night": false,
+      "towers": 12,
+      "enemies": 80,
+      "medianMs": 12.199999999254942,
+      "p95Ms": 16.199999999254942
+    },
+    {
+      "variant": 0,
+      "wide": true,
+      "night": true,
+      "towers": 12,
+      "enemies": 80,
+      "medianMs": 11.199999999254942,
+      "p95Ms": 12.899999998509884
+    },
+    {
+      "variant": 1,
+      "wide": false,
+      "night": false,
+      "towers": 12,
+      "enemies": 80,
+      "medianMs": 10.899999998509884,
+      "p95Ms": 15.300000000745058
+    },
+    {
+      "variant": 1,
+      "wide": false,
+      "night": true,
+      "towers": 12,
+      "enemies": 80,
+      "medianMs": 10.600000001490116,
+      "p95Ms": 16.300000000745058
+    },
+    {
+      "variant": 1,
+      "wide": true,
+      "night": false,
+      "towers": 12,
+      "enemies": 80,
+      "medianMs": 10.300000000745058,
+      "p95Ms": 14.199999999254942
+    },
+    {
+      "variant": 1,
+      "wide": true,
+      "night": true,
+      "towers": 12,
+      "enemies": 80,
+      "medianMs": 10.300000000745058,
+      "p95Ms": 12.900000002235174
+    },
+    {
+      "variant": 2,
+      "wide": false,
+      "night": false,
+      "towers": 12,
+      "enemies": 80,
+      "medianMs": 10.399999998509884,
+      "p95Ms": 15.5
+    },
+    {
+      "variant": 2,
+      "wide": false,
+      "night": true,
+      "towers": 12,
+      "enemies": 80,
+      "medianMs": 10.800000000745058,
+      "p95Ms": 14
+    },
+    {
+      "variant": 2,
+      "wide": true,
+      "night": false,
+      "towers": 12,
+      "enemies": 80,
+      "medianMs": 10.300000000745058,
+      "p95Ms": 14.900000002235174
+    },
+    {
+      "variant": 2,
+      "wide": true,
+      "night": true,
+      "towers": 12,
+      "enemies": 80,
+      "medianMs": 11.399999998509884,
+      "p95Ms": 14.800000000745058
+    },
+    {
+      "variant": 3,
+      "wide": false,
+      "night": false,
+      "towers": 12,
+      "enemies": 80,
+      "medianMs": 11,
+      "p95Ms": 14
+    },
+    {
+      "variant": 3,
+      "wide": false,
+      "night": true,
+      "towers": 12,
+      "enemies": 80,
+      "medianMs": 10.5,
+      "p95Ms": 15.5
+    },
+    {
+      "variant": 3,
+      "wide": true,
+      "night": false,
+      "towers": 12,
+      "enemies": 80,
+      "medianMs": 10,
+      "p95Ms": 12.300000000745058
+    },
+    {
+      "variant": 3,
+      "wide": true,
+      "night": true,
+      "towers": 12,
+      "enemies": 80,
+      "medianMs": 10.699999999254942,
+      "p95Ms": 16
+    }
+  ],
+  "renderingDoesNotMutateSave": true,
+  "masteryCosmetics": true
+}

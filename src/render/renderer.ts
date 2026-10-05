@@ -387,7 +387,13 @@ export class Renderer {
           const p=elevated(ev.x,ev.y,24,this.fixedLandscape),colour=ev.kind==='armour'?'#ffdd94':ev.kind==='freeze'?'#aef5ef':'#f5e5b8'
           if(ev.tx!==undefined&&ev.ty!==undefined){const q=elevated(ev.tx,ev.ty,12,this.fixedLandscape);fx.add({kind:'link',x:p.x,y:p.y,tx:q.x,ty:q.y,color:colour,life:this.settings.reduceMotion?.15:.5,lw:3})}
           fx.ring(p.x,p.y,decisive?65:ev.kind==='freeze'?42:26,colour,this.settings.reduceMotion?.15:.5,decisive?3:2)
-          if(decisive&&!this.settings.reduceMotion){fx.ring(p.x,p.y,38,colour,.3,4);fx.shards(p.x,p.y,colour,8)}
+           if(decisive&&!this.settings.reduceMotion){
+             fx.ring(p.x,p.y,38,colour,.3,4);fx.shards(p.x,p.y,colour,8)
+             // One authored release accent per command; ordinary attacks keep their smaller contact cues.
+             if(ev.label.startsWith('Ignition ·'))fx.add({kind:'shock',x:ev.x,y:ev.y,size:80,color:'#edab69',life:.5})
+             if(ev.label.startsWith('Stillwater ·'))for(let i=0;i<6;i++){const a=i*Math.PI/3;fx.add({kind:'shard',x:p.x+Math.cos(a)*24,y:p.y+Math.sin(a)*24,vx:Math.cos(a)*70,vy:Math.sin(a)*70,color:'#c6fff2',size:6,rot:a,life:.55,drag:2})}
+             if(ev.label.startsWith('Discharge ·'))fx.add({kind:'pillar',x:p.x,y:p.y,color:'#d7f4ff',size:38,life:.28})
+           }
           const label=elevated(ev.x,ev.y,46,this.fixedLandscape)
           if(!sim.director||decisive||ev.kind==='debut')fx.text(label.x,label.y,ev.label,colour,decisive?16:14,decisive?1.1:.85)
           if(ev.label.startsWith('Core open'))sound.encounter('open')

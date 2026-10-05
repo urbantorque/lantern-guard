@@ -32,6 +32,10 @@ export function drawCanalBeam(c:CanvasRenderingContext2D,t:Tower,target:Enemy,ti
 
 export function drawCanalShot(c:CanvasRenderingContext2D,p:Proj,time:number,reduced:boolean,wide:boolean){
  const pose=shotPose(p,wide),colour=p.beacon?'#aaffed':TOWER_COLOURS[p.tower.id].accent,lob=p.kind==='firework'||p.kind==='mini'
+ if(lob){
+  const u=Math.min(1,p.t/Math.max(.001,p.dur)),x=p.sx+(p.ex-p.sx)*u,y=p.sy+(p.ey-p.sy)*u
+  c.save();c.globalAlpha*=.28;upright(c,x,y,wide,()=>oval(c,x,y,4+(p.heavy?2:0),2,'#081e2b'));c.restore()
+ }
  // Sample the authored ballistic arc, not a straight smoke line across its bend.
  // Six short segments are the entire trail budget; no particle history is retained.
  if(lob&&!reduced){
@@ -45,7 +49,7 @@ export function drawCanalShot(c:CanvasRenderingContext2D,p:Proj,time:number,redu
   lightPool(c,0,0,p.heavy?13:8,colour,.4,1)
   if(p.kind==='bolt'){
    if(p.beacon){line(c,[[-34,-3],[11,-3]],'#aaffed',1.5);line(c,[[-34,3],[11,3]],'#aaffed',1.5);lightPool(c,4,0,18,'#d8fff2',.55,1)}
-   line(c,[[-20,0],[3,0]],'#263e42',3);line(c,[[-20,-.6],[3,-.6]],'#f0d39e',1.5)
+   line(c,[[-20,0],[3,0]],'#172e38',4);line(c,[[-20,-.6],[3,-.6]],'#f0d39e',1.8)
    for(const side of [-1,1]){polygon(c,[[-12,0],[-21,side*4],[-18,0]],side<0?'#d0e8d9':'#5f9388');line(c,[[-19,side*2],[-12,0]],'#f9f0c7',.5)}
    polygon(c,[[9,0],[0,-4],[2,0],[0,4]],'#b7d9d4');polygon(c,[[9,0],[0,-4],[2,0]],'#fff7d9');line(c,[[-tail,0],[-22,0]],'#e6fff5',.7)
   }else if(p.kind==='feather'||p.kind==='moth'){

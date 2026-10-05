@@ -432,6 +432,7 @@ export class FixedApp {
   }
   private drawAim(){
     const s=this.sim,r=this.renderer,layer=$('aim-layer'),help=$('aim-help');if(!s||!r||!layer)return
+    if(help.parentElement!==$('command-controls'))$('command-controls').append(help)
     if(s.challenge.hero!=='ivo'||s.director?.command?.phase!=='held'||!s.waveActive||s.over)this.aiming=false
     layer.hidden=help.hidden=!this.aiming;$('plots').toggleAttribute('inert',this.aiming)
     if(!this.aiming){layer.replaceChildren();return}
@@ -483,7 +484,7 @@ export class FixedApp {
   }
   private landmarkSheet(){
     const s=this.sim!;if(!s.challenge.watchDepth)return
-    const original=landmark(s),l=secondWatch(s.challenge)&&original.id!=='moonwell'?{...original,help:s.director?.passage?passageDescription(s.director.passage).plan:'Choose a permanent jetty or sluice restoration at the passage break. The map preview shows the exact construction.'}:original
+    const original=landmark(s),story=storyMission(s.challenge),l=story?{...original,help:story.brief}:secondWatch(s.challenge)&&original.id!=='moonwell'?{...original,help:s.director?.passage?passageDescription(s.director.passage).plan:'Choose a permanent jetty or sluice restoration at the passage break. The map preview shows the exact construction.'}:original
     this.show(l.name,`<p class="lead">${l.help}</p><p class="small muted">The coloured ring marks its area. This landmark works automatically.</p><h3>Prepare for night</h3><p class="small muted">${SUN_HELP} Choose the support stream on a scout tower to store sunlight.</p><h3>Build a Bond</h3><p class="small muted">Compatible towers pair automatically over shared water. ${s.challenge.watchExperience?'Select a tower and open Choose Bond partner to change a pair. ':''}Your pairs stay together while coverage overlaps. One partner per tower.</p><div class="bond-recipes">${([['bell','cracker'],['owl','wick'],['bell','beam'],['garden','storm'],['owl','ballista']] as const).map(([a,b])=>`<p><b>${{bell:'Chime',cracker:'Blast',owl:'Scout',wick:'Spark',beam:'Beam',garden:'Garden',storm:'Storm',ballista:'Bolt'}[a]} + ${{bell:'Chime',cracker:'Blast',owl:'Scout',wick:'Spark',beam:'Beam',garden:'Garden',storm:'Storm',ballista:'Bolt'}[b]}</b><span>${bondHelp(s,a,b)}</span></p>`).join('')}</div><p class="small muted">${s.challenge.expedition?'Bond slots open at waves 3 and 7.':`Bond slots open at waves ${campaignUnlock(s.challenge,5)} and ${campaignUnlock(s.challenge,20)}.`} Both towers must reach a target for their bonus to activate.</p>`,'landmark')
   }
   private settings() {
