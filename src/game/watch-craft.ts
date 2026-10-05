@@ -2,6 +2,7 @@ import type { Sim, Tower, Enemy } from './sim'
 import type { HeroId } from './heroes'
 import type { TowerId, TowerStats } from './defs'
 import type { WaveDef } from './waves'
+import { techniqueWaves, techniqueRound } from './watch-experience'
 
 export const CRAFT_RULES=1 as const
 export const TECHNIQUES=[
@@ -20,12 +21,13 @@ export const TECHNIQUES=[
 ] as const
 export type TechniqueId=typeof TECHNIQUES[number]['id']
 export function techniqueOffers(s:Pick<Sim,'challenge'|'techniques'|'planningWave'>){
-  if(!s.challenge.watchCraft||!s.challenge.hero||s.techniques.length>=2)return []
-  const wave=s.challenge.expedition?[4,8]:[6,16]
-  return s.planningWave>=wave[s.techniques.length]?TECHNIQUES.filter(t=>t.hero===s.challenge.hero&&t.round===s.techniques.length):[]
+  if(!s.challenge.watchCraft||!s.challenge.hero||s.techniques.length>=(s.challenge.watchDirector?1:2))return []
+  const wave=techniqueWaves(s.challenge)
+  return s.planningWave>=wave[s.techniques.length]?TECHNIQUES.filter(t=>t.hero===s.challenge.hero&&t.round===techniqueRound(s.challenge,s.techniques.length)):[]
 }
-export function validTechniques(ids:unknown,hero:HeroId|undefined,wave:number,short:boolean){
-  return Array.isArray(ids)&&ids.length<=2&&ids.every((id,i)=>TECHNIQUES.some(t=>t.id===id&&t.hero===hero&&t.round===i)&&wave+1>=(short?[4,8]:[6,16])[i])
+export function validTechniques(ids:unknown,hero:HeroId|undefined,wave:number,short:boolean,experience=false,directed=false){
+  const c={...(short?{expedition:'sunforge' as const}:{}),...(experience?{watchExperience:1 as const}:{}),...(directed?{watchDirector:1 as const}:{})}
+  return Array.isArray(ids)&&ids.length<=(directed?1:2)&&ids.every((id,i)=>TECHNIQUES.some(t=>t.id===id&&t.hero===hero&&t.round===techniqueRound(c,i))&&wave+1>=techniqueWaves(c)[i])
 }
 export function techniqueStats(stats:TowerStats,id:TowerId,ids:readonly TechniqueId[],living=false){
   if(ids.includes('stillwater')){stats.slowDur*=1.25;stats.damage*=.96}

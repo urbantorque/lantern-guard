@@ -11,6 +11,8 @@ export interface Group {
 }
 
 export interface WaveDef {
+  /** Removed ordinary enemy bounties transferred to the clear reward on edited waves. */
+  clearBonus?: number
   encounter?: string
   groups: Group[]
   /** Short coaching line shown as the wave starts (first-session guidance). */

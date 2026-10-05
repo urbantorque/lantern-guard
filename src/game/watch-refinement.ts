@@ -37,7 +37,7 @@ export function refinedWave(base:WaveDef,n:number,short=false):WaveDef{
     const healer=groups.find(g=>g.type==='mender')
     if(healer){healer.src=lead.src;healer.at=2;healer.count=Math.min(2,healer.count)}
     else groups.push({type:'mender',count:1,gap:1,at:2,src:lead.src})
-    return {...base,groups,encounter:'The glass procession',note:'Break the leading shells to uncover the Bloom Jelly.'}
+    return {...base,groups,encounter:'The glass procession',note:'Break the leading shells to uncover the Leech Choir.'}
   }
   if(n===(short?9:23)){
     for(const g of groups){if(['shell','vshell','bloat'].includes(g.type)){g.at=0;g.gap=Math.max(1,g.gap)}else{g.at+=6;g.gap*=.88}}

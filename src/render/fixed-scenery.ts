@@ -1,92 +1,26 @@
+import {secondWatch} from '../game/second-watch'
+import { paintCanalLandscape, groveCanopies } from './canal-art'
 import { districtStyle } from './district-style'
 import { upright } from './board-view'
 import type { Sim } from '../game/sim'
-import { block, plant, polygon, windows, setArchitectureLight, lightPool } from './architecture'
+import { setArchitectureLight, lightPool } from './architecture'
 import { districtLayout } from './district-layout'
+import { projectDetails } from './place-art'
 
 const terrain=new WeakMap<Sim['level'],{key:string;canvas:HTMLCanvasElement}>()
-export const districtGround=(s:Sim)=>(s.sky.night?districtStyle(s.challenge.variant).night:districtStyle(s.challenge.variant).day)[1]
+const groundTones=(s:Sim)=>secondWatch(s.challenge)?s.sky.night?['#132b37','#203d44','#112733']:['#435b5c','#64756b','#344d53']:s.sky.night?districtStyle(s.challenge.variant).night:districtStyle(s.challenge.variant).day
+export const districtGround=(s:Sim)=>groundTones(s)[1]
 export function districtGradient(c:CanvasRenderingContext2D,s:Sim,x=0,y=-105,w=720,h=960){
-  const tones=s.sky.night?districtStyle(s.challenge.variant).night:districtStyle(s.challenge.variant).day,ground=c.createLinearGradient(x,y,x+w,y+h);ground.addColorStop(0,tones[0]);ground.addColorStop(.48,tones[1]);ground.addColorStop(1,tones[2]);return ground
+  const tones=groundTones(s),ground=c.createLinearGradient(x,y,x+w,y+h);ground.addColorStop(0,tones[0]);ground.addColorStop(.48,tones[1]);ground.addColorStop(1,tones[2]);return ground
 }
-const colours=[['#ce7965','#f3be8a','#8b5360'],['#438a91','#a0d3bd','#2e586c'],['#557eaf','#a9c6df','#354e7b'],['#b58a59','#e9d2a0','#79604e'],['#5b9873','#bfdb9b','#396657']]
 
 /** Paint once per district/lighting change; keep the playable centre free of decoration. */
 export function scenery(s:Sim,stage:number,keepsakes:readonly string[],wide=false){
-  const material=districtStyle(s.challenge.variant),variant=s.challenge.variant??0,day=!s.sky.night,chapter=Math.min(3,Math.floor(s.wave/10)),key=stage+':'+chapter+':'+keepsakes.join(',')+':'+day+':'+wide,old=terrain.get(s.level)
+  const day=!s.sky.night,chapter=Math.min(3,Math.floor(s.wave/10)),key=stage+':'+chapter+':'+keepsakes.join(',')+':'+day+':'+wide,old=terrain.get(s.level)
   if(old?.key===key)return old.canvas
   const canvas=document.createElement('canvas');canvas.width=1840;canvas.height=2140
   const c=canvas.getContext('2d')!;c.scale(2,2);c.translate(50,140);setArchitectureLight(c,day)
-  // Transparent terrain blends into the full viewport. Extra headroom keeps
-  // upright buildings intact on a turned board.
-  for(const [x,y,rx,ry] of [[160,110,120,175],[605,260,85,200],[145,670,110,135],[540,755,145,65]]){
-    c.fillStyle=day?'#b8d79224':'#548e7e14';c.beginPath();c.ellipse(x,y,rx,ry,-.35,0,Math.PI*2);c.fill()
-  }
-  // Stroke the whole network once per layer. A downstream bank must never
-  // paint across upstream water (especially where the side inlet merges).
-  c.lineJoin='round';c.lineCap='round'
-  const network=()=>{c.beginPath();for(const seg of s.level.segs.values())seg.line.pts.forEach((p,i)=>i?c.lineTo(p.x,p.y):c.moveTo(p.x,p.y));c.stroke()}
-  c.save();c.translate(5,8);c.strokeStyle=day?'#3b77736b':'#081f3599';c.lineWidth=62;network();c.restore()
-  for(const [width,colour] of [[60,day?material.bank[0]:'#829bc3'],[53,day?material.bank[1]:'#475e88'],[46,day?material.water[0]:'#182d59'],[37,material.water[0]],[25,material.water[1]],[11,material.water[2]+'55']] as const){c.strokeStyle=colour;c.lineWidth=width;network()}
-  // Small stone seams supply scale and material without adding map obstacles.
-  c.strokeStyle=day?'#64898266':'#ccdafa44';c.lineWidth=1
-  for(const seg of s.level.segs.values())for(let at=20;at<seg.line.length;at+=26){
-    const p=seg.line.at(at,{x:0,y:0,tx:0,ty:0})
-    for(const side of [-1,1]){
-      const x=p.x-p.ty*27*side,y=p.y+p.tx*27*side
-      if([...s.level.segs.values()].some(other=>other!==seg&&other.line.distanceTo(x,y)<32))continue
-      c.beginPath();c.moveTo(x-p.ty*3,y+p.tx*3);c.lineTo(x+p.ty*3,y-p.tx*3);c.stroke()
-    }
-  }
-  for(const seg of s.level.segs.values()){
-    for(let at=65;at<seg.line.length;at+=150){const p=seg.line.at(at,{x:0,y:0,tx:0,ty:0});for(const side of [-1,1]){
-      const x=p.x-p.ty*33*side,y=p.y+p.tx*33*side
-      if(s.pads.some(pad=>Math.hypot(pad.x-x,pad.y-y)<48))continue
-      if([...s.level.segs.values()].some(other=>other!==seg&&other.line.distanceTo(x,y)<32))continue
-      if(!day)lightPool(c,x,y,38,'#ffc766',.7)
-      upright(c,x,y,wide,()=>{block(c,x,y,5,5,9,day?'#728c81':'#355d71','#c4ccaa','#274757');c.fillStyle=day?'#fbe6a2':'#ffe6a0';c.fillRect(x-2,y-12,4,4)})
-    }}
-  }
-  for(const prop of districtLayout(s)){
-    const {x,y,style}=prop
-    upright(c,x,y,wide,()=>{
-    if(prop.kind==='tree'){
-      polygon(c,[[x-6,y+5],[x+24,y+5],[x+35,y-5],[x+3,y-14]],'#17475225')
-      c.fillStyle=day?'#796c59':'#40525b';c.fillRect(x-2,y-12,4,18);plant(c,x,y-10,14+style*2);return
-    }
-    const w=37+style%2*6,h=24+style%3*6,[front,roof,side]=style===0?colours[0]:material.walls
-    c.save();c.globalAlpha=.92
-    c.fillStyle=day?'#c5ccb299':'#638c7b55';c.beginPath();c.ellipse(x+7,y,43,21,-.25,0,Math.PI*2);c.fill()
-    polygon(c,[[x-24,y+4],[x+29,y+4],[x+48,y-9],[x-4,y-22]],day?'#234f5d3d':'#061b354d')
-    if(!day)lightPool(c,x,y+2,w,'#ffc56c',.4)
-    block(c,x,y,w,28,h,day?front:side,day?roof:front,day?side:'#233c52');windows(c,x,y,w,h,1,true)
-    block(c,x,y-h+1,w+3,30,3,day?roof:front,day?roof:front,side)
-    if(keepsakes.includes('sunforge'))block(c,x,y-h+2,w+3,30,3,'#b46e53',day?'#eeb587':'#b77c77','#875461')
-    if(keepsakes.includes('moonwake')){polygon(c,[[x+w/2+7,y-25],[x+w/2+11,y-20],[x+w/2+7,y-15],[x+w/2+3,y-20]],'#c4f7ff');if(!day)lightPool(c,x+w/2+7,y-20,23,'#aae9ff',.48)}
-    if(keepsakes.includes('stormglass'))for(let i=0;i<3;i++){c.fillStyle=['#ffccae','#9fe9df','#d5bdff'][i];c.fillRect(x-w/2+6+i*9,y-h+7,5,7)}
-    if(keepsakes.includes('mastery:weekly')){c.strokeStyle='#e1dbc0';c.lineWidth=1.5;c.beginPath();c.moveTo(x+w/2,y-h);c.lineTo(x+w/2,y-h-24);c.stroke();polygon(c,[[x+w/2,y-h-24],[x+w/2+16,y-h-18],[x+w/2,y-h-12]],'#80dec9')}
-    c.fillStyle=style%2?'#e6a55b':'#366778';c.fillRect(x-w/2+6,y-12,8,12)
-    if(variant===0){polygon(c,[[x-w/2-2,y-h],[x+1,y-h-17],[x+w/2+14,y-h-13],[x+w/2+1,y-h+1]],day?'#87b2bb':'#426680');c.strokeStyle='#c9dfd9';c.lineWidth=1;for(let k=0;k<4;k++){c.beginPath();c.moveTo(x-14+k*9,y-h-2);c.lineTo(x+k*9,y-h-15);c.stroke()}}
-    else if(variant===1){for(let k=0;k<2;k++){const rx=x-13+k*21;polygon(c,[[rx-10,y-h],[rx+4,y-h-15],[rx+11,y-h-15],[rx+11,y-h]],day?'#849393':'#596c7b');c.fillStyle=day?'#a9dbdc':'#edd2a2';c.fillRect(rx+4,y-h-13,6,8)}block(c,x-15,y-h-3,5,6,13,'#916c66','#c5a690','#604858')}
-    else if(variant===2){polygon(c,[[x-22,y-h-1],[x-8,y-h-22],[x+22,y-h-22],[x+28,y-h-3]],day?'#ace8d5bb':'#79bcb877');c.strokeStyle='#eee5b9';c.lineWidth=1.4;for(let k=0;k<4;k++){c.beginPath();c.moveTo(x-18+k*12,y-h-2);c.lineTo(x-8+k*9,y-h-21);c.stroke()}}
-    else{c.fillStyle=day?'#9eadd4':'#717fa9';c.beginPath();c.ellipse(x+4,y-h-3,18,17,0,Math.PI,Math.PI*2);c.fill();c.strokeStyle='#e7d7b0';c.lineWidth=1.5;c.beginPath();c.moveTo(x+4,y-h-3);c.lineTo(x+4,y-h-25);c.stroke()}
-    if(variant===2&&style%2===0){block(c,x+4,y-h-5,w-7,20,4,'#759b75',day?'#8dbf73':'#43806b','#396559');for(let j=0;j<3;j++)plant(c,x-8+j*9,y-h-10,4)}
-    else polygon(c,[[x-11,y-h-7],[x-5,y-h-15],[x+13,y-h-15],[x+7,y-h-7]],day?'#356e91':'#234660')
-    if(style===0&&keepsakes.includes('market'))block(c,x-9,y+8,25,14,11,day?'#bc6b62':'#784f60',day?'#f3b28b':'#c27d79','#704859')
-    if(keepsakes.includes('glass')){c.fillStyle='#94e5df';c.fillRect(x+w/2+6,y-19,3,10)}
-    if(stage>=2||keepsakes.includes('garden')){c.fillStyle='#f9c68c';c.fillRect(x-10,y-8,4,4);c.fillRect(x-3,y-10,4,4)}
-    if(style===0&&keepsakes.some(k=>k.startsWith('project:market:'))){const col=keepsakes.includes('project:market:1')?'#7dd7c4':'#eead64';polygon(c,[[x-24,y-15],[x+20,y-15],[x+30,y-5],[x-14,y-5]],col)}
-    if(style===2&&keepsakes.some(k=>k.startsWith('project:observatory:'))){c.fillStyle=keepsakes.includes('project:observatory:1')?'#aaa0ee':'#e99973';c.beginPath();c.ellipse(x,y-h-6,13,12,0,Math.PI,Math.PI*2);c.fill();c.fillStyle='#eee1aa';c.fillRect(x-1,y-h-24,2,16)}
-    if(style===4&&keepsakes.some(k=>k.startsWith('project:gardens:'))){c.fillStyle=keepsakes.includes('project:gardens:1')?'#bdf5df':'#f6a7b2';for(let j=0;j<4;j++){c.beginPath();c.arc(x-15+j*9,y-h-10,3,0,Math.PI*2);c.fill()}}
-    if(chapter>=1){
-      c.strokeStyle='#fff0b799';c.lineWidth=1;c.beginPath();c.moveTo(x-w/2,y-7);c.quadraticCurveTo(x,y+3,x+w/2,y-7);c.stroke()
-      for(let j=0;j<3+chapter;j++){const bx=x-w/2+5+j*(w-10)/(2+chapter);polygon(c,[[bx-2,y-5],[bx+3,y-5],[bx,y+1]],['#ffb789','#b4fff0','#e5bdff'][j%3])}
-    }
-    if(chapter>=2){block(c,x+7,y-h-8,14,11,5,front,roof,side);plant(c,x+7,y-h-16,5)}
-    if(chapter>=3){c.fillStyle='#fff0b6';c.fillRect(x+w/2+5,y-22,4,5);if(!day)lightPool(c,x+w/2+7,y-19,24,'#ffe59b',.65)}
-    c.restore()
-    })
-  }
+  paintCanalLandscape(c,s,stage,keepsakes,wide)
   terrain.set(s.level,{key,canvas});return canvas
 }
 
@@ -95,17 +29,33 @@ export function movingWater(c:CanvasRenderingContext2D,s:Sim,time:number){
   for(const seg of s.level.segs.values())for(let i=0;i<Math.ceil(seg.line.length/88);i++){
     const at=(i*88+time*30)%seg.line.length,p=seg.line.at(at,{x:0,y:0,tx:0,ty:0}),off=Math.sin(i*7+time*.45)*9
     const x=p.x-p.ty*off,y=p.y+p.tx*off
-    c.globalAlpha=.45+Math.sin(time*1.5+i)*.2;c.strokeStyle=s.sky.night?'#8df7dc':'#d8fff0';c.lineWidth=i%3===0?2.4:1.4
-    c.beginPath();c.moveTo(x-p.tx*10,y-p.ty*10);c.quadraticCurveTo(x-p.ty*2,y+p.tx*2,x+p.tx*9,y+p.ty*9);c.stroke()
-    if(i%3===0){c.globalAlpha=s.waveActive?.18:.36;c.lineWidth=2;c.beginPath();c.moveTo(x-p.tx*4-p.ty*6,y-p.ty*4+p.tx*6);c.lineTo(x+p.tx*3,y+p.ty*3);c.lineTo(x-p.tx*4+p.ty*6,y-p.ty*4-p.tx*6);c.stroke()}
+    c.globalAlpha=.2+Math.sin(time*1.1+i)*.08;c.strokeStyle=s.sky.night?'#adebdd':'#e5efcb';c.lineWidth=i%3===0?1.6:1
+    c.beginPath();c.moveTo(x-p.tx*14,y-p.ty*14);c.bezierCurveTo(x-p.tx*6-p.ty*3,y-p.ty*6+p.tx*3,x+p.tx*5+p.ty*3,y+p.ty*5-p.tx*3,x+p.tx*13,y+p.ty*13);c.stroke()
+    if(i%3===0){c.globalAlpha=.1;c.lineWidth=.8;c.beginPath();c.moveTo(x-p.tx*8-p.ty*5,y-p.ty*8+p.tx*5);c.quadraticCurveTo(x-p.ty*8,y+p.tx*8,x+p.tx*8-p.ty*4,y+p.ty*8+p.tx*4);c.stroke()}
   }
   c.restore()
 }
 
-export function livingDistrict(c:CanvasRenderingContext2D,s:Sim,time:number,reduced:boolean){
+export function livingDistrict(c:CanvasRenderingContext2D,s:Sim,time:number,reduced:boolean,keepsakes:readonly string[]=[],wide=false){
+  groveCanopies(c,s,time,reduced,wide)
+  if(s.challenge.watchExperience){
+    const homes=districtLayout(s).filter(p=>p.kind==='house'),ids=['market','observatory','gardens'] as const
+    for(const [i,p] of homes.entries()){
+      const id=ids[i%3],restored=keepsakes.some(k=>k.startsWith('project:'+id+':')),celebrating=s.won
+      if(!restored&&!celebrating)continue
+      const {x,y}=p
+      upright(c,x,y,wide,()=>{
+        c.save();lightPool(c,x,y,restored?45:25,'#ffe5ac',s.sky.night||celebrating?.6:.18)
+        if(restored){c.save();c.translate(x,y);c.scale(.8,.8);projectDetails(c,0,0,id,time,reduced);c.restore()}
+        // Residents stay on reserved plazas, never over water or tower plots.
+        if(!s.waveActive||celebrating)for(let j=0;j<2;j++){const dx=x-10+j*20+(reduced?0:Math.sin(time*.7+i+j)*3),dy=y+18;c.fillStyle='#ffe2ae';c.beginPath();c.arc(dx,dy-6,2.5,0,Math.PI*2);c.fill();c.fillStyle=j?'#a2dace':'#cf9398';c.fillRect(dx-2,dy-3,4,6)}
+        c.restore()
+      })
+    }
+  }
   if(reduced)return
   for(const [i,p] of districtLayout(s).entries()){
-    if(p.kind!=='tree')continue
+    if(p.kind!=='tree'||secondWatch(s.challenge))continue
     const x=p.x+Math.sin(time*.8+i)*13,y=p.y-26+Math.cos(time*1.1+i)*6
     if(s.sky.night){lightPool(c,x,y,13,'#ffdc80',.35+Math.sin(time*2+i)*.2,1);c.fillStyle='#ffe9ad';c.fillRect(x-1,y-1,2,2)}
     else if(i%3===0){const wing=2+Math.abs(Math.sin(time*9+i))*3;c.fillStyle='#ffdc87';c.beginPath();c.ellipse(x-3,y,wing,2,-.4,0,Math.PI*2);c.ellipse(x+3,y,wing,2,.4,0,Math.PI*2);c.fill()}

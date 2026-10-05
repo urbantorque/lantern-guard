@@ -3,7 +3,7 @@ import type { EnemyId } from '../game/defs'
 import { drawCheer } from './enemies'
 import { glowSprite, P, withAlpha } from './palette'
 
-export type PKind = 'spark' | 'ink' | 'ring' | 'firefly' | 'text' | 'shard' | 'flash' | 'mote' | 'note' | 'cheer' | 'petal' | 'pillar' | 'orbit' | 'link' | 'arc'
+export type PKind = 'spark' | 'ink' | 'ring' | 'firefly' | 'text' | 'shard' | 'flash' | 'mote' | 'note' | 'cheer' | 'petal' | 'pillar' | 'orbit' | 'link' | 'arc' | 'impact' | 'shock'
 
 export interface Particle {
   kind: PKind
@@ -109,7 +109,8 @@ export class Fx {
     for (let i = 0; i < n; i++) {
       const a = vrand(0, TAU)
       const s = vrand(90, 220)
-      this.add({ kind: 'shard', x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 80, life: vrand(0.5, 0.8), size: vrand(4, 8), color, rot: vrand(0, TAU), vr: vrand(-12, 12), grav: 520, drag: 1.2 })
+      const sx=Math.cos(a)*s,sy=(Math.sin(a)*s-80)/this.viewDepth,cs=Math.cos(this.viewRotation),sn=Math.sin(this.viewRotation)
+      this.add({ kind: 'shard', x, y, vx: sx*cs+sy*sn, vy: -sx*sn+sy*cs, life: vrand(0.5, 0.8), size: vrand(4, 8), color, rot: vrand(0, TAU), vr: vrand(-12, 12), grav: 520, drag: 1.2 })
     }
   }
 
@@ -181,7 +182,11 @@ export class Fx {
         p.vx *= k
         p.vy *= k
       }
-      p.vy += p.grav * dt
+      if(p.kind==='shard'){
+        // Fragments fall down the screen when the canal camera rotates.
+        p.vx+=Math.sin(this.viewRotation)*p.grav*dt/this.viewDepth
+        p.vy+=Math.cos(this.viewRotation)*p.grav*dt/this.viewDepth
+      }else p.vy += p.grav * dt
       p.x += p.vx * dt
       p.y += p.vy * dt
       p.rot += p.vr * dt
@@ -193,12 +198,30 @@ export class Fx {
     for (const p of this.list) {
       const k = p.life / p.max
       switch (p.kind) {
+        case 'impact': {
+          // A brief cut of light at contact, kept upright in either camera.
+          const reach=p.size*(.45+(1-k)*.55)
+          ctx.save();ctx.translate(p.x,p.y);ctx.rotate(-this.viewRotation+p.rot);ctx.scale(1,1/this.viewDepth);ctx.globalAlpha=k*k
+          for(let i=0;i<6;i++){const a=i*TAU/6,r=reach*(i%2?.6:1);ctx.rotate(a);ctx.fillStyle=i%2?p.color:'#fff5d5';ctx.beginPath();ctx.moveTo(1,-1.3*k);ctx.lineTo(r,0);ctx.lineTo(1,1.3*k);ctx.closePath();ctx.fill();ctx.rotate(-a)}ctx.restore()
+          break
+        }
+        case 'shock': {
+          // Low ground shock with broken outer arcs; it never covers the target.
+          const t=1-k,r=p.size*(.18+.82*easeOut(t))
+          ctx.globalAlpha=k*.8;ctx.strokeStyle=p.color;ctx.lineWidth=1.2+k*1.4
+          ctx.beginPath();ctx.arc(p.x,p.y,r,0,TAU);ctx.stroke()
+          ctx.globalAlpha=k*k*.6;ctx.lineWidth=.8
+          for(let i=0;i<8;i++){const a=i*TAU/8;ctx.beginPath();ctx.arc(p.x,p.y,r*.81,a,a+.28);ctx.stroke();ctx.beginPath();ctx.moveTo(p.x+Math.cos(a)*r*.55,p.y+Math.sin(a)*r*.55);ctx.lineTo(p.x+Math.cos(a)*r*.88,p.y+Math.sin(a)*r*.88);ctx.stroke()}
+          break
+        }
         case 'arc': {
           const dx=p.tx-p.x,dy=p.ty-p.y,d=Math.hypot(dx,dy)||1
           ctx.globalAlpha=k;ctx.lineCap='round';ctx.lineJoin='round'
           ctx.beginPath();ctx.moveTo(p.x,p.y)
           for(let i=1;i<6;i++){const offset=Math.sin(i*17+k*12)*Math.min(9,d*.07);ctx.lineTo(p.x+dx*i/6-dy/d*offset,p.y+dy*i/6+dx/d*offset)}
           ctx.lineTo(p.tx,p.ty);ctx.strokeStyle=p.color;ctx.lineWidth=p.lw+4;ctx.globalAlpha=k*.3;ctx.stroke();ctx.strokeStyle='#edfcff';ctx.lineWidth=p.lw*.55;ctx.globalAlpha=k;ctx.stroke()
+          ctx.lineWidth=.7;ctx.globalAlpha=k*.65
+          for(const i of [2,4]){const u=i/6,x=p.x+dx*u,y=p.y+dy*u,side=i===2?1:-1,reach=Math.min(12,d*.1);ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+dx/d*4-dy/d*reach*side,y+dy/d*4+dx/d*reach*side);ctx.lineTo(x-dy/d*reach*1.35*side,y+dx/d*reach*1.35*side);ctx.stroke()}
           break
         }
         case 'link': {

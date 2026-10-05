@@ -1,0 +1,4490 @@
+[
+  {
+    "mode": "chapter",
+    "hero": "sol",
+    "composition": "Wildfire relay",
+    "passage": "convoy",
+    "won": true,
+    "wave": 24,
+    "light": 23,
+    "glow": 4613,
+    "commands": 19,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 6,
+        "spent": 868,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 0,
+        "spent": 1577,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 3,
+        "spent": 1183,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 10,
+        "spent": 1577,
+        "stage": 4
+      },
+      {
+        "id": "owl",
+        "pad": 7,
+        "spent": 1341,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 1,
+        "spent": 1577,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 2,
+        "spent": 1183,
+        "stage": 4
+      },
+      {
+        "id": "garden",
+        "pad": 4,
+        "spent": 1814,
+        "stage": 4
+      },
+      {
+        "id": "ballista",
+        "pad": 12,
+        "spent": 5679,
+        "stage": 4
+      }
+    ]
+  },
+  {
+    "mode": "chapter",
+    "hero": "sol",
+    "composition": "Wildfire relay",
+    "passage": "runners",
+    "won": true,
+    "wave": 24,
+    "light": 23,
+    "glow": 4445,
+    "commands": 19,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 6,
+        "spent": 868,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 0,
+        "spent": 1577,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 3,
+        "spent": 1183,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 10,
+        "spent": 1577,
+        "stage": 4
+      },
+      {
+        "id": "owl",
+        "pad": 7,
+        "spent": 1341,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 1,
+        "spent": 1577,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 2,
+        "spent": 1183,
+        "stage": 4
+      },
+      {
+        "id": "garden",
+        "pad": 4,
+        "spent": 1814,
+        "stage": 4
+      },
+      {
+        "id": "ballista",
+        "pad": 5,
+        "spent": 5679,
+        "stage": 4
+      }
+    ]
+  },
+  {
+    "mode": "chapter",
+    "hero": "sol",
+    "composition": "Ignition siege",
+    "passage": "convoy",
+    "won": true,
+    "wave": 24,
+    "light": 16,
+    "glow": 2358,
+    "commands": 13,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 6,
+        "spent": 868,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 0,
+        "spent": 1577,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 3,
+        "spent": 1183,
+        "stage": 4
+      },
+      {
+        "id": "owl",
+        "pad": 10,
+        "spent": 1341,
+        "stage": 4
+      },
+      {
+        "id": "owl",
+        "pad": 7,
+        "spent": 1341,
+        "stage": 4
+      },
+      {
+        "id": "garden",
+        "pad": 2,
+        "spent": 1814,
+        "stage": 4
+      },
+      {
+        "id": "beam",
+        "pad": 4,
+        "spent": 2682,
+        "stage": 4
+      },
+      {
+        "id": "ballista",
+        "pad": 12,
+        "spent": 5679,
+        "stage": 4
+      },
+      {
+        "id": "ballista",
+        "pad": 9,
+        "spent": 2002,
+        "stage": 2
+      }
+    ]
+  },
+  {
+    "mode": "chapter",
+    "hero": "sol",
+    "composition": "Ignition siege",
+    "passage": "runners",
+    "won": true,
+    "wave": 24,
+    "light": 16,
+    "glow": 2156,
+    "commands": 15,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 6,
+        "spent": 868,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 0,
+        "spent": 1577,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 3,
+        "spent": 1183,
+        "stage": 4
+      },
+      {
+        "id": "owl",
+        "pad": 10,
+        "spent": 1341,
+        "stage": 4
+      },
+      {
+        "id": "owl",
+        "pad": 7,
+        "spent": 1341,
+        "stage": 4
+      },
+      {
+        "id": "garden",
+        "pad": 2,
+        "spent": 1814,
+        "stage": 4
+      },
+      {
+        "id": "beam",
+        "pad": 4,
+        "spent": 2682,
+        "stage": 4
+      },
+      {
+        "id": "ballista",
+        "pad": 5,
+        "spent": 5679,
+        "stage": 4
+      },
+      {
+        "id": "ballista",
+        "pad": 9,
+        "spent": 2002,
+        "stage": 2
+      }
+    ]
+  },
+  {
+    "mode": "chapter",
+    "hero": "mira",
+    "composition": "Frozen battery",
+    "passage": "convoy",
+    "won": true,
+    "wave": 24,
+    "light": 25,
+    "glow": 4084,
+    "commands": 3,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 6,
+        "spent": 868,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 0,
+        "spent": 1577,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 3,
+        "spent": 1183,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 10,
+        "spent": 1577,
+        "stage": 4
+      },
+      {
+        "id": "owl",
+        "pad": 7,
+        "spent": 1341,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 1,
+        "spent": 1183,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 4,
+        "spent": 1577,
+        "stage": 4
+      },
+      {
+        "id": "garden",
+        "pad": 2,
+        "spent": 1814,
+        "stage": 4
+      },
+      {
+        "id": "ballista",
+        "pad": 12,
+        "spent": 5679,
+        "stage": 4
+      }
+    ]
+  },
+  {
+    "mode": "chapter",
+    "hero": "mira",
+    "composition": "Frozen battery",
+    "passage": "runners",
+    "won": true,
+    "wave": 24,
+    "light": 15,
+    "glow": 3880,
+    "commands": 5,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 6,
+        "spent": 868,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 0,
+        "spent": 1577,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 3,
+        "spent": 1183,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 10,
+        "spent": 1577,
+        "stage": 4
+      },
+      {
+        "id": "owl",
+        "pad": 7,
+        "spent": 1341,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 1,
+        "spent": 1183,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 4,
+        "spent": 1577,
+        "stage": 4
+      },
+      {
+        "id": "garden",
+        "pad": 2,
+        "spent": 1814,
+        "stage": 4
+      },
+      {
+        "id": "ballista",
+        "pad": 5,
+        "spent": 5679,
+        "stage": 4
+      }
+    ]
+  },
+  {
+    "mode": "chapter",
+    "hero": "mira",
+    "composition": "Undertow corridor",
+    "passage": "convoy",
+    "won": true,
+    "wave": 24,
+    "light": 25,
+    "glow": 3835,
+    "commands": 13,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 6,
+        "spent": 868,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 0,
+        "spent": 1577,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 3,
+        "spent": 1183,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 10,
+        "spent": 1183,
+        "stage": 4
+      },
+      {
+        "id": "owl",
+        "pad": 7,
+        "spent": 1341,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 1,
+        "spent": 1183,
+        "stage": 4
+      },
+      {
+        "id": "garden",
+        "pad": 2,
+        "spent": 1814,
+        "stage": 4
+      },
+      {
+        "id": "beam",
+        "pad": 4,
+        "spent": 2682,
+        "stage": 4
+      },
+      {
+        "id": "beam",
+        "pad": 5,
+        "spent": 2682,
+        "stage": 4
+      },
+      {
+        "id": "ballista",
+        "pad": 12,
+        "spent": 2002,
+        "stage": 2
+      }
+    ]
+  },
+  {
+    "mode": "chapter",
+    "hero": "mira",
+    "composition": "Undertow corridor",
+    "passage": "runners",
+    "won": true,
+    "wave": 24,
+    "light": 25,
+    "glow": 3399,
+    "commands": 12,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 6,
+        "spent": 868,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 0,
+        "spent": 1577,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 3,
+        "spent": 1183,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 10,
+        "spent": 1183,
+        "stage": 4
+      },
+      {
+        "id": "owl",
+        "pad": 7,
+        "spent": 1341,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 1,
+        "spent": 1183,
+        "stage": 4
+      },
+      {
+        "id": "garden",
+        "pad": 2,
+        "spent": 1814,
+        "stage": 4
+      },
+      {
+        "id": "beam",
+        "pad": 4,
+        "spent": 2682,
+        "stage": 4
+      },
+      {
+        "id": "beam",
+        "pad": 5,
+        "spent": 2682,
+        "stage": 4
+      },
+      {
+        "id": "ballista",
+        "pad": 9,
+        "spent": 2002,
+        "stage": 2
+      }
+    ]
+  },
+  {
+    "mode": "chapter",
+    "hero": "ivo",
+    "composition": "Chain network",
+    "passage": "convoy",
+    "won": true,
+    "wave": 24,
+    "light": 23,
+    "glow": 4213,
+    "commands": 13,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 6,
+        "spent": 868,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 0,
+        "spent": 1577,
+        "stage": 4
+      },
+      {
+        "id": "storm",
+        "pad": 3,
+        "spent": 2208,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 10,
+        "spent": 1183,
+        "stage": 4
+      },
+      {
+        "id": "owl",
+        "pad": 7,
+        "spent": 1341,
+        "stage": 4
+      },
+      {
+        "id": "storm",
+        "pad": 1,
+        "spent": 2208,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 4,
+        "spent": 1577,
+        "stage": 4
+      },
+      {
+        "id": "storm",
+        "pad": 5,
+        "spent": 2208,
+        "stage": 4
+      },
+      {
+        "id": "ballista",
+        "pad": 12,
+        "spent": 2002,
+        "stage": 2
+      }
+    ]
+  },
+  {
+    "mode": "chapter",
+    "hero": "ivo",
+    "composition": "Chain network",
+    "passage": "runners",
+    "won": true,
+    "wave": 24,
+    "light": 23,
+    "glow": 4098,
+    "commands": 14,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 6,
+        "spent": 868,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 0,
+        "spent": 1577,
+        "stage": 4
+      },
+      {
+        "id": "storm",
+        "pad": 3,
+        "spent": 2208,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 10,
+        "spent": 1183,
+        "stage": 4
+      },
+      {
+        "id": "owl",
+        "pad": 7,
+        "spent": 1341,
+        "stage": 4
+      },
+      {
+        "id": "storm",
+        "pad": 1,
+        "spent": 2208,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 4,
+        "spent": 1577,
+        "stage": 4
+      },
+      {
+        "id": "storm",
+        "pad": 5,
+        "spent": 2208,
+        "stage": 4
+      },
+      {
+        "id": "ballista",
+        "pad": 2,
+        "spent": 2002,
+        "stage": 2
+      }
+    ]
+  },
+  {
+    "mode": "chapter",
+    "hero": "ivo",
+    "composition": "Capacitor bastion",
+    "passage": "convoy",
+    "won": true,
+    "wave": 24,
+    "light": 7,
+    "glow": 4194,
+    "commands": 10,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 6,
+        "spent": 868,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 0,
+        "spent": 1577,
+        "stage": 4
+      },
+      {
+        "id": "storm",
+        "pad": 3,
+        "spent": 2208,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 10,
+        "spent": 1183,
+        "stage": 4
+      },
+      {
+        "id": "owl",
+        "pad": 7,
+        "spent": 1341,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 1,
+        "spent": 1183,
+        "stage": 4
+      },
+      {
+        "id": "beam",
+        "pad": 4,
+        "spent": 2682,
+        "stage": 4
+      },
+      {
+        "id": "ballista",
+        "pad": 12,
+        "spent": 2002,
+        "stage": 2
+      },
+      {
+        "id": "ballista",
+        "pad": 9,
+        "spent": 2002,
+        "stage": 2
+      }
+    ]
+  },
+  {
+    "mode": "chapter",
+    "hero": "ivo",
+    "composition": "Capacitor bastion",
+    "passage": "runners",
+    "won": true,
+    "wave": 24,
+    "light": 7,
+    "glow": 4199,
+    "commands": 10,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 6,
+        "spent": 868,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 0,
+        "spent": 1577,
+        "stage": 4
+      },
+      {
+        "id": "storm",
+        "pad": 3,
+        "spent": 2208,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 10,
+        "spent": 1183,
+        "stage": 4
+      },
+      {
+        "id": "owl",
+        "pad": 7,
+        "spent": 1341,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 1,
+        "spent": 1183,
+        "stage": 4
+      },
+      {
+        "id": "beam",
+        "pad": 4,
+        "spent": 2682,
+        "stage": 4
+      },
+      {
+        "id": "ballista",
+        "pad": 2,
+        "spent": 2002,
+        "stage": 2
+      },
+      {
+        "id": "ballista",
+        "pad": 5,
+        "spent": 2002,
+        "stage": 2
+      }
+    ]
+  },
+  {
+    "mode": "sunforge",
+    "hero": "sol",
+    "composition": "Wildfire relay",
+    "passage": "convoy",
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "glow": 820,
+    "commands": 4,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 0,
+        "spent": 319,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 3,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 7,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "owl",
+        "pad": 6,
+        "spent": 493,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 12,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 1,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 5,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "ballista",
+        "pad": 10,
+        "spent": 720,
+        "stage": 0
+      }
+    ]
+  },
+  {
+    "mode": "sunforge",
+    "hero": "sol",
+    "composition": "Wildfire relay",
+    "passage": "runners",
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "glow": 702,
+    "commands": 5,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 0,
+        "spent": 319,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 3,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 7,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "owl",
+        "pad": 6,
+        "spent": 493,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 1,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 2,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 5,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "ballista",
+        "pad": 10,
+        "spent": 720,
+        "stage": 0
+      }
+    ]
+  },
+  {
+    "mode": "sunforge",
+    "hero": "sol",
+    "composition": "Ignition siege",
+    "passage": "convoy",
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "glow": 1176,
+    "commands": 2,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 0,
+        "spent": 319,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 3,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 7,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "owl",
+        "pad": 6,
+        "spent": 493,
+        "stage": 2
+      },
+      {
+        "id": "beam",
+        "pad": 12,
+        "spent": 986,
+        "stage": 2
+      },
+      {
+        "id": "owl",
+        "pad": 10,
+        "spent": 493,
+        "stage": 2
+      },
+      {
+        "id": "ballista",
+        "pad": 2,
+        "spent": 720,
+        "stage": 0
+      }
+    ]
+  },
+  {
+    "mode": "sunforge",
+    "hero": "sol",
+    "composition": "Ignition siege",
+    "passage": "runners",
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "glow": 1234,
+    "commands": 0,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 0,
+        "spent": 983,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 3,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 7,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "owl",
+        "pad": 6,
+        "spent": 493,
+        "stage": 2
+      },
+      {
+        "id": "beam",
+        "pad": 10,
+        "spent": 986,
+        "stage": 2
+      },
+      {
+        "id": "owl",
+        "pad": 5,
+        "spent": 493,
+        "stage": 2
+      }
+    ]
+  },
+  {
+    "mode": "sunforge",
+    "hero": "mira",
+    "composition": "Frozen battery",
+    "passage": "convoy",
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "glow": 820,
+    "commands": 1,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 0,
+        "spent": 319,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 3,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 7,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "owl",
+        "pad": 6,
+        "spent": 493,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 12,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 1,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 5,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "ballista",
+        "pad": 10,
+        "spent": 720,
+        "stage": 0
+      }
+    ]
+  },
+  {
+    "mode": "sunforge",
+    "hero": "mira",
+    "composition": "Frozen battery",
+    "passage": "runners",
+    "won": true,
+    "wave": 12,
+    "light": 13,
+    "glow": 1127,
+    "commands": 3,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 0,
+        "spent": 319,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 3,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 7,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "owl",
+        "pad": 6,
+        "spent": 493,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 1,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 5,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 9,
+        "spent": 580,
+        "stage": 2
+      }
+    ]
+  },
+  {
+    "mode": "sunforge",
+    "hero": "mira",
+    "composition": "Undertow corridor",
+    "passage": "convoy",
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "glow": 748,
+    "commands": 1,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 0,
+        "spent": 319,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 3,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 7,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "owl",
+        "pad": 6,
+        "spent": 493,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 12,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "beam",
+        "pad": 10,
+        "spent": 986,
+        "stage": 2
+      },
+      {
+        "id": "beam",
+        "pad": 9,
+        "spent": 986,
+        "stage": 2
+      }
+    ]
+  },
+  {
+    "mode": "sunforge",
+    "hero": "mira",
+    "composition": "Undertow corridor",
+    "passage": "runners",
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "glow": 742,
+    "commands": 1,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 0,
+        "spent": 319,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 3,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 7,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "owl",
+        "pad": 6,
+        "spent": 493,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 1,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "beam",
+        "pad": 2,
+        "spent": 340,
+        "stage": 0
+      },
+      {
+        "id": "beam",
+        "pad": 9,
+        "spent": 340,
+        "stage": 0
+      },
+      {
+        "id": "ballista",
+        "pad": 5,
+        "spent": 720,
+        "stage": 0
+      }
+    ]
+  },
+  {
+    "mode": "sunforge",
+    "hero": "ivo",
+    "composition": "Chain network",
+    "passage": "convoy",
+    "won": true,
+    "wave": 12,
+    "light": 13,
+    "glow": 656,
+    "commands": 4,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 0,
+        "spent": 319,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 3,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "storm",
+        "pad": 6,
+        "spent": 812,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 10,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "owl",
+        "pad": 12,
+        "spent": 493,
+        "stage": 2
+      },
+      {
+        "id": "storm",
+        "pad": 5,
+        "spent": 812,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 7,
+        "spent": 200,
+        "stage": 0
+      },
+      {
+        "id": "storm",
+        "pad": 9,
+        "spent": 280,
+        "stage": 0
+      }
+    ]
+  },
+  {
+    "mode": "sunforge",
+    "hero": "ivo",
+    "composition": "Chain network",
+    "passage": "runners",
+    "won": true,
+    "wave": 12,
+    "light": 13,
+    "glow": 658,
+    "commands": 3,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 0,
+        "spent": 319,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 3,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "storm",
+        "pad": 6,
+        "spent": 812,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 10,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "owl",
+        "pad": 7,
+        "spent": 493,
+        "stage": 2
+      },
+      {
+        "id": "storm",
+        "pad": 2,
+        "spent": 812,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 5,
+        "spent": 200,
+        "stage": 0
+      },
+      {
+        "id": "storm",
+        "pad": 8,
+        "spent": 280,
+        "stage": 0
+      }
+    ]
+  },
+  {
+    "mode": "sunforge",
+    "hero": "ivo",
+    "composition": "Capacitor bastion",
+    "passage": "convoy",
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "glow": 748,
+    "commands": 1,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 0,
+        "spent": 319,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 3,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "storm",
+        "pad": 6,
+        "spent": 812,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 10,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "owl",
+        "pad": 12,
+        "spent": 493,
+        "stage": 2
+      },
+      {
+        "id": "beam",
+        "pad": 5,
+        "spent": 340,
+        "stage": 0
+      },
+      {
+        "id": "ballista",
+        "pad": 7,
+        "spent": 720,
+        "stage": 0
+      },
+      {
+        "id": "bell",
+        "pad": 2,
+        "spent": 435,
+        "stage": 2
+      }
+    ]
+  },
+  {
+    "mode": "sunforge",
+    "hero": "ivo",
+    "composition": "Capacitor bastion",
+    "passage": "runners",
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "glow": 695,
+    "commands": 2,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 0,
+        "spent": 319,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 3,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "storm",
+        "pad": 6,
+        "spent": 812,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 10,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "owl",
+        "pad": 7,
+        "spent": 493,
+        "stage": 2
+      },
+      {
+        "id": "beam",
+        "pad": 2,
+        "spent": 340,
+        "stage": 0
+      },
+      {
+        "id": "ballista",
+        "pad": 5,
+        "spent": 720,
+        "stage": 0
+      },
+      {
+        "id": "bell",
+        "pad": 9,
+        "spent": 150,
+        "stage": 0
+      }
+    ]
+  },
+  {
+    "mode": "moonwake",
+    "hero": "sol",
+    "composition": "Wildfire relay",
+    "passage": "convoy",
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "glow": 922,
+    "commands": 6,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 0,
+        "spent": 319,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 3,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 7,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "owl",
+        "pad": 6,
+        "spent": 493,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 12,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 1,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 5,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "ballista",
+        "pad": 10,
+        "spent": 720,
+        "stage": 0
+      }
+    ]
+  },
+  {
+    "mode": "moonwake",
+    "hero": "sol",
+    "composition": "Wildfire relay",
+    "passage": "runners",
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "glow": 795,
+    "commands": 7,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 0,
+        "spent": 319,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 3,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 7,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "owl",
+        "pad": 6,
+        "spent": 493,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 1,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 5,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 2,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "ballista",
+        "pad": 10,
+        "spent": 720,
+        "stage": 0
+      }
+    ]
+  },
+  {
+    "mode": "moonwake",
+    "hero": "sol",
+    "composition": "Ignition siege",
+    "passage": "convoy",
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "glow": 1278,
+    "commands": 2,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 0,
+        "spent": 319,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 3,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 7,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "owl",
+        "pad": 6,
+        "spent": 493,
+        "stage": 2
+      },
+      {
+        "id": "beam",
+        "pad": 12,
+        "spent": 986,
+        "stage": 2
+      },
+      {
+        "id": "owl",
+        "pad": 10,
+        "spent": 493,
+        "stage": 2
+      },
+      {
+        "id": "ballista",
+        "pad": 2,
+        "spent": 720,
+        "stage": 0
+      }
+    ]
+  },
+  {
+    "mode": "moonwake",
+    "hero": "sol",
+    "composition": "Ignition siege",
+    "passage": "runners",
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "glow": 1327,
+    "commands": 4,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 0,
+        "spent": 983,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 3,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 7,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "owl",
+        "pad": 6,
+        "spent": 493,
+        "stage": 2
+      },
+      {
+        "id": "beam",
+        "pad": 10,
+        "spent": 986,
+        "stage": 2
+      },
+      {
+        "id": "owl",
+        "pad": 5,
+        "spent": 493,
+        "stage": 2
+      }
+    ]
+  },
+  {
+    "mode": "moonwake",
+    "hero": "mira",
+    "composition": "Frozen battery",
+    "passage": "convoy",
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "glow": 886,
+    "commands": 1,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 0,
+        "spent": 319,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 3,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 7,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "owl",
+        "pad": 6,
+        "spent": 493,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 12,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 1,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 5,
+        "spent": 200,
+        "stage": 0
+      },
+      {
+        "id": "ballista",
+        "pad": 10,
+        "spent": 720,
+        "stage": 0
+      },
+      {
+        "id": "garden",
+        "pad": 2,
+        "spent": 230,
+        "stage": 0
+      }
+    ]
+  },
+  {
+    "mode": "moonwake",
+    "hero": "mira",
+    "composition": "Frozen battery",
+    "passage": "runners",
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "glow": 631,
+    "commands": 4,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 0,
+        "spent": 983,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 3,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 7,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "owl",
+        "pad": 6,
+        "spent": 493,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 1,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 5,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 9,
+        "spent": 580,
+        "stage": 2
+      }
+    ]
+  },
+  {
+    "mode": "moonwake",
+    "hero": "mira",
+    "composition": "Undertow corridor",
+    "passage": "convoy",
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "glow": 732,
+    "commands": 1,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 0,
+        "spent": 319,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 3,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 7,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "owl",
+        "pad": 6,
+        "spent": 493,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 5,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "beam",
+        "pad": 12,
+        "spent": 340,
+        "stage": 0
+      },
+      {
+        "id": "beam",
+        "pad": 9,
+        "spent": 340,
+        "stage": 0
+      },
+      {
+        "id": "ballista",
+        "pad": 2,
+        "spent": 720,
+        "stage": 0
+      },
+      {
+        "id": "bell",
+        "pad": 10,
+        "spent": 150,
+        "stage": 0
+      }
+    ]
+  },
+  {
+    "mode": "moonwake",
+    "hero": "mira",
+    "composition": "Undertow corridor",
+    "passage": "runners",
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "glow": 729,
+    "commands": 5,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 0,
+        "spent": 319,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 3,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 7,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "owl",
+        "pad": 6,
+        "spent": 493,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 2,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "beam",
+        "pad": 10,
+        "spent": 986,
+        "stage": 2
+      },
+      {
+        "id": "beam",
+        "pad": 4,
+        "spent": 340,
+        "stage": 0
+      },
+      {
+        "id": "ballista",
+        "pad": 1,
+        "spent": 720,
+        "stage": 0
+      }
+    ]
+  },
+  {
+    "mode": "moonwake",
+    "hero": "ivo",
+    "composition": "Chain network",
+    "passage": "convoy",
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "glow": 833,
+    "commands": 1,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 0,
+        "spent": 319,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 3,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "storm",
+        "pad": 6,
+        "spent": 812,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 10,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "owl",
+        "pad": 5,
+        "spent": 493,
+        "stage": 2
+      },
+      {
+        "id": "storm",
+        "pad": 12,
+        "spent": 812,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 7,
+        "spent": 200,
+        "stage": 0
+      },
+      {
+        "id": "storm",
+        "pad": 9,
+        "spent": 280,
+        "stage": 0
+      }
+    ]
+  },
+  {
+    "mode": "moonwake",
+    "hero": "ivo",
+    "composition": "Chain network",
+    "passage": "runners",
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "glow": 826,
+    "commands": 3,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 0,
+        "spent": 319,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 3,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "storm",
+        "pad": 6,
+        "spent": 812,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 10,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "owl",
+        "pad": 5,
+        "spent": 493,
+        "stage": 2
+      },
+      {
+        "id": "storm",
+        "pad": 7,
+        "spent": 812,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 2,
+        "spent": 200,
+        "stage": 0
+      },
+      {
+        "id": "storm",
+        "pad": 8,
+        "spent": 280,
+        "stage": 0
+      }
+    ]
+  },
+  {
+    "mode": "moonwake",
+    "hero": "ivo",
+    "composition": "Capacitor bastion",
+    "passage": "convoy",
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "glow": 850,
+    "commands": 1,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 0,
+        "spent": 319,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 3,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "storm",
+        "pad": 6,
+        "spent": 812,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 10,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "owl",
+        "pad": 5,
+        "spent": 493,
+        "stage": 2
+      },
+      {
+        "id": "beam",
+        "pad": 12,
+        "spent": 340,
+        "stage": 0
+      },
+      {
+        "id": "ballista",
+        "pad": 7,
+        "spent": 720,
+        "stage": 0
+      },
+      {
+        "id": "bell",
+        "pad": 2,
+        "spent": 435,
+        "stage": 2
+      }
+    ]
+  },
+  {
+    "mode": "moonwake",
+    "hero": "ivo",
+    "composition": "Capacitor bastion",
+    "passage": "runners",
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "glow": 788,
+    "commands": 2,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 0,
+        "spent": 319,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 3,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "storm",
+        "pad": 6,
+        "spent": 812,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 10,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "owl",
+        "pad": 5,
+        "spent": 493,
+        "stage": 2
+      },
+      {
+        "id": "beam",
+        "pad": 7,
+        "spent": 340,
+        "stage": 0
+      },
+      {
+        "id": "ballista",
+        "pad": 2,
+        "spent": 720,
+        "stage": 0
+      },
+      {
+        "id": "bell",
+        "pad": 9,
+        "spent": 150,
+        "stage": 0
+      }
+    ]
+  },
+  {
+    "mode": "stormglass",
+    "hero": "sol",
+    "composition": "Wildfire relay",
+    "passage": "convoy",
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "glow": 925,
+    "commands": 7,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 6,
+        "spent": 983,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 0,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 3,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "owl",
+        "pad": 10,
+        "spent": 493,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 12,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 4,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 9,
+        "spent": 435,
+        "stage": 2
+      }
+    ]
+  },
+  {
+    "mode": "stormglass",
+    "hero": "sol",
+    "composition": "Wildfire relay",
+    "passage": "runners",
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "glow": 1371,
+    "commands": 7,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 6,
+        "spent": 319,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 0,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 3,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "owl",
+        "pad": 10,
+        "spent": 493,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 2,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 5,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 9,
+        "spent": 435,
+        "stage": 2
+      }
+    ]
+  },
+  {
+    "mode": "stormglass",
+    "hero": "sol",
+    "composition": "Ignition siege",
+    "passage": "convoy",
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "glow": 1285,
+    "commands": 5,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 6,
+        "spent": 319,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 0,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 3,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "owl",
+        "pad": 10,
+        "spent": 493,
+        "stage": 2
+      },
+      {
+        "id": "beam",
+        "pad": 4,
+        "spent": 986,
+        "stage": 2
+      },
+      {
+        "id": "owl",
+        "pad": 12,
+        "spent": 493,
+        "stage": 2
+      },
+      {
+        "id": "ballista",
+        "pad": 7,
+        "spent": 720,
+        "stage": 0
+      }
+    ]
+  },
+  {
+    "mode": "stormglass",
+    "hero": "sol",
+    "composition": "Ignition siege",
+    "passage": "runners",
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "glow": 853,
+    "commands": 5,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 6,
+        "spent": 319,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 0,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 3,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "owl",
+        "pad": 10,
+        "spent": 493,
+        "stage": 2
+      },
+      {
+        "id": "beam",
+        "pad": 7,
+        "spent": 340,
+        "stage": 0
+      },
+      {
+        "id": "owl",
+        "pad": 2,
+        "spent": 493,
+        "stage": 2
+      },
+      {
+        "id": "ballista",
+        "pad": 1,
+        "spent": 720,
+        "stage": 0
+      },
+      {
+        "id": "ballista",
+        "pad": 5,
+        "spent": 720,
+        "stage": 0
+      }
+    ]
+  },
+  {
+    "mode": "stormglass",
+    "hero": "mira",
+    "composition": "Frozen battery",
+    "passage": "convoy",
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "glow": 837,
+    "commands": 1,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 6,
+        "spent": 319,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 0,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 3,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "owl",
+        "pad": 7,
+        "spent": 493,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 12,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 10,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 4,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "ballista",
+        "pad": 5,
+        "spent": 720,
+        "stage": 0
+      }
+    ]
+  },
+  {
+    "mode": "stormglass",
+    "hero": "mira",
+    "composition": "Frozen battery",
+    "passage": "runners",
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "glow": 875,
+    "commands": 1,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 6,
+        "spent": 983,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 0,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 3,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "owl",
+        "pad": 7,
+        "spent": 493,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 10,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 2,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 9,
+        "spent": 580,
+        "stage": 2
+      }
+    ]
+  },
+  {
+    "mode": "stormglass",
+    "hero": "mira",
+    "composition": "Undertow corridor",
+    "passage": "convoy",
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "glow": 1065,
+    "commands": 1,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 6,
+        "spent": 319,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 0,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 3,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "owl",
+        "pad": 7,
+        "spent": 493,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 2,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "beam",
+        "pad": 12,
+        "spent": 986,
+        "stage": 2
+      },
+      {
+        "id": "beam",
+        "pad": 10,
+        "spent": 986,
+        "stage": 2
+      }
+    ]
+  },
+  {
+    "mode": "stormglass",
+    "hero": "mira",
+    "composition": "Undertow corridor",
+    "passage": "runners",
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "glow": 947,
+    "commands": 1,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 6,
+        "spent": 319,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 0,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 3,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "owl",
+        "pad": 7,
+        "spent": 493,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 10,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "beam",
+        "pad": 4,
+        "spent": 986,
+        "stage": 2
+      },
+      {
+        "id": "beam",
+        "pad": 2,
+        "spent": 986,
+        "stage": 2
+      }
+    ]
+  },
+  {
+    "mode": "stormglass",
+    "hero": "ivo",
+    "composition": "Chain network",
+    "passage": "convoy",
+    "won": false,
+    "wave": 12,
+    "light": 0,
+    "glow": 137,
+    "commands": 4,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 6,
+        "spent": 319,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 0,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "storm",
+        "pad": 3,
+        "spent": 812,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 10,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "owl",
+        "pad": 2,
+        "spent": 493,
+        "stage": 2
+      },
+      {
+        "id": "storm",
+        "pad": 4,
+        "spent": 812,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 12,
+        "spent": 200,
+        "stage": 0
+      },
+      {
+        "id": "storm",
+        "pad": 9,
+        "spent": 280,
+        "stage": 0
+      }
+    ]
+  },
+  {
+    "mode": "stormglass",
+    "hero": "ivo",
+    "composition": "Chain network",
+    "passage": "runners",
+    "won": false,
+    "wave": 12,
+    "light": 0,
+    "glow": 222,
+    "commands": 4,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 6,
+        "spent": 319,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 0,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "storm",
+        "pad": 3,
+        "spent": 812,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 10,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "owl",
+        "pad": 2,
+        "spent": 493,
+        "stage": 2
+      },
+      {
+        "id": "storm",
+        "pad": 7,
+        "spent": 812,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 5,
+        "spent": 200,
+        "stage": 0
+      },
+      {
+        "id": "storm",
+        "pad": 4,
+        "spent": 280,
+        "stage": 0
+      }
+    ]
+  },
+  {
+    "mode": "stormglass",
+    "hero": "ivo",
+    "composition": "Capacitor bastion",
+    "passage": "convoy",
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "glow": 966,
+    "commands": 4,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 6,
+        "spent": 319,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 0,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "storm",
+        "pad": 3,
+        "spent": 812,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 10,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "owl",
+        "pad": 2,
+        "spent": 493,
+        "stage": 2
+      },
+      {
+        "id": "beam",
+        "pad": 12,
+        "spent": 986,
+        "stage": 2
+      },
+      {
+        "id": "ballista",
+        "pad": 7,
+        "spent": 720,
+        "stage": 0
+      }
+    ]
+  },
+  {
+    "mode": "stormglass",
+    "hero": "ivo",
+    "composition": "Capacitor bastion",
+    "passage": "runners",
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "glow": 804,
+    "commands": 4,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 6,
+        "spent": 319,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 0,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "storm",
+        "pad": 3,
+        "spent": 812,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 10,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "owl",
+        "pad": 2,
+        "spent": 493,
+        "stage": 2
+      },
+      {
+        "id": "beam",
+        "pad": 7,
+        "spent": 340,
+        "stage": 0
+      },
+      {
+        "id": "ballista",
+        "pad": 5,
+        "spent": 720,
+        "stage": 0
+      },
+      {
+        "id": "bell",
+        "pad": 9,
+        "spent": 150,
+        "stage": 0
+      }
+    ]
+  },
+  {
+    "mode": "nightfall",
+    "hero": "sol",
+    "composition": "Wildfire relay",
+    "passage": "convoy",
+    "won": true,
+    "wave": 24,
+    "light": 15,
+    "glow": 3794,
+    "commands": 19,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 6,
+        "spent": 868,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 0,
+        "spent": 1577,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 3,
+        "spent": 1183,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 10,
+        "spent": 1577,
+        "stage": 4
+      },
+      {
+        "id": "owl",
+        "pad": 7,
+        "spent": 1341,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 1,
+        "spent": 1577,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 2,
+        "spent": 1183,
+        "stage": 4
+      },
+      {
+        "id": "garden",
+        "pad": 4,
+        "spent": 1814,
+        "stage": 4
+      },
+      {
+        "id": "ballista",
+        "pad": 12,
+        "spent": 5679,
+        "stage": 4
+      }
+    ]
+  },
+  {
+    "mode": "nightfall",
+    "hero": "sol",
+    "composition": "Wildfire relay",
+    "passage": "runners",
+    "won": true,
+    "wave": 24,
+    "light": 15,
+    "glow": 3643,
+    "commands": 19,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 6,
+        "spent": 868,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 0,
+        "spent": 1577,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 3,
+        "spent": 1183,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 10,
+        "spent": 1577,
+        "stage": 4
+      },
+      {
+        "id": "owl",
+        "pad": 7,
+        "spent": 1341,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 1,
+        "spent": 1577,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 2,
+        "spent": 1183,
+        "stage": 4
+      },
+      {
+        "id": "garden",
+        "pad": 4,
+        "spent": 1814,
+        "stage": 4
+      },
+      {
+        "id": "ballista",
+        "pad": 5,
+        "spent": 5679,
+        "stage": 4
+      }
+    ]
+  },
+  {
+    "mode": "nightfall",
+    "hero": "sol",
+    "composition": "Ignition siege",
+    "passage": "convoy",
+    "won": false,
+    "wave": 19,
+    "light": 0,
+    "glow": 215,
+    "commands": 10,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 6,
+        "spent": 868,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 0,
+        "spent": 556,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 3,
+        "spent": 1183,
+        "stage": 4
+      },
+      {
+        "id": "owl",
+        "pad": 10,
+        "spent": 1341,
+        "stage": 4
+      },
+      {
+        "id": "owl",
+        "pad": 7,
+        "spent": 1341,
+        "stage": 4
+      },
+      {
+        "id": "garden",
+        "pad": 2,
+        "spent": 1814,
+        "stage": 4
+      },
+      {
+        "id": "beam",
+        "pad": 4,
+        "spent": 945,
+        "stage": 2
+      },
+      {
+        "id": "ballista",
+        "pad": 12,
+        "spent": 2002,
+        "stage": 2
+      },
+      {
+        "id": "ballista",
+        "pad": 5,
+        "spent": 720,
+        "stage": 0
+      }
+    ]
+  },
+  {
+    "mode": "nightfall",
+    "hero": "sol",
+    "composition": "Ignition siege",
+    "passage": "runners",
+    "won": true,
+    "wave": 24,
+    "light": 4,
+    "glow": 1884,
+    "commands": 13,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 6,
+        "spent": 868,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 0,
+        "spent": 1577,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 3,
+        "spent": 1183,
+        "stage": 4
+      },
+      {
+        "id": "owl",
+        "pad": 10,
+        "spent": 1341,
+        "stage": 4
+      },
+      {
+        "id": "owl",
+        "pad": 7,
+        "spent": 1341,
+        "stage": 4
+      },
+      {
+        "id": "garden",
+        "pad": 2,
+        "spent": 1814,
+        "stage": 4
+      },
+      {
+        "id": "beam",
+        "pad": 4,
+        "spent": 2682,
+        "stage": 4
+      },
+      {
+        "id": "ballista",
+        "pad": 5,
+        "spent": 5679,
+        "stage": 4
+      },
+      {
+        "id": "ballista",
+        "pad": 1,
+        "spent": 2002,
+        "stage": 2
+      }
+    ]
+  },
+  {
+    "mode": "nightfall",
+    "hero": "mira",
+    "composition": "Frozen battery",
+    "passage": "convoy",
+    "won": false,
+    "wave": 11,
+    "light": 0,
+    "glow": 78,
+    "commands": 0,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 6,
+        "spent": 306,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 0,
+        "spent": 556,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 3,
+        "spent": 417,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 10,
+        "spent": 200,
+        "stage": 0
+      },
+      {
+        "id": "owl",
+        "pad": 7,
+        "spent": 473,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 1,
+        "spent": 417,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 4,
+        "spent": 200,
+        "stage": 0
+      },
+      {
+        "id": "garden",
+        "pad": 2,
+        "spent": 230,
+        "stage": 0
+      }
+    ]
+  },
+  {
+    "mode": "nightfall",
+    "hero": "mira",
+    "composition": "Frozen battery",
+    "passage": "runners",
+    "won": false,
+    "wave": 11,
+    "light": 0,
+    "glow": 78,
+    "commands": 0,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 6,
+        "spent": 306,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 0,
+        "spent": 556,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 3,
+        "spent": 417,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 10,
+        "spent": 200,
+        "stage": 0
+      },
+      {
+        "id": "owl",
+        "pad": 7,
+        "spent": 473,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 1,
+        "spent": 417,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 4,
+        "spent": 200,
+        "stage": 0
+      },
+      {
+        "id": "garden",
+        "pad": 2,
+        "spent": 230,
+        "stage": 0
+      }
+    ]
+  },
+  {
+    "mode": "nightfall",
+    "hero": "mira",
+    "composition": "Undertow corridor",
+    "passage": "convoy",
+    "won": true,
+    "wave": 24,
+    "light": 14,
+    "glow": 2893,
+    "commands": 9,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 6,
+        "spent": 868,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 0,
+        "spent": 1577,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 3,
+        "spent": 1183,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 10,
+        "spent": 1183,
+        "stage": 4
+      },
+      {
+        "id": "owl",
+        "pad": 7,
+        "spent": 1341,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 1,
+        "spent": 1183,
+        "stage": 4
+      },
+      {
+        "id": "beam",
+        "pad": 4,
+        "spent": 2682,
+        "stage": 4
+      },
+      {
+        "id": "beam",
+        "pad": 5,
+        "spent": 2682,
+        "stage": 4
+      },
+      {
+        "id": "garden",
+        "pad": 2,
+        "spent": 1814,
+        "stage": 4
+      },
+      {
+        "id": "ballista",
+        "pad": 12,
+        "spent": 2002,
+        "stage": 2
+      }
+    ]
+  },
+  {
+    "mode": "nightfall",
+    "hero": "mira",
+    "composition": "Undertow corridor",
+    "passage": "runners",
+    "won": true,
+    "wave": 24,
+    "light": 14,
+    "glow": 2779,
+    "commands": 10,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 6,
+        "spent": 868,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 0,
+        "spent": 1577,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 3,
+        "spent": 1183,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 10,
+        "spent": 1183,
+        "stage": 4
+      },
+      {
+        "id": "owl",
+        "pad": 7,
+        "spent": 1341,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 1,
+        "spent": 1183,
+        "stage": 4
+      },
+      {
+        "id": "beam",
+        "pad": 4,
+        "spent": 2682,
+        "stage": 4
+      },
+      {
+        "id": "beam",
+        "pad": 5,
+        "spent": 2682,
+        "stage": 4
+      },
+      {
+        "id": "garden",
+        "pad": 2,
+        "spent": 1814,
+        "stage": 4
+      },
+      {
+        "id": "ballista",
+        "pad": 9,
+        "spent": 2002,
+        "stage": 2
+      }
+    ]
+  },
+  {
+    "mode": "nightfall",
+    "hero": "ivo",
+    "composition": "Chain network",
+    "passage": "convoy",
+    "won": true,
+    "wave": 24,
+    "light": 13,
+    "glow": 3462,
+    "commands": 13,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 6,
+        "spent": 868,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 0,
+        "spent": 1577,
+        "stage": 4
+      },
+      {
+        "id": "storm",
+        "pad": 3,
+        "spent": 2208,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 10,
+        "spent": 1183,
+        "stage": 4
+      },
+      {
+        "id": "owl",
+        "pad": 7,
+        "spent": 1341,
+        "stage": 4
+      },
+      {
+        "id": "storm",
+        "pad": 1,
+        "spent": 2208,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 4,
+        "spent": 1577,
+        "stage": 4
+      },
+      {
+        "id": "storm",
+        "pad": 2,
+        "spent": 2208,
+        "stage": 4
+      },
+      {
+        "id": "ballista",
+        "pad": 12,
+        "spent": 2002,
+        "stage": 2
+      }
+    ]
+  },
+  {
+    "mode": "nightfall",
+    "hero": "ivo",
+    "composition": "Chain network",
+    "passage": "runners",
+    "won": true,
+    "wave": 24,
+    "light": 13,
+    "glow": 3247,
+    "commands": 13,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 6,
+        "spent": 868,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 0,
+        "spent": 1577,
+        "stage": 4
+      },
+      {
+        "id": "storm",
+        "pad": 3,
+        "spent": 2208,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 10,
+        "spent": 1183,
+        "stage": 4
+      },
+      {
+        "id": "owl",
+        "pad": 7,
+        "spent": 1341,
+        "stage": 4
+      },
+      {
+        "id": "storm",
+        "pad": 1,
+        "spent": 2208,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 4,
+        "spent": 1577,
+        "stage": 4
+      },
+      {
+        "id": "storm",
+        "pad": 2,
+        "spent": 2208,
+        "stage": 4
+      },
+      {
+        "id": "ballista",
+        "pad": 5,
+        "spent": 2002,
+        "stage": 2
+      }
+    ]
+  },
+  {
+    "mode": "nightfall",
+    "hero": "ivo",
+    "composition": "Capacitor bastion",
+    "passage": "convoy",
+    "won": false,
+    "wave": 11,
+    "light": 0,
+    "glow": 177,
+    "commands": 4,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 6,
+        "spent": 306,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 0,
+        "spent": 200,
+        "stage": 0
+      },
+      {
+        "id": "storm",
+        "pad": 3,
+        "spent": 778,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 10,
+        "spent": 417,
+        "stage": 2
+      },
+      {
+        "id": "owl",
+        "pad": 7,
+        "spent": 473,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 1,
+        "spent": 417,
+        "stage": 2
+      },
+      {
+        "id": "beam",
+        "pad": 4,
+        "spent": 340,
+        "stage": 0
+      }
+    ]
+  },
+  {
+    "mode": "nightfall",
+    "hero": "ivo",
+    "composition": "Capacitor bastion",
+    "passage": "runners",
+    "won": false,
+    "wave": 11,
+    "light": 0,
+    "glow": 177,
+    "commands": 4,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 6,
+        "spent": 306,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 0,
+        "spent": 200,
+        "stage": 0
+      },
+      {
+        "id": "storm",
+        "pad": 3,
+        "spent": 778,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 10,
+        "spent": 417,
+        "stage": 2
+      },
+      {
+        "id": "owl",
+        "pad": 7,
+        "spent": 473,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 1,
+        "spent": 417,
+        "stage": 2
+      },
+      {
+        "id": "beam",
+        "pad": 4,
+        "spent": 340,
+        "stage": 0
+      }
+    ]
+  },
+  {
+    "mode": "endurance",
+    "hero": "sol",
+    "composition": "Wildfire relay",
+    "passage": "convoy",
+    "won": true,
+    "wave": 40,
+    "light": 16,
+    "glow": 3936,
+    "commands": 34,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 6,
+        "spent": 1021,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 0,
+        "spent": 1857,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 3,
+        "spent": 1392,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 10,
+        "spent": 1857,
+        "stage": 4
+      },
+      {
+        "id": "owl",
+        "pad": 7,
+        "spent": 1578,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 1,
+        "spent": 1857,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 2,
+        "spent": 1392,
+        "stage": 4
+      },
+      {
+        "id": "garden",
+        "pad": 4,
+        "spent": 2135,
+        "stage": 4
+      },
+      {
+        "id": "ballista",
+        "pad": 12,
+        "spent": 6685,
+        "stage": 4
+      }
+    ]
+  },
+  {
+    "mode": "endurance",
+    "hero": "sol",
+    "composition": "Wildfire relay",
+    "passage": "runners",
+    "won": true,
+    "wave": 40,
+    "light": 16,
+    "glow": 4296,
+    "commands": 35,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 6,
+        "spent": 1021,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 0,
+        "spent": 1857,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 3,
+        "spent": 1392,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 10,
+        "spent": 1857,
+        "stage": 4
+      },
+      {
+        "id": "owl",
+        "pad": 7,
+        "spent": 1578,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 1,
+        "spent": 1857,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 2,
+        "spent": 1392,
+        "stage": 4
+      },
+      {
+        "id": "garden",
+        "pad": 4,
+        "spent": 2135,
+        "stage": 4
+      },
+      {
+        "id": "ballista",
+        "pad": 5,
+        "spent": 6685,
+        "stage": 4
+      }
+    ]
+  },
+  {
+    "mode": "endurance",
+    "hero": "sol",
+    "composition": "Ignition siege",
+    "passage": "convoy",
+    "won": true,
+    "wave": 40,
+    "light": 9,
+    "glow": 2976,
+    "commands": 27,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 6,
+        "spent": 1021,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 0,
+        "spent": 1857,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 3,
+        "spent": 1392,
+        "stage": 4
+      },
+      {
+        "id": "owl",
+        "pad": 10,
+        "spent": 1578,
+        "stage": 4
+      },
+      {
+        "id": "owl",
+        "pad": 7,
+        "spent": 1578,
+        "stage": 4
+      },
+      {
+        "id": "garden",
+        "pad": 2,
+        "spent": 2135,
+        "stage": 4
+      },
+      {
+        "id": "beam",
+        "pad": 4,
+        "spent": 3157,
+        "stage": 4
+      },
+      {
+        "id": "ballista",
+        "pad": 12,
+        "spent": 6685,
+        "stage": 4
+      },
+      {
+        "id": "ballista",
+        "pad": 1,
+        "spent": 2088,
+        "stage": 2
+      }
+    ]
+  },
+  {
+    "mode": "endurance",
+    "hero": "sol",
+    "composition": "Ignition siege",
+    "passage": "runners",
+    "won": true,
+    "wave": 40,
+    "light": 9,
+    "glow": 2582,
+    "commands": 22,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 6,
+        "spent": 1021,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 0,
+        "spent": 1857,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 3,
+        "spent": 1392,
+        "stage": 4
+      },
+      {
+        "id": "owl",
+        "pad": 10,
+        "spent": 1578,
+        "stage": 4
+      },
+      {
+        "id": "owl",
+        "pad": 7,
+        "spent": 1578,
+        "stage": 4
+      },
+      {
+        "id": "garden",
+        "pad": 2,
+        "spent": 2135,
+        "stage": 4
+      },
+      {
+        "id": "beam",
+        "pad": 4,
+        "spent": 3157,
+        "stage": 4
+      },
+      {
+        "id": "ballista",
+        "pad": 5,
+        "spent": 6685,
+        "stage": 4
+      },
+      {
+        "id": "ballista",
+        "pad": 9,
+        "spent": 2088,
+        "stage": 2
+      }
+    ]
+  },
+  {
+    "mode": "endurance",
+    "hero": "mira",
+    "composition": "Frozen battery",
+    "passage": "convoy",
+    "won": true,
+    "wave": 40,
+    "light": 6,
+    "glow": 3038,
+    "commands": 4,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 6,
+        "spent": 1021,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 0,
+        "spent": 1857,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 3,
+        "spent": 1392,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 10,
+        "spent": 1857,
+        "stage": 4
+      },
+      {
+        "id": "owl",
+        "pad": 7,
+        "spent": 1578,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 1,
+        "spent": 1392,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 4,
+        "spent": 1857,
+        "stage": 4
+      },
+      {
+        "id": "garden",
+        "pad": 2,
+        "spent": 2135,
+        "stage": 4
+      },
+      {
+        "id": "ballista",
+        "pad": 12,
+        "spent": 6685,
+        "stage": 4
+      }
+    ]
+  },
+  {
+    "mode": "endurance",
+    "hero": "mira",
+    "composition": "Frozen battery",
+    "passage": "runners",
+    "won": true,
+    "wave": 40,
+    "light": 6,
+    "glow": 3519,
+    "commands": 6,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 6,
+        "spent": 1021,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 0,
+        "spent": 1857,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 3,
+        "spent": 1392,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 10,
+        "spent": 1857,
+        "stage": 4
+      },
+      {
+        "id": "owl",
+        "pad": 7,
+        "spent": 1578,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 1,
+        "spent": 1392,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 4,
+        "spent": 1857,
+        "stage": 4
+      },
+      {
+        "id": "garden",
+        "pad": 2,
+        "spent": 2135,
+        "stage": 4
+      },
+      {
+        "id": "ballista",
+        "pad": 5,
+        "spent": 6685,
+        "stage": 4
+      }
+    ]
+  },
+  {
+    "mode": "endurance",
+    "hero": "mira",
+    "composition": "Undertow corridor",
+    "passage": "convoy",
+    "won": true,
+    "wave": 40,
+    "light": 21,
+    "glow": 4046,
+    "commands": 13,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 6,
+        "spent": 1021,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 0,
+        "spent": 1857,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 3,
+        "spent": 1392,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 10,
+        "spent": 1392,
+        "stage": 4
+      },
+      {
+        "id": "owl",
+        "pad": 7,
+        "spent": 1578,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 1,
+        "spent": 1392,
+        "stage": 4
+      },
+      {
+        "id": "garden",
+        "pad": 2,
+        "spent": 2135,
+        "stage": 4
+      },
+      {
+        "id": "beam",
+        "pad": 4,
+        "spent": 3157,
+        "stage": 4
+      },
+      {
+        "id": "beam",
+        "pad": 5,
+        "spent": 3157,
+        "stage": 4
+      },
+      {
+        "id": "ballista",
+        "pad": 12,
+        "spent": 2088,
+        "stage": 2
+      }
+    ]
+  },
+  {
+    "mode": "endurance",
+    "hero": "mira",
+    "composition": "Undertow corridor",
+    "passage": "runners",
+    "won": true,
+    "wave": 40,
+    "light": 21,
+    "glow": 3639,
+    "commands": 17,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 6,
+        "spent": 1021,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 0,
+        "spent": 1857,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 3,
+        "spent": 1392,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 10,
+        "spent": 1392,
+        "stage": 4
+      },
+      {
+        "id": "owl",
+        "pad": 7,
+        "spent": 1578,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 1,
+        "spent": 1392,
+        "stage": 4
+      },
+      {
+        "id": "garden",
+        "pad": 2,
+        "spent": 2135,
+        "stage": 4
+      },
+      {
+        "id": "beam",
+        "pad": 4,
+        "spent": 3157,
+        "stage": 4
+      },
+      {
+        "id": "beam",
+        "pad": 5,
+        "spent": 3157,
+        "stage": 4
+      },
+      {
+        "id": "ballista",
+        "pad": 9,
+        "spent": 2088,
+        "stage": 2
+      }
+    ]
+  },
+  {
+    "mode": "endurance",
+    "hero": "ivo",
+    "composition": "Chain network",
+    "passage": "convoy",
+    "won": true,
+    "wave": 40,
+    "light": 14,
+    "glow": 3203,
+    "commands": 19,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 6,
+        "spent": 1021,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 0,
+        "spent": 1857,
+        "stage": 4
+      },
+      {
+        "id": "storm",
+        "pad": 3,
+        "spent": 2599,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 10,
+        "spent": 1392,
+        "stage": 4
+      },
+      {
+        "id": "owl",
+        "pad": 7,
+        "spent": 1578,
+        "stage": 4
+      },
+      {
+        "id": "storm",
+        "pad": 1,
+        "spent": 2599,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 4,
+        "spent": 1857,
+        "stage": 4
+      },
+      {
+        "id": "storm",
+        "pad": 2,
+        "spent": 2599,
+        "stage": 4
+      },
+      {
+        "id": "ballista",
+        "pad": 12,
+        "spent": 2088,
+        "stage": 2
+      }
+    ]
+  },
+  {
+    "mode": "endurance",
+    "hero": "ivo",
+    "composition": "Chain network",
+    "passage": "runners",
+    "won": true,
+    "wave": 40,
+    "light": 14,
+    "glow": 2990,
+    "commands": 19,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 6,
+        "spent": 1021,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 0,
+        "spent": 1857,
+        "stage": 4
+      },
+      {
+        "id": "storm",
+        "pad": 3,
+        "spent": 2599,
+        "stage": 4
+      },
+      {
+        "id": "bell",
+        "pad": 10,
+        "spent": 1392,
+        "stage": 4
+      },
+      {
+        "id": "owl",
+        "pad": 7,
+        "spent": 1578,
+        "stage": 4
+      },
+      {
+        "id": "storm",
+        "pad": 1,
+        "spent": 2599,
+        "stage": 4
+      },
+      {
+        "id": "cracker",
+        "pad": 4,
+        "spent": 1857,
+        "stage": 4
+      },
+      {
+        "id": "storm",
+        "pad": 2,
+        "spent": 2599,
+        "stage": 4
+      },
+      {
+        "id": "ballista",
+        "pad": 5,
+        "spent": 2088,
+        "stage": 2
+      }
+    ]
+  },
+  {
+    "mode": "endurance",
+    "hero": "ivo",
+    "composition": "Capacitor bastion",
+    "passage": "convoy",
+    "won": false,
+    "wave": 14,
+    "light": 0,
+    "glow": 490,
+    "commands": 1,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 6,
+        "spent": 319,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 0,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "storm",
+        "pad": 3,
+        "spent": 812,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 10,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "owl",
+        "pad": 7,
+        "spent": 493,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 1,
+        "spent": 435,
+        "stage": 2
+      }
+    ]
+  },
+  {
+    "mode": "endurance",
+    "hero": "ivo",
+    "composition": "Capacitor bastion",
+    "passage": "runners",
+    "won": false,
+    "wave": 14,
+    "light": 0,
+    "glow": 490,
+    "commands": 1,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 6,
+        "spent": 319,
+        "stage": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 0,
+        "spent": 580,
+        "stage": 2
+      },
+      {
+        "id": "storm",
+        "pad": 3,
+        "spent": 812,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 10,
+        "spent": 435,
+        "stage": 2
+      },
+      {
+        "id": "owl",
+        "pad": 7,
+        "spent": 493,
+        "stage": 2
+      },
+      {
+        "id": "bell",
+        "pad": 1,
+        "spent": 435,
+        "stage": 2
+      }
+    ]
+  }
+]

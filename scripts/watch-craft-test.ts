@@ -89,7 +89,9 @@ function drawing(id:EnemyId,age:number,still:boolean){
   const unit=boss.spawnEnemy(id,seg,centre,12,true);unit.age=age;unit.uid=1;unit.x=100;unit.y=100;unit.tx=1;unit.ty=0
   drawFixedEnemy(c,unit,still,false);assert.equal(stack,0,'canvas state restored');return JSON.stringify(commands)
 }
-assert.equal(bestiaryText('Veiled armour; Veils and Drips.'),'Veiled armour; Glass Rays and Pebble Pups.')
+assert.equal(bestiaryText('Veiled armour; Veils and Drips.'),'Veiled armour; Wraith Rays and Guttermaws.')
+assert.equal(bestiaryText('Ramming Skiffs and Skiffs.'),'Ramming Skiffs and Ramming Skiffs.','display names remain stable inside UI copy')
+assert.equal(bestiaryText('Mossjaw and Bloom Jelly.'),'Mire Tyrant and Leech Choir.','older encounter descriptions use the current invader identities')
 assert.equal(Object.keys(BESTIARY).length,Object.keys(ENEMIES).length)
 const silhouettes=new Set<string>()
 for(const id of Object.keys(ENEMIES) as EnemyId[]){silhouettes.add(drawing(id,0,true));assert.equal(drawing(id,0,true),drawing(id,5,true),'reduced motion freezes every anatomy');assert.notEqual(drawing(id,0,false),drawing(id,.21,false),`${id} has its own motion`)}

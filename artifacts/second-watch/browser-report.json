@@ -1,0 +1,50 @@
+[
+  {
+    "width": 1280,
+    "height": 800,
+    "passagePreviews": true,
+    "jetty": true,
+    "sluice": true,
+    "threeStages": true,
+    "commands": true,
+    "targetSelection": true,
+    "saveResume": true,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "height": 844,
+    "passagePreviews": true,
+    "jetty": true,
+    "sluice": true,
+    "threeStages": true,
+    "commands": true,
+    "targetSelection": true,
+    "saveResume": true,
+    "errors": []
+  },
+  {
+    "width": 320,
+    "height": 740,
+    "passagePreviews": true,
+    "jetty": true,
+    "sluice": true,
+    "threeStages": true,
+    "commands": true,
+    "targetSelection": true,
+    "saveResume": true,
+    "errors": []
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "passagePreviews": true,
+    "jetty": true,
+    "sluice": true,
+    "threeStages": true,
+    "commands": true,
+    "targetSelection": true,
+    "saveResume": true,
+    "errors": []
+  }
+]

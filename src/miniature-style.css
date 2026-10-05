@@ -1,0 +1,17 @@
+/* Ceramic, patinated brass and warm paper. Keep the established touch layout. */
+html:root{color:#eee8d6;background:#19363c;--ink:#19363c;--panel:#244348;--line:#637c79;--muted:#c4d6cf;--gold:#eed092;--cream:#fff0cf}
+body .hud,body .playbar{background:#19383e;border-color:#8b9c7e70;box-shadow:inset 0 1px #e4dca716}
+body .drawer,body .drawer.live-panel{background:#233f44fa;border-color:#a3aa867d;box-shadow:0 18px 60px #09262d66,inset 0 1px #fff2cb24}
+body .drawer.live-panel>header{background:#19373b;border-bottom-color:#8e9d7c66}
+body .primary{background:linear-gradient(#f3dba9,#e7c386);border-color:#ffe5b1;color:#243c3b;box-shadow:inset 0 1px #fff8df80,0 2px 0 #112e3333}
+body .primary:hover:not(:disabled){background:#f6dfb5;border-color:#fff0cf}
+body .secondary,body .hero-choice{background:#29494d;border-color:#7e979078}
+body .hero-choice.selected{background:#365954;border-color:var(--hero)}
+body .build-card,body .quick-branches article,body .technique-cards article{background:#1c3a3e;border-color:#80958c80;box-shadow:inset 0 1px #ddd8b014}
+body .build-card:hover:not(:disabled){background:#34564e;border-color:#d9c38b}
+body .prepare-watch{background:#203f43f7;border-color:#d5bc83;box-shadow:0 8px 24px #102e3c40,inset 0 1px #f9e3b123}
+body .creature-card{background:#203e43;border-color:#8eab9a66}
+body .creature-art{background:radial-gradient(ellipse at 50% 80%,#a5715145,transparent 67%),linear-gradient(155deg,#263e48,#132b36);box-shadow:inset 0 1px #c8b79a1f}
+body .map-caption .landmark-link{background:#1a403dbe;color:#fff0cc}
+body .home:after{background:linear-gradient(90deg,#133435e8 0%,#193a40c9 22%,#203c391c 63%,transparent)}
+@media(max-width:600px){body .home:after{background:linear-gradient(180deg,#17363855,#17363800 20%,#193b3d99 52%,#18363af5 85%)}}

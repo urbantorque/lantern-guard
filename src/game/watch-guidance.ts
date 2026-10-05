@@ -14,6 +14,19 @@ export function watchLesson(s:Sim,seen:readonly string[]=[]){
   return hints.find(h=>h.when&&!seen.includes(h.id))??null
 }
 export function watchInsights(s:Sim):string[]{
+  if(s.challenge.watchExperience){
+    const lines:string[]=[],support=[...s.towers].sort((a,b)=>(b.interrupts??0)-(a.interrupts??0)||b.spotted-a.spotted||b.slowed-a.slowed)[0]
+    if(support){if(support.interrupts)lines.push(`${support.def.name} interrupted ${support.interrupts} ${s.challenge.watchTactics?'boss signals':'healing pulses'}.`);else if(support.spotted)lines.push(`${support.def.name} revealed ${support.spotted} hidden foes for your defence.`);else if(support.slowed)lines.push(`${support.def.name} landed ${support.slowed} slowing hits.`)}
+    const armour=[...s.towers].sort((a,b)=>(b.armourRemoved??0)-(a.armourRemoved??0))[0]
+    if(armour?.armourRemoved)lines.push(`${armour.def.name} removed ${Math.round(armour.armourRemoved)} armour.`)
+    const signature=[...s.towers].sort((a,b)=>(b.signatureHits??0)-(a.signatureHits??0))[0]
+    if(s.stats.firesSpread)lines.push(`Wildfire spread to ${s.stats.firesSpread} neighbouring foes.`)
+    if(signature?.signatureHits)lines.push(`${signature.def.name} landed ${signature.signatureHits} signature hits.`)
+    const leak=Object.entries(s.stats.leaksBy).sort((a,b)=>(b[1]??0)-(a[1]??0))[0]
+    if(leak)lines.push(`Next watch: ${BESTIARY[leak[0] as keyof typeof BESTIARY].counter}`)
+    else if(lines.length<3){const top=[...s.towers].sort((a,b)=>(b.damageDealt??0)-(a.damageDealt??0))[0];if(top)lines.push(`${top.def.name} dealt ${Math.round(top.damageDealt??0).toLocaleString()} damage.`)}
+    return lines
+  }
   const top=[...s.towers].sort((a,b)=>(b.damageDealt??0)-(a.damageDealt??0))[0]
   const lines=top&&(top.damageDealt??0)>0?[`${top.def.name} led damage: ${Math.round(top.damageDealt??0).toLocaleString()}.`]:[]
   const seen=s.towers.reduce((n,t)=>n+t.spotted,0),slows=s.towers.reduce((n,t)=>n+t.slowed,0)
@@ -33,7 +46,7 @@ function openingLesson(s:Sim,seen:readonly string[]){
   return [
     {id:'refined-hidden',when:s.enemies.some(e=>e.alive&&e.def.hidden)&&!scout,text:'Glass creatures need sight. Add a scout beside your attacks.'},
     {id:'refined-armour',when:s.wave>=5&&!heavy,text:'Copper shells resist sparks. Build a blast tower before the next wave.'},
-    {id:'refined-night',when:!s.sky.night&&s.sky.phaseLeft<20&&s.keeperAllowed('owl')&&s.towers.some(t=>['cracker','storm','ballista'].includes(t.id)&&!s.sheltered(t)),text:'Night is close. A nearby scout preserves your heavy towers’ reach.'},
+    {id:s.challenge.watchDirector===2?'second-night':'refined-night',when:!s.sky.night&&s.sky.phaseLeft<20&&s.keeperAllowed('owl')&&s.towers.some(t=>['cracker','storm','ballista'].includes(t.id)&&!s.sheltered(t)),text:s.challenge.watchDirector===2?'Night is close. Garden income falls; support Scouts spend stored sunlight. Your towers keep their reach.':'Night is close. A nearby scout preserves your heavy towers’ reach.'},
     {id:'refined-place',when:!s.towers.length,text:'Tap the lit plot. The upper bend gives your first tower more time to fire.'},
     {id:'refined-slow',when:s.wave>=3&&!s.towers.some(t=>t.id==='bell'),text:'Fins move fast. Put a chime where your attacks overlap.'},
     {id:'refined-branch',when:s.wave>=2&&!specialised&&s.towers.some(t=>(s.specialiseCost(t)??Infinity)<=s.glow),text:'Tap your tower and choose a specialisation. Its weapon changes immediately.'},

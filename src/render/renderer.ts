@@ -14,10 +14,10 @@ import { drawEnemy, drawEnemyIcon, ENEMY_VIS, setEnemySpriteScale } from './enem
 import { Fx } from './fx'
 import { FAMILY_COLOR, glowSprite, P, withAlpha } from './palette'
 import { drawPad, drawTower, PAD_R } from './towers'
-import { boardPoint, worldPoint, boardBounds, elevated, BOARD_DEPTH } from './board-view'
+import { boardPoint, worldPoint, boardBounds, boardAngle, elevated, BOARD_DEPTH } from './board-view'
 import { drawFixedWorld } from './fixed-world'
 import { districtGradient } from './fixed-scenery'
-import { fixedMuzzle } from './fixed-towers'
+import { fixedShotOrigin } from './fixed-towers'
 
 export type Selection =
   | { kind: 'pad'; index: number }
@@ -108,6 +108,7 @@ export class Renderer {
   fixedBounds:{x:number;y:number;w:number;h:number}|null=null
   fixedFrameHeight=0
   fixedFocus:{x:number;y:number}|null=null
+  private craftCueAt=-10
   private fixedEdition=false
   fixedTopInset=60
   keepsakes: string[] = []
@@ -336,12 +337,12 @@ export class Renderer {
           if (sim.challenge.fixed) {
             this.addBloom(ev)
             if (!this.settings.reduceMotion && (ev.boss || pops < 5)) {
-              fx.ring(ev.x,ev.y,ev.boss?82:25,withAlpha(col,.9),.4,2.5)
+              fx.add({kind:'shock',x:ev.x,y:ev.y,size:ev.boss?82:23,color:withAlpha(col,.8),life:ev.boss?.55:.3})
               const hit=elevated(ev.x,ev.y,8,this.fixedLandscape)
-              fx.flash(hit.x,hit.y,ev.boss?75:28,col,.22)
-              fx.petals(ev.x,ev.y-6,col,ev.boss?14:4,ev.boss?5:3,ev.boss?140:65)
-              fx.burst(ev.x,ev.y-8,P.cream,ev.boss?12:3,ev.boss?180:100,3,.35)
-              if(ev.boss)fx.burst(ev.x,ev.y-8,P.amberHi,26,200,4,.7)
+              fx.flash(hit.x,hit.y,ev.boss?54:22,col,.18)
+              fx.shards(hit.x,hit.y,'#9aa9a2',ev.boss?10:3)
+              fx.burst(hit.x,hit.y,P.cream,ev.boss?10:2,ev.boss?160:70,2.5,.3)
+              if(ev.boss)fx.burst(hit.x,hit.y,P.amberHi,12,160,3,.55)
             }
             sound.creaturePop(ev.enemy,big)
             break
@@ -379,21 +380,39 @@ export class Renderer {
           }
           break
         }
+        case 'craft': {
+          const decisive=!!sim.director&&/Shatterburst|Ignition ·|Stillwater ·|Discharge ·|Escort broken|Command banked|Core open|Crown unleashed|Break the tether/.test(ev.label)
+          if(!decisive&&sim.time-this.craftCueAt<1.15)break
+          this.craftCueAt=sim.time
+          const p=elevated(ev.x,ev.y,24,this.fixedLandscape),colour=ev.kind==='armour'?'#ffdd94':ev.kind==='freeze'?'#aef5ef':'#f5e5b8'
+          if(ev.tx!==undefined&&ev.ty!==undefined){const q=elevated(ev.tx,ev.ty,12,this.fixedLandscape);fx.add({kind:'link',x:p.x,y:p.y,tx:q.x,ty:q.y,color:colour,life:this.settings.reduceMotion?.15:.5,lw:3})}
+          fx.ring(p.x,p.y,decisive?65:ev.kind==='freeze'?42:26,colour,this.settings.reduceMotion?.15:.5,decisive?3:2)
+          if(decisive&&!this.settings.reduceMotion){fx.ring(p.x,p.y,38,colour,.3,4);fx.shards(p.x,p.y,colour,8)}
+          const label=elevated(ev.x,ev.y,46,this.fixedLandscape)
+          if(!sim.director||decisive||ev.kind==='debut')fx.text(label.x,label.y,ev.label,colour,decisive?16:14,decisive?1.1:.85)
+          if(ev.label.startsWith('Core open'))sound.encounter('open')
+          else if(ev.label.startsWith('Crown unleashed'))sound.encounter('crown')
+          else if(ev.label.startsWith('Break the tether'))sound.encounter('warning')
+          else if(ev.kind==='debut')sound.tactic('sun')
+          break
+        }
         case 'tactic': {
           if(++tacticCount>4&&ev.kind!=='interrupt')break
           const p=elevated(ev.x,ev.y,ev.kind==='sun'?38:14,this.fixedLandscape)
           const col=ev.kind==='ignite'||ev.kind==='spread'?'#ffc180':ev.kind==='interrupt'?'#d8ffc6':ev.kind==='charged'?'#d4c7ff':'#9ce9eb'
           if(ev.kind==='spread'&&ev.tx!==undefined&&ev.ty!==undefined){const q=elevated(ev.tx,ev.ty,12,this.fixedLandscape);fx.add({kind:'link',x:p.x,y:p.y,tx:q.x,ty:q.y,color:col,life:.2,lw:2})}
           else{fx.ring(p.x,p.y,ev.kind==='sun'?36:ev.kind==='charged'?25:18,col,this.settings.reduceMotion?.12:.32,ev.kind==='charged'?3:2);if(!this.settings.reduceMotion)fx.flash(p.x,p.y,ev.kind==='ignite'?32:23,col,.18)}
-          if(ev.kind==='interrupt')fx.text(p.x,p.y-24,'Interrupted',col,15,.7)
+          if(ev.kind==='interrupt'){fx.text(p.x,p.y-24,'Interrupted · core exposed',col,15,1.1);fx.ring(p.x,p.y,58,'#ffe4ae',this.settings.reduceMotion?.15:.6,3);if(!this.settings.reduceMotion)fx.shards(p.x,p.y,'#b1d6c5',7);sound.encounter('interrupt')}
           sound.tactic(ev.kind)
           break
         }
-        case 'crack':
-          fx.shards(ev.x, ev.y, P.coral, sim.challenge.fixed?3:calm?3:7)
-          fx.flash(ev.x, ev.y, 30, P.coral, 0.2)
+        case 'crack': {
+          const at=sim.challenge.fixed?elevated(ev.x,ev.y,8,this.fixedLandscape):ev
+          if(!this.settings.reduceMotion){fx.shards(at.x,at.y,P.coral,sim.challenge.fixed?3:calm?3:7);fx.flash(at.x,at.y,26,P.coral,.2)}
+          else fx.ring(at.x,at.y,10,P.coral,.15,1.5)
           sound.crack()
           break
+        }
         case 'clink':
           if (Math.random() < 0.5) fx.burst(ev.x, ev.y - 6, '#ffffff', 2, 90, 2, 0.2)
           sound.clink()
@@ -403,28 +422,37 @@ export class Renderer {
           if (ev.kind === 'feather' || ev.kind === 'moth') {
             // a small soft puff where the feather or moth lands
             const c = ev.kind === 'feather' ? P.lime : P.gold
-            fx.flash(ev.x, ev.y, 18, c, 0.2)
-            fx.burst(ev.x, ev.y, c, calm ? 1 : 3, 90, 2.2, 0.3)
+            const hit=sim.challenge.fixed?elevated(ev.x,ev.y,8,this.fixedLandscape):ev
+            if(!this.settings.reduceMotion){fx.flash(hit.x,hit.y,18,c,.2);fx.burst(hit.x,hit.y,c,calm?1:3,90,2.2,.3);if(sim.challenge.fixed)fx.add({kind:'impact',x:hit.x,y:hit.y,color:c,size:11,life:.17,rot:.4})}
           } else if (sim.challenge.fixed && !this.settings.reduceMotion) {
             const hit=elevated(ev.x,ev.y,8,this.fixedLandscape)
-            fx.flash(hit.x,hit.y,21,ev.hue,.16)
-            // A short contact ring reads as a hit; long shards looked like
-            // another projectile ricocheting away from a still-living enemy.
-            fx.ring(hit.x,hit.y,9,ev.hue,.14,2)
+            fx.flash(hit.x,hit.y,18,ev.hue,.16)
+            fx.add({kind:'impact',x:hit.x,y:hit.y,color:ev.hue,size:ev.kind==='bolt'?17:11,life:ev.kind==='bolt'?.2:.14})
           } else if (!calm && Math.random() < 0.6) fx.burst(ev.x, ev.y, ev.hue, 2, 110, 2.5, 0.25)
           break
         case 'shoot':
-          if(sim.challenge.fixed&&!this.settings.reduceMotion){const tower=sim.towers.find(t=>t.x===ev.x&&t.y===ev.y),muzzle=tower?fixedMuzzle({...tower,angle:tower.angle-(this.fixedLandscape?Math.PI/2:0)}):{x:0,y:-44},offset=worldPoint(muzzle.x,muzzle.y,this.fixedLandscape);fx.flash(ev.x+offset.x,ev.y+offset.y,ev.tower==='cracker'?30:20,ev.tower==='storm'?P.ice:ev.tower==='owl'?P.lime:P.amberHi,.17)}
+          if(sim.challenge.fixed&&!this.settings.reduceMotion){const tower=sim.towers.find(t=>t.x===ev.x&&t.y===ev.y),muzzle=tower?fixedShotOrigin({...tower,angle:boardAngle(tower.angle,this.fixedLandscape)}):{x:0,y:-44},offset=worldPoint(muzzle.x,muzzle.y,this.fixedLandscape);fx.flash(ev.x+offset.x,ev.y+offset.y,ev.tower==='cracker'?26:17,ev.tower==='storm'?P.ice:ev.tower==='owl'?P.lime:P.amberHi,.17)}
           if (ev.tower === 'wick') sound.spark()
           else if (ev.tower === 'owl') sound.swoosh()
           else if (ev.tower === 'storm') sound.zap()
           else if (ev.tower === 'ballista') sound.bolt()
           else if (ev.tower === 'cracker') {
             sound.launch()
-            fx.burst(ev.x + Math.cos(ev.angle) * 18, ev.y - 22 + Math.sin(ev.angle) * 18, P.amberHi, 4, 120, 2.5, 0.3)
+            if(!sim.challenge.fixed)fx.burst(ev.x + Math.cos(ev.angle) * 18, ev.y - 22 + Math.sin(ev.angle) * 18, P.amberHi, 4, 120, 2.5, 0.3)
           }
           break
         case 'boom': {
+          if(sim.challenge.fixed){
+            const hit=elevated(ev.x,ev.y,8,this.fixedLandscape)
+            if(this.settings.reduceMotion)fx.ring(ev.x,ev.y,ev.r,withAlpha(P.amberHi,.55),.2,1.2)
+            else{
+              fx.add({kind:'shock',x:ev.x,y:ev.y,size:ev.r,color:'#ffd29b',life:.42})
+              fx.add({kind:'impact',x:hit.x,y:hit.y,size:Math.min(28,ev.r*.55),color:'#ffc181',life:.23})
+              fx.flash(hit.x,hit.y,Math.min(48,ev.r*.75),P.coral,.2)
+              fx.burst(hit.x,hit.y,'#ffe6aa',ev.big?8:4,ev.r*1.8,2.4,.4)
+            }
+            sound.boom(ev.big);break
+          }
           const cols = [P.coral, P.amberHi, P.pink, P.ice]
           fx.flash(ev.x, ev.y, ev.r * 1.3, P.coral, 0.25)
           fx.ring(ev.x, ev.y, ev.r, withAlpha(P.amberHi, 0.9), 0.35, 3)
@@ -432,13 +460,16 @@ export class Renderer {
           sound.boom(ev.big)
           break
         }
-        case 'toll':
+        case 'toll': {
           // the toll's true area is centred on the keeper's pad; a small ring rings out at the bell mouth
           fx.ring(ev.x, ev.y, ev.r, withAlpha(P.ice, 0.85), 0.7, 4)
           if (ev.stun) fx.ring(ev.x, ev.y, ev.r * 0.8, '#ffffff', 0.5, 6)
-          fx.ring(ev.x, ev.y - 36, 24, withAlpha(P.ice, 0.9), 0.35, 3)
+          const tower=sim.challenge.fixed?sim.towers.find(t=>t.id==='bell'&&t.x===ev.x&&t.y===ev.y):null
+          const mouth=tower?elevated(ev.x,ev.y,-fixedShotOrigin(tower).y,this.fixedLandscape):{x:ev.x,y:ev.y-36}
+          if(!this.settings.reduceMotion)fx.ring(mouth.x,mouth.y,24,withAlpha(P.ice,.9),.35,3)
           sound.bell(ev.tier, false)
           break
+        }
         case 'leak': {
           const h = this.levelBuilt!.def.home
           fx.ring(h.x, h.y, 120, withAlpha(P.danger, 0.9), 0.8, 5)
@@ -533,15 +564,20 @@ export class Renderer {
           sound.crack()
           break
         case 'combo':
+          if(sim.challenge.fixed){if(this.time>=this.comboUntil){fx.ring(ev.x,ev.y,22,P.ice,this.settings.reduceMotion?.12:.3,1.5);this.comboUntil=this.time+.35}break}
           fx.ring(ev.x, ev.y, 48, P.ice, .45, 3)
           if (this.time >= this.comboUntil) { if (!calm) fx.shards(ev.x, ev.y, P.ice, 4); fx.text(ev.x, ev.y - 42, 'Slow + burst', P.ice, 20, 1.1); this.comboUntil = this.time + 4 }
           break
         case 'bounce':
           fx.add({ kind: 'link', x: ev.x, y: ev.y, tx: ev.tx, ty: ev.ty, life: .22, lw: 3, color: P.lime })
           break
-        case 'arc':
-          fx.add({ kind: sim.challenge.fixed&&!calm?'arc':'link', x: ev.x, y: ev.y, tx: ev.tx, ty: ev.ty, life: .2, lw: 3.5, color: P.ice })
+        case 'arc': {
+          const tower=sim.challenge.fixed?sim.towers.find(t=>t.id==='storm'&&t.x===ev.x&&t.y-25===ev.y):null
+          const from=sim.challenge.fixed?elevated(ev.x,tower?tower.y:ev.y,tower?-fixedShotOrigin(tower).y:8,this.fixedLandscape):{x:ev.x,y:ev.y}
+          const to=sim.challenge.fixed?elevated(ev.tx,ev.ty,8,this.fixedLandscape):{x:ev.tx,y:ev.ty}
+          fx.add({kind:sim.challenge.fixed&&!this.settings.reduceMotion?'arc':'link',x:from.x,y:from.y,tx:to.x,ty:to.y,life:.2,lw:2.5,color:P.ice})
           break
+        }
         case 'prepare':
           fx.ring(ev.x, ev.y, ev.id === 'ward' ? 48 : 30, ev.id === 'ward' ? P.amberHi : P.lime, .5, 3)
           break

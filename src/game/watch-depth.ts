@@ -116,7 +116,7 @@ export function landmark(sim:Sim):Landmark{
   candidates.sort((a,b)=>a.score-b.score)
   const help=sim.challenge.livingWatch?[
     'At night, reveals nearby foes for 6s every 12s. Defend both sides of the spring.',
-    'Nearby Storm damage +5% by day, +15% at night or +12% in rain. Bonuses do not stack.',
+    sim.challenge.watchExperience?'Nearby Storm damage +5% by day, +15% at night. Weather is atmospheric.':'Nearby Storm damage +5% by day, +15% at night or +12% in rain. Bonuses do not stack.',
     'Nearby Gardens earn +20% by day, but 15% less at night. Invest before dusk.',
     'Nearby foes move 14% slower at night, 4% by day. Save the basin for heavy damage.',
   ][sim.challenge.variant??0]:def.help

@@ -1,11 +1,12 @@
 import { Sim,DT,type Tower } from '../src/game/sim'
 import { type TowerId } from '../src/game/defs'
 import { stageOf } from '../src/game/fixed'
+import { campaignBeat, campaignUnlock } from '../src/game/watch-director'
 
 export type Strategy='mixed'|'no-beam'|'no-garden'|'no-bonds'|'sparks'|'greedy'
 const distance=(a:{x:number;y:number},b:{x:number;y:number})=>Math.hypot(a.x-b.x,a.y-b.y)
 export function planFixed(s:Sim,strategy:Strategy='mixed',branches:Partial<Record<TowerId,0|1>>={}) {
-  const progress=s.challenge.expedition?Math.floor(s.wave*40/12):s.wave
+  const progress=s.challenge.expedition?Math.floor(s.wave*40/12):s.wave?campaignBeat(s.challenge,s.wave):0
   const recipe=!!s.challenge.refinedWatch&&Object.keys(branches).length>0,finale=recipe&&s.wave>=s.finalWave-1
   const authored=recipe&&s.challenge.hero==='ivo'
   if(finale)for(const t of [...s.towers])if(t.id==='garden')s.sell(t)
@@ -35,10 +36,13 @@ export function planFixed(s:Sim,strategy:Strategy='mixed',branches:Partial<Recor
     }
     return !!s.build(p.i,id)
   }
-  const improve=(t:Tower)=>stageOf(t)===3?s.refine(t):s.upgrade(t,stageOf(t)===0?0:t.id==='owl'&&s.towers.filter(q=>q.id==='owl').indexOf(t)>0?1:paths[t.id]??0)
+  const improve=(t:Tower)=>stageOf(t)===3?s.refine(t):s.upgrade(t,stageOf(t)===0&&s.challenge.watchDirector!==2?0:t.id==='owl'&&s.towers.filter(q=>q.id==='owl').indexOf(t)>0?1:paths[t.id]??0)
   // Role coverage first, then alternate investment in fewer strong towers and new banks.
   if(!count('wick'))build('wick')
-  if(!count('cracker')&&progress>=1)build('cracker')
+  if(s.challenge.watchExperience&&s.challenge.hero==='ivo'&&!count('storm')){
+    if(!s.keeperAllowed('storm')||!build('storm'))return
+  }
+  if(!count('cracker')&&progress>=(s.challenge.watchExperience&&s.challenge.hero==='ivo'?8:1))build('cracker')
   if(progress>=3&&!count('bell'))build('bell')
   if(progress>=6&&!count('owl'))build('owl')
   if(!finale&&strategy==='greedy'&&progress>=10){
@@ -58,7 +62,7 @@ export function planFixed(s:Sim,strategy:Strategy='mixed',branches:Partial<Recor
   }
   for(let pass=0;pass<20;pass++) {
     const eligible=s.towers.filter(t=>t.id!=='garden' || progress<27).filter(t=>{
-      const price=s.fixedPrice(t);return price!==null&&price<=s.glow&& (stageOf(t)<2||stageOf(t)===2&&s.planningWave>=(s.challenge.expedition?7:16)||stageOf(t)===3&&s.planningWave>=(s.challenge.expedition?10:31))
+      const price=s.fixedPrice(t);return price!==null&&price<=s.glow&& (stageOf(t)<2||stageOf(t)===2&&s.planningWave>=(s.challenge.expedition?7:campaignUnlock(s.challenge,16))||stageOf(t)===3&&s.planningWave>=(s.challenge.expedition?10:campaignUnlock(s.challenge,31)))
     }).sort((a,b)=>stageOf(a)-stageOf(b)||((authored?['storm','cracker','wick','beam','ballista','bell','owl','garden']:['cracker','wick','beam','ballista','storm','bell','owl','garden']).indexOf(a.id)-(authored?['storm','cracker','wick','beam','ballista','bell','owl','garden']:['cracker','wick','beam','ballista','storm','bell','owl','garden']).indexOf(b.id)))
     if(eligible.length&&improve(eligible[0]))continue
     const roster:TowerId[]=progress>=26?['ballista','storm','cracker','wick','owl','bell']:progress>=21?['storm','cracker','wick','bell']:['cracker','wick','bell']

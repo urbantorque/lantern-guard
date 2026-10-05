@@ -260,6 +260,21 @@ export class Sound {
     for (let i = 0; i < (big ? 7 : 4); i++) this.noise(0.02, 'highpass', 4000, 1, 0.06 + Math.random() * 0.05, 0.05 + Math.random() * 0.25)
   }
 
+  /** Mechanical tells, a low impact and a short bright release leave room for the score. */
+  encounter(kind:'warning'|'open'|'interrupt'|'crown') {
+    if(!this.ok('encounter:'+kind,2))return
+    if(kind==='warning'){
+      this.tone(146.83,'triangle',.02,.32,.12)
+      this.tone(155.56,'sine',.02,.3,.07,undefined,.12)
+      this.noise(.12,'bandpass',850,3,.09)
+      return
+    }
+    const f=kind==='crown'?73.42:kind==='interrupt'?98:82.41
+    this.tone(f,'sine',.003,.32,.23)
+    this.noise(.1,'bandpass',kind==='open'?520:1250,2,.15)
+    for(let i=0;i<3;i++)this.tone(f*[4,6,8][i],'sine',.005,.4-i*.06,.06,undefined,.05+i*.045)
+  }
+
   bell(pitchIndex = 0, soft = false) {
     if (!this.ok('bell', 6)) return
     const ctx = this.ctx!

@@ -1,8 +1,8 @@
 /** Material palettes belong to places; tower and enemy counter colours stay stable. */
 export const DISTRICT_STYLE=[
-  {name:'Millpond',day:['#d2e3a4','#73b69b','#398f97'],night:['#254c72','#173e59','#102d48'],bank:['#eee2bc','#b6ccb7'],water:['#176e8d','#2abbbd','#91ece0'],walls:['#729bad','#dce5cb','#3c697d'],accent:'#eec27c'},
-  {name:'Harbour',day:['#eed5ad','#9cbaa7','#598e9e'],night:['#3f486a','#293951','#172d43'],bank:['#dcc7b0','#a99992'],water:['#295784','#588eb8','#b5d2e7'],walls:['#b77460','#ddbd9a','#714d55'],accent:'#efb386'},
-  {name:'Glass gardens',day:['#d6edbd','#7abfaf','#3a9694'],night:['#3d536d','#234b55','#163541'],bank:['#e8dcb5','#adcab6'],water:['#236f81','#42b7ae','#c2f2d6'],walls:['#80bca6','#dbedcf','#447c79'],accent:'#f5d892'},
-  {name:'Tide basin',day:['#c7d9e4','#83aeb5','#5b839f'],night:['#464777','#273d60','#1b294a'],bank:['#d9d7df','#a6b5c9'],water:['#3b578f','#758dcb','#c2d3f7'],walls:['#858cb9','#cbd0e6','#4f5d89'],accent:'#eea8ba'},
+  {name:'Millpond',day:['#cbd1a2','#91ad86','#688f83'],night:['#274c53','#193c49','#122c3d'],bank:['#dbd2ad','#aaa98d'],water:['#285e6d','#508e8d','#bcddd0'],walls:['#90aaa2','#e7debb','#526e73'],accent:'#e7bc7a'},
+  {name:'Harbour',day:['#e1c8a0','#b7b18d','#7c9991'],night:['#394755','#283b49','#172f40'],bank:['#dcc7aa','#b6a28b'],water:['#345f77','#688f9d','#c7dad7'],walls:['#c29678','#ead5ad','#806768'],accent:'#e9bb8d'},
+  {name:'Glass gardens',day:['#cbd7b0','#9ebc98','#6a9b8f'],night:['#304f52','#22434a','#17333e'],bank:['#e0d7b6','#b0b39a'],water:['#306b75','#6baba1','#d1e4d4'],walls:['#9eb59a','#e5e5bf','#56796f'],accent:'#ecce91'},
+  {name:'Tide basin',day:['#ced6c9','#a4b9b1','#7b9d9f'],night:['#3a4562','#293d53','#192e46'],bank:['#dbd8c8','#a7b4ac'],water:['#456883','#799eac','#d3e1dc'],walls:['#98a5b5','#dfdcc9','#647383'],accent:'#deb5a4'},
 ] as const
 export const districtStyle=(variant=0)=>DISTRICT_STYLE[variant]??DISTRICT_STYLE[0]

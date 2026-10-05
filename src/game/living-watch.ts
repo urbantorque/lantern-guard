@@ -10,14 +10,14 @@ const WEEK_MS = 7 * 86400000
 const EPOCH = Date.UTC(2026, 8, 28)
 export const currentWeek = (now = Date.now()) => Math.max(0, Math.floor((now - EPOCH) / WEEK_MS))
 export const WEEK_RULES = [
-  { name:'Quick current', text:'Needlefins and Rivet Racers move 20% faster.', reward:'Current pennant' },
+  { name:'Quick current', text:'Razorfins and Ramming Skiffs move 20% faster.', reward:'Current pennant' },
   { name:'Iron tide', text:'Armoured enemies carry 25% more shell.', reward:'Copper pennant' },
   { name:'Small beginnings', text:'Start with 620 glow. Wave rewards stay the same.', reward:'Dawn pennant' },
 ] as const
-export function weeklyWatch(week:number) {
+export function weeklyWatch(week:number,experience=false) {
   const expedition=EXPEDITIONS[week%3],rule=WEEK_RULES[Math.floor(week/3)%3]
   return {week,expedition,rule,seed:(92047+week*7919)>>>0,variant:week%4,glow:rule===WEEK_RULES[2]?620:760,
-    id:`weekly:${week}:living1`,date:new Date(EPOCH+week*WEEK_MS).toISOString().slice(0,10)}
+    id:`weekly:${week}:${experience?'experience1':'living1'}`,date:new Date(EPOCH+week*WEEK_MS).toISOString().slice(0,10)}
 }
 export function formationAt(n:number,short=false) {
   const cycle=short ? [0,0,1,2,3,0,1,2,3,0,4,5][Math.min(11,n-1)] : n<7?0:(n-7)%6
@@ -32,7 +32,7 @@ export function formationAt(n:number,short=false) {
 }
 export function livingWave(base:WaveDef,n:number,short=false):WaveDef {
   if(!short&&n===40)return {...base,note:'Healing takes 3 seconds. A stunning chime toll interrupts the pulse.'}
-  if(!short&&n===10)return {...base,note:'Mossjaw calls a crowd after a 2-second warning. Keep blasts near its back.'}
+  if(!short&&n===10)return {...base,note:'Mire Tyrant calls a crowd after a 2-second warning. Keep blasts near its back.'}
   // Preserve the first counter lessons and boss set pieces.
   if(n<5||(!short&&[6,8,10,11,16,25,30,40].includes(n))||short&&n===12)return base
   const beat=formationAt(n,short)

@@ -23,7 +23,10 @@ export function districtLayout(s:Sim):readonly DistrictProp[]{
   let count=0
   for(const [x,y] of trees){
     if(count>=10)break
-    if(sceneryClear(s,x,y,16)&&props.every(p=>Math.hypot(p.x-x,p.y-y)>(p.kind==='house'?58:40))){props.push({x,y,kind:'tree',style:count%3});count++}
+    if(sceneryClear(s,x,y,16)&&props.every(p=>Math.hypot(p.x-x,p.y-y)>(p.kind==='house'?58:40))){
+      const house=s.challenge.watchDirector===2&&count%2===0&&sceneryClear(s,x,y,26)&&props.every(p=>Math.hypot(p.x-x,p.y-y)>72)
+      props.push({x,y,kind:house?'house':'tree',style:count%3});count++
+    }
   }
   props.sort((a,b)=>a.y-b.y);layouts.set(s.level,props);return props
 }

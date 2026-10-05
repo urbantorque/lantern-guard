@@ -1,8 +1,10 @@
+import { secondWatch } from './second-watch'
 import {restorationLimit} from './watch-refinement'
 import type { Tower, Sim } from './sim'
 import { stageOf } from './fixed'
 import type { TowerId } from './defs'
 import { CROWN_HELP } from './watch-depth'
+import { crownTechnique } from './watch-tactics'
 
 /** Roles describe the whole stream; benefits describe only the next purchase. */
 export const STREAM_ROLES:Record<TowerId,readonly [string,string]>={
@@ -23,6 +25,7 @@ export const STREAM_CHOICE:Record<TowerId,readonly [readonly[string,string],read
   ballista:[['Much heavier single hits.','Slower reload.'],['Fast bolts see hidden foes.','Less damage per bolt.']],
 }
 export function streamChoice(sim:Sim,t:Tower,branch:0|1):readonly[string,string]{
+  if(secondWatch(sim.challenge)&&t.id==='owl')return branch===0?['Faster, heavy shots.','Shorter sight.']:['Wider sight and stored sunlight.','Less direct damage.']
   const copy=STREAM_CHOICE[t.id][branch]
   if(t.id==='owl'&&branch===1&&!sim.challenge.watchDepth)return ['More reach for nearby towers.',copy[1]]
   if(t.id==='storm'&&branch===0&&sim.towerStats(t.id,2,0).heavy)return [copy[0],'Less damage per hit.']
@@ -33,10 +36,11 @@ const n=(v:number)=>String(+v.toFixed(2))
 
 /** Bundles include the foundation in the comparison with the actual tower. */
 export function upgradeBenefits(sim:Sim,t:Tower,branch:0|1,bundle=false) {
-  const stage=stageOf(t),target=bundle?2:stage+1
-  const next=stage===3?sim.towerStats(t.id,t.a,t.b,1):sim.towerStats(t.id,target===1?1:branch===0?target:0,target===1?0:branch===1?target:0)
+  const stage=stageOf(t),crown=stage===3||secondWatch(sim.challenge)&&stage===2,target=bundle?2:stage+1
+  const next=crown?sim.towerStats(t.id,branch===0?3:0,branch===1?3:0,1):sim.towerStats(t.id,target===1?1:branch===0?target:0,target===1?0:branch===1?target:0)
   const old=t.stats,lines:string[]=[]
-  if(sim.challenge.watchDepth&&stage===3)lines.push(CROWN_HELP[t.id][branch])
+  if(sim.challenge.watchDepth&&crown)lines.push(CROWN_HELP[t.id][branch])
+  const capstone=crownTechnique(sim,t);if(crown&&capstone)lines.unshift(`${capstone.name}: ${capstone.help}`)
   if(sim.challenge.watchDepth&&t.id==='owl'&&branch===1&&target===2)lines.push('Banks 3 night pulses: wider sight, +12% fire rate')
   if(next.heavy&&!old.heavy)lines.push('Breaks armour')
   if(next.detect&&!old.detect)lines.push('Targets hidden foes')

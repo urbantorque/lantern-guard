@@ -1,9 +1,14 @@
 import { restorationLimit, lateRewardScale, lateUpgradeScale, refinedWave } from './watch-refinement'
+import { experienceUnlock, experiencePrice, experienceStats, experienceWave } from './watch-experience'
 import { techniqueOffers, techniqueStats, hasNeighbour, craftWave, dredgerOpen, type TechniqueId } from './watch-craft'
 import { livingWave, escortCover, weeklyWatch } from './living-watch'
 import { enemyName } from './bestiary'
 import { automaticTarget } from './auto-target'
 import { fixedLevel, fixedWave, fixedStats, FIXED_UNLOCK, stageOf, upgradePrice, bondName, type Bond } from './fixed'
+import { tacticalWave, breachDetail, EXPOSED_BONUS, type BreachDetail } from './watch-tactics'
+import { freshMastery, masteryStats, masteryWave, lowerGuard, commandAvailable, surgeTarget, type WatchMastery, type ContractId } from './watch-mastery'
+import { secondWatch, passageLevel, secondWave, designatedTarget, JETTY_PAD } from './second-watch'
+import { freshDirector, campaignBeat, campaignUnlock, campaignReward, shortCampaign, authoredExpedition, passageWave, passagePending, commandTower, commandTargets, COMMANDS, MOON_ARCHES, type DirectorState, type Passage } from './watch-director'
 import { heroStats, heroTower, heroHitSlow, type HeroId } from './heroes'
 import { contactTime } from './projectile-collision'
 import { skyAt, skyReach, skyRate, skyDamage, skySpeed, gardenYield, type ClimateState } from './environment'
@@ -51,6 +56,10 @@ export const FINAL_WAVE = WAVES.length
 export const RELOCATE_COST = 25
 
 export interface Enemy {
+  exposedT?: number
+  burnSource?: number
+  channelLink?: number
+  coreOpen?: boolean
   escortOf?: number
   signalT?: number
   uid: number
@@ -101,6 +110,11 @@ export interface Enemy {
 }
 
 export interface Tower {
+  crownReadyAt?: number
+  armourRemoved?: number
+  interrupts?: number
+  signatureHits?: number
+  debutPending?: boolean
   refinement?: number
   damageDealt?: number
   uid: number
@@ -143,6 +157,7 @@ export interface Tower {
 export type ProjKind = 'spark' | 'feather' | 'firework' | 'rocket' | 'moth' | 'mini' | 'bolt'
 
 export interface Proj {
+  beacon?: boolean
   bounced?: boolean
   kind: ProjKind
   x: number
@@ -186,6 +201,7 @@ export interface GateState {
 }
 
 export type SimEvent =
+  | {t:'craft';kind:'armour'|'freeze'|'bond'|'debut';x:number;y:number;label:string;tx?:number;ty?:number}
   | { t:'tactic'; kind:'ignite'|'spread'|'interrupt'|'charged'|'push'|'sun'; x:number;y:number;tx?:number;ty?:number }
   | { t: 'arc'; x: number; y: number; tx: number; ty: number }
   | { t: 'prepare'; id: PreparationId; x: number; y: number }
@@ -225,6 +241,12 @@ export type SimEvent =
 
 /** Rules a night is played under. Plain nights use {}; tides and weekly nights set several. */
 export interface Challenge {
+  watchDirector?: 1 | 2
+  endurance?: true
+  watchMastery?: 1
+  contract?: ContractId
+  watchTactics?: 1
+  watchExperience?: 1
   fixed?: 1
   watchDepth?: 1
   watchCraft?: 1
@@ -276,6 +298,7 @@ export interface Challenge {
 }
 
 export interface RunStats {
+  firesSpread?: number
   lightRestored?: number
   plotsUnlocked?: number
   retries?: number
@@ -304,6 +327,11 @@ export interface RunStats {
 
 /** A keeper as saved. The timers are only present in v2 saves. */
 export interface SavedTower {
+  crownReadyAt?: number
+  armourRemoved?: number
+  interrupts?: number
+  signatureHits?: number
+  debutPending?: boolean
   refinement?: number
   damageDealt?: number
   id: TowerId
@@ -349,6 +377,10 @@ export interface SavedGate {
 
 /** A Mope on the water, as saved in v2. */
 export interface SavedEnemy {
+  exposedT?: number
+  burnSource?: number
+  channelLink?: number
+  coreOpen?: boolean
   escortOf?: number
   signalT?: number
   uid: number
@@ -415,6 +447,8 @@ export interface SaveSnapshotV1 extends SnapshotBase {
 
 /** Full save, valid at any moment including mid-wave. Restores to an identical simulation. */
 export interface SaveSnapshotV2 extends SnapshotBase {
+  director?: DirectorState
+  mastery?: WatchMastery
   techniques?: TechniqueId[]
   climate?: ClimateState
   bonds?: Bond[]
@@ -445,7 +479,7 @@ export interface SaveSnapshotV2 extends SnapshotBase {
 export type SaveSnapshot = SaveSnapshotV1 | SaveSnapshotV2
 export interface WaveReport { wave: number; slowSplashHits: number; damage: Partial<Record<TowerId, number>> }
 export interface EmberPatch { x: number; y: number; radius: number; life: number; dps: number; tower: number }
-export interface LeakReport { enemy: EnemyId; route: string; hidden: boolean; armoured: boolean; wave: number; light: number }
+export interface LeakReport { enemy: EnemyId; route: string; hidden: boolean; armoured: boolean; wave: number; light: number; detail?:BreachDetail }
 
 interface Spawner {
   group: Group
@@ -459,8 +493,10 @@ interface Spawner {
 const CELL = 56
 
 export class Sim {
+  director:DirectorState|null=null
+  mastery:WatchMastery|null=null
   climate:ClimateState = {elapsed:0,waveSeconds:0,gardenExposure:0}
-  get sky() {return skyAt(this.climate.elapsed,this.seed)}
+  get sky() {const sky=skyAt(this.climate.elapsed,this.seed);return this.challenge.watchExperience?{...sky,atmosphereOnly:true,steadyCombat:secondWatch(this.challenge)}:sky}
   level: BuiltLevel
   difficulty: Difficulty
   challenge: Challenge
@@ -509,6 +545,8 @@ export class Sim {
     seed = challenge.skirmish?.seed ?? seed
     this.difficulty = difficulty
     this.challenge = challenge
+    if(challenge.watchDirector)this.director=freshDirector()
+    if(challenge.watchMastery)this.mastery=freshMastery()
     this.seed = seed
     this.rng = new Rng(seed)
     const d = DIFFICULTY[difficulty]
@@ -517,7 +555,8 @@ export class Sim {
     this.maxLives = d.lives
     this.hpMul = d.hp
     this.speedMul = d.speed
-    this.level = buildLevel(challenge.fixed ? fixedLevel(challenge.variant,!!challenge.livingWatch) : challenge.compact ? compactLevel(challenge.variant) : challenge.expanding ? growingCanal(0, !!challenge.guard) : challenge.guard ? growingCanal(2, true) : waterwayLevel(challenge.waterway))
+    this.level = buildLevel(challenge.fixed ? fixedLevel(challenge.variant,!!challenge.livingWatch,!!challenge.watchDirector) : challenge.compact ? compactLevel(challenge.variant) : challenge.expanding ? growingCanal(0, !!challenge.guard) : challenge.guard ? growingCanal(2, true) : waterwayLevel(challenge.waterway))
+    if(shortCampaign(challenge))this.level.def.sources=this.level.def.sources.map(s=>({...s,openWave:campaignUnlock(challenge,s.openWave)}))
     this.gates = this.level.def.gates.map((g) => ({ def: g, state: g.lockedDir, charm: null, jammed: false, cd: 0, flipT: -9, routeT: [-9, -9], flips: 0, swingT: 0 }))
     this.pads = this.level.def.pads.map((p) => ({ x: p.x, y: p.y, tower: null }))
     // a tide opens mid-night: the locks and the sluice are already open, and there is a bank to build with
@@ -614,10 +653,12 @@ export class Sim {
   }
 
   padRevealed(index: number): boolean {
-    return this.challenge.compact ? !!PLOTS[index] && this.planningWave >= (this.challenge.expedition?1+Math.floor((PLOTS[index].wave-1)/2.5):PLOTS[index].wave) : this.padAvailable(index)
+    if(index===JETTY_PAD&&secondWatch(this.challenge))return this.director?.passage==='convoy'
+    return this.challenge.compact ? !!PLOTS[index] && this.planningWave >= (this.challenge.expedition?1+Math.floor((PLOTS[index].wave-1)/2.5):campaignUnlock(this.challenge,PLOTS[index].wave)) : this.padAvailable(index)
   }
 
   plotCost(index: number): number | null {
+    if(index===JETTY_PAD)return null
     return this.challenge.fixed && this.challenge.blockedPad === index ? null : this.challenge.compact && this.padRevealed(index) && !this.plots.has(index) ? PLOTS[index].cost : null
   }
 
@@ -690,7 +731,7 @@ export class Sim {
   }
 
   /** Whether this keeper may be built under the night's rules. */
-  keeperWave(id: TowerId): number { if(this.challenge.expedition)return EXPEDITION_UNLOCK[id]; if (this.challenge.fixed) return FIXED_UNLOCK[id]; return this.challenge.compact && id === 'garden' ? 6 : KEEPER_WAVE[id] }
+  keeperWave(id: TowerId): number { const early=this.challenge.watchExperience?experienceUnlock(id,this.challenge.hero,!!this.challenge.expedition):undefined;if(early!==undefined)return early;if(this.challenge.expedition)return EXPEDITION_UNLOCK[id]; if (this.challenge.fixed) return campaignUnlock(this.challenge,FIXED_UNLOCK[id]); return this.challenge.compact && id === 'garden' ? 6 : KEEPER_WAVE[id] }
 
   keeperAllowed(id: TowerId): boolean {
     if (this.challenge.fixed) return this.planningWave >= this.keeperWave(id) && !(id === 'garden' && this.challenge.noGarden)
@@ -712,6 +753,7 @@ export class Sim {
   }
 
   canStartWave(): boolean {
+    if(passagePending(this))return false
     if (this.challenge.fixed && this.waveActive) return false
     if (this.over) return false
     if (this.preparation && this.waveActive) return false
@@ -726,11 +768,19 @@ export class Sim {
   }
 
   waveDef(n: number): WaveDef {
-    if (this.challenge.expedition) {let wave=expeditionWave(this.challenge.expedition,n);if(this.challenge.watchCraft)wave=craftWave(wave,n,this.challenge.expedition);if(this.challenge.livingWatch)wave=livingWave(wave,n,true);return this.challenge.refinedWatch?refinedWave(wave,n,true):wave}
+    if(this.challenge.watchDirector){
+      if(this.challenge.expedition)return passageWave(secondWave(authoredExpedition(this.challenge,n),this.challenge,n),n,this.challenge,this.director)
+      const beat=campaignBeat(this.challenge,n)
+      let w=fixedWave(beat,this.challenge.variant??0,this.seed)
+      w=depthWave(w,beat,this.seed);w=livingWave(w,beat);w=refinedWave(w,beat);w=experienceWave(w,beat,false);w=tacticalWave(w,beat,false);w=masteryWave(w,beat,false)
+      if(shortCampaign(this.challenge))w={...w,groups:w.groups.map(g=>({...g,count:ENEMIES[g.type].boss?g.count:Math.max(1,Math.ceil(g.count*.85))}))}
+      return passageWave(secondWave(w,this.challenge,n),n,this.challenge,this.director)
+    }
+    if (this.challenge.expedition) {let wave=expeditionWave(this.challenge.expedition,n);if(this.challenge.watchCraft)wave=craftWave(wave,n,this.challenge.expedition);if(this.challenge.livingWatch)wave=livingWave(wave,n,true);if(this.challenge.refinedWatch)wave=refinedWave(wave,n,true);if(this.challenge.watchExperience)wave=experienceWave(wave,n,true);if(this.challenge.watchTactics)wave=tacticalWave(wave,n,true);return this.challenge.watchMastery?masteryWave(wave,n,true):wave}
     if (this.challenge.fixed) {
       let wave=fixedWave(n,this.challenge.variant ?? 0,this.seed)
       if(this.challenge.watchDepth)wave=depthWave(wave,n,this.seed)
-      if(this.challenge.livingWatch)wave=livingWave(wave,n);return this.challenge.refinedWatch?refinedWave(wave,n):wave
+      if(this.challenge.livingWatch)wave=livingWave(wave,n);if(this.challenge.refinedWatch)wave=refinedWave(wave,n);if(this.challenge.watchExperience)wave=experienceWave(wave,n,false);if(this.challenge.watchTactics)wave=tacticalWave(wave,n,false);return this.challenge.watchMastery?masteryWave(wave,n,false):wave
     }
     if (this.challenge.compact) {
       const wave = compactWave(n, this.challenge.variant ?? 0, this.seed)
@@ -764,7 +814,7 @@ export class Sim {
   }
 
   towerCost(id: TowerId): number {
-    return TOWERS[id].cost
+    return this.challenge.watchExperience?experiencePrice(id,this.challenge.hero,TOWERS[id].cost):TOWERS[id].cost
   }
 
   /** Support coverage improves in new nights without rewriting legacy towers or saves. */
@@ -775,7 +825,14 @@ export class Sim {
         if(id==='owl'&&b>=2)stats.damage*=.75
         if(refinement)specialiseCrown(stats,id,b)
       }
-      return this.challenge.watchCraft?techniqueStats(stats,id,this.techniques,!!this.challenge.livingWatch):stats
+      if(this.challenge.watchCraft)techniqueStats(stats,id,this.techniques,!!this.challenge.livingWatch)
+      if(this.challenge.watchMastery)masteryStats(stats,id,this.challenge.hero)
+      if(secondWatch(this.challenge)){
+        if(id==='owl'){stats.auraRange=0;stats.auraRate=0}
+        else if(id!=='garden'){stats.range*=1.08;stats.interval/=1.06}
+        if(id==='wick'||id==='beam')stats.damage*=1.06
+      }
+      return this.challenge.watchExperience?experienceStats(stats,id,this.challenge.hero,this.techniques):stats
     }
     const stats = computeStats(id, a, b)
     if (this.challenge.guard && (id === 'bell' || id === 'owl')) stats.range += 20
@@ -793,12 +850,19 @@ export class Sim {
   }
 
   fixedPrice(t: Tower): number | null {
+    if(secondWatch(this.challenge)){
+      const stage=stageOf(t),cost=this.towerCost(t.id),scale=shortCampaign(this.challenge)?.8:1
+      if(stage===0)return Math.round(cost*.6*scale)+Math.round(cost*1.3)
+      if(stage===2)return Math.round(cost*2.3*lateUpgradeScale(2,!!this.challenge.expedition)*scale)+Math.round(cost*3.4*lateUpgradeScale(3,!!this.challenge.expedition)*scale)
+      return null
+    }
     const base=upgradePrice(t)
-    return base===null?null:Math.round(base*(this.challenge.refinedWatch?lateUpgradeScale(stageOf(t),!!this.challenge.expedition):1))
+    return base===null?null:Math.round(base*(this.towerCost(t.id)/TOWERS[t.id].cost)*(this.challenge.refinedWatch?lateUpgradeScale(stageOf(t),!!this.challenge.expedition):1)*(shortCampaign(this.challenge)?.8:1))
   }
 
   refinementCost(t: Tower): number | null {
-    if (this.challenge.fixed) return stageOf(t) === 3 && this.planningWave >= (this.challenge.expedition?10:31) ? this.fixedPrice(t) : null
+    if(secondWatch(this.challenge))return stageOf(t)===2&&this.planningWave>=(this.challenge.expedition?7:campaignUnlock(this.challenge,16))?this.fixedPrice(t):null
+    if (this.challenge.fixed) return stageOf(t) === 3 && this.planningWave >= (this.challenge.expedition?10:campaignUnlock(this.challenge,31)) ? this.fixedPrice(t) : null
     const next = this.refinementOffer(t)
     return this.challenge.compact && next && Math.max(t.a, t.b) === 3 && this.planningWave >= next.wave ? next.cost : null
   }
@@ -811,11 +875,13 @@ export class Sim {
   get refinements() { return this.challenge.depth ? [...REFINEMENTS, ...LATE_REFINEMENTS] : [...REFINEMENTS] }
 
   refine(t: Tower): boolean {
+    if(secondWatch(this.challenge))return this.upgrade(t,t.b?1:0)
     const cost = this.refinementCost(t)
     if (cost === null || this.glow < cost || this.over || !this.towers.includes(t)) return false
     this.glow -= cost; t.spent += cost; t.refinement = (t.refinement ?? 0) + 1
     t.stats = this.towerStats(t.id, t.a, t.b, t.refinement)
     t.upT = this.time; this.stats.upgrades++
+    if(this.challenge.watchExperience)t.debutPending=true
     this.recomputeAuras()
     this.events.push({ t: 'upgrade', x: t.x, y: t.y, tier: 3 })
     return true
@@ -825,7 +891,7 @@ export class Sim {
     return !!this.challenge.guard && !this.waveActive && (!!this.pendingPlan || !!this.challenge.harbour || [8, 10, 16, 25].includes(this.wave + 1))
   }
 
-  get finalWave() { return this.challenge.skirmish?.to ?? (this.challenge.compact ? COMPACT_END : this.challenge.gardens ? GARDENS_END : this.challenge.harbour ? HARBOUR_END : FINAL_WAVE) }
+  get finalWave() { return this.challenge.skirmish?.to ?? (shortCampaign(this.challenge)?24:this.challenge.compact ? COMPACT_END : this.challenge.gardens ? GARDENS_END : this.challenge.harbour ? HARBOUR_END : FINAL_WAVE) }
 
   continueHarbour(): boolean {
     if (!this.challenge.guard || !this.challenge.expanding || this.challenge.harbour || this.isChallenge || this.over !== 'won' || this.freeplay || this.wave !== FINAL_WAVE) return false
@@ -869,9 +935,15 @@ export class Sim {
   }
 
   upgradeCost(t: Tower, path: 0 | 1): number | null {
+    if(secondWatch(this.challenge)){
+      const stage=stageOf(t)
+      if(stage===0)return this.fixedPrice(t)
+      if(stage===2&&path===(t.b?1:0))return this.refinementCost(t)
+      return null
+    }
     if (this.challenge.fixed) {
       const stage = stageOf(t)
-      if (stage >= 3 || stage === 2 && this.planningWave < (this.challenge.expedition?7:16) || stage === 0 && path === 1) return null
+      if (stage >= 3 || stage === 2 && this.planningWave < (this.challenge.expedition?7:campaignUnlock(this.challenge,16)) || stage === 0 && path === 1) return null
       if (stage === 2 && path !== (t.b ? 1 : 0)) return null
       return this.fixedPrice(t)
     }
@@ -913,7 +985,7 @@ export class Sim {
   chooseTechnique(id:TechniqueId):boolean {
     if(this.over||!techniqueOffers(this).some(t=>t.id===id))return false
     this.techniques.push(id)
-    for(const t of this.towers)t.stats=this.towerStats(t.id,t.a,t.b,t.refinement)
+    for(const t of this.towers){t.stats=this.towerStats(t.id,t.a,t.b,t.refinement);if(this.challenge.watchExperience)t.debutPending=true}
     this.recomputeAuras();this.syncBonds();return true
   }
 
@@ -954,7 +1026,7 @@ export class Sim {
     const pad = this.pads[padIndex]
     if (!pad || !this.padAvailable(padIndex) || pad.tower || this.over) return null
     if (!this.keeperAllowed(id)) return null
-    const cost = TOWERS[id].cost
+    const cost = this.towerCost(id)
     if (this.glow < cost) return null
     this.glow -= cost
     const t: Tower = {
@@ -988,6 +1060,7 @@ export class Sim {
     }
     pad.tower = t
     this.towers.push(t)
+    if(this.mastery)this.mastery.peakTowers=Math.max(this.mastery.peakTowers,this.towers.length)
     this.stats.built++
     if (this.stats.firstBuildAt < 0) this.stats.firstBuildAt = this.stats.time
     if (!this.stats.towersUsed.includes(id)) this.stats.towersUsed.push(id)
@@ -1002,11 +1075,16 @@ export class Sim {
     if (cost == null || this.glow < cost || this.over || !this.towers.includes(t)) return false
     this.glow -= cost
     t.spent += cost
-    if (this.challenge.fixed && stageOf(t) === 1) { t.a = path === 0 ? 2 : 0; t.b = path === 1 ? 2 : 0 }
+    if(secondWatch(this.challenge)){
+      if(stageOf(t)===0){t.a=path===0?2:0;t.b=path===1?2:0}
+      else {t.a=path===0?3:0;t.b=path===1?3:0;t.refinement=1}
+    }
+    else if (this.challenge.fixed && stageOf(t) === 1) { t.a = path === 0 ? 2 : 0; t.b = path === 1 ? 2 : 0 }
     else if (path === 0) t.a++
     else t.b++
     t.stats = this.towerStats(t.id, t.a, t.b, t.refinement)
     t.upT = this.time
+    if(this.challenge.watchExperience)t.debutPending=true
     this.stats.upgrades++
     this.stats.maxTier = Math.max(this.stats.maxTier, t.a, t.b)
     this.recomputeAuras()
@@ -1017,11 +1095,13 @@ export class Sim {
 
   /** Buy the shared foundation and chosen stream together, with no extra fee. */
   specialiseCost(t:Tower):number|null {
+    if(secondWatch(this.challenge))return stageOf(t)===0?this.fixedPrice(t):null
     if(!this.challenge.fixed||stageOf(t)>1)return null
-    return Math.round(TOWERS[t.id].cost*1.3)+(stageOf(t)===0?this.fixedPrice(t)!:0)
+    return Math.round(this.towerCost(t.id)*1.3)+(stageOf(t)===0?this.fixedPrice(t)!:0)
   }
 
   specialise(t:Tower,path:0|1):boolean {
+    if(secondWatch(this.challenge))return stageOf(t)===0&&this.upgrade(t,path)
     const cost=this.specialiseCost(t)
     if(cost===null||this.glow<cost||this.over||!this.towers.includes(t))return false
     if(stageOf(t)===0){this.upgrade(t,0);this.events.pop()} // One visible celebration for the bundled purchase.
@@ -1035,6 +1115,9 @@ export class Sim {
     this.glow += v
     this.pads[t.pad].tower = null
     this.towers = this.towers.filter((x) => x !== t)
+    if(this.mastery?.surge?.tower===t.uid&&this.mastery.surge.phase!=='spent')this.mastery.surge=null
+    if(this.director?.command?.tower===t.uid)this.director.command.phase='spent'
+    if(this.director?.owner===t.uid)delete this.director.owner
     this.recomputeAuras()
     this.events.push({ t: 'sell', x: t.x, y: t.y, amount: v })
     this.syncBonds()
@@ -1098,6 +1181,8 @@ export class Sim {
       this.events.push({ t: 'income', x: this.level.def.home.x, y: this.level.def.home.y - 60, amount: early })
     }
     this.wave++
+    if(this.director){this.director.command=null;delete this.director.target}
+    if(this.mastery){this.mastery.waveLeaks=0;this.mastery.surge=null}
     if (this.challenge.guard) this.waveReports.push({ wave: this.wave, slowSplashHits: 0, damage: {} })
     if (this.wave > this.finalWave) this.freeplay = true
     const def = this.waveDef(this.wave)
@@ -1129,7 +1214,7 @@ export class Sim {
         this.climate.gardenExposure+=exposure
         // Live purchases earn only for the time each tier actually worked.
         for(const t of this.towers)if(t.id==='garden'){
-          const terrace=this.challenge.watchDepth&&landmark(this).id==='sunterrace'&&nearLandmark(this,t)?(this.challenge.livingWatch?(this.sky.night?.85:1.2):(this.sky.night?1:1.12)):1
+          const terrace=!secondWatch(this.challenge)&&this.challenge.watchDepth&&landmark(this).id==='sunterrace'&&nearLandmark(this,t)?(this.challenge.livingWatch?(this.sky.night?.85:1.2):(this.sky.night?1:1.12)):1
           t.harvest=(t.harvest??0)+t.stats.income*exposure*terrace*(this.techniques.includes('dividend')?(this.sky.night?.88:1.18):1)
           t.healing=(t.healing??0)+t.stats.lifePerWave*dt
         }
@@ -1213,12 +1298,13 @@ export class Sim {
     let hp = def.hp * ramp * late * bossHealth * (this.challenge.compact && def.id === 'bloomheart' ? .7 : 1) * (this.freeplay ? 1 + (this.wave - (this.challenge.compact ? COMPACT_END : FINAL_WAVE)) * 0.06 : 1)
     let shell = (def.shell ?? 0) * ramp * late * (this.challenge.thick ?? 1)
     if (this.challenge.fixed) {
-      const mode = this.difficulty === 'relaxed' ? .78 : this.difficulty === 'nightfall' ? 1 + .22*Math.min(1,Math.max(0,wave-10)/25) : 1
-      const growth = def.boss ? 1 + Math.max(0,wave-10)*.045 : 1 + Math.max(0,wave-6)*.1
+      const authoredWave=campaignBeat(this.challenge,wave)
+      const mode = this.difficulty === 'relaxed' ? .78 : this.difficulty === 'nightfall' ? 1 + .22*Math.min(1,Math.max(0,authoredWave-10)/25) : 1
+      const growth = def.boss ? 1 + Math.max(0,authoredWave-10)*.045 : 1 + Math.max(0,authoredWave-6)*.1
       hp = def.hp * mode * growth
       shell = (def.shell ?? 0)* mode * growth
       if (type === 'warden') hp *= .7
-      if (type === 'bloomheart') hp *= .65
+      if (type === 'bloomheart') hp *= secondWatch(this.challenge)?.55:.65
       // Twelve-wave expeditions have a smaller economy than a 40-wave watch.
       // Escalate ordinary pressure gradually; scale the final boss to that budget.
       if(this.challenge.expedition){
@@ -1344,6 +1430,7 @@ export class Sim {
         if (owl && !e.owlSeen && !e.revealedPerm) {
           e.owlSeen = true
           t.spotted++
+          if(t.debutPending&&this.challenge.watchExperience){t.debutPending=false;this.events.push({t:'craft',kind:'debut',x:t.x,y:t.y,tx:e.x,ty:e.y,label:'Revealed for the defence'})}
         }
       }
     }
@@ -1405,12 +1492,13 @@ export class Sim {
       if (e.hitT > 0) e.hitT -= dt
       if (e.heatT > 0) e.heatT -= dt
       if (e.brittleT > 0) e.brittleT -= dt
+      if ((e.exposedT??0)>0)e.exposedT=Math.max(0,e.exposedT!-dt)
       // damage over time
       if (e.burnT > 0) {
         e.burnT -= dt
         this.damage(e, e.burnDps * dt, true, null, true)
         if (!e.alive) continue
-        if (e.burnT <= 0) e.burnDps = 0
+        if (e.burnT <= 0) {e.burnDps = 0;delete e.burnSource}
       }
       // healing aura
       if (e.def.heal) {
@@ -1420,13 +1508,14 @@ export class Sim {
       }
       if (this.challenge.fixed && e.def.id === 'toad' && e.phase === 0 && e.hp <= e.maxHp*.5) {
         e.phase=1
-        if(this.challenge.livingWatch)e.signalT=2
+        if(secondWatch(this.challenge))this.beginChannel(e,2)
+        else if(this.challenge.livingWatch)e.signalT=2
         else for(let i=0;i<6;i++) this.inherit(this.spawnEnemy('drip',e.seg,Math.max(0,e.s-20-i*18),e.wave),e)
         this.events.push({t:'phase',x:e.x,y:e.y})
       }
       if(this.challenge.livingWatch&&e.def.id==='toad'&&e.phase===1){
         e.signalT=Math.max(0,(e.signalT??0)-dt)
-        if(e.signalT===0){e.phase=2;for(let i=0;i<6;i++)this.inherit(this.spawnEnemy('drip',e.seg,Math.max(0,e.s-20-i*18),e.wave),e);this.events.push({t:'phase',x:e.x,y:e.y})}
+        if(e.signalT===0){e.phase=2;delete e.channelLink;for(let i=0;i<6;i++)this.inherit(this.spawnEnemy('drip',e.seg,Math.max(0,e.s-20-i*18),e.wave),e);this.events.push({t:'phase',x:e.x,y:e.y})}
       }
       // boss minions and phases
       if (e.def.spawn) {
@@ -1454,15 +1543,21 @@ export class Sim {
       if (e.def.id === 'bloomheart') {
         if ((e.phase === 0 && e.hp <= e.maxHp * .7) || (e.phase === 2 && e.hp <= e.maxHp * .35)) {
           e.phase++; e.signalT = 3
+          if(secondWatch(this.challenge))this.beginChannel(e,3)
           this.events.push({ t: 'phase', x: e.x, y: e.y })
         } else if (e.phase === 1 || e.phase === 3) {
           e.signalT = Math.max(0, (e.signalT ?? 0) - dt)
           if (!e.signalT) {
             for (const other of this.enemies) if (other.alive && !other.def.boss && dist2(e.x, e.y, other.x, other.y) <= 160 ** 2) other.hp = Math.min(other.maxHp, other.hp + other.maxHp * .5)
-            e.phase++
+            e.phase++;delete e.channelLink
             this.events.push({ t: 'phase', x: e.x, y: e.y })
           }
         }
+      }
+      if(secondWatch(this.challenge)&&e.def.id==='dredger'){
+        const open=dredgerOpen(e)
+        if(open&&!e.coreOpen)this.events.push({t:'craft',kind:'armour',x:e.x,y:e.y,label:'Core open · commit your burst'})
+        e.coreOpen=open
       }
       // speed
       let slow = 0
@@ -1482,7 +1577,8 @@ export class Sim {
         for (let i = 0; i < 4; i++) this.inherit(this.spawnEnemy('skiff', e.seg, Math.max(0, e.s - 24 * (i + 1)), e.wave), e)
       }
       let speed = e.speedBase * (1 - slow) * (this.challenge.fixed?skySpeed(this.sky):1)
-      if(this.challenge.watchDepth&&landmark(this).id==='tidebell'&&nearLandmark(this,e))speed*=this.sky.night?(this.challenge.livingWatch?.86:.92):.96
+      if(!secondWatch(this.challenge)&&this.challenge.watchDepth&&landmark(this).id==='tidebell'&&nearLandmark(this,e))speed*=this.sky.night?(this.challenge.livingWatch?.86:.92):.96
+      if(secondWatch(this.challenge)&&(e.signalT??0)>0)speed*=.45
       if (e.def.id === 'skiff' && e.shell <= 0) speed *= 1.6
       if (e.stunT > 0) {
         e.stunT -= dt
@@ -1492,6 +1588,10 @@ export class Sim {
       const prevS = e.s
       const prevSeg = e.seg
       e.s += speed * dt
+      if(this.director&&this.challenge.expedition==='moonwake')for(const arch of MOON_ARCHES){
+        const at=e.seg.line.length*arch.fraction
+        if(e.seg.id===arch.seg&&prevS<at&&e.s>=at){e.seenT=Math.max(e.seenT,6);if(e.def.hidden)this.events.push({t:'craft',kind:'debut',x:e.x,y:e.y,label:'Moon gate · revealed for 6s'})}
+      }
       // channel landmarks act on Mopes as they pass
       const ft = prevSeg.feature
       if (ft && prevS < ft.at && e.s >= ft.at) this.applyFeature(e, ft.kind)
@@ -1599,6 +1699,7 @@ export class Sim {
 
   private leak(e: Enemy) {
     e.alive = false
+    if(secondWatch(this.challenge))for(const boss of this.enemies)if(boss.channelLink===e.uid)delete boss.channelLink
     this.decWave(e.wave)
     // greed has a price: escapees from a short rich run cost double light
     let w = e.def.weight * (e.rich ? RICH_LEAK : 1)
@@ -1608,9 +1709,10 @@ export class Sim {
       this.events.push({ t: 'prepare', id: 'ward', x: e.x, y: e.y })
       if (!w) return
     }
-    if (this.challenge.guard) this.lastLeak = { enemy: e.def.id, route: e.route, hidden: !!e.def.hidden && !e.revealedPerm && e.seenT <= 0, armoured: e.shell > 0, wave: e.wave, light: w }
+    if (this.challenge.guard) this.lastLeak = { enemy: e.def.id, route: e.route, hidden: !!e.def.hidden && !e.revealedPerm && e.seenT <= 0, armoured: e.shell > 0, wave: e.wave, light: w,...(this.challenge.watchTactics?{detail:breachDetail(this,e)}:{}) }
     this.lives = Math.max(0, this.lives - w)
     this.stats.leaked += w
+    if(this.mastery)this.mastery.waveLeaks+=w
     this.stats.leaksBy[e.def.id] = (this.stats.leaksBy[e.def.id] ?? 0) + w
     const rk = e.route || 'direct'
     this.stats.leakRoutes[rk] = (this.stats.leakRoutes[rk] ?? 0) + w
@@ -1632,14 +1734,24 @@ export class Sim {
     if(src&&this.techniques.includes('afterglow'))amount*=this.sky.night?1.08:.96
     if(src&&this.techniques.includes('outrider')&&hasNeighbour(this,src))amount*=.96
     if(this.challenge.watchCraft&&e.def.id==='dredger')amount*=dredgerOpen(e)?1.4:.6
-    if(this.challenge.livingWatch&&src&&heavy&&!continuous&&this.techniques.includes('flashpoint')&&e.burnT>0){
-      amount+=e.burnDps*Math.min(2,e.burnT);e.burnT=0;e.burnDps=0
+    if(this.challenge.livingWatch&&src&&heavy&&!continuous&&this.techniques.includes('flashpoint')&&e.burnT>0&&(!secondWatch(this.challenge)||src.uid!==e.burnSource)){
+      const ignition=e.burnDps*Math.min(2,e.burnT)*(secondWatch(this.challenge)&&['ballista','beam'].includes(src.id)?3.25:this.challenge.watchExperience?2.5:1)
+      amount+=ignition;e.burnT=0;e.burnDps=0;delete e.burnSource
+      if(this.challenge.watchTactics&&src.id==='cracker'&&src.refinement&&(src.crownReadyAt??0)<=this.time){
+        src.crownReadyAt=this.time+4
+        for(const o of this.enemies.filter(o=>o.alive&&o!==e&&dist2(e.x,e.y,o.x,o.y)<=70**2).sort((a,b)=>dist2(e.x,e.y,a.x,a.y)-dist2(e.x,e.y,b.x,b.y)||a.uid-b.uid).slice(0,2)){
+          this.damage(o,ignition*.4,true,src,true);this.events.push({t:'tactic',kind:'spread',x:e.x,y:e.y,tx:o.x,ty:o.y})
+        }
+        this.events.push({t:'craft',kind:'bond',x:e.x,y:e.y,label:'Backdraft'})
+      }
+      if(this.challenge.watchExperience)src.signatureHits=(src.signatureHits??0)+1
       this.events.push(this.challenge.refinedWatch?{t:'tactic',kind:'ignite',x:e.x,y:e.y}:{t:'hit',x:e.x,y:e.y,kind:'burn',hue:'#ffb778'})
     }
-    if(this.challenge.watchDepth&&src?.id==='storm'&&landmark(this).id==='stormgarden'&&nearLandmark(this,src))amount*=this.challenge.livingWatch&&this.sky.night?1.15:this.sky.weather==='rain'?1.12:1.05
+    if(!secondWatch(this.challenge)&&this.challenge.watchDepth&&src?.id==='storm'&&landmark(this).id==='stormgarden'&&nearLandmark(this,src))amount*=this.challenge.livingWatch&&this.sky.night?1.15:!this.challenge.watchExperience&&this.sky.weather==='rain'?1.12:1.05
     if(this.challenge.fixed&&src&&!continuous){const slow=heroHitSlow(this.challenge.hero,src.id);if(slow){e.slowF=Math.max(e.slowF,slow.amount);e.slowT=Math.max(e.slowT,slow.duration)}}
     const before = Math.max(0, e.hp) + Math.max(0, e.shell)
     if (this.challenge.fixed && src && (!continuous||this.challenge.watchDepth&&src.id==='beam')) heavy = this.applyBond(e,src,heavy)
+    if(this.challenge.watchTactics&&heavy&&(e.exposedT??0)>0)amount*=EXPOSED_BONUS
     if(!heavy&&escortCover(this,e))amount*=.7
     if (e.brittleT > 0) amount += continuous ? amount * 0.25 : 1
     if (!this.challenge.fixed && src && src.def.family === e.def.family && !(this.challenge.balance && e.def.boss)) amount *= FAMILY_BONUS
@@ -1647,16 +1759,18 @@ export class Sim {
     if (e.shell > 0) {
       if (!heavy) {
         // light hits only chip shells: a soft counter, never an immunity
-        amount *= SHELL_CHIP
+        amount *= this.challenge.watchMastery&&this.challenge.hero==='ivo'&&src?.id==='storm'&&e.slowT>0?.45:SHELL_CHIP
         if (!continuous) this.events.push({ t: 'clink', x: e.x, y: e.y })
       }
       const absorbed = Math.min(e.shell, amount)
+      if(src&&this.challenge.watchExperience)src.armourRemoved=(src.armourRemoved??0)+absorbed
       if (src && this.challenge.guard) src.damageDealt = (src.damageDealt ?? 0) + absorbed
       e.shell -= absorbed
       amount -= absorbed
       if (e.shell <= 0.0001) {
         e.shell = 0
         this.events.push({ t: 'crack', x: e.x, y: e.y })
+        if(this.challenge.watchExperience)this.events.push({t:'craft',kind:'armour',x:e.x,y:e.y,label:'Shell broken'})
       }
     }
     // beams and burns warm the rim; discrete hits flash white, at most every 0.2 s
@@ -1677,16 +1791,34 @@ export class Sim {
 
   private reportDamage(e: Enemy, src: Tower | null, before: number) {
     if (!src) return
+    if(this.challenge.watchExperience&&src.debutPending&&before>Math.max(0,e.hp)+Math.max(0,e.shell)){
+      src.debutPending=false;this.events.push({t:'craft',kind:'debut',x:src.x,y:src.y,tx:e.x,ty:e.y,label:secondWatch(this.challenge)&&src.refinement?'Crown unleashed':src.id==='storm'?'Lightning connected':src.id==='bell'?'Control established':src.stats.burn>0?'Fire established':'Specialist at work'})
+    }
     const report = this.waveReports.find(r => r.wave === e.wave)
     if (report) report.damage[src.id] = (report.damage[src.id] ?? 0) + Math.max(0, before - Math.max(0, e.hp) - Math.max(0, e.shell))
   }
 
   private kill(e: Enemy, src: Tower | null) {
     e.alive = false
+    if(secondWatch(this.challenge))for(const boss of this.enemies)if(boss.alive&&boss.channelLink===e.uid)this.interruptChannel(boss)
+    if(this.challenge.watchTactics&&e.escortOf&&!this.enemies.some(o=>o.alive&&o.escortOf===e.escortOf)){
+      const captain=this.enemies.find(o=>o.alive&&o.uid===e.escortOf)
+      if(captain){captain.exposedT=4;this.events.push({t:'craft',kind:'armour',x:captain.x,y:captain.y,label:'Escort broken · opening'})}
+    }
     if(this.challenge.livingWatch&&this.techniques.includes('long-embers')&&e.burnT>0&&e.burnDps>=1){
-      const neighbours=this.enemies.filter(o=>o.alive&&o!==e&&dist2(e.x,e.y,o.x,o.y)<=70**2)
-        .sort((a,b)=>dist2(e.x,e.y,a.x,a.y)-dist2(e.x,e.y,b.x,b.y)||a.uid-b.uid).slice(0,2)
-      for(const other of neighbours){other.burnDps=Math.max(other.burnDps,e.burnDps*.5);other.burnT=Math.max(other.burnT,Math.min(2,e.burnT));this.events.push(this.challenge.refinedWatch?{t:'tactic',kind:'spread',x:e.x,y:e.y,tx:other.x,ty:other.y}:{t:'hit',x:other.x,y:other.y,kind:'burn',hue:'#ffb778'})}
+      const owner=this.challenge.watchTactics?this.towers.find(t=>t.uid===e.burnSource):undefined
+      const ashfall=owner?.id==='cracker'&&!!owner.refinement
+      if(ashfall){
+        const own=this.embers.filter(p=>p.tower===owner.uid)
+        if(own.length>=3)this.embers.splice(this.embers.indexOf(own[0]),1)
+        this.embers.push({x:e.x,y:e.y,radius:58,life:2.5,dps:e.burnDps*.4,tower:owner.uid})
+        if(this.embers.length>48)this.embers.shift()
+        this.events.push({t:'craft',kind:'bond',x:e.x,y:e.y,label:'Ashfall'})
+      }
+      const neighbours=this.enemies.filter(o=>o.alive&&o!==e&&dist2(e.x,e.y,o.x,o.y)<=(this.challenge.watchExperience?95:70)**2)
+        .sort((a,b)=>dist2(e.x,e.y,a.x,a.y)-dist2(e.x,e.y,b.x,b.y)||a.uid-b.uid).slice(0,this.challenge.watchExperience?3:2)
+      if(this.challenge.watchExperience)this.stats.firesSpread=(this.stats.firesSpread??0)+neighbours.length
+      for(const other of neighbours){const relay=secondWatch(this.challenge)&&this.towers.some(t=>t.id==='cracker'&&t.uid!==owner?.uid&&dist2(t.x,t.y,other.x,other.y)<=this.effRange(t)**2);const dps=e.burnDps*(relay?1:this.challenge.watchExperience?.75:.5);if(this.challenge.watchTactics&&dps>=other.burnDps)other.burnSource=e.burnSource;other.burnDps=Math.max(other.burnDps,dps);other.burnT=Math.max(other.burnT,ashfall||relay?3:Math.min(2,e.burnT));this.events.push(this.challenge.refinedWatch?{t:'tactic',kind:'spread',x:e.x,y:e.y,tx:other.x,ty:other.y}:{t:'hit',x:other.x,y:other.y,kind:'burn',hue:'#ffb778'})}
     }
     this.decWave(e.wave)
     let lure = 0
@@ -1765,7 +1897,7 @@ export class Sim {
 
   private pickTarget(t: Tower, range: number, exclude: Enemy | null = null, excluded:readonly (Enemy|null)[]=[]): Enemy | null {
     const cands = this.near(t.x, t.y, range, tmpB)
-    if(this.challenge.fixed)return automaticTarget(t,cands.filter(e=>e!==exclude&&!excluded.includes(e)&&this.canSee(e,t.stats.detect)))
+    if(this.challenge.fixed){const visible=cands.filter(e=>e!==exclude&&!excluded.includes(e)&&this.canSee(e,t.stats.detect));return this.challenge.watchMastery&&t.id==='storm'&&this.techniques.includes('capacitor')&&t.tolls%3===2?surgeTarget(visible):automaticTarget(t,visible)}
     let best: Enemy | null = null
     let bestScore = Infinity
     const detect = t.stats.detect
@@ -1801,22 +1933,45 @@ export class Sim {
       const s = t.stats
       const range = this.effRange(t)
       const rate = t.rateMul * (this.techniques.includes('circuit')?(hasNeighbour(this,t)?1.1:.95):1) * (this.challenge.fixed?skyRate(t.id,this.sky):1) * (this.sunlit(t)?1.12:1) * (this.activePreparation('oil') && this.waveActive ? 1.15 : 1)
+      const command=this.director?.command
+      if(command?.tower===t.uid&&command.phase!=='spent'){
+        if(command.phase==='held')continue
+        const ready=t.id!=='storm'||!this.techniques.includes('capacitor')||t.tolls%3===2
+        if(ready){
+          t.cd-=dt*rate
+          if(t.cd<=0&&this.enemies.some(e=>e.alive&&dist2(t.x,t.y,e.x,e.y)<=range*range&&this.canSee(e,s.detect))){command.phase='held';t.cd=0;this.events.push({t:'craft',kind:'bond',x:t.x,y:t.y,label:'Command banked'})}
+          continue
+        }
+      }
       switch (t.def.kind) {
         case 'arc': {
+          const surge=this.mastery?.surge
+          if(surge?.tower===t.uid&&surge.wave===this.wave&&surge.phase==='held')break
           t.cd -= dt * rate
           if (t.cd > 0) break
           let target = this.pickTarget(t, range)
           if (!target) break
+          if(surge?.tower===t.uid&&surge.wave===this.wave&&surge.phase==='charging'&&t.tolls%3===2){surge.phase='held';t.cd=0;this.events.push({t:'craft',kind:'bond',x:t.x,y:t.y,label:'Surge banked · choose your moment'});break}
+          if(surge?.tower===t.uid&&surge.wave===this.wave&&surge.phase==='release'){surge.phase='spent';this.mastery!.commands++;this.events.push({t:'craft',kind:'bond',x:t.x,y:t.y,tx:target.x,ty:target.y,label:'Surge released'})}
           t.cd = s.interval; t.fireT = this.time
           if(this.challenge.livingWatch)t.tolls++
           if(this.challenge.refinedWatch&&this.techniques.includes('capacitor')&&t.tolls%3===0)this.events.push({t:'tactic',kind:'charged',x:target.x,y:target.y})
           t.angle = Math.atan2(target.y - t.y, target.x - t.x)
           const hit = new Set<number>()
           let x = t.x, y = t.y - 25
-          for (let i = 0; target && i < s.count; i++) {
+          let jumps=s.count
+          for (let i = 0; target && i < jumps; i++) {
             hit.add(target.uid)
             this.events.push({ t: 'arc', x, y, tx: target.x, ty: target.y })
-            this.damage(target, s.damage*(this.challenge.livingWatch&&this.techniques.includes('capacitor')&&t.tolls%3===0&&i===0?2:1), s.heavy, t)
+            const charged=this.challenge.livingWatch&&this.techniques.includes('capacitor')&&t.tolls%3===0&&i===0
+            if(charged&&this.challenge.watchExperience)t.signatureHits=(t.signatureHits??0)+1
+            const thunderhead=!!this.challenge.watchTactics&&!!t.refinement&&!!charged
+            if(thunderhead){
+              for(const o of this.enemies.filter(o=>o.alive&&o!==target&&!o.def.boss&&dist2(target!.x,target!.y,o.x,o.y)<=70**2).sort((a,b)=>dist2(target!.x,target!.y,a.x,a.y)-dist2(target!.x,target!.y,b.x,b.y)||a.uid-b.uid).slice(0,3))o.stunT=Math.max(o.stunT,.6)
+              this.events.push({t:'craft',kind:'freeze',x:target.x,y:target.y,label:'Thunderhead'})
+            }
+            this.damage(target, s.damage*(charged?(secondWatch(this.challenge)&&t.refinement?3.45:this.challenge.watchExperience?3:2):1), s.heavy||thunderhead||!!this.challenge.watchMastery&&!!charged, t)
+            if(this.challenge.watchTactics&&t.refinement&&i===0&&!target.alive&&this.techniques.includes('forked-current')){jumps+=2;this.events.push({t:'craft',kind:'bond',x:target.x,y:target.y,label:'Cascade · two more jumps'})}
             x = target.x; y = target.y
             target = this.enemies.filter(e => e.alive && !hit.has(e.uid) && this.canSee(e, s.detect) && dist2(x, y, e.x, e.y) <= s.splash ** 2)
               .sort((a, b) => dist2(x, y, a.x, a.y) - dist2(x, y, b.x, b.y) || a.uid - b.uid)[0] ?? null
@@ -1831,7 +1986,9 @@ export class Sim {
           if (!target) break
           t.cd = s.interval; t.fireT = this.time
           t.angle = Math.atan2(target.y - t.y, target.x - t.x)
-          this.projs.push(this.makeProj(t, 'bolt', t.angle, target, range))
+          const bolt=this.makeProj(t, 'bolt', t.angle, target, range)
+          if(this.challenge.watchTactics)this.primeBeacon(t,target,bolt)
+          this.projs.push(bolt)
           this.events.push({ t: 'shoot', x: t.x, y: t.y, tower: t.id, angle: t.angle })
           break
         }
@@ -1920,21 +2077,30 @@ export class Sim {
           t.fireT = this.time
           const stun = s.stunEvery > 0 && t.tolls % s.stunEvery === 0
           for (const e of [...hits]) {
-            if(this.challenge.livingWatch&&this.techniques.includes('tidal-echo')&&t.tolls%4===0&&e.slowT>0&&!e.def.boss){
+            if(this.challenge.livingWatch&&this.techniques.includes('tidal-echo')&&t.tolls%(this.challenge.watchExperience?3:4)===0&&e.slowT>0&&!e.def.boss){
               if(this.challenge.refinedWatch)this.events.push({t:'tactic',kind:'push',x:e.x,y:e.y})
-              e.s=Math.max(0,e.s-24);const p=e.seg.line.at(e.s,{x:0,y:0,tx:0,ty:0});Object.assign(e,p);e.remaining=e.seg.toHome-e.s
+              e.s=Math.max(0,e.s-(secondWatch(this.challenge)?65:this.challenge.watchExperience?40:24));const p=e.seg.line.at(e.s,{x:0,y:0,tx:0,ty:0});Object.assign(e,p);e.remaining=e.seg.toHome-e.s
+              if(secondWatch(this.challenge)||this.challenge.watchTactics&&t.refinement)e.exposedT=3
+              if(this.challenge.watchExperience)t.signatureHits=(t.signatureHits??0)+1
             }
             e.slowF = Math.max(e.slowF, s.slow)
             e.slowT = Math.max(e.slowT, s.slowDur)
             if (s.brittle) e.brittleT = Math.max(e.brittleT, s.slowDur)
             if (s.revealPerm && e.def.hidden) e.revealedPerm = true
             if(stun&&this.challenge.livingWatch&&e.def.id==='bloomheart'&&(e.phase===1||e.phase===3)){
+              if(this.challenge.watchExperience)t.interrupts=(t.interrupts??0)+1
+              if(secondWatch(this.challenge)){delete e.channelLink;e.stunT=Math.max(e.stunT,.65)}
               e.phase++;e.signalT=0;this.events.push(this.challenge.refinedWatch?{t:'tactic',kind:'interrupt',x:e.x,y:e.y}:{t:'crack',x:e.x,y:e.y})
+              if(this.challenge.watchTactics)e.exposedT=4
             }
+            if(stun&&this.challenge.watchTactics&&e.def.id==='toad'&&e.phase===1){delete e.channelLink;if(secondWatch(this.challenge))e.stunT=Math.max(e.stunT,.65);e.phase=2;e.signalT=0;e.exposedT=4;t.interrupts=(t.interrupts??0)+1;this.events.push({t:'tactic',kind:'interrupt',x:e.x,y:e.y})}
             if (stun && !e.def.boss) e.stunT = Math.max(e.stunT, s.stunDur)
+            if(stun&&!e.def.boss&&this.challenge.watchTactics&&t.refinement&&this.techniques.includes('deep-freeze'))e.exposedT=3
             if (s.damage > 0) this.damage(e, s.damage, false, t)
           }
           this.events.push({ t: 'toll', x: t.x, y: t.y, r: range, stun, tier: Math.max(t.a, t.b) })
+          if(stun&&this.challenge.watchExperience){t.signatureHits=(t.signatureHits??0)+hits.filter(e=>!e.def.boss).length;this.events.push({t:'craft',kind:'freeze',x:t.x,y:t.y,label:'Frozen in reach'})}
+          if(t.debutPending&&this.challenge.watchExperience){t.debutPending=false;this.events.push({t:'craft',kind:'debut',x:t.x,y:t.y,label:'Control established'})}
           break
         }
         case 'beam': {
@@ -1962,6 +2128,7 @@ export class Sim {
                   const fraction = this.challenge.balance && e !== tg ? BEAM_SECONDARY_DAMAGE : 1
                   this.damage(e, dmg * fraction, true, t, true)
                   if (s.burn > 0 && e.alive) {
+                    if(this.challenge.watchTactics&&s.burn*fraction>=e.burnDps)e.burnSource=t.uid
                     e.burnT = s.burnDur
                     e.burnDps = Math.max(e.burnDps, s.burn * fraction)
                   }
@@ -1970,6 +2137,7 @@ export class Sim {
             } else {
               this.damage(tg, dmg, true, t, true)
               if (s.burn > 0 && tg.alive) {
+                if(this.challenge.watchTactics&&s.burn>=tg.burnDps)tg.burnSource=t.uid
                 tg.burnT = s.burnDur
                 tg.burnDps = Math.max(tg.burnDps, s.burn)
               }
@@ -2098,6 +2266,7 @@ export class Sim {
         p.hit.push(e.uid)
         const landed = this.damage(e, p.dmg, p.heavy, p.tower)
         if (landed && p.kind === 'bolt' && p.burn > 0 && e.alive) {
+          if(this.challenge.watchTactics&&p.burn>=e.burnDps)e.burnSource=p.tower.uid
           e.burnT = Math.max(e.burnT, p.burnDur); e.burnDps = Math.max(e.burnDps, p.burn)
         }
         if (landed) this.events.push({ t: 'hit', x: e.x, y: e.y, kind: p.kind, hue: p.tower.def.hue })
@@ -2140,6 +2309,7 @@ export class Sim {
         combo++
       }
       if (p.burn > 0 && e.alive) {
+        if(this.challenge.watchTactics&&p.burn>=e.burnDps)e.burnSource=p.tower.uid
         e.burnT = p.burnDur
         e.burnDps = Math.max(e.burnDps, p.burn)
       }
@@ -2187,10 +2357,11 @@ export class Sim {
       const spawning = this.spawners.some((sp) => sp.wave === w)
       if (spawning || (this.waveAlive.get(w) ?? 0) > 0) continue
       this.wavesPending.delete(w)
+      if(this.mastery&&w>=this.finalWave-2){const guard=lowerGuard(this);if(this.mastery.waveLeaks===0&&guard.damage>=2&&guard.scouts>=1)this.mastery.lowerWaves++}
       if (this.preparation?.wave === w) this.preparation = null
       cleared = true
       const d = DIFFICULTY[this.difficulty]
-      const bonus = Math.round((this.challenge.refinedWatch?lateRewardScale(w,!!this.challenge.expedition):1)*(this.challenge.expedition ? expeditionBonus(w) : this.challenge.fixed ? 125 + w * 15 : this.challenge.compact ? 90 + w * 8 : 45 + w * 5) * d.bonus)
+      const bonus = Math.round((this.challenge.refinedWatch?lateRewardScale(w,!!this.challenge.expedition):1)*(this.challenge.expedition ? expeditionBonus(w) : this.challenge.fixed ? campaignReward(this.challenge,w) : this.challenge.compact ? 90 + w * 8 : 45 + w * 5) * d.bonus)+(this.waveDef(w).clearBonus??0)
       let income = 0
       let life = 0
       for (const t of this.towers) {
@@ -2256,7 +2427,7 @@ export class Sim {
     }
     if(Math.floor(this.time*2)!==Math.floor((this.time-dt)*2))this.syncBonds()
   }
-  get bondSlots(){return this.challenge.expedition?(this.wave>=7?2:this.wave>=3?1:0):(this.wave>=20?2:this.wave>=5?1:0)}
+  get bondSlots(){return this.challenge.expedition?(this.wave>=7?2:this.wave>=3?1:0):(this.wave>=campaignUnlock(this.challenge,21)-1?2:this.wave>=campaignUnlock(this.challenge,6)-1?1:0)}
   syncBonds(){
     if(!this.challenge.watchDepth)return
     const eligible=(a:Tower,b:Tower)=>!!bondName(a.id,b.id,true)&&this.sharedCoverage(a,b)
@@ -2269,10 +2440,27 @@ export class Sim {
       this.bonds.push({a:a.uid,b:b.uid,readyAt:this.time+4,activations:0});paired.add(a.uid);paired.add(b.uid)
     }
   }
+  previewTower(pad:number,id:TowerId):Tower|null {
+    const p=this.pads[pad];if(!p||p.tower||!this.keeperAllowed(id))return null
+    const stats=this.towerStats(id,0,0),rangeMul=1+Math.max(0,...this.towers.filter(t=>t.id==='owl'&&dist2(p.x,p.y,t.x,t.y)<=t.stats.range**2).map(t=>t.stats.auraRange))
+    return {uid:-1,id,def:heroTower(id,this.challenge.hero),pad,x:p.x,y:p.y,a:0,b:0,stats,rangeMul,rateMul:1} as Tower
+  }
+  /** A chosen pair owns its slot until coverage is broken. Re-linking cannot
+   * accelerate an existing cooldown, and a full unrelated slot needs a choice. */
+  selectBond(a:Tower,b:Tower,replace=-1):boolean {
+    if(!this.challenge.watchExperience||this.over||a===b||!this.towers.includes(a)||!this.towers.includes(b)||!bondName(a.id,b.id,true)||!this.sharedCoverage(a,b)||!this.bondSlots)return false
+    if(this.bonds.some(q=>[q.a,q.b].includes(a.uid)&&[q.a,q.b].includes(b.uid)))return false
+    const affected=this.bonds.filter((q,i)=>[q.a,q.b].includes(a.uid)||[q.a,q.b].includes(b.uid)||i===replace)
+    const keep=this.bonds.filter(q=>!affected.includes(q))
+    if(keep.length>=this.bondSlots)return false
+    this.bonds=[...keep,{a:a.uid,b:b.uid,readyAt:Math.max(this.time+4,...affected.map(q=>q.readyAt)),activations:0}]
+    this.events.push({t:'craft',kind:'bond',x:a.x,y:a.y,tx:b.x,ty:b.y,label:bondName(a.id,b.id,true)!})
+    return true
+  }
   /** Pairs must share a section of the fixed route. */
   sharedCoverage(a: Tower,b: Tower): boolean {
     for(const seg of this.level.segs.values()) {
-      if(seg.id === 'inlet' && this.planningWave < (this.challenge.expedition?6:11)) continue
+      if(seg.id === 'inlet' && this.planningWave < (this.challenge.expedition?6:campaignUnlock(this.challenge,11))) continue
       for(let at=0;at<=seg.line.length;at+=12) {
         const p=seg.line.at(at,{x:0,y:0,tx:0,ty:0})
         if(dist2(a.x,a.y,p.x,p.y)<=this.effRange(a)**2 && dist2(b.x,b.y,p.x,p.y)<=this.effRange(b)**2) return true
@@ -2294,7 +2482,116 @@ export class Sim {
     this.bonds=this.bonds.filter(b=>b.a!==t.uid&&b.b!==t.uid)
     return old!==this.bonds.length
   }
+  choosePassage(id:Passage):boolean {
+    if(!passagePending(this)||!this.director||!['convoy','runners'].includes(id))return false
+    this.director.passage=id
+    if(secondWatch(this.challenge)){this.applyPassage();if(id==='convoy')this.plots.add(JETTY_PAD)}
+    if(id==='convoy'){this.glow+=180;this.stats.glowEarned+=180}
+    return true
+  }
+  /** Rebuild only between waves, or before loading entities. */
+  private applyPassage(){
+    if(!secondWatch(this.challenge)||!this.director?.passage)return
+    this.level=buildLevel(passageLevel(fixedLevel(this.challenge.variant,!!this.challenge.livingWatch,true),this.director.passage))
+    while(this.pads.length<this.level.def.pads.length)this.pads.push({...this.level.def.pads[this.pads.length],tower:null})
+    this.recomputeRoutes();this.buildGateDistances()
+  }
+  designateCommand(t:Tower):boolean {
+    if(!secondWatch(this.challenge)||!this.director||!this.challenge.hero||this.director.command||this.over||!this.towers.includes(t)||t.id!==COMMANDS[this.challenge.hero].tower)return false
+    this.director.owner=t.uid;return true
+  }
+  designateTarget(uid:number):boolean {
+    if(!secondWatch(this.challenge)||!this.director||this.challenge.hero!=='ivo'||this.director.command?.phase!=='held'||!commandTargets(this).some(e=>e.uid===uid))return false
+    this.director.target=uid;return true
+  }
+  private beginChannel(e:Enemy,seconds:number){
+    e.signalT=seconds
+    let escort=this.enemies.filter(o=>o.alive&&!o.def.boss&&dist2(e.x,e.y,o.x,o.y)<190**2).sort((a,b)=>dist2(e.x,e.y,a.x,a.y)-dist2(e.x,e.y,b.x,b.y)||a.uid-b.uid)[0]
+    if(!escort){escort=this.spawnEnemy('skiff',e.seg,Math.max(0,e.s-32),e.wave);this.inherit(escort,e);escort.hp*=.45;escort.maxHp=escort.hp;escort.shell*=.45;escort.maxShell=escort.shell;escort.speedBase=e.speedBase}
+    e.channelLink=escort.uid
+    this.events.push({t:'craft',kind:'armour',x:e.x,y:e.y,label:'Break the tether · or interrupt'})
+  }
+  private interruptChannel(e:Enemy){
+    if((e.signalT??0)<=0)return
+    e.signalT=0;e.phase++;delete e.channelLink;e.exposedT=4;e.stunT=Math.max(e.stunT,.65)
+    this.events.push({t:'tactic',kind:'interrupt',x:e.x,y:e.y})
+  }
+  bankCommand():boolean {
+    if(!this.director||this.director.command||!this.waveActive||this.over||!this.techniques.length)return false
+    const t=commandTower(this);if(!t)return false
+    this.director.command={wave:this.wave,tower:t.uid,phase:'charging'}
+    return true
+  }
+  cancelCommand():boolean {
+    const q=this.director?.command;if(!q||q.phase==='spent'||this.over)return false
+    if(q.phase==='charging')this.director!.command=null
+    else q.phase='spent'
+    return true
+  }
+  releaseCommand():boolean {
+    const q=this.director?.command,t=commandTower(this),hero=this.challenge.hero
+    if(!q||q.phase!=='held'||!t||!hero||this.over||!this.waveActive)return false
+    const targets=commandTargets(this);if(!targets.length)return false
+    let affected=0
+    if(hero==='sol')for(const e of targets){
+      const consumed=Math.min(2,e.burnT),damage=consumed*e.burnDps*2.5
+      e.burnT-=consumed;if(e.burnT<=0){e.burnDps=0;delete e.burnSource}
+      this.damage(e,damage,true,t,true);affected++
+      this.events.push({t:'tactic',kind:'ignite',x:e.x,y:e.y})
+    }
+    if(hero==='mira')for(const e of targets){
+      e.slowT=Math.max(e.slowT,t.stats.slowDur+1);e.slowF=Math.max(e.slowF,t.stats.slow)
+      if(!e.def.boss){e.stunT=Math.max(e.stunT,1.25);e.exposedT=Math.max(e.exposedT??0,3)}
+      else if((e.signalT??0)>0&&(e.def.id==='bloomheart'&&(e.phase===1||e.phase===3)||e.def.id==='toad'&&e.phase===1||e.def.id==='warden'&&e.phase===1)){
+        e.signalT=0;e.phase++;e.exposedT=4;if(secondWatch(this.challenge)){delete e.channelLink;e.stunT=Math.max(e.stunT,.65)}t.interrupts=(t.interrupts??0)+1
+        this.events.push({t:'tactic',kind:'interrupt',x:e.x,y:e.y})
+      }
+      affected++
+    }
+    if(hero==='ivo'){
+      const target=secondWatch(this.challenge)?designatedTarget(this):surgeTarget(targets);if(!target)return false
+      const power=this.techniques.includes('capacitor')?(secondWatch(this.challenge)&&t.refinement?3.45:3):Math.min(4,t.stats.count)
+      this.damage(target,t.stats.damage*power,true,t);t.tolls++;affected=1
+      this.events.push({t:'arc',x:t.x,y:t.y,tx:target.x,ty:target.y},{t:'tactic',kind:'charged',x:target.x,y:target.y})
+    }
+    q.phase='spent';this.director!.commands++;t.signatureHits=(t.signatureHits??0)+affected;t.cd=t.stats.interval;t.fireT=this.time
+    this.events.push({t:'craft',kind:hero==='mira'?'freeze':'bond',x:t.x,y:t.y,label:`${COMMANDS[hero].name} · ${affected} ${affected===1?'target':'targets'}`})
+    if(hero==='mira')this.events.push({t:'toll',x:t.x,y:t.y,r:this.effRange(t),stun:true,tier:Math.max(t.a,t.b)})
+    return true
+  }
+  /** Sunforge prototype: reserve an existing Capacitor discharge, never create a free shot. */
+  bankSurge():boolean {
+    if(this.director)return this.bankCommand()
+    if(!commandAvailable(this)||!this.mastery||this.over||!this.waveActive||this.mastery.surge)return false
+    const tower=this.towers.filter(t=>t.id==='storm').sort((a,b)=>b.stats.damage-a.stats.damage||a.uid-b.uid)[0]
+    if(!tower)return false
+    this.mastery.surge={wave:this.wave,tower:tower.uid,phase:'charging'}
+    return true
+  }
+  releaseSurge():boolean {
+    if(this.director)return this.releaseCommand()
+    const q=this.mastery?.surge;if(!q||q.phase!=='held'||!commandAvailable(this)||this.over||!this.waveActive)return false
+    q.phase='release';return true
+  }
+  cancelSurge():boolean {
+    if(this.director)return this.cancelCommand()
+    if(this.mastery?.surge?.phase!=='charging'||this.over)return false
+    this.mastery.surge=null;return true
+  }
+
+  private primeBeacon(src:Tower,target:Enemy,p:Proj) {
+    const bond=this.bonds.find(b=>b.a===src.uid||b.b===src.uid)
+    if(!bond||bond.readyAt>this.time)return
+    const scout=this.towers.find(t=>t.uid===(bond.a===src.uid?bond.b:bond.a))
+    if(scout?.id!=='owl'||dist2(target.x,target.y,scout.x,scout.y)>this.effRange(scout)**2||dist2(target.x,target.y,src.x,src.y)>this.effRange(src)**2)return
+    bond.readyAt=this.time+4;bond.activations++
+    if(this.mastery)this.mastery.bonds['Beacon Volley']=(this.mastery.bonds['Beacon Volley']??0)+1
+    p.beacon=true;p.heavy=true;p.dmg*=1.3;p.pierce+=2
+    this.events.push({t:'craft',kind:'bond',x:scout.x,y:scout.y,tx:src.x,ty:src.y,label:'Beacon Volley'})
+  }
+
   private applyBond(e: Enemy,src: Tower,heavy: boolean): boolean {
+    if(this.challenge.watchTactics&&src.id==='ballista')return heavy
     const bond=this.bonds.find(b=>b.a===src.uid||b.b===src.uid)
     if(!bond || bond.readyAt>this.time || !(this.challenge.watchDepth?['wick','cracker','storm','ballista','beam']:['wick','cracker']).includes(src.id)) return heavy
     const other=this.towers.find(t=>t.uid===(bond.a===src.uid?bond.b:bond.a))
@@ -2304,10 +2601,21 @@ export class Sim {
     if(src.id==='beam'&&e.slowT<=0)return heavy
     if(src.id==='wick' && !this.canSee(e,false)) return heavy
     bond.readyAt=this.time+(src.id==='wick'?2:src.id==='storm'?3:4); bond.activations++
-    if(src.id==='cracker'||src.id==='beam') { const removed=Math.min(src.id==='beam'?8:6,e.shell); e.shell-=removed; src.damageDealt=(src.damageDealt??0)+removed }
+    const name=bondName(src.id,other.id,true);if(this.mastery&&name)this.mastery.bonds[name]=(this.mastery.bonds[name]??0)+1
+    if(this.challenge.watchTactics&&src.id==='cracker'){
+      const targets=[e,...this.enemies.filter(o=>o!==e&&o.alive&&o.shell>0&&o.slowT>0&&dist2(e.x,e.y,o.x,o.y)<=72**2&&dist2(src.x,src.y,o.x,o.y)<=this.effRange(src)**2&&dist2(other.x,other.y,o.x,o.y)<=this.effRange(other)**2).sort((a,b)=>dist2(e.x,e.y,a.x,a.y)-dist2(e.x,e.y,b.x,b.y)||a.uid-b.uid).slice(0,2)]
+      for(const target of targets){
+        const before=target.hp+target.shell,removed=Math.min(12,target.shell);target.shell-=removed;target.exposedT=Math.max(target.exposedT??0,3)
+        src.damageDealt=(src.damageDealt??0)+removed;other.armourRemoved=(other.armourRemoved??0)+removed
+        if(target!==e)this.reportDamage(target,src,before)
+        if(!target.shell)this.events.push({t:'crack',x:target.x,y:target.y})
+      }
+      if(this.director)this.events.push({t:'craft',kind:'armour',x:e.x,y:e.y,label:`Shatterburst · ${targets.length} ${targets.length===1?'shell':'shells'} exposed`})
+    }else if(src.id==='cracker'||src.id==='beam') { const removed=Math.min(src.id==='beam'?8:6,e.shell); e.shell-=removed; src.damageDealt=(src.damageDealt??0)+removed;if(this.challenge.watchExperience)other.armourRemoved=(other.armourRemoved??0)+removed }
     if(src.id==='storm'){e.slowF=Math.max(e.slowF,.25);e.slowT=Math.max(e.slowT,2)}
     if(src.id==='ballista'){e.burnDps=Math.max(e.burnDps,6);e.burnT=Math.max(e.burnT,2)}
     this.events.push({t:'arc',x:other.x,y:other.y,tx:src.x,ty:src.y})
+    if(this.challenge.watchExperience&&!(this.director&&src.id==='cracker'))this.events.push({t:'craft',kind:'bond',x:other.x,y:other.y,tx:e.x,ty:e.y,label:bondName(src.id,other.id,true)!})
     return src.id==='storm'?heavy:true
   }
 
@@ -2318,6 +2626,8 @@ export class Sim {
     const alive = (e: Enemy | null) => (e && e.alive ? e.uid : 0)
     return {
       v: 2,
+      ...(this.director?{director:structuredClone(this.director)}:{}),
+      ...(this.mastery?{mastery:structuredClone(this.mastery)}:{}),
       ...(this.challenge.watchCraft?{techniques:[...this.techniques]}:{}),
       ...(this.challenge.fixed ? { bonds: this.bonds.map(b => ({...b})),climate:{...this.climate} } : {}),
       ...(this.challenge.guard ? { waveReports: this.waveReports.map(r => ({ ...r, damage: { ...r.damage } })), embers: this.embers.map(p => ({ ...p })), lastLeak: this.lastLeak && { ...this.lastLeak } } : {}),
@@ -2332,6 +2642,8 @@ export class Sim {
       lives: this.lives,
       seed: this.seed,
       towers: this.towers.map((t) => ({
+        ...(t.crownReadyAt!==undefined?{crownReadyAt:t.crownReadyAt}:{}),
+        ...(this.challenge.watchExperience?{armourRemoved:t.armourRemoved??0,interrupts:t.interrupts??0,signatureHits:t.signatureHits??0,debutPending:t.debutPending??false}:{}),
         ...(this.challenge.compact ? { refinement: t.refinement ?? 0 } : {}),
         ...(this.challenge.guard ? { damageDealt: t.damageDealt ?? 0 } : {}),
         id: t.id,
@@ -2388,6 +2700,10 @@ export class Sim {
           revealedPerm: e.revealedPerm,
           seenT: e.seenT,
           phase: e.phase,
+          ...(e.exposedT!==undefined?{exposedT:e.exposedT}:{}),
+          ...(e.burnSource!==undefined?{burnSource:e.burnSource}:{}),
+          ...(e.channelLink !== undefined ? {channelLink:e.channelLink}:{}),
+          ...(e.coreOpen !== undefined ? {coreOpen:e.coreOpen}:{}),
           ...(e.escortOf !== undefined ? { escortOf: e.escortOf } : {}),
           ...(e.signalT !== undefined ? { signalT: e.signalT } : {}),
           spawnCd: e.spawnCd,
@@ -2415,10 +2731,12 @@ export class Sim {
   /** Accepts v1 (between waves, older builds) and v2 (full, any moment) saves. */
   static restore(snap: SaveSnapshot): Sim {
     const sim = new Sim(snap.difficulty, snap.challenge, snap.seed)
+    if(snap.v===2&&snap.mastery)sim.mastery=structuredClone(snap.mastery)
     // The challenge's starter defence is only for new attempts.
     if (snap.challenge.skirmish) { sim.towers = []; sim.projs = []; for (const pad of sim.pads) pad.tower = null; sim.uid = 1 }
     const full = snap.v === 2 ? snap : null
     sim.wave = snap.wave
+    if(snap.challenge.watchDirector&&full?.director){sim.director=structuredClone(full.director);sim.applyPassage()}
     if(snap.challenge.fixed&&full)sim.climate={...(full.climate??{elapsed:full.stats.activeTime,waveSeconds:0,gardenExposure:0})}
     if(snap.challenge.watchCraft&&full)sim.techniques=[...(full.techniques??[])]
     if (snap.challenge.fixed && full) sim.bonds = (full.bonds ?? []).map(b => ({...b}))
@@ -2468,8 +2786,10 @@ export class Sim {
       const pad = sim.pads[t.pad]
       if (!pad || pad.tower || !TOWERS[t.id]) continue
       const tw: Tower = {
+        ...(t.crownReadyAt!==undefined?{crownReadyAt:t.crownReadyAt}:{}),
         ...(snap.challenge.compact ? { refinement: t.refinement ?? 0 } : {}),
         ...(snap.challenge.guard ? { damageDealt: t.damageDealt ?? 0 } : {}),
+        ...(snap.challenge.watchExperience?{armourRemoved:t.armourRemoved??0,interrupts:t.interrupts??0,signatureHits:t.signatureHits??0,debutPending:t.debutPending??false}:{}),
         uid: t.uid ?? sim.uid++,
         id: t.id,
         def: snap.challenge.fixed?heroTower(t.id,snap.challenge.hero):TOWERS[t.id],
@@ -2544,6 +2864,10 @@ export class Sim {
       e.revealedPerm = se.revealedPerm
       e.seenT = se.seenT
       e.phase = se.phase
+      if(se.exposedT!==undefined)e.exposedT=se.exposedT
+      if(se.burnSource!==undefined)e.burnSource=se.burnSource
+      if(se.channelLink!==undefined)e.channelLink=se.channelLink
+      if(se.coreOpen!==undefined)e.coreOpen=se.coreOpen
       if (se.escortOf !== undefined) e.escortOf = se.escortOf
       if (se.signalT !== undefined) e.signalT = se.signalT
       e.spawnCd = se.spawnCd

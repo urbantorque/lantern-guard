@@ -14,6 +14,8 @@ export interface Sky {
   weather:Weather
   weatherLeft:number
   nextWeather:Weather
+  atmosphereOnly?:boolean
+  steadyCombat?:boolean
 }
 export const WEATHER:Record<Weather,{name:string;effect:string}> = {
   clear:{name:'Clear skies',effect:'No weather modifier.'},
@@ -35,14 +37,15 @@ export function skyAt(elapsed:number,seed:number):Sky {
 }
 export const lamplit=(id:TowerId)=>['wick','beam','owl','bell','garden'].includes(id)
 export function skyReach(id:TowerId,sky:Sky,warded:boolean) {
+  if(sky.steadyCombat)return 1
   let reach=!sky.night&&id==='ballista'?1.12:1
-  if(!lamplit(id)&&!warded){if(sky.night)reach*=.85;if(sky.weather==='mist')reach*=.96}
+  if(!lamplit(id)&&!warded){if(sky.night)reach*=.85;if(!sky.atmosphereOnly&&sky.weather==='mist')reach*=.96}
   return reach
 }
-export const skyRate=(id:TowerId,sky:Sky)=>(sky.night&&id==='wick'?1.12:1)*(sky.weather==='breeze'&&['cracker','ballista'].includes(id)?1.05:1)
-export const skyDamage=(id:TowerId,sky:Sky)=>(sky.night&&id==='beam'?1.12:1)*(sky.weather==='rain'&&id==='storm'?1.08:1)
-export const skySpeed=(sky:Sky)=>(sky.night?1.08:1)*(sky.weather==='breeze'?1.02:1)
-export const gardenYield=(sky:Sky)=>(sky.night?.55:1.4)*(sky.weather==='rain'?1.05:1)
+export const skyRate=(id:TowerId,sky:Sky)=>(!sky.steadyCombat&&sky.night&&id==='wick'?1.12:1)*(!sky.atmosphereOnly&&sky.weather==='breeze'&&['cracker','ballista'].includes(id)?1.05:1)
+export const skyDamage=(id:TowerId,sky:Sky)=>(!sky.steadyCombat&&sky.night&&id==='beam'?1.12:1)*(!sky.atmosphereOnly&&sky.weather==='rain'&&id==='storm'?1.08:1)
+export const skySpeed=(sky:Sky)=>(sky.night?1.08:1)*(!sky.atmosphereOnly&&sky.weather==='breeze'?1.02:1)
+export const gardenYield=(sky:Sky)=>(sky.night?.55:1.4)*(!sky.atmosphereOnly&&sky.weather==='rain'?1.05:1)
 export const clockText=(seconds:number)=>`${Math.floor(Math.ceil(seconds)/60)}:${String(Math.ceil(seconds)%60).padStart(2,'0')}`
 export const SKY_TOWER_HELP:Record<TowerId,string>={
   wick:'Lamplit: keeps its reach and fires 12% faster at night.',
@@ -53,4 +56,9 @@ export const SKY_TOWER_HELP:Record<TowerId,string>={
   beam:'Lamplit: keeps its reach and deals 12% more damage at night.',
   storm:'Loses 15% reach at night unless sheltered. Light rain adds 8% damage.',
   ballista:'Day reach +12%; unsheltered night reach −15%. Breeze adds 5% firing speed.',
+}
+export function skyTowerHelp(id:TowerId,atmosphereOnly=false,steady=false){
+  if(steady)return id==='owl'?'Reveals hidden foes. The support stream stores sunlight for visible night pulses.':id==='garden'?'Day income +40%; night income −45%. Paid for time active.':'Stable reach and damage through day and night.'
+  if(!atmosphereOnly)return SKY_TOWER_HELP[id]
+  return SKY_TOWER_HELP[id].replace(/ Breeze adds 5% firing speed\./,'').replace(/ Light rain adds 8% damage\./,'').replace(/ Rain adds 5%\./,'').replace('darkness and mist','darkness')
 }

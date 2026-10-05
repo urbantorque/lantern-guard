@@ -2,6 +2,7 @@ import { compactLevel, compactWave } from './compact'
 import { computeStats, TOWERS, type TowerId, type EnemyId } from './defs'
 import type { WaveDef } from './waves'
 import type { Tower } from './sim'
+import { directorLevel } from './watch-director'
 
 /** Published rules boundary. Historical replays continue using their original simulator. */
 export const FIXED_VERSION = 1
@@ -20,7 +21,7 @@ export const FIXED_TIPS: Record<EnemyId, string> = {
   reedling: 'Grows armour at the meeting stone. Hit early or bring heavy damage.', bloomheart: 'Heals its neighbours after a three-second warning. It cannot heal itself.',
 }
 
-export function fixedLevel(variant = 0,living=false) {
+export function fixedLevel(variant = 0,living=false,directed=false) {
   const level = compactLevel(variant)
   // Keep only the authored long route. There are no hidden alternate channels or switches.
   level.segments = level.segments.filter(s => !['e1', 'w2'].includes(s.id)).map(s => ({ ...s, bonus: 1, feature: undefined,
@@ -52,7 +53,7 @@ export function fixedLevel(variant = 0,living=false) {
       ? [[175,255],[305,40],[70,420],[310,310],[610,390],[530,615],[425,555],[205,465],[645,770],[340,610],[270,785],[465,815]]
       : [[235,250],[270,65],[80,440],[300,340],[590,395],[490,650],[430,550],[215,455],[625,745],[320,610],[270,785],[450,795]]
   level.pads = positions.map(([x,y]) => ({ x: mirror ? 720-x : x, y }))
-  return level
+  return directed?directorLevel(level):level
 }
 
 const NOTES: Record<number, string> = {

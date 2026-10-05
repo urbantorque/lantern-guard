@@ -1,0 +1,428 @@
+[
+  {
+    "contract": "small-company",
+    "hero": "sol",
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "met": true,
+    "progress": "6/6 peak towers · crown ready",
+    "commands": 1,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 0,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "cracker",
+        "pad": 6,
+        "a": 3,
+        "b": 0
+      },
+      {
+        "id": "bell",
+        "pad": 3,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "owl",
+        "pad": 7,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "beam",
+        "pad": 12,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "ballista",
+        "pad": 10,
+        "a": 0,
+        "b": 0
+      }
+    ]
+  },
+  {
+    "contract": "small-company",
+    "hero": "mira",
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "met": true,
+    "progress": "6/6 peak towers · crown ready",
+    "commands": 4,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 0,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "cracker",
+        "pad": 6,
+        "a": 3,
+        "b": 0
+      },
+      {
+        "id": "bell",
+        "pad": 3,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "owl",
+        "pad": 7,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "beam",
+        "pad": 12,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "ballista",
+        "pad": 10,
+        "a": 0,
+        "b": 0
+      }
+    ]
+  },
+  {
+    "contract": "small-company",
+    "hero": "ivo",
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "met": true,
+    "progress": "6/6 peak towers · crown ready",
+    "commands": 9,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 3,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "cracker",
+        "pad": 6,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "storm",
+        "pad": 0,
+        "a": 3,
+        "b": 0
+      },
+      {
+        "id": "bell",
+        "pad": 7,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "owl",
+        "pad": 12,
+        "a": 0,
+        "b": 0
+      },
+      {
+        "id": "ballista",
+        "pad": 10,
+        "a": 0,
+        "b": 0
+      }
+    ]
+  },
+  {
+    "contract": "last-lantern",
+    "hero": "sol",
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "met": true,
+    "progress": "3/3 clean holds · bend: 2/2 attacks, 1/1 Scout",
+    "commands": 1,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 0,
+        "a": 0,
+        "b": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 6,
+        "a": 0,
+        "b": 2
+      },
+      {
+        "id": "bell",
+        "pad": 3,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "owl",
+        "pad": 5,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "beam",
+        "pad": 8,
+        "a": 0,
+        "b": 0
+      },
+      {
+        "id": "owl",
+        "pad": 12,
+        "a": 0,
+        "b": 0
+      },
+      {
+        "id": "ballista",
+        "pad": 7,
+        "a": 0,
+        "b": 0
+      }
+    ]
+  },
+  {
+    "contract": "last-lantern",
+    "hero": "mira",
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "met": true,
+    "progress": "3/3 clean holds · bend: 2/2 attacks, 1/1 Scout",
+    "commands": 3,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 11,
+        "a": 0,
+        "b": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 6,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "bell",
+        "pad": 3,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "owl",
+        "pad": 5,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "beam",
+        "pad": 8,
+        "a": 0,
+        "b": 0
+      },
+      {
+        "id": "owl",
+        "pad": 12,
+        "a": 0,
+        "b": 0
+      },
+      {
+        "id": "ballista",
+        "pad": 0,
+        "a": 0,
+        "b": 0
+      }
+    ]
+  },
+  {
+    "contract": "last-lantern",
+    "hero": "ivo",
+    "won": true,
+    "wave": 12,
+    "light": 25,
+    "met": true,
+    "progress": "3/3 clean holds · bend: 2/2 attacks, 1/1 Scout",
+    "commands": 7,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 8,
+        "a": 0,
+        "b": 2
+      },
+      {
+        "id": "storm",
+        "pad": 0,
+        "a": 0,
+        "b": 0
+      },
+      {
+        "id": "bell",
+        "pad": 3,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "owl",
+        "pad": 5,
+        "a": 0,
+        "b": 0
+      },
+      {
+        "id": "cracker",
+        "pad": 10,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "beam",
+        "pad": 12,
+        "a": 0,
+        "b": 0
+      },
+      {
+        "id": "storm",
+        "pad": 6,
+        "a": 0,
+        "b": 0
+      },
+      {
+        "id": "ballista",
+        "pad": 7,
+        "a": 0,
+        "b": 0
+      },
+      {
+        "id": "owl",
+        "pad": 1,
+        "a": 0,
+        "b": 0
+      }
+    ]
+  },
+  {
+    "contract": "twin-signals",
+    "hero": "sol",
+    "won": true,
+    "wave": 12,
+    "light": 20,
+    "met": true,
+    "progress": "Shatterburst 3/3 · Beacon Volley 6/6",
+    "commands": 2,
+    "roster": [
+      {
+        "id": "cracker",
+        "pad": 5,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "bell",
+        "pad": 6,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "owl",
+        "pad": 0,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "ballista",
+        "pad": 3,
+        "a": 2,
+        "b": 0
+      }
+    ]
+  },
+  {
+    "contract": "twin-signals",
+    "hero": "mira",
+    "won": true,
+    "wave": 12,
+    "light": 19,
+    "met": true,
+    "progress": "Shatterburst 3/3 · Beacon Volley 6/6",
+    "commands": 5,
+    "roster": [
+      {
+        "id": "cracker",
+        "pad": 5,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "bell",
+        "pad": 6,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "owl",
+        "pad": 0,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "ballista",
+        "pad": 3,
+        "a": 2,
+        "b": 0
+      }
+    ]
+  },
+  {
+    "contract": "twin-signals",
+    "hero": "ivo",
+    "won": true,
+    "wave": 12,
+    "light": 18,
+    "met": true,
+    "progress": "Shatterburst 3/3 · Beacon Volley 6/6",
+    "commands": 0,
+    "roster": [
+      {
+        "id": "cracker",
+        "pad": 5,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "bell",
+        "pad": 6,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "owl",
+        "pad": 0,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "ballista",
+        "pad": 3,
+        "a": 2,
+        "b": 0
+      }
+    ]
+  }
+]

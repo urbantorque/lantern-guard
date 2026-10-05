@@ -6,7 +6,7 @@ export const isHero=(value:unknown):value is HeroId=>HERO_IDS.includes(value as 
 interface HeroTower {name:string;trait:string;paths:[string,string]}
 interface Hero {name:string;title:string;colour:string;approach:string;tradeoff:string;towers:Record<TowerId,HeroTower>}
 export const HEROES:Record<HeroId,Hero>={
-  sol:{name:'Sol',title:'The Emberwright',colour:'#ffb46f',approach:'Volley fire, wide explosions and ambitious daylight income.',tradeoff:'Shorter sight and weaker slows make night shelter and careful placement essential.',towers:{
+  sol:{name:'Sol',title:'The Emberwright',colour:'#ffb46f',approach:'Volley fire, wide explosions and ambitious daylight income.',tradeoff:'Shorter sight and weaker slows reward shared detection and careful placement.',towers:{
     wick:{name:'Sunspoke',trait:'Extra sparks. Lighter hits and shorter reach.',paths:['Sunburst','Burning Horizon']},
     cracker:{name:'Cinder Kiln',trait:'Wide, heavy blasts. Slower reload.',paths:['Festival Shells','Furnace Rockets']},
     bell:{name:'Forge Gong',trait:'Weakens armour. Gentler slow.',paths:['Tempered Echo','Hammerfall']},
@@ -16,11 +16,11 @@ export const HEROES:Record<HeroId,Hero>={
     storm:{name:'Ember Relay',trait:'Breaks armour. Fewer targets and slower reload.',paths:['Cinder Network','Furnace Arc']},
     ballista:{name:'Dawnlance',trait:'Heavy, burning bolts. Slower reload.',paths:['Sunsteel','Quickfire Winch']},
   }},
-  mira:{name:'Mira',title:'The Tidekeeper',colour:'#8ae2cc',approach:'Piercing shots, lasting slows and generous night shelter.',tradeoff:'Lower burst damage and smaller harvests reward overlapping defences.',towers:{
+  mira:{name:'Mira',title:'The Tidekeeper',colour:'#8ae2cc',approach:'Piercing shots, lasting slows and generous shared sight.',tradeoff:'Lower burst damage and smaller harvests reward overlapping defences.',towers:{
     wick:{name:'Pearl Needle',trait:'Pierces extra foes. Lighter hits.',paths:['Pearl Fan','Undertow']},
     cracker:{name:'Tidal Mortar',trait:'Blasts slow crowds. Lighter damage.',paths:['Foam Burst','Seeking Buoys']},
     bell:{name:'Undertow Chime',trait:'Wider, lasting slows. Slower tolls.',paths:['Deep Current','Stillwater']},
-    owl:{name:'Heron Observatory',trait:'Wider sight and night shelter. Weaker attacks.',paths:['Moonwatch','River Wings']},
+    owl:{name:'Heron Observatory',trait:'Wider shared sight. Weaker attacks.',paths:['Moonwatch','River Wings']},
     garden:{name:'Lotus Conservatory',trait:'Slows nearby foes. Smaller harvests.',paths:['Lotus Harvest','Night Bloom']},
     beam:{name:'Moonwell',trait:'Longer reach. Lighter damage.',paths:['Tidal Lens','Mirror Pools']},
     storm:{name:'Coral Conductor',trait:'Wider chain jumps. Lighter hits.',paths:['Reef Network','Deepwater Charge']},

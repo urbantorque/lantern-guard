@@ -1,8 +1,12 @@
+import { secondWatch } from './second-watch'
 import {restorationLimit} from './watch-refinement'
+import { campaignUnlock, shortCampaign, routeWave, COMMANDS } from './watch-director'
+import { experienceUnlock } from './watch-experience'
 import { validTechniques } from './watch-craft'
 import { weeklyWatch } from './living-watch'
 import { compactLevel, PLOTS, STARTER_PLOTS, REFINEMENTS } from './compact'
-import { fixedLevel, COMMISSIONS, FIXED_UNLOCK, bondName } from './fixed'
+import { fixedLevel, COMMISSIONS, FIXED_UNLOCK, bondName, BOND_HELP } from './fixed'
+import { contractDef } from './watch-mastery'
 import { isHero } from './heroes'
 import { EXPEDITIONS, EXPEDITION_UNLOCK, isExpedition, SUN_CAPACITY } from './watch-depth'
 import { LATE_REFINEMENTS, LATE_TOWERS, PREPARATIONS } from './depth'
@@ -13,7 +17,7 @@ import { DIFFICULTY, TOWERS, ENEMIES, CHARMS } from './defs'
 import { LEVEL } from './level'
 import { CANAL_STAGES, growingCanal, stageForWave } from './canal-growth'
 import { harbourLevel, HARBOUR_PADS } from './harbour'
-import type { SaveSnapshot } from './sim'
+import type { SaveSnapshot, Challenge } from './sim'
 
 export const RUN_KEY = 'lanternlocks.run.v3'
 export const BACKUP_KEY = 'lanternlocks.run-backup.v3'
@@ -77,11 +81,19 @@ export function validSnapshot(s: unknown): s is SaveSnapshot {
   if(s.challenge.hero!==undefined&&(!isHero(s.challenge.hero)||s.challenge.fixed!==1))return false
   if(s.challenge.watchDepth!==undefined&&(s.challenge.watchDepth!==1||s.challenge.fixed!==1))return false
   if(s.challenge.watchCraft!==undefined&&(s.challenge.watchCraft!==1||s.challenge.watchDepth!==1||!isHero(s.challenge.hero)))return false
-  if(s.challenge.refinedWatch!==undefined&&(s.challenge.refinedWatch!==1||s.challenge.livingWatch!==1||s.challenge.weekly!==undefined))return false
+  if(s.challenge.watchExperience!==undefined&&(s.challenge.watchExperience!==1||s.challenge.refinedWatch!==1||s.challenge.commission!==undefined))return false
+  if(s.challenge.watchTactics!==undefined&&(s.challenge.watchTactics!==1||s.challenge.watchExperience!==1||s.challenge.weekly!==undefined))return false
+  if(s.challenge.watchMastery!==undefined&&(s.challenge.watchMastery!==1||s.challenge.watchTactics!==1))return false
+  if(s.challenge.watchDirector!==undefined&&(![1,2].includes(Number(s.challenge.watchDirector))||s.challenge.watchMastery!==1||s.challenge.weekly!==undefined||s.challenge.commission!==undefined))return false
+  if(s.challenge.endurance!==undefined&&(s.challenge.endurance!==true||![1,2].includes(Number(s.challenge.watchDirector))||s.challenge.expedition!==undefined))return false
+  const directed=s.challenge as Challenge
+  if(shortCampaign(directed)&&s.wave>24)return false
+  if(s.challenge.contract!==undefined&&(!s.challenge.watchMastery||!contractDef(s.challenge.contract)||contractDef(s.challenge.contract)!.expedition!==s.challenge.expedition))return false
+  if(s.challenge.refinedWatch!==undefined&&(s.challenge.refinedWatch!==1||s.challenge.livingWatch!==1||s.challenge.weekly!==undefined&&!s.challenge.watchExperience))return false
   if(s.stats.lightRestored!==undefined&&(!s.challenge.refinedWatch||!integer(s.stats.lightRestored,0,restorationLimit(s.difficulty as import('./defs').Difficulty))))return false
   if(s.challenge.livingWatch!==undefined&&(s.challenge.livingWatch!==1||s.challenge.watchCraft!==1))return false
   if(s.challenge.weekly!==undefined&&(!integer(s.challenge.weekly,0,5200)||s.challenge.livingWatch!==1||!s.challenge.expedition))return false
-  if(s.challenge.watchCraft?!validTechniques(s.techniques,s.challenge.hero as import('./heroes').HeroId,Number(s.wave),!!s.challenge.expedition):s.techniques!==undefined)return false
+  if(s.challenge.watchCraft?!validTechniques(s.techniques,s.challenge.hero as import('./heroes').HeroId,Number(s.wave),!!s.challenge.expedition,!!s.challenge.watchExperience,!!s.challenge.watchDirector):s.techniques!==undefined)return false
   if(s.challenge.expedition!==undefined&&(!isExpedition(s.challenge.expedition)||s.challenge.watchDepth!==1||!s.challenge.skirmish||s.challenge.commission!==undefined||s.challenge.blockedPad!==undefined))return false
   if (s.challenge.fixed !== undefined && (s.challenge.fixed !== 1 || s.challenge.compact !== 1 || s.challenge.depth !== 1 || s.challenge.balance !== 1 || s.challenge.guard !== 1 || s.challenge.plans || s.challenge.guardian || s.freeplay || s.wave > 40)) return false
   if (s.challenge.fixed && (s.preparation !== null || s.preparationRound !== 0 || s.challenge.practice !== undefined && typeof s.challenge.practice !== 'boolean' || !s.challenge.skirmish && (s.challenge.commission !== undefined || s.challenge.blockedPad !== undefined))) return false
@@ -97,7 +109,7 @@ export function validSnapshot(s: unknown): s is SaveSnapshot {
   }
   if(s.challenge.expedition){
     const expeditionId=s.challenge.expedition,e=EXPEDITIONS.find(e=>e.id===expeditionId)!,q=s.challenge.skirmish
-    const w=s.challenge.weekly!==undefined?weeklyWatch(Number(s.challenge.weekly)):null
+    const w=s.challenge.weekly!==undefined?weeklyWatch(Number(s.challenge.weekly),!!s.challenge.watchExperience):null
     if(w&&w.expedition.id!==e.id)return false
     if(!object(q)||q.from!==0||q.to!==e.waves||q.glow!==(w?.glow??e.glow)||q.seed!==(w?.seed??e.seed)||s.seed!==q.seed||s.challenge.variant!==(w?.variant??e.variant)||s.challenge.id!==(w?.id??`expedition:${e.id}:depth1`)||s.wave>e.waves)return false
   }
@@ -122,8 +134,11 @@ export function validSnapshot(s: unknown): s is SaveSnapshot {
   } else if (s.battlePlans !== undefined) return false
   if (s.challenge.variant !== undefined && !s.challenge.compact) return false
   if (s.challenge.compact) {
-    const expedition=!!s.challenge.expedition
-    if (!Array.isArray(s.plots) || s.plots.length > PLOTS.length || new Set(s.plots).size !== s.plots.length || !s.plots.every(p => integer(p, 0, PLOTS.length - 1) && (expedition?1+Math.floor((PLOTS[p].wave-1)/2.5):PLOTS[p].wave) <= (s.wave as number) + 1) || !STARTER_PLOTS.every(p => (s.plots as number[]).includes(p))) return false
+    const expedition=!!s.challenge.expedition,jetty=secondWatch(directed)&&object(s.director)&&s.director.passage==='convoy'
+    const regularPlots=Array.isArray(s.plots)?s.plots.filter(p=>p!==12):s.plots
+    if(Array.isArray(s.plots)&&s.plots.includes(12)&&!jetty)return false
+    if(jetty&&Array.isArray(s.plots)&&!s.plots.includes(12))return false
+    if (!Array.isArray(s.plots) || s.plots.length > PLOTS.length+(jetty?1:0) || new Set(s.plots).size !== s.plots.length || !Array.isArray(regularPlots)||!regularPlots.every(p => integer(p, 0, PLOTS.length - 1) && (expedition?1+Math.floor((PLOTS[p].wave-1)/2.5):campaignUnlock(directed,PLOTS[p].wave)) <= (s.wave as number) + 1) || !STARTER_PLOTS.every(p => (s.plots as number[]).includes(p))) return false
   } else if (s.plots !== undefined) return false
   if (s.challenge.waterway !== undefined && !Object.hasOwn(WATERWAYS, String(s.challenge.waterway))) return false
   if (s.challenge.expanding !== undefined && (s.challenge.expanding !== 1 || s.v !== 2 || s.challenge.waterway !== undefined || s.challenge.id !== undefined || s.challenge.tide !== undefined || !integer(s.canalStage, 0, 2))) return false
@@ -132,17 +147,47 @@ export function validSnapshot(s: unknown): s is SaveSnapshot {
   if (s.challenge.harbourEncounters !== undefined && (s.challenge.harbourEncounters !== 1 || s.challenge.harbour !== 1)) return false
   if (s.challenge.guardian !== undefined && (!['ember', 'reed', 'tide'].includes(String(s.challenge.guardian)) || (s.challenge.guardian === 'tide' && !s.challenge.compact) || s.challenge.guard !== 1 || s.challenge.id !== undefined)) return false
   if (s.challenge.gardens !== undefined && (s.challenge.gardens !== 1 || s.challenge.harbour !== 1 || s.wave < 33)) return false
-  const maxPads = s.challenge.compact ? PLOTS.length : LEVEL.pads.length + (s.challenge.harbour ? HARBOUR_PADS.length : 0) + (s.challenge.gardens ? GARDENS_PADS.length : 0)
+  const maxPads = s.challenge.compact ? PLOTS.length+(secondWatch(directed)&&object(s.director)&&s.director.passage==='convoy'?1:0) : LEVEL.pads.length + (s.challenge.harbour ? HARBOUR_PADS.length : 0) + (s.challenge.gardens ? GARDENS_PADS.length : 0)
   if (!Array.isArray(s.towers) || s.towers.length > maxPads || !Array.isArray(s.gates) || s.gates.length !== (s.challenge.fixed ? 0 : 2)) return false
+  if(s.challenge.watchDirector){
+    const d=s.director,choiceAt=routeWave(directed)
+    if(!object(d)||!['convoy','runners',null].includes(d.passage as string|null)||!integer(d.commands,0,s.wave)||d.passage!==null&&s.wave<choiceAt||d.passage===null&&s.wave>choiceAt)return false
+    if(d.owner!==undefined&&(!secondWatch(directed)||!integer(d.owner,1)||!s.towers.some(t=>object(t)&&t.uid===d.owner&&directed.hero&&t.id===COMMANDS[directed.hero].tower)))return false
+    if(d.target!==undefined&&(!secondWatch(directed)||directed.hero!=='ivo'||!integer(d.target,1)))return false
+    if(d.command!==null){
+      const q=d.command,hero=directed.hero
+      if(!object(q)||!hero||q.wave!==s.wave||!integer(q.wave,1)||!integer(q.tower,1)||!['charging','held','spent'].includes(String(q.phase))||!Array.isArray(s.techniques)||s.techniques.length!==1)return false
+      const owner=s.towers.find(t=>object(t)&&t.uid===q.tower)
+      if(q.phase!=='spent'&&(!object(owner)||owner.id!==COMMANDS[hero].tower))return false
+      if(q.phase==='held'&&hero==='ivo'&&s.techniques.includes('capacitor')&&Number(owner?.tolls)%3!==2)return false
+    }
+  }else if(s.director!==undefined)return false
+  if(s.challenge.watchMastery){
+    const m=s.mastery
+    if(!object(m)||!integer(m.peakTowers,s.towers.length,maxPads)||!integer(m.lowerWaves,0,3)||!integer(m.waveLeaks,0)||!integer(m.commands,0,s.wave)||!object(m.bonds)||!Object.entries(m.bonds).every(([k,v])=>Object.hasOwn(BOND_HELP,k)&&integer(v)))return false
+    if(m.surge!==null){
+      const q=m.surge
+      if(!object(q)||q.wave!==s.wave||!integer(q.wave,1)||!integer(q.tower,1)||!['charging','held','release','spent'].includes(String(q.phase))||s.challenge.hero!=='ivo'||s.challenge.expedition!=='sunforge'||!Array.isArray(s.techniques)||!s.techniques.includes('capacitor'))return false
+      const owner=s.towers.find(t=>object(t)&&t.uid===q.tower)
+      if(q.phase!=='spent'&&(!object(owner)||owner.id!=='storm'||['held','release'].includes(String(q.phase))&&Number(owner.tolls)%3!==2))return false
+    }
+  }else if(s.mastery!==undefined)return false
   const pads = new Set<number>()
   for (const t of s.towers) {
+    if(object(t)&&s.challenge.watchExperience){
+      for(const key of ['armourRemoved','interrupts','signatureHits'])if(t[key]!==undefined&&!number(t[key],0))return false
+      if(t.debutPending!==undefined&&typeof t.debutPending!=='boolean')return false
+    }
     if (!object(t) || typeof t.id !== 'string' || !Object.hasOwn(TOWERS, t.id) || !integer(t.pad, 0, maxPads - 1) || pads.has(t.pad) || !integer(t.a, 0, 3) || !integer(t.b, 0, 3) || (t.a > 1 && t.b > 1) || !number(t.spent, 0) || !number(t.pops, 0) || !['first', 'last', 'strong', 'close'].includes(String(t.priority))) return false
     if(t.sunUsed!==undefined&&(!s.challenge.livingWatch||!integer(t.sunUsed,0,1000000)||t.sunUsed>0&&(t.id!=='owl'||Number(t.b)<2)))return false
+    if(t.crownReadyAt!==undefined&&(!s.challenge.watchTactics||t.id!=='cracker'||!t.refinement||!number(t.crownReadyAt,0)))return false
     const ranks = s.challenge.depth ? [...REFINEMENTS, ...LATE_REFINEMENTS] : REFINEMENTS
-    if (LATE_TOWERS.includes(t.id as import('./defs').TowerId) && (!s.challenge.depth || (s.challenge.expedition?EXPEDITION_UNLOCK[t.id as keyof typeof EXPEDITION_UNLOCK]:t.id === 'storm' ? 16 : 26) > s.wave + 1)) return false
-    if (s.challenge.compact && (!(s.plots as number[]).includes(t.pad) || !integer(t.refinement, 0, ranks.length) || (t.refinement > 0 && (Math.max(t.a, t.b) < 3 || (s.challenge.expedition?10:ranks[t.refinement - 1].wave) > s.wave + 1)))) return false
+    const early=s.challenge.watchExperience?experienceUnlock(t.id as import('./defs').TowerId,s.challenge.hero as import('./heroes').HeroId,!!s.challenge.expedition):undefined
+    if (LATE_TOWERS.includes(t.id as import('./defs').TowerId) && (!s.challenge.depth || (early??(s.challenge.expedition?EXPEDITION_UNLOCK[t.id as keyof typeof EXPEDITION_UNLOCK]:campaignUnlock(directed,t.id === 'storm' ? 16 : 26))) > s.wave + 1)) return false
+    if (s.challenge.compact && (!(s.plots as number[]).includes(t.pad) || !integer(t.refinement, 0, ranks.length) || (t.refinement > 0 && (Math.max(t.a, t.b) < 3 || (s.challenge.expedition?(secondWatch(directed)?7:10):campaignUnlock(directed,secondWatch(directed)?16:ranks[t.refinement - 1].wave)) > s.wave + 1)))) return false
     if (!s.challenge.compact && t.refinement !== undefined) return false
-    if (s.challenge.fixed && (Number(t.a) > 0 && Number(t.b) > 0 || Number(t.b) === 1 || Number(t.refinement) > 1 || Number(t.refinement) > 0 && s.wave < (s.challenge.expedition?9:30) || (s.challenge.expedition?EXPEDITION_UNLOCK:FIXED_UNLOCK)[t.id as keyof typeof FIXED_UNLOCK] > s.wave + 1 || t.pad === s.challenge.blockedPad)) return false
+    if (s.challenge.fixed && (Number(t.a) > 0 && Number(t.b) > 0 || Number(t.b) === 1 || Number(t.refinement) > 1 || Number(t.refinement) > 0 && s.wave < (s.challenge.expedition?(secondWatch(directed)?6:9):campaignUnlock(directed,secondWatch(directed)?16:31)-1) || (early??(s.challenge.expedition?EXPEDITION_UNLOCK[t.id as keyof typeof EXPEDITION_UNLOCK]:campaignUnlock(directed,FIXED_UNLOCK[t.id as keyof typeof FIXED_UNLOCK]))) > s.wave + 1 || t.pad === s.challenge.blockedPad)) return false
+    if(secondWatch(directed)&&(Math.max(Number(t.a),Number(t.b))===1||Math.max(Number(t.a),Number(t.b))===3&&!t.refinement))return false
     pads.add(t.pad)
   }
   if (s.challenge.fixed) {
@@ -150,7 +195,7 @@ export function validSnapshot(s: unknown): s is SaveSnapshot {
       const c=s.climate
       if(!object(c)||!number(c.elapsed,0)||!number(c.waveSeconds,0)||!number(c.gardenExposure,0)||c.waveSeconds>c.elapsed+1e-6||c.gardenExposure>c.waveSeconds*1.47+1e-6||c.gardenExposure<c.waveSeconds*.55-1e-6)return false
     }
-    if (!Array.isArray(s.bonds) || s.bonds.length > (s.challenge.expedition?(s.wave>=7?2:s.wave>=3?1:0):(s.wave >= 20 ? 2 : s.wave >= 5 ? 1 : 0))) return false
+    if (!Array.isArray(s.bonds) || s.bonds.length > (s.challenge.expedition?(s.wave>=7?2:s.wave>=3?1:0):(s.wave >= campaignUnlock(directed,21)-1 ? 2 : s.wave >= campaignUnlock(directed,6)-1 ? 1 : 0))) return false
     const used = new Set<unknown>()
     for(const b of s.bonds) {
       if(!object(b) || !number(b.readyAt,0) || !integer(b.activations) || used.has(b.a) || used.has(b.b) || b.a === b.b) return false
@@ -199,18 +244,24 @@ export function validSnapshot(s: unknown): s is SaveSnapshot {
     const harbour = !!s.challenge.harbour
     if (s.towers.some(t => !available.includes((t as { pad: number }).pad) && !(harbour && (t as { pad: number }).pad >= LEVEL.pads.length))) return false
   }
-  const base = s.challenge.fixed ? fixedLevel(s.challenge.variant as number,!!s.challenge.livingWatch) : s.challenge.compact ? compactLevel(s.challenge.variant as number) : s.challenge.expanding ? growingCanal(s.canalStage as number) : LEVEL
+  const base = s.challenge.fixed ? fixedLevel(s.challenge.variant as number,!!s.challenge.livingWatch,!!s.challenge.watchDirector) : s.challenge.compact ? compactLevel(s.challenge.variant as number) : s.challenge.expanding ? growingCanal(s.canalStage as number) : LEVEL
   const harbour = s.challenge.harbour ? harbourLevel(base) : base
   const segments = new Set((s.challenge.gardens ? gardensLevel(harbour) : harbour).segments.map(seg => seg.id))
   if (s.waveReports !== undefined && (!s.challenge.guard || !Array.isArray(s.waveReports) || s.waveReports.length > 100 || !s.waveReports.every(r => object(r) && integer(r.wave, 1, 10000) && integer(r.slowSplashHits) && object(r.damage) && Object.entries(r.damage).every(([id, value]) => Object.hasOwn(TOWERS, id) && number(value, 0))))) return false
   if (s.embers !== undefined && (!Array.isArray(s.embers) || s.embers.length > 48 || !s.embers.every(p => object(p) && number(p.x) && number(p.y) && number(p.radius, 0, 1000) && number(p.life, 0, 3) && number(p.dps, 0) && integer(p.tower, 1)))) return false
   if (s.lastLeak !== undefined && s.lastLeak !== null && (!object(s.lastLeak) || !Object.hasOwn(ENEMIES, String(s.lastLeak.enemy)) || typeof s.lastLeak.route !== 'string' || typeof s.lastLeak.hidden !== 'boolean' || typeof s.lastLeak.armoured !== 'boolean' || !integer(s.lastLeak.wave, 1) || !number(s.lastLeak.light, 0))) return false
+  if(object(s.lastLeak)&&s.lastLeak.detail!==undefined){const d=s.lastLeak.detail;if(!s.challenge.watchTactics||!object(d)||!['hidden','armour','runaway','coverage','pressure'].includes(String(d.cause))||!number(d.x)||!number(d.y)||!segments.has(String(d.segment))||!number(d.hp,0)||!number(d.shell,0)||!integer(d.damageTowers,0,maxPads)||!integer(d.controlTowers,0,maxPads))return false}
   if (!(s.openSources as unknown[]).every(id => ['north', 'west'].includes(String(id)))) return false
   if (!(s.enemies as unknown[]).every(e => object(e) && Object.hasOwn(ENEMIES, String(e.type)) && segments.has(String(e.seg)) && number(e.s, 0) && number(e.hp) && number(e.maxHp, 0) && integer(e.uid, 1) && integer(e.wave, 1, 10000))) return false
   if (!(s.projs as unknown[]).every(p => object(p) && integer(p.tower, 1) && Array.isArray(p.hit) && number(p.x) && number(p.y))) return false
   if (!(s.spawners as unknown[]).every(p => object(p) && integer(p.wave, 1, 10000) && integer(p.group, 0, 100) && number(p.t) && integer(p.spawned))) return false
   if (!(s.waveAlive as unknown[]).every(v => Array.isArray(v) && integer(v[0], 1, 10000) && integer(v[1]))) return false
   for (const e of s.enemies as Record<string, unknown>[]) {
+    if(e.channelLink!==undefined&&(!secondWatch(directed)||!['bloomheart','toad'].includes(String(e.type))||!integer(e.channelLink,1)||!number(e.signalT,0.000001,3)))return false
+    if(e.channelLink!==undefined&&!(s.enemies as Record<string,unknown>[]).some(o=>o.uid===e.channelLink&&!ENEMIES[o.type as keyof typeof ENEMIES].boss))return false
+    if(e.coreOpen!==undefined&&(!secondWatch(directed)||e.type!=='dredger'||typeof e.coreOpen!=='boolean'))return false
+    if(e.exposedT!==undefined&&(!s.challenge.watchTactics||!number(e.exposedT,0,4)))return false
+    if(e.burnSource!==undefined&&(!s.challenge.watchTactics||!integer(e.burnSource,1)))return false
     if(e.type==='dredger'&&(s.challenge.watchCraft!==1||s.challenge.expedition!=='sunforge'))return false
     if (e.escortOf !== undefined && (!integer(e.escortOf, 1) || e.type !== 'skiff' || s.challenge.harbourEncounters !== 1 && s.challenge.compact !== 1)) return false
     if (e.signalT !== undefined && !((e.type === 'warden' && (s.challenge.harbourEncounters === 1 || s.challenge.compact === 1) && number(e.signalT, 0, 2.4)) || (e.type === 'bloomheart' && (s.challenge.gardens === 1 || s.challenge.compact === 1) && number(e.signalT, 0, 3)) || (e.type === 'toad' && s.challenge.livingWatch === 1 && number(e.signalT, 0, 2)))) return false
@@ -221,6 +272,7 @@ export function validSnapshot(s: unknown): s is SaveSnapshot {
     if (typeof e.route !== 'string' || typeof e.lastGate !== 'string') return false
   }
   for (const p of s.projs as Record<string, unknown>[]) {
+    if(p.beacon!==undefined&&(!s.challenge.watchTactics||p.kind!=='bolt'||typeof p.beacon!=='boolean'))return false
     if (p.bounced !== undefined && (typeof p.bounced !== 'boolean' || p.kind !== 'spark' || s.challenge.guardian !== 'reed')) return false
     for (const key of ['vx', 'vy', 'speed', 'target', 'dmg', 'pierce', 'splash', 'burn', 'burnDur', 'cluster', 'life', 'sx', 'sy', 'ex', 'ey', 't', 'dur']) if (!number(p[key])) return false
     for (const key of ['heavy', 'detect', 'brittleBonus']) if (typeof p[key] !== 'boolean') return false
