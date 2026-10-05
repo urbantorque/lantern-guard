@@ -5,6 +5,7 @@ import type { TechniqueId } from './watch-craft'
 import type { WaveDef } from './waves'
 import { directorPreparation } from './watch-director'
 import {storyMission} from './story'
+import {SIEGE_PREPARATIONS} from './siege'
 
 export const EXPERIENCE_RULES=1 as const
 export const experiencePrice=(id:TowerId,hero:HeroId|undefined,base:number)=>hero==='ivo'&&id==='storm'?280:base
@@ -35,6 +36,7 @@ export function experienceTechnique(id:TechniqueId){
 
 /** Preparation is driven by the next encounter, never by real-world waiting. */
 export function preparationBeat(c:Challenge,wave:number):string|null {
+  if(c.siege)return SIEGE_PREPARATIONS[wave]??null
   if(c.story)return storyMission(c)?.preparations[wave]??null
   if(!c.watchExperience||wave<=1)return null
   if(techniqueWaves(c).includes(wave))return 'Choose your technique and shape the next stretch.'

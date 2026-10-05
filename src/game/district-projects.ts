@@ -1,4 +1,5 @@
-import {missionWon,mission,type MissionId} from './story'
+import {missionWon,type MissionId} from './story'
+import {SIEGE_RESTORATION} from './siege'
 import { CONTRACTS } from './watch-mastery'
 import { watchRecord } from './record-view'
 import type { VillageProfile } from './fixed-store'
@@ -15,15 +16,17 @@ export const PROJECT_STEPS:Record<ProjectId,{missions:MissionId[];names:string[]
  gardens:{missions:['below-island','restore-waterway','last-bloom'],names:['Terraces cleared','Water beds planted','Night flowers open']},
 }
 export const projectStage=(p:VillageProfile,id:ProjectId)=>Math.min(3,Math.floor(projectProgress(p,id)*3+1e-6))
-export function projectNext(p:VillageProfile,id:ProjectId){const steps=PROJECT_STEPS[id],next=steps.missions.find(m=>!missionWon(p,m));return next?`Complete ${mission(next)!.name} · ${steps.names[steps.missions.indexOf(next)]}.`:'All three stages restored.'}
+export function projectNext(p:VillageProfile,id:ProjectId){const stage=projectStage(p,id);return stage<3?`Hold campaign wave ${SIEGE_RESTORATION[id][stage]} · ${PROJECT_STEPS[id].names[stage]}.`:'All three stages restored.'}
 export function projectProgress(p:VillageProfile,id:ProjectId){
-  const story=PROJECT_STEPS[id].missions.filter(m=>missionWon(p,m)).length/3
+  const held=bestSiegeWave(p)
+  const story=Math.max(PROJECT_STEPS[id].missions.filter(m=>missionWon(p,m)).length,SIEGE_RESTORATION[id].filter(w=>held>=w).length)/3
   const best=Math.max(0,...Object.entries(p.records).flatMap(([key,r])=>{const record=watchRecord(key,r.wave);return record&&!record.practice&&!r.practice?[record.restorationWave]:[]}))
   const heroes=new Set(Object.entries(p.records).filter(([k,r])=>k.startsWith('expedition:')&&r.won&&!r.practice).map(([k])=>k.split(':').at(-2)))
   if(id==='market')return p.commissions.includes('sunforge')?1:Math.max(story,Math.min(1,best/10))
   if(id==='observatory')return p.commissions.includes('moonwake')?1:Math.max(story,Math.min(1,best/25))
   return Math.min(1,Math.max(story,best/40,heroes.size/2))
 }
+export function bestSiegeWave(p:Pick<VillageProfile,'records'>){return Math.max(0,...Object.entries(p.records).filter(([key,r])=>/^siege1:(relaxed|standard|nightfall):(sol|mira|ivo):standard$/.test(key)&&!r.practice).map(([,r])=>r.wave))}
 export function validStyles(value:unknown):Partial<Record<ProjectId,0|1>>{
   if(!value||typeof value!=='object')return {}
   return Object.fromEntries(PROJECTS.flatMap(p=>{const v=(value as Record<string,unknown>)[p.id];return v===0||v===1?[[p.id,v]]:[]}))

@@ -1,5 +1,8 @@
-import {mission,storyMission,storyChallenge,missionOpen,nextMission,type MissionId} from './game/story'
+import {mission,storyMission,storyChallenge,nextMission,type MissionId} from './game/story'
 import {campaignScreen} from './ui/campaign'
+import {siegeCampaignScreen,siegeTimeline} from './ui/siege-campaign'
+import {siegeChallenge,siegeAct,siegeBoundary,SIEGE_ACTS,siegeHeld} from './game/siege'
+import {saveActCheckpoint,loadActCheckpoint,retrySiegeAct} from './game/siege-store'
 import {placementReadout} from './game/placement'
 import { secondWatch, SECOND_STAGES, commandReadout, designatedTarget, passageDescription } from './game/second-watch'
 import { localPlaytest } from './game/playtest-log'
@@ -118,7 +121,7 @@ export class FixedApp {
     this.playtest.record('leave-watch',{wave:this.sim?.wave??0});this.playtest.flush()
     sound.beam(0);document.body.classList.remove('playing')
     this.save();this.rehearsal=null;this.sim=null;this.renderer=null;this.observer?.disconnect();this.drawer='';this.nextWaveIn=null
-    $('app').innerHTML=titleScreen(this.profile,loadWatch('campaign')?.snapshot,loadWatch('commission')?.snapshot)
+    $('app').innerHTML=titleScreen(this.profile,loadWatch('campaign')?.snapshot,loadWatch('commission')?.snapshot,loadWatch('siege')?.snapshot)
   }
   private show(title:string,content:string,kind='') {
     this.aiming=false
@@ -151,11 +154,19 @@ export class FixedApp {
     if(focusAction){document.querySelector<HTMLButtonElement>('[data-action="'+focusAction+'"]')?.focus({preventScroll:true});const body=document.querySelector<HTMLElement>('.drawer-body');if(body)body.scrollTop=scroll}
   }
   private campaign(){
-    this.show('Keep the city alight',campaignScreen(this.profile,this.selectedMission,this.hero,this.difficulty,(map)=>this.preview(map),!!loadWatch('campaign')&&!loadWatch('campaign')!.snapshot.over),'campaign')
+    this.show('Keep the city alight',siegeCampaignScreen(this.profile,this.hero,this.difficulty,this.preview(0),loadWatch('siege')?.snapshot),'campaign siege-campaign')
+  }
+  private shortPractice(){
+    this.show('Short encounter practice',campaignScreen(this.profile,this.selectedMission,this.hero,this.difficulty,(map)=>this.preview(map),!!loadWatch('practice')&&!loadWatch('practice')!.snapshot.over,true),'campaign')
+  }
+  private newSiege(){
+    const seed=Math.floor(Math.random()*4294967295),rules=siegeChallenge(this.hero,seed)
+    this.slot='siege';this.profile.lastHero=this.hero;writeJSON('profile',this.profile)
+    this.begin(new Sim(this.difficulty,rules,seed));this.writePlanning(this.sim!.snapshot());this.save()
+    if(!this.qa)saveActCheckpoint(this.sim!,[])
   }
   private newStory(id:MissionId){
-    if(!missionOpen(this.profile,id))return
-    const rules=storyChallenge(id,this.hero);this.slot='campaign';this.profile.lastHero=rules.hero;writeJSON('profile',this.profile)
+    const rules={...storyChallenge(id,this.hero),practice:true};this.slot='practice';this.profile.lastHero=rules.hero;writeJSON('profile',this.profile)
     this.begin(new Sim(this.difficulty,rules,rules.skirmish!.seed));this.writePlanning(this.sim!.snapshot());this.save()
   }
   private towerDef(id:TowerId){return heroTower(id,this.sim?this.sim.challenge.hero:this.hero)}
@@ -206,7 +217,7 @@ export class FixedApp {
     $('app').innerHTML=`<main class="game"><header class="hud"><div class="stat">${icon('heart')}<b id="light"></b><span>Light</span></div><div class="stat">${icon('sparkle')}<b id="glow"></b><span>Glow</span></div><div class="wave-stat" id="wave"></div>${button('menu',icon('gear')+'<span class="sr-only">Watch menu</span>','icon-button')}</header><section id="battlefield" class="battlefield" aria-label="Battlefield"><canvas id="canvas" aria-label="Fixed paths through the district"></canvas><div id="plots" aria-label="Tower plots"></div><button id="sky" class="sky-strip" data-action="sky"></button><div id="board-status" class="board-status"></div><div id="lantern-watch" class="lantern-watch" hidden aria-live="polite"></div><div id="prepare-watch" class="prepare-watch" hidden></div><div id="district-notice" class="district-notice" role="status" hidden></div><button id="watch-lesson" class="watch-lesson" data-action="lesson" hidden></button><div id="boss-status" class="boss-status" hidden></div><div id="battle-moment" class="battle-moment" role="status" hidden></div><div class="map-caption"><span id="map-name">${WATCH_NAMES[this.map]}${sim.challenge.hero?" · "+HEROES[sim.challenge.hero].name:""}</span><span id="act"></span></div></section><footer class="playbar"><div class="wave-brief"><button data-action="forecast" class="forecast-button" id="forecast"></button><span id="wave-recap" class="wave-recap"></span><button id="breach-review" data-action="breach-review" class="text-button breach-review" hidden>Review the breach</button></div><button id="technique-offer" data-action="techniques" class="technique-offer" hidden>Choose a technique</button><div id="command-controls" class="command-controls"><span id="command-readout" class="command-readout"></span><button id="command-aim" data-action="command-aim" class="command-aim" hidden>Choose target</button><button id="surge-command" data-action="surge" class="surge-command" hidden></button><button id="command-discard" data-action="command-cancel" class="command-discard" aria-label="Discard banked command and resume automatic fire" hidden>${icon('close')}</button></div><div class="watch-flow"><span id="flow-label"></span><div id="wave-progress" class="wave-progress" role="progressbar" aria-label="Wave cleared" aria-valuemin="0" aria-valuemax="100"><i></i></div></div></footer></main><div id="modal-root"></div><div id="live" class="sr-only" aria-live="polite"></div><p id="save-warning" role="status"></p>`
     this.renderer=new Renderer($<HTMLCanvasElement>('canvas')); this.renderer.attach(sim);if(blooms.length)this.renderer.importBlooms(blooms)
     $('battlefield').insertAdjacentHTML('beforeend','<div id="aim-layer" class="aim-layer" hidden aria-label="Discharge targets"></div><div id="aim-help" class="aim-help" hidden><span>Tap a marked enemy, then release.</span><button data-action="command-list">Target list</button><button data-action="aim-cancel" aria-label="Cancel targeting">Done</button></div>')
-    if(sim.challenge.watchDepth)$('act').outerHTML='<button id="act" class="landmark-link" data-action="landmark"></button>'
+    if(sim.challenge.watchDepth)$('act').outerHTML=`<button id="act" class="landmark-link" data-action="${sim.challenge.siege?'siege-progress':'landmark'}"></button>`
     document.querySelector('.hud .icon-button')?.insertAdjacentHTML('beforebegin','<button id="sound-toggle" data-action="sound" class="sound-toggle"></button>')
     this.renderer.settlement=Math.max(this.profile.settlement,loadProgress().settlement??0)
     this.renderer.bunting=this.profile.commissions.includes('market')
@@ -280,8 +291,8 @@ export class FixedApp {
     $('sky').style.setProperty('--phase-progress',`${100*(1-sky.phaseLeft/(sky.night?NIGHT_SECONDS:DAY_SECONDS))}%`)
     $('sky').innerHTML=`<span><i class="sky-disc" aria-hidden="true"></i>${soon?(sky.night?'Dawn in':'Nightfall in'):sky.night?'Night':'Daylight'} <b>${clockText(sky.phaseLeft/WATCH_TEMPO)}</b></span><span>${sky.weatherLeft<=8?'Next: '+WEATHER[sky.nextWeather].name:WEATHER[sky.weather].name} ${icon('caretRight')}</span>`
     $('sky').setAttribute('aria-label',`${sky.night?'Night, dawn':'Daylight, nightfall'} in ${clockText(sky.phaseLeft/WATCH_TEMPO)}. ${WEATHER[sky.weather].name}. Open sky forecast`)
-    $('wave').innerHTML=`<span>${s.challenge.weekly!==undefined?'Weekly':s.challenge.expedition?'Expedition':s.challenge.story?'Mission':s.isChallenge?'Commission':'Wave'}</span><b>${s.wave-s.waveOffset}<small> / ${s.finalWave-s.waveOffset}</small></b>`
-    $('act').textContent=s.challenge.watchDepth?landmark(s).name+' ›':ACTS[Math.min(7,Math.floor(Math.max(0,s.planningWave-1)/5))]
+    $('wave').innerHTML=`<span>${s.challenge.siege?'Wave':s.challenge.weekly!==undefined?'Weekly':s.challenge.expedition?'Expedition':s.challenge.story?'Practice':s.isChallenge?'Commission':'Wave'}</span><b>${s.wave-s.waveOffset}<small> / ${s.finalWave-s.waveOffset}</small></b>`
+    $('act').textContent=s.challenge.siege?`${siegeAct(s.planningWave).name} ›`:s.challenge.watchDepth?landmark(s).name+' ›':ACTS[Math.min(7,Math.floor(Math.max(0,s.planningWave-1)/5))]
     const remaining=s.enemies.filter(e=>e.alive).length+s.spawners.reduce((n,sp)=>n+sp.group.count-sp.spawned,0)
     const total=s.waveDef(Math.max(1,s.wave)).groups.reduce((n,g)=>n+g.count,0)
     const progress=s.waveActive?Math.max(0,Math.min(100,100*(1-remaining/total))):s.wave?100:0
@@ -308,7 +319,7 @@ export class FixedApp {
     const offer=$('technique-offer');if(offer){offer.hidden=!!s.over||!techniqueOffers(s).length;offer.textContent=s.director?'Choose signature':`Choose technique ${s.techniques.length+1}/2`}
     const lesson=watchLesson(s,this.profile.lessons),hint=$('watch-lesson');document.querySelector('[data-action="plot:0"]')?.classList.toggle('teaching',lesson?.id==='refined-place'||lesson?.id==='story-place');if(hint){hint.hidden=!lesson||!!this.drawer;hint.textContent=lesson?lesson.text+'  ×':'';hint.setAttribute('aria-label',lesson?lesson.text+' Dismiss tip':'Tip')}
     const obstacle=$('tower-obstacle');if(obstacle&&this.selection?.kind==='tower'){obstacle.textContent=towerObstacle(s,this.selection.tower);obstacle.hidden=!obstacle.textContent}
-    const prep=$('prepare-watch');prep.hidden=!this.preparing||!!this.drawer;if(this.preparing)prep.innerHTML=passagePending(s)?'<b>Choose your passage</b><p>Shape the next three waves around your defence.</p>'+button('passages','Inspect both routes','primary'):this.rehearsal?.finished?'<b>Practice complete</b>'+button('practice-report','Review practice','primary'):'<b>'+(this.rehearsal?'Practice · adjust for wave ':'Prepare for wave ')+(s.wave+1-s.waveOffset)+'</b><p>'+(this.rehearsal?'Move, sell or upgrade using the original budget. Only this wave will play.':preparationBeat(s.challenge,s.wave+1))+'</p>'+button('begin-next','Ready · begin wave','primary');
+    const prep=$('prepare-watch');prep.hidden=!this.preparing||!!this.drawer;if(this.preparing)prep.innerHTML=passagePending(s)?'<b>Choose your passage</b><p>Shape the next three waves around your defence.</p>'+button('passages','Inspect both routes','primary'):this.rehearsal?.finished?'<b>Practice complete</b>'+button('practice-report','Review practice','primary'):'<b>'+(this.rehearsal?'Practice · adjust for wave ':s.challenge.siege&&siegeBoundary(s.wave)?siegeAct(s.wave+1).name+' · Wave ':'Prepare for wave ')+(s.wave+1-s.waveOffset)+'</b><p>'+(this.rehearsal?'Move, sell or upgrade using the original budget. Only this wave will play.':preparationBeat(s.challenge,s.wave+1))+'</p>'+button('begin-next','Ready · begin wave','primary');
     if(this.rehearsal)$('flow-label').textContent=this.rehearsal.finished?'Practice complete':s.waveActive?'One-wave practice':'Practice · take your time'
     const watch=$('lantern-watch'),danger=s.enemies.filter(e=>e.alive&&e.remaining<360);watch.hidden=!this.drawer||!danger.length;watch.classList.toggle('urgent',danger.some(e=>e.remaining<150));watch.textContent=danger.length+' approaching the lantern';
     const breach=$('breach-review');if(breach)breach.hidden=!s.lastLeak?.detail
@@ -497,9 +508,14 @@ export class FixedApp {
     const s=this.sim!;this.endShown=true
     const rehearsalReady=matchingCheckpoint(s.snapshot(),loadPlanning(this.slot))
     const won=s.over==='won'
+    if(s.challenge.siege){
+      const checkpoint=loadActCheckpoint(s),held=siegeHeld(s),acts=SIEGE_ACTS.filter(a=>held>=a.to).length
+      this.show(won?'The city held until dawn':'The defence was breached',`<p class="eyebrow">The Long Watch · ${DIFFICULTY[s.difficulty].name}</p><p class="result-number">${held}<small> / 40 waves held</small></p>${won?`<img class="district-panorama" src="${districtPanorama(this.profile)}" alt="The restored market, observatory and waterfront gardens"/><p>Your defence carried through all five acts. ${s.lives} light remains.</p><p class="resident-line">“Leave a lamp by the water. I want to see what opens tonight.”<small>Jori, gardener</small></p>`:`<p>${siegeAct(s.wave).name} · ${acts} ${acts===1?'act':'acts'} held.</p><p>${s.lastLeak?`${enemyName(s.lastLeak.enemy)} reached the lantern${s.lastLeak.armoured?' with armour remaining':''}. ${FIXED_TIPS[s.lastLeak.enemy]}`:'Reconsider the coverage around your final bend.'}</p>${s.lastLeak?.detail?`<p class="breach-advice">${breachAdvice(s.lastLeak)}</p>`:''}${checkpoint?`${button('retry-act',`Retry act ${Math.floor(checkpoint.snapshot.wave/8)+1} · from wave ${checkpoint.snapshot.wave+1}`,'primary wide')}<p class="small muted">Return to your saved towers, glow and light before this act. Reconsider your purchases and passage choice. Earlier acts stay held.</p>`:s.difficulty==='nightfall'?'<p class="notice">Nightfall ends on defeat. Your district rewards stay earned.</p>':'<p class="notice">An act checkpoint is unavailable for this defence.</p>'}${rehearsalReady?button('practice-wave','Practise the breached wave','secondary wide'):''}`}
+      <details class="mission-report"><summary>Defence report</summary><ul class="watch-insights">${watchInsights(s).map(line=>`<li>${line}</li>`).join('')}</ul><p>${s.director?.commands??0} commands released · ${s.stats.retries??0} act retries</p></details>${button('campaign',won?'Defend with another keeper':'Plan a new defence','secondary wide')}${button('home','Return to the district','text-button wide')}`,'result siege-result');return
+    }
     if(won&&s.challenge.story){
       const m=storyMission(s.challenge)!,next=nextMission(this.profile)
-      this.show(m.reward,`<article class="story-reward"><span>${s.challenge.practice?'Practice complete':m.name+' · held'}</span><img class="district-panorama" src="${districtPanorama(this.profile)}" alt="Your district at its current restoration stages"/><p>“${m.line}”</p><small>${m.resident}</small></article><p>${s.challenge.practice?'Practice leaves your district record unchanged.':`${s.lives} light kept. ${m.id==='last-bloom'?'All eight waterways are safe. Revisit a mission with another keeper or try an expedition.':'The next mission is ready when you are.'}`}</p>${button('campaign',next.id===m.id?'Return to the campaign':'Next · '+next.name,'primary wide')}<details class="mission-report"><summary>Watch report · ${s.wave} waves held</summary><ul class="watch-insights">${watchInsights(s).map(line=>`<li>${line}</li>`).join('')}</ul></details>${button('rematch','Defend this mission again','secondary wide')}${button('home','Return to the district','text-button wide')}`,'result');return
+      this.show(m.reward,`<article class="story-reward"><span>${s.challenge.practice?'Practice complete':m.name+' · held'}</span><img class="district-panorama" src="${districtPanorama(this.profile)}" alt="Your district at its current restoration stages"/><p>“${m.line}”</p><small>${m.resident}</small></article><p>${s.challenge.practice?'Practice leaves your district record unchanged.':`${s.lives} light kept. ${m.id==='last-bloom'?'All eight waterways are safe. Revisit a mission with another keeper or try an expedition.':'The next mission is ready when you are.'}`}</p>${button('campaign',s.challenge.practice?'Return to the 40-wave campaign':next.id===m.id?'Return to the campaign':'Next · '+next.name,'primary wide')}<details class="mission-report"><summary>Watch report · ${s.wave} waves held</summary><ul class="watch-insights">${watchInsights(s).map(line=>`<li>${line}</li>`).join('')}</ul></details>${button('rematch','Defend this mission again','secondary wide')}${button('home','Return to the district','text-button wide')}`,'result');return
     }
     this.show(won?'The lantern is still alight':'A little light for next time',`<p class="eyebrow">${WATCH_NAMES[this.map]} · ${DIFFICULTY[s.difficulty].name}${s.challenge.practice?' · Practice':''}</p><p class="result-number">${s.wave-(won?0:1)-s.waveOffset}<small> waves held</small></p><p>${won?'The district remembers your watch.':s.lastLeak?`${enemyName(s.lastLeak.enemy)} reached the lantern${s.lastLeak.armoured?' with armour remaining':''}${s.lastLeak.hidden?' while still hidden':''}. ${FIXED_TIPS[s.lastLeak.enemy]}`:'Try building around a longer shared stretch of the stream.'}</p>${s.lastLeak?.detail?`<p class="breach-advice"><b>At the marked lower bend</b>${breachAdvice(s.lastLeak)}</p>`:''}${this.contractReport()}<ul class="watch-insights">${watchInsights(s).map(line=>`<li>${line}</li>`).join('')}</ul>${won?button('rematch','Rematch this seed','primary wide'):button('retry',s.difficulty==='nightfall'?'Retry as practice':'Retry this wave','primary wide',!loadPlanning(this.slot))}${!won&&rehearsalReady?button('practice-wave','Practise this wave only','secondary wide')+'<p class="small muted">Adjust the defence, test one wave, then return here. Your result and district rewards stay as recorded.</p>':''}${won&&!s.isChallenge?button('nextmap','Try the next waterway','secondary wide'):''}${nextMastery(this.profile)?`<p class="next-goal"><b>Next: ${nextMastery(this.profile)!.name}</b><span>${nextMastery(this.profile)!.hint}</span></p>`:''}${button('home','Return to the district','secondary wide')}`,'result')
     if(s.challenge.story){const m=storyMission(s.challenge)!,next=nextMission(this.profile);document.querySelector('.result .drawer-body')?.insertAdjacentHTML('afterbegin',won?`<article class="story-reward"><span>District restored</span><h3>${m.reward}</h3><p>“${m.line}”</p><small>${m.resident}</small></article>${button('campaign',next.id===m.id?'Return to the campaign':'Next · '+next.name,'primary wide')}`:`<p class="mission-context">${m.name} · ${m.brief}</p>`)}
@@ -560,10 +576,14 @@ export class FixedApp {
     if(cmd==='hero'&&isHero(a)&&this.drawer==='choose'){this.hero=a;this.choose(action);return}
     if(cmd==='roster'){this.roster();return}
     if(cmd==='campaign'){this.selectedMission=nextMission(this.profile).id;this.campaign();return}
-    if(cmd==='mission'&&mission(a)){this.selectedMission=a as MissionId;this.campaign();return}
+    if(cmd==='short-practice'){this.shortPractice();return}
+    if(cmd==='siege-begin'){this.newSiege();return}
+    if(cmd==='siege-hero'&&isHero(a)){this.hero=a;this.campaign();return}
+    if(cmd==='siege-mode'&&['relaxed','standard','nightfall'].includes(a)){this.difficulty=a as Difficulty;this.campaign();return}
+    if(cmd==='mission'&&mission(a)){this.selectedMission=a as MissionId;this.shortPractice();return}
     if(cmd==='story-begin'&&mission(a)){this.newStory(a as MissionId);return}
-    if(cmd==='story-hero'&&isHero(a)){this.hero=a;this.campaign();return}
-    if(cmd==='story-mode'&&['relaxed','standard','nightfall'].includes(a)){this.difficulty=a as Difficulty;this.campaign();return}
+    if(cmd==='story-hero'&&isHero(a)){this.hero=a;this.shortPractice();return}
+    if(cmd==='story-mode'&&['relaxed','standard','nightfall'].includes(a)){this.difficulty=a as Difficulty;this.shortPractice();return}
     if(cmd==='choose'){this.choose();return}
     if(cmd==='map'){this.map=Number(a);this.choose(action);return}
     if(cmd==='mode'){this.difficulty=a as Difficulty;this.choose(action);return}
@@ -589,6 +609,8 @@ export class FixedApp {
     if(cmd==='sound'){this.profile.settings.muted=!this.profile.settings.muted;writeJSON('profile',this.profile);this.applySettings();sound.unlock();this.refresh();return}
     if(cmd==='guardian'){this.guardian=a;this.profile.guardian=a;writeJSON('profile',this.profile);if(this.renderer)this.renderer.crest=a;this.settings();return}
     if(!s)return
+    if(cmd==='siege-progress'){this.show('The Long Watch',`<p class="lead">${siegeHeld(s)}/40 waves held · ${s.lives} light remaining</p>${siegeTimeline(siegeHeld(s))}<p class="small muted">Your towers and upgrades carry through every act.</p>`,'siege-progress');return}
+    if(cmd==='retry-act'){const retry=retrySiegeAct(s);if(retry){this.begin(retry.sim,retry.blooms);this.writePlanning(retry.sim.snapshot());this.save()}return}
     if(cmd==='passages'){this.passages();return}
     if(cmd==='passage'){if(s.choosePassage(a as Passage)){this.close();this.writePlanning(s.snapshot());this.save();this.recap='Passage chosen.'}return}
     if(cmd==='command-cancel'){s.cancelCommand();if(this.drawer==='surge-help')this.close();this.save();this.refresh();return}
@@ -623,8 +645,8 @@ export class FixedApp {
     if(cmd==='unbond'){const t=tower();this.change(()=>s.unbond(t));this.towerSheet(t)}
     if(cmd==='move'){this.moving=Number(a);this.close()}
     if(cmd==='sell'){this.change(()=>s.sell(tower()));this.close()}
-    if(cmd==='retry'){const p=loadPlanning(this.slot);if(p){p.challenge.practice ||=s.difficulty==='nightfall';p.stats.retries=(s.stats.retries??0)+1;this.begin(Sim.restore(p));this.save()}}
-    if(cmd==='rematch'){if(s.challenge.mission){this.newStory(s.challenge.mission);return}if(s.challenge.weekly!==undefined)this.newWeekly(s.challenge.weekly);else if(s.challenge.expedition){const c=contractDef(s.challenge.contract);if(c)this.selectedContracts.add(c.id);else for(const q of CONTRACTS)if(q.expedition===s.challenge.expedition)this.selectedContracts.delete(q.id);this.newExpedition(s.challenge.expedition)}else this.newWatch(s.challenge.commission,s.seed)}
+    if(cmd==='retry'&&!s.challenge.siege){const p=loadPlanning(this.slot);if(p){p.challenge.practice ||=s.difficulty==='nightfall';p.stats.retries=(s.stats.retries??0)+1;this.begin(Sim.restore(p));this.save()}}
+    if(cmd==='rematch'){if(s.challenge.siege){this.newSiege();return}if(s.challenge.mission){this.newStory(s.challenge.mission);return}if(s.challenge.weekly!==undefined)this.newWeekly(s.challenge.weekly);else if(s.challenge.expedition){const c=contractDef(s.challenge.contract);if(c)this.selectedContracts.add(c.id);else for(const q of CONTRACTS)if(q.expedition===s.challenge.expedition)this.selectedContracts.delete(q.id);this.newExpedition(s.challenge.expedition)}else this.newWatch(s.challenge.commission,s.seed)}
     if(cmd==='nextmap'){this.map=(this.map+1)%4;this.newWatch()}
     this.refresh()
   }
@@ -667,6 +689,8 @@ export class FixedApp {
           const restored=PROJECTS.filter(p=>projectProgress(this.profile,p.id)>=1&&!before.includes(p.id));if(restored.length){this.projectNotice=restored.map(p=>p.name).join(' & ')+' restored';this.projectNoticeLeft=7}
           r.settlement=Math.max(r.settlement,this.profile.settlement);r.keepsakes=districtKeepsakes(this.profile);this.resize();$('live').textContent=this.recap
           this.save()
+          if(s.challenge.siege&&siegeBoundary(s.wave)&&!this.qa&&!this.rehearsal)saveActCheckpoint(s,r.exportBlooms())
+          if(s.challenge.siege&&s.wave%8===0){const act=siegeAct(s.wave);this.projectNotice=`${act.name} held · ${act.reward} “${act.line}” — ${act.resident}`;this.projectNoticeLeft=10}
           if(this.drawer==='tower'&&this.selection?.kind==='tower')this.towerSheet(this.selection.tower)
         }
         if(e.t==='defeat'||e.t==='victory'){if(!this.qa&&!this.rehearsal)recordWatch(this.profile,s);this.save()}
@@ -676,7 +700,7 @@ export class FixedApp {
       r.draw(s,dt,{selection:this.selection,preview:this.buildGhost,armed:null,hint:null,paused:document.hidden||this.background})
       if(this.rehearsal&&(s.over||this.rehearsal.finished)&&!this.endShown){this.rehearsal.finished=true;this.practiceResult()}
       if(s.over&&!this.endShown&&!this.rehearsal){
-        if(s.won&&s.challenge.watchExperience&&!s.challenge.story&&!this.celebrationSeen){this.celebrationSeen=true;this.celebrationLeft=this.profile.settings.reducedMotion?2:5;this.close();this.show('The district wakes',`<p class="lead">Every light you kept is a home waking to morning.</p><img class="district-panorama" src="${districtPanorama(this.profile)}" alt="Your restored canal district"/><p>${PROJECTS.filter(p=>projectProgress(this.profile,p.id)>=1).map(p=>p.name).join(' · ')||'The canal is safe for another morning.'}</p>${button('celebration-done','View watch report','primary wide')}`,'celebration')}
+        if(s.won&&s.challenge.watchExperience&&!s.challenge.story&&!s.challenge.siege&&!this.celebrationSeen){this.celebrationSeen=true;this.celebrationLeft=this.profile.settings.reducedMotion?2:5;this.close();this.show('The district wakes',`<p class="lead">Every light you kept is a home waking to morning.</p><img class="district-panorama" src="${districtPanorama(this.profile)}" alt="Your restored canal district"/><p>${PROJECTS.filter(p=>projectProgress(this.profile,p.id)>=1).map(p=>p.name).join(' · ')||'The canal is safe for another morning.'}</p>${button('celebration-done','View watch report','primary wide')}`,'celebration')}
         if(this.celebrationLeft>0){if(!hidden)this.celebrationLeft=Math.max(0,this.celebrationLeft-dt)}else this.result()
       }
       if(this.projectNoticeLeft>0&&!hidden){this.projectNoticeLeft=Math.max(0,this.projectNoticeLeft-dt);if(!this.projectNoticeLeft)$('district-notice').hidden=true}

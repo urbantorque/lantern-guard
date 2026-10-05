@@ -12,7 +12,7 @@ import { isExpedition } from './watch-depth'
 import { earnedMastery, MASTERY, type MasteryId } from './living-watch'
 
 const PREFIX = 'lanternlocks.fixed1.'
-export type Slot = 'campaign' | 'commission'
+export type Slot = 'campaign' | 'commission' | 'siege' | 'practice'
 export interface FixedRecord { wave: number; light: number; won: boolean; practice: boolean }
 export interface VillageProfile {
   v: 1
@@ -72,7 +72,7 @@ export function recordWatch(profile:VillageProfile,sim:Sim) {
   }
   profile.mastery=[...new Set([...(profile.mastery??[]),...earnedMastery(sim)])]
   const held=sim.wave-(sim.waveActive || sim.over==='lost'?1:0)
-  const format=sim.challenge.story?sim.challenge.id:sim.challenge.watchDirector?(sim.challenge.expedition?sim.challenge.id+':director'+sim.challenge.watchDirector:`${sim.challenge.endurance?'endurance':'chapter'}${sim.challenge.watchDirector}:${sim.challenge.variant}`):sim.challenge.id??sim.challenge.variant
+  const format=sim.challenge.story||sim.challenge.siege?sim.challenge.id:sim.challenge.watchDirector?(sim.challenge.expedition?sim.challenge.id+':director'+sim.challenge.watchDirector:`${sim.challenge.endurance?'endurance':'chapter'}${sim.challenge.watchDirector}:${sim.challenge.variant}`):sim.challenge.id??sim.challenge.variant
   const id=`${sim.seed}:${sim.challenge.variant}:${sim.difficulty}:${sim.challenge.watchDirector?format:sim.challenge.id??'campaign'}${sim.challenge.hero?':'+sim.challenge.hero:''}`
   const credit=profile.credits[id] ?? {wave:0,journal:{}}
   for(const [enemy,count] of Object.entries(sim.stats.cheered)) {

@@ -1,0 +1,59 @@
+/* The campaign reads as one route through a night, with a single commitment panel. */
+.siege-introduction{max-width:860px;margin-bottom:24px}
+.siege-introduction .menu-lead{margin-bottom:8px;font-size:clamp(22px,2.5vw,32px);line-height:1.2}
+.siege-introduction>p:last-child{font-size:14px;line-height:1.6;margin:0}
+.siege-layout{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:52px;align-items:start}
+.siege-timeline{list-style:none;padding:0;margin:0;display:grid;gap:0}
+.siege-timeline li{position:relative;display:grid;grid-template-columns:35px minmax(0,1fr) 66px;align-items:center;gap:17px;min-height:108px;padding:12px 0}
+.siege-timeline li:before{content:'';position:absolute;left:16px;top:72px;bottom:-12px;width:1px;background:#4f707577}
+.siege-timeline li:last-child:before{display:none}
+.siege-act-number{display:grid;place-items:center;min-height:36px;border:1px solid #59767c66;border-radius:50%;font-variant-numeric:tabular-nums;color:var(--night-muted);font-size:12px}
+.siege-timeline .held .siege-act-number{background:#2d6251;color:#d9f3de;border-color:#76a88e}
+.siege-timeline .current .siege-act-number{color:var(--night-lamp);border-color:var(--night-lamp)}
+.siege-timeline .siege-range{font-size:11px;color:#a3b8bd}
+.siege-timeline h3{font-size:20px;letter-spacing:-.025em;font-weight:600;margin:4px 0 5px;color:inherit}
+.siege-timeline p{font-size:12px;line-height:1.5;margin:0;max-width:38em}
+.siege-timeline img{width:66px;height:74px;object-fit:contain;filter:drop-shadow(0 4px 9px #0004)}
+.siege-launch{padding:0 0 16px;min-width:0}
+.siege-launch>.campaign-chart{height:140px;min-height:0;background:#193a4366;border:1px solid #6d8c8240;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.siege-launch .map-preview{width:180px;height:160px;transform:rotate(-12deg)}
+.siege-launch .campaign-chart>span{position:absolute;right:16px;bottom:14px;font-size:12px;color:var(--night-lamp)}
+.siege-launch>h3{font-size:28px;font-weight:560;letter-spacing:-.035em;margin:22px 0 12px}
+.siege-launch .resident-line{font-size:13px;line-height:1.5;margin:0 0 22px}
+.siege-launch .keeper-select{gap:7px}
+.siege-launch .keeper-option{flex-direction:column;gap:7px;text-align:center;padding:12px 6px;position:relative}
+.siege-launch .keeper-option img{width:40px;height:48px}
+.siege-launch .keeper-option b{font-size:18px}
+.siege-launch .keeper-option small{font-size:10px}
+.siege-launch .keeper-option>.ic{position:absolute;right:4px;top:4px;width:13px}
+.siege-difficulty{border:0;margin:20px 0 16px;padding:0;min-width:0}
+.siege-difficulty legend{font-size:13px;margin-bottom:9px}
+.siege-difficulty p{font-size:12px;line-height:1.5;margin:10px 0 0;min-height:36px}
+.siege-new{margin:20px 0 0;border-top:1px solid #657d7855;padding-top:8px}
+.siege-new>summary{cursor:pointer;min-height:44px;display:flex;align-items:center;font-size:13px;color:var(--night-muted)}
+.siege-progress .siege-timeline{color:var(--ink,#d8e6e2)}
+.siege-progress .siege-timeline p{color:inherit}
+.siege-result .result-number small{font-size:16px}
+.siege-result .district-panorama{margin:12px 0}
+@media(max-width:760px){
+ .siege-layout{grid-template-columns:minmax(0,1fr);gap:28px}
+ .siege-launch{grid-row:1}
+ .siege-introduction{margin-bottom:20px}
+ .siege-introduction>p:last-child{font-size:12px}
+ .siege-launch>.campaign-chart{height:90px}
+ .siege-launch .map-preview{height:110px}
+ .siege-launch>h3{font-size:24px;margin-top:16px}
+ .siege-timeline li{grid-template-columns:32px minmax(0,1fr) 48px;gap:11px}
+ .siege-timeline img{width:48px;height:60px}
+ .siege-timeline h3{font-size:18px}
+ .siege-timeline p{font-size:12px}
+ .siege-difficulty .segmented button{padding:10px 8px;flex:1}
+}
+@media(max-height:500px) and (orientation:landscape){
+ .siege-layout{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px}
+ .siege-launch{grid-row:auto}
+ .siege-launch>.campaign-chart{height:80px}
+ .siege-timeline li{grid-template-columns:30px minmax(0,1fr);gap:10px}
+ .siege-timeline img{display:none}
+ .nocturne-home .home-actions>.title-review{font-size:10px;min-height:32px;padding:3px 0}
+}

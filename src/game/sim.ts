@@ -1,4 +1,5 @@
 import { restorationLimit, lateRewardScale, lateUpgradeScale, refinedWave } from './watch-refinement'
+import {siegeTowerWave,siegeWave,SIEGE_INLET} from './siege'
 import {storyMission,storyWave,storyTowerWave,type MissionId} from './story'
 import { experienceUnlock, experiencePrice, experienceStats, experienceWave } from './watch-experience'
 import { techniqueOffers, techniqueStats, hasNeighbour, craftWave, dredgerOpen, type TechniqueId } from './watch-craft'
@@ -242,6 +243,7 @@ export type SimEvent =
 
 /** Rules a night is played under. Plain nights use {}; tides and weekly nights set several. */
 export interface Challenge {
+  siege?:1
   story?:1
   mission?:MissionId
   watchDirector?: 1 | 2
@@ -600,6 +602,7 @@ export class Sim {
     this.buildGateDistances()
     const mission=storyMission(challenge)
     if(mission){this.level.def.sources=this.level.def.sources.map(s=>({...s,openWave:s.id==='west'?mission.inlet:s.openWave}));if(mission.id==='first-lights')this.techniques=['deep-freeze']}
+    if(challenge.siege)this.level.def.sources=this.level.def.sources.map(s=>({...s,openWave:s.id==='west'?SIEGE_INLET:s.openWave}))
   }
 
   // ------------------------------------------------------------------ queries
@@ -736,7 +739,7 @@ export class Sim {
   }
 
   /** Whether this keeper may be built under the night's rules. */
-  keeperWave(id: TowerId): number {const story=storyTowerWave(this.challenge,id);if(story!==undefined)return story; const early=this.challenge.watchExperience?experienceUnlock(id,this.challenge.hero,!!this.challenge.expedition):undefined;if(early!==undefined)return early;if(this.challenge.expedition)return EXPEDITION_UNLOCK[id]; if (this.challenge.fixed) return campaignUnlock(this.challenge,FIXED_UNLOCK[id]); return this.challenge.compact && id === 'garden' ? 6 : KEEPER_WAVE[id] }
+  keeperWave(id: TowerId): number {const authored=siegeTowerWave(this.challenge,id)??storyTowerWave(this.challenge,id);if(authored!==undefined)return authored; const early=this.challenge.watchExperience?experienceUnlock(id,this.challenge.hero,!!this.challenge.expedition):undefined;if(early!==undefined)return early;if(this.challenge.expedition)return EXPEDITION_UNLOCK[id]; if (this.challenge.fixed) return campaignUnlock(this.challenge,FIXED_UNLOCK[id]); return this.challenge.compact && id === 'garden' ? 6 : KEEPER_WAVE[id] }
 
   keeperAllowed(id: TowerId): boolean {
     if (this.challenge.fixed) return this.planningWave >= this.keeperWave(id) && !(id === 'garden' && this.challenge.noGarden)
@@ -773,6 +776,7 @@ export class Sim {
   }
 
   waveDef(n: number): WaveDef {
+    if(this.challenge.siege)return passageWave(siegeWave(n),n,this.challenge,this.director)
     if(this.challenge.story)return passageWave(storyWave(this.challenge,n)!,n,this.challenge,this.director)
     if(this.challenge.watchDirector){
       if(this.challenge.expedition)return passageWave(secondWave(authoredExpedition(this.challenge,n),this.challenge,n),n,this.challenge,this.director)
@@ -1318,6 +1322,7 @@ export class Sim {
         else{hp*=1+Math.max(0,wave-5)*.08;shell*=1+Math.max(0,wave-5)*.04}
       }
       if(this.challenge.story&&def.boss){hp*=type==='toad'?3:type==='bloomheart'?.85:.65}
+      if(this.challenge.siege&&def.boss){hp*=type==='toad'?1.6:type==='dredger'?.7:type==='gloom'?.8:type==='warden'?.65:.72}
     }
     if(this.challenge.weekly!==undefined&&weeklyWatch(this.challenge.weekly).rule.name==='Iron tide')shell*=1.25
     const e: Enemy = {
@@ -1595,7 +1600,7 @@ export class Sim {
       const prevS = e.s
       const prevSeg = e.seg
       e.s += speed * dt
-      if(hasMoonArches(this.challenge))for(const arch of MOON_ARCHES){
+      if(hasMoonArches(this.challenge)&&(!this.challenge.siege||this.wave>=SIEGE_INLET))for(const arch of MOON_ARCHES){
         const at=e.seg.line.length*arch.fraction
         if(e.seg.id===arch.seg&&prevS<at&&e.s>=at){e.seenT=Math.max(e.seenT,6);if(e.def.hidden)this.events.push({t:'craft',kind:'debut',x:e.x,y:e.y,label:'Moon gate · revealed for 6s'})}
       }
@@ -2502,6 +2507,7 @@ export class Sim {
     this.level=buildLevel(passageLevel(fixedLevel(this.challenge.variant,!!this.challenge.livingWatch,true),this.director.passage))
     const m=storyMission(this.challenge)
     if(m)this.level.def.sources=this.level.def.sources.map(s=>({...s,openWave:s.id==='west'?m.inlet:s.openWave}))
+    if(this.challenge.siege)this.level.def.sources=this.level.def.sources.map(s=>({...s,openWave:s.id==='west'?SIEGE_INLET:s.openWave}))
     while(this.pads.length<this.level.def.pads.length)this.pads.push({...this.level.def.pads[this.pads.length],tower:null})
     this.recomputeRoutes();this.buildGateDistances()
   }

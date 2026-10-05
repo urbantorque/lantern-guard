@@ -3,22 +3,24 @@ import type { EnemyId, TowerId } from './defs'
 import type { Group, WaveDef } from './waves'
 import type { LevelDef } from './level'
 import {storyMission,storyUnlock,storyReward} from './story'
+import {siegeUnlock,siegeReward,SIEGE_PASSAGE} from './siege'
 
 /** Authored watches are opt-in. Historical saves retain their original rules. */
 export const DIRECTOR_RULES = 2 as const
 export const CAMPAIGN_WAVES = [1,2,3,4,6,8,9,10,11,13,16,18,21,22,24,25,26,28,30,33,35,37,39,40] as const
-export const shortCampaign = (c:Challenge) => !!c.watchDirector && !c.expedition && !c.endurance && !c.story
+export const shortCampaign = (c:Challenge) => !!c.watchDirector && !c.expedition && !c.endurance && !c.story && !c.siege
 export const campaignBeat = (c:Challenge,n:number) => shortCampaign(c) ? CAMPAIGN_WAVES[Math.max(0,Math.min(23,n-1))] : n
-export const campaignUnlock = (c:Challenge,n:number) => storyUnlock(c,n)??(shortCampaign(c) ? Math.max(1,CAMPAIGN_WAVES.findIndex(w=>w>=n)+1) : n)
+export const campaignUnlock = (c:Challenge,n:number) => siegeUnlock(c,n)??storyUnlock(c,n)??(shortCampaign(c) ? Math.max(1,CAMPAIGN_WAVES.findIndex(w=>w>=n)+1) : n)
 /** Transfer the removed waves' clear income into the retained encounter. */
 export function campaignReward(c:Challenge,n:number){
+  if(c.siege)return siegeReward(n)
   if(c.story)return storyReward(c,n)??0
   if(!shortCampaign(c))return 125+n*15
   const previous=n>1?campaignBeat(c,n-1):0,current=campaignBeat(c,n)
   let reward=0;for(let beat=previous+1;beat<=current;beat++)reward+=125+beat*15
   return reward
 }
-export const routeWave = (c:Challenge) => c.story?storyMission(c)?.passage??99:c.expedition ? 6 : c.endurance ? 20 : 12
+export const routeWave = (c:Challenge) => c.siege?SIEGE_PASSAGE:c.story?storyMission(c)?.passage??99:c.expedition ? 6 : c.endurance ? 20 : 12
 export type Passage = 'convoy' | 'runners'
 export type CommandPhase = 'charging' | 'held' | 'spent'
 export interface WatchCommand {wave:number;tower:number;phase:CommandPhase}
@@ -120,7 +122,7 @@ export function directorLevel(level:LevelDef):LevelDef {
 }
 
 export const MOON_ARCHES=[{seg:'w1',fraction:.47},{seg:'e2',fraction:.38}] as const
-export const hasMoonArches=(c:Challenge)=>!!c.watchDirector&&(c.expedition==='moonwake'||c.mission==='moon-gates'||c.mission==='broken-formation')
+export const hasMoonArches=(c:Challenge)=>!!c.watchDirector&&(!!c.siege||c.expedition==='moonwake'||c.mission==='moon-gates'||c.mission==='broken-formation')
 export function directorPreparation(c:Challenge,n:number):string|null {
   if(c.expedition&&n===4&&c.expedition==='moonwake')return 'Hidden fleets approach. Inspect the two revealing moon gates.'
   if(c.expedition&&n===6)return 'The side inlet opens. Prepare a second line of defence.'

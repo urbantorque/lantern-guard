@@ -4,7 +4,7 @@ import { heroPortrait } from '../render/heroes'
 import { fixedEnemyIcon } from '../render/fixed-world'
 import { EXPEDITIONS, type ExpeditionId } from '../game/watch-depth'
 import { COMMANDS, shortCampaign } from '../game/watch-director'
-import {mission,nextMission,missionWon} from '../game/story'
+import {mission} from '../game/story'
 import { WATCH_NAMES } from '../game/compact'
 import { PROJECTS, projectProgress } from '../game/district-projects'
 import type { VillageProfile } from '../game/fixed-store'
@@ -12,17 +12,20 @@ import type { SaveSnapshotV2 as SaveSnapshot } from '../game/sim'
 
 export const menuButton=(action:string,label:string,cls='')=>`<button data-action="${action}" class="${cls}">${label}</button>`
 const chevron=()=>icon('caretRight')
-export function titleScreen(profile:VillageProfile,campaign:SaveSnapshot|undefined,expedition:SaveSnapshot|undefined){
-  const saved=campaign&&!campaign.over?{snapshot:campaign,slot:'campaign'}:expedition&&!expedition.over?{snapshot:expedition,slot:'commission'}:null
-  const completed=PROJECTS.filter(p=>projectProgress(profile,p.id)>=1).length,next=nextMission(profile),started=missionWon(profile,'first-lights')
-  const resume=saved?`<button data-action="resume:${saved.slot}" class="title-primary"><span>Continue ${saved.slot==='campaign'?'watch':'expedition'}<small>${WATCH_NAMES[saved.snapshot.challenge.variant??0]} · Wave ${Math.max(1,saved.snapshot.wave)} / ${saved.snapshot.challenge.mission?mission(saved.snapshot.challenge.mission)!.waves.length:saved.snapshot.challenge.expedition?12:shortCampaign(saved.snapshot.challenge)?24:40}</small></span>${chevron()}</button>`:''
+export function titleScreen(profile:VillageProfile,campaign:SaveSnapshot|undefined,expedition:SaveSnapshot|undefined,siege?:SaveSnapshot){
+  const saved=siege&&!siege.over?{snapshot:siege,slot:'siege'}:null
+  const completed=PROJECTS.filter(p=>projectProgress(profile,p.id)>=1).length
+  const resume=saved?`<button data-action="resume:siege" class="title-primary"><span>Continue defence<small>Wave ${Math.min(40,saved.snapshot.wave+(saved.snapshot.enemies.length||saved.snapshot.spawners.length?0:1))}/40 · ${saved.snapshot.towers.length} towers · ${saved.snapshot.lives} light</small></span>${chevron()}</button>`:''
+  const earlier=campaign&&!campaign.over?`<button data-action="resume:campaign" class="title-review">Continue earlier ${campaign.challenge.mission?mission(campaign.challenge.mission)!.name:WATCH_NAMES[campaign.challenge.variant??0]} · ${campaign.wave}/${campaign.challenge.mission?mission(campaign.challenge.mission)!.waves.length:shortCampaign(campaign.challenge)?24:40}</button>`:''
   return `<main class="home nocturne-home"><img class="title-art" src="${import.meta.env.BASE_URL}nightward-nocturne.png" alt="A brass lantern tower watches over a winding canal and the illuminated city after dusk" fetchpriority="high"/><div class="home-shade"></div>
     <header class="title-top"><span class="title-emblem" aria-hidden="true">${icon('waves')}</span>${menuButton('settings',icon('gear')+'<span>Settings</span>','title-settings')}</header>
     <div class="home-content"><p class="eyebrow">A canal defence game</p><h1 class="wordmark" aria-label="Nightward">NIGHT<span>WARD</span></h1><p class="home-intro">Defend the city after dark.</p><div class="home-actions">${resume}
-      <button data-action="${!saved&&!started?'story-begin:first-lights':'campaign'}" class="${saved?'title-secondary':'title-primary'}"><span>${started?'Continue the campaign':'Begin First Lights'}<small>${started?next.name:'A guided defence with Mira'}</small></span>${chevron()}</button>
-      <button data-action="${!started?'campaign':'expeditions'}" class="title-secondary"><span>${!started?'Explore the campaign':'Play expedition'}<small>${!started?'Restore the city, one watch at a time':'12 waves · Choose your passage'}</small></span>${chevron()}</button>
+      <button data-action="campaign" class="${saved?'title-secondary':'title-primary'}"><span>${saved?'The Long Watch':'Begin the campaign'}<small>40 waves · One continuous defence</small></span>${chevron()}</button>
+      <button data-action="expeditions" class="title-secondary"><span>Play expedition<small>12 waves · Choose your passage</small></span>${chevron()}</button>
+      ${siege?.over?menuButton('resume:siege',`${siege.won?'View completed defence':'Review defence'} · Wave ${siege.wave}`,'title-review'):''}
+      ${earlier}
       ${!saved&&campaign?.over==='lost'?menuButton('resume:campaign','Review last defence','title-review'):''}
-      ${saved?.slot==='campaign'&&expedition&&!expedition.over?menuButton('resume:commission','Continue saved expedition','title-review'):''}
+      ${expedition&&!expedition.over?menuButton('resume:commission','Continue saved expedition','title-review'):''}
     </div></div>
     <footer class="title-bottom"><nav aria-label="Explore Nightward">${menuButton('district','The district'+(completed?`<small>${completed} restored</small>`:''))}${menuButton('bestiary','Invaders')}</nav><p>The city sleeps.<br>You keep the light.</p></footer>
   </main><div id="modal-root"></div><div id="live" class="sr-only" aria-live="polite"></div>`

@@ -1,4 +1,5 @@
 import {mission,storyTowerWave} from './story'
+import {siegeTowerWave,SIEGE_GLOW} from './siege'
 import { secondWatch } from './second-watch'
 import {restorationLimit} from './watch-refinement'
 import { campaignUnlock, shortCampaign, routeWave, COMMANDS } from './watch-director'
@@ -88,6 +89,10 @@ export function validSnapshot(s: unknown): s is SaveSnapshot {
   if(s.challenge.watchDirector!==undefined&&(![1,2].includes(Number(s.challenge.watchDirector))||s.challenge.watchMastery!==1||s.challenge.weekly!==undefined||s.challenge.commission!==undefined))return false
   if(s.challenge.endurance!==undefined&&(s.challenge.endurance!==true||![1,2].includes(Number(s.challenge.watchDirector))||s.challenge.expedition!==undefined))return false
   const directed=s.challenge as Challenge
+  if(s.challenge.siege!==undefined){
+    const q=s.challenge.skirmish
+    if(s.challenge.siege!==1||s.challenge.story||s.challenge.mission||s.challenge.endurance||s.challenge.expedition||s.challenge.weekly!==undefined||s.challenge.commission||s.challenge.contract||s.challenge.blockedPad!==undefined||s.challenge.watchDirector!==2||s.challenge.variant!==0||s.challenge.id!=='siege1'||!object(q)||q.from!==0||q.to!==40||q.glow!==SIEGE_GLOW||!integer(q.seed,0,4294967295)||s.seed!==q.seed)return false
+  }
   if(s.challenge.story!==undefined){
     const m=mission(s.challenge.mission),q=s.challenge.skirmish
     if(s.challenge.story!==1||!m||s.challenge.watchDirector!==2||s.challenge.endurance||s.challenge.expedition||s.challenge.weekly!==undefined||s.challenge.commission||s.challenge.contract||!object(q)||q.from!==0||q.to!==m.waves.length||q.glow!==m.glow||q.seed!==m.seed||s.seed!==m.seed||s.challenge.variant!==m.map||s.challenge.id!=='story1:'+m.id||s.wave>m.waves.length||m.keeper&&s.challenge.hero!==m.keeper)return false
@@ -119,7 +124,7 @@ export function validSnapshot(s: unknown): s is SaveSnapshot {
     if(w&&w.expedition.id!==e.id)return false
     if(!object(q)||q.from!==0||q.to!==e.waves||q.glow!==(w?.glow??e.glow)||q.seed!==(w?.seed??e.seed)||s.seed!==q.seed||s.challenge.variant!==(w?.variant??e.variant)||s.challenge.id!==(w?.id??`expedition:${e.id}:depth1`)||s.wave>e.waves)return false
   }
-  if (s.challenge.fixed && s.challenge.skirmish && !s.challenge.expedition && !s.challenge.story) {
+  if (s.challenge.fixed && s.challenge.skirmish && !s.challenge.expedition && !s.challenge.story && !s.challenge.siege) {
     const commissionId = s.challenge.commission
     const commission = COMMISSIONS.find(c => c.id === commissionId)
     const q = s.challenge.skirmish
@@ -188,7 +193,7 @@ export function validSnapshot(s: unknown): s is SaveSnapshot {
     if(t.sunUsed!==undefined&&(!s.challenge.livingWatch||!integer(t.sunUsed,0,1000000)||t.sunUsed>0&&(t.id!=='owl'||Number(t.b)<2)))return false
     if(t.crownReadyAt!==undefined&&(!s.challenge.watchTactics||t.id!=='cracker'||!t.refinement||!number(t.crownReadyAt,0)))return false
     const ranks = s.challenge.depth ? [...REFINEMENTS, ...LATE_REFINEMENTS] : REFINEMENTS
-    const early=storyTowerWave(directed,t.id as import('./defs').TowerId)??(s.challenge.watchExperience?experienceUnlock(t.id as import('./defs').TowerId,s.challenge.hero as import('./heroes').HeroId,!!s.challenge.expedition):undefined)
+    const early=siegeTowerWave(directed,t.id as import('./defs').TowerId)??storyTowerWave(directed,t.id as import('./defs').TowerId)??(s.challenge.watchExperience?experienceUnlock(t.id as import('./defs').TowerId,s.challenge.hero as import('./heroes').HeroId,!!s.challenge.expedition):undefined)
     if (LATE_TOWERS.includes(t.id as import('./defs').TowerId) && (!s.challenge.depth || (early??(s.challenge.expedition?EXPEDITION_UNLOCK[t.id as keyof typeof EXPEDITION_UNLOCK]:campaignUnlock(directed,t.id === 'storm' ? 16 : 26))) > s.wave + 1)) return false
     if (s.challenge.compact && (!(s.plots as number[]).includes(t.pad) || !integer(t.refinement, 0, ranks.length) || (t.refinement > 0 && (Math.max(t.a, t.b) < 3 || (s.challenge.expedition?(secondWatch(directed)?7:10):campaignUnlock(directed,secondWatch(directed)?16:ranks[t.refinement - 1].wave)) > s.wave + 1)))) return false
     if (!s.challenge.compact && t.refinement !== undefined) return false
@@ -268,7 +273,7 @@ export function validSnapshot(s: unknown): s is SaveSnapshot {
     if(e.coreOpen!==undefined&&(!secondWatch(directed)||e.type!=='dredger'||typeof e.coreOpen!=='boolean'))return false
     if(e.exposedT!==undefined&&(!s.challenge.watchTactics||!number(e.exposedT,0,4)))return false
     if(e.burnSource!==undefined&&(!s.challenge.watchTactics||!integer(e.burnSource,1)))return false
-    if(e.type==='dredger'&&(s.challenge.watchCraft!==1||s.challenge.expedition!=='sunforge'))return false
+    if(e.type==='dredger'&&(s.challenge.watchCraft!==1||s.challenge.expedition!=='sunforge'&&!s.challenge.siege&&!(s.challenge.story&&mission(s.challenge.mission)?.waves.some(w=>w.groups.some(g=>g.type==='dredger')))))return false
     if (e.escortOf !== undefined && (!integer(e.escortOf, 1) || e.type !== 'skiff' || s.challenge.harbourEncounters !== 1 && s.challenge.compact !== 1)) return false
     if (e.signalT !== undefined && !((e.type === 'warden' && (s.challenge.harbourEncounters === 1 || s.challenge.compact === 1) && number(e.signalT, 0, 2.4)) || (e.type === 'bloomheart' && (s.challenge.gardens === 1 || s.challenge.compact === 1) && number(e.signalT, 0, 3)) || (e.type === 'toad' && s.challenge.livingWatch === 1 && number(e.signalT, 0, 2)))) return false
     if (['reedling', 'bloomheart'].includes(String(e.type)) && s.challenge.gardens !== 1 && s.challenge.compact !== 1) return false
