@@ -1,9 +1,9 @@
 import {createRequire} from 'node:module'
 import {mkdirSync,readFileSync,writeFileSync} from 'node:fs'
 import assert from 'node:assert/strict'
-const require=createRequire(import.meta.url),{chromium}=require('C:/Users/roger/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright')
+const require=createRequire(import.meta.url),{chromium}=require(process.env.PLAYWRIGHT_PATH||'C:/Users/roger/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright')
 const out='artifacts/story';mkdirSync(out,{recursive:true})
-const browser=await chromium.launch({headless:true,executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',args:['--mute-audio']});const reports=[]
+const browser=await chromium.launch({headless:true,executablePath:process.env.EDGE_PATH||'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',args:['--mute-audio']});const reports=[]
 try{for(const [width,height] of [[1280,800],[390,844],[320,740],[844,390]]){
  const ctx=await browser.newContext({viewport:{width,height},reducedMotion:width===320?'reduce':'no-preference'}),page=await ctx.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));page.setDefaultTimeout(15000)
  const shot=async name=>{await page.screenshot({path:`${out}/${name}-${width}.png`,animations:'disabled'});assert(!await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),name+' horizontal overflow')}

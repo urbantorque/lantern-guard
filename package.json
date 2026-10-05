@@ -76,7 +76,8 @@
     "test:progression-trust": "tsx scripts/progression-trust-test.ts",
     "test:story": "tsx scripts/story-test.ts",
     "test:story-systems": "tsx scripts/story-systems-test.ts",
-    "balance:story": "tsx scripts/story-campaign-test.ts"
+    "balance:story": "tsx scripts/story-campaign-test.ts",
+    "qa:story": "npm run test:story && npm run balance:story && node scripts/story-browser-qa.mjs && node scripts/story-release-qa.mjs && node scripts/visual-invariants.mjs --story && node scripts/story-art-qa.mjs"
   },
   "type": "module",
   "devDependencies": {

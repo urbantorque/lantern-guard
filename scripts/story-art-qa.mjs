@@ -1,8 +1,8 @@
 import {createRequire} from 'node:module'
 import {mkdirSync} from 'node:fs'
-const require=createRequire(import.meta.url),{chromium}=require('C:/Users/roger/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright')
+const require=createRequire(import.meta.url),{chromium}=require(process.env.PLAYWRIGHT_PATH||'C:/Users/roger/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright')
 const out='artifacts/story-release';mkdirSync(out,{recursive:true})
-const browser=await chromium.launch({headless:true,executablePath:'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',args:['--mute-audio']})
+const browser=await chromium.launch({headless:true,executablePath:process.env.EDGE_PATH||'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',args:['--mute-audio']})
 try{
  const page=await browser.newPage({viewport:{width:1440,height:1000}})
  await page.goto(process.env.QA_URL||'http://127.0.0.1:5176/?muted=1')

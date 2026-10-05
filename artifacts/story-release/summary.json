@@ -1,0 +1,88 @@
+{
+  "codeCheckpoint": "fd0ee1afc105df8388f7b904f8dba84a19c6ede1",
+  "implementationPhasesComplete": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "regression": {
+    "command": "npm run check",
+    "exitCode": 0,
+    "passLogEntries": 232
+  },
+  "campaign": {
+    "paidRuns": 54,
+    "wins": 49,
+    "everyKeeperHasAWinOnEveryMission": true,
+    "exactPlanningAndActiveSaves": true,
+    "firstLights": {
+      "light": 17,
+      "commands": 1,
+      "simulationSeconds": 149
+    }
+  },
+  "browser": {
+    "openingViewports": [
+      [
+        1280,
+        800
+      ],
+      [
+        390,
+        844
+      ],
+      [
+        320,
+        740
+      ],
+      [
+        844,
+        390
+      ]
+    ],
+    "releaseViewports": [
+      [
+        1280,
+        800
+      ],
+      [
+        390,
+        844
+      ],
+      [
+        320,
+        740
+      ],
+      [
+        844,
+        390
+      ]
+    ],
+    "directAndListTargeting": true,
+    "largeText": true,
+    "reducedMotion": true,
+    "restorationStages": 9,
+    "errors": []
+  },
+  "render": {
+    "portraits": 207,
+    "stressScenes": 16,
+    "gameStateUnchanged": true,
+    "maxCpuP95Ms": 17.300000000745058,
+    "scope": "Synthetic desktop browser renderer measurement, not a physical phone performance claim"
+  },
+  "packaging": {
+    "productionBuild": true,
+    "capacitorIosSync": true,
+    "nativeArchive": false
+  },
+  "unverified": [
+    "Observed newcomer and returning-player playtests",
+    "Physical iPhone touch, audio, thermals, battery and sustained performance",
+    "Xcode device build/signing and App Store release"
+  ]
+}

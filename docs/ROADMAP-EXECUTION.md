@@ -12,15 +12,13 @@ Approved 6 October 2026. Checkpoints are committed and pushed to `master`.
 | 3 | Eight authored campaign missions across the four waterways | Implemented; 54 paid references, exact saves and route timings checked |
 | 4 | Staged district restoration, keeper/resident character and next goals | Implemented; progression invariants and four browser sizes pass |
 | 5 | Battlefield silhouette/material/feedback and mobile polish | Implemented; 207 portraits, animation, reduced motion and 16 stress scenes pass |
-| 6 | Automated/browser confirmation, balance reports and human/device test protocol | Regression and browser suites pass; final packaging and evidence consolidation in progress |
+| 6 | Automated/browser confirmation, balance reports and human/device test protocol | Automated release work complete; production build and iOS asset sync pass; human/device protocol delivered |
 
 ## Phase 0
 
 Current and historical chapter/endurance records now share a decoder. District restoration derives credit from saved records, repairing affected profiles without inventing wins or awarding duplicate currency. Practice records and unknown formats are excluded. Existing saves and earned cosmetics are retained.
 
 Settings offers opt-in local playtest recording, JSON export and clear. Recording retains eight sessions with at most 600 events each. Game purchases, actions, wave results and leaks are captured without personal information or network transmission. Recording and storage failures cannot block gameplay.
-
-## Validation boundaries
 
 ## Phase 1
 
@@ -61,3 +59,15 @@ The render suite validates 207 unclipped portraits, eight animated tower roles, 
 The eight-mission campaign is the main progression path. Long watches and endurance are advanced options; the opening exposes two tower roles and delays the command until it has a purpose. Mission victories use one persistent restoration result instead of a timed generic celebration followed by a second full report. Detailed statistics remain available on demand.
 
 No score target is presented as achieved. [The player/device protocol](PLAYER-VALIDATION.md) defines the observed tests needed to judge enjoyment, mastery, retention intent, sound fatigue and sustained native performance.
+
+## Phase 6: release evidence
+
+All implementation phases are complete. `npm run check` passed the full historical and current regression suite. The final `npm run balance:story` completed all 54 paid campaign references with 49 wins and a winning reference for every keeper on every mission. First Lights is checked separately with a paid opening, a real released command and exact save continuation.
+
+The final four-size release pass checks larger text, reduced motion, the complete campaign, nine restoration stages, direct target marking, target-list fallback, command release and live final-mission rendering without browser exceptions or horizontal overflow. A separate opening pass checks purchase, guidance, save/resume, reward and local JSON export. Portraits and full restoration art sheets were rendered and inspected.
+
+The production TypeScript/Vite build and Capacitor iOS asset/plugin sync pass. The main bundle remains above Vite's default 500 kB advisory threshold (about 193 kB gzipped); this is recorded as an advisory, not hidden by increasing the threshold. Xcode compilation/signing, physical phone checks and observed-player results are not available from this Windows workspace and are explicitly unverified.
+
+Compact machine-readable evidence is in `artifacts/story-release/summary.json`, `artifacts/story-release/report.json`, `artifacts/story-release/invariants.json`, `artifacts/story/browser-report.json` and `artifacts/story/campaign-matrix.json`. The generated PNG galleries and raw logs remain local QA artifacts.
+
+To reproduce, run the game with `npm run dev -- --port 5176`, then use `npm run check` for regressions and `npm run qa:story` for the paid fixtures, campaign matrix, browser flows and visual checks. The browser scripts accept `QA_URL`, `PLAYWRIGHT_PATH` and `EDGE_PATH`; their defaults match this workstation. `npm run ios:sync` rebuilds the assets and updates the native project. `QA_WIDTH` can narrow release UI diagnosis to a single viewport; leave it unset for the complete four-size report.
