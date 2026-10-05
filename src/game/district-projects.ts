@@ -1,3 +1,4 @@
+import {missionWon} from './story'
 import { CONTRACTS } from './watch-mastery'
 import { watchRecord } from './record-view'
 import type { VillageProfile } from './fixed-store'
@@ -11,7 +12,7 @@ export type ProjectId=typeof PROJECTS[number]['id']
 export function projectProgress(p:VillageProfile,id:ProjectId){
   const best=Math.max(0,...Object.entries(p.records).flatMap(([key,r])=>{const record=watchRecord(key,r.wave);return record&&!record.practice&&!r.practice?[record.restorationWave]:[]}))
   const heroes=new Set(Object.entries(p.records).filter(([k,r])=>k.startsWith('expedition:')&&r.won&&!r.practice).map(([k])=>k.split(':').at(-2)))
-  if(id==='market')return p.commissions.includes('sunforge')?1:Math.min(1,best/10)
+  if(id==='market')return p.commissions.includes('sunforge')?1:Math.max(missionWon(p,'first-lights')?1/3:0,Math.min(1,best/10))
   if(id==='observatory')return p.commissions.includes('moonwake')?1:Math.min(1,best/25)
   return Math.min(1,Math.max(best/40,heroes.size/2))
 }

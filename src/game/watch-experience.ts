@@ -4,11 +4,12 @@ import type { TowerId, TowerStats } from './defs'
 import type { TechniqueId } from './watch-craft'
 import type { WaveDef } from './waves'
 import { directorPreparation } from './watch-director'
+import {storyMission} from './story'
 
 export const EXPERIENCE_RULES=1 as const
 export const experiencePrice=(id:TowerId,hero:HeroId|undefined,base:number)=>hero==='ivo'&&id==='storm'?280:base
 export const experienceUnlock=(id:TowerId,hero:HeroId|undefined,short:boolean)=>hero==='ivo'&&id==='storm'?(short?2:3):hero==='mira'&&id==='bell'?1:undefined
-export const techniqueWaves=(c:Challenge)=>c.watchDirector?(c.expedition?[3]:[4]):c.watchExperience?(c.expedition?[3,7]:[4,12]):c.expedition?[4,8]:[6,16]
+export const techniqueWaves=(c:Challenge)=>c.story?(c.mission==='first-lights'?[1]:[3]):c.watchDirector?(c.expedition?[3]:[4]):c.watchExperience?(c.expedition?[3,7]:[4,12]):c.expedition?[4,8]:[6,16]
 export const techniqueRound=(c:Challenge,index:number)=>c.watchExperience?1-index:index
 export function experienceStats(s:TowerStats,id:TowerId,hero:HeroId|undefined,ids:readonly TechniqueId[]){
   if(hero==='sol'&&id==='cracker'){s.burn=Math.max(1.5,s.burn);s.burnDur=Math.max(2.5,s.burnDur)}
@@ -34,6 +35,7 @@ export function experienceTechnique(id:TechniqueId){
 
 /** Preparation is driven by the next encounter, never by real-world waiting. */
 export function preparationBeat(c:Challenge,wave:number):string|null {
+  if(c.story)return storyMission(c)?.preparations[wave]??null
   if(!c.watchExperience||wave<=1)return null
   if(techniqueWaves(c).includes(wave))return 'Choose your technique and shape the next stretch.'
   if(c.watchDirector)return directorPreparation(c,wave)

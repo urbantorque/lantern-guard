@@ -1,8 +1,10 @@
 import type { Sim } from './sim'
 import { enemyName } from './bestiary'
 import { BESTIARY } from './bestiary'
+import {storyLesson} from './story'
 
 export function watchLesson(s:Sim,seen:readonly string[]=[]){
+  if(s.challenge.mission==='first-lights'){const lesson=storyLesson(s);return lesson&&!seen.includes(lesson.id)?lesson:null}
   if(s.challenge.refinedWatch)return openingLesson(s,seen)
   if(!s.challenge.watchCraft||s.wave>10)return null
   const hints=[

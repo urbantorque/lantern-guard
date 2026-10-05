@@ -1,3 +1,4 @@
+import {mission,storyTowerWave} from './story'
 import { secondWatch } from './second-watch'
 import {restorationLimit} from './watch-refinement'
 import { campaignUnlock, shortCampaign, routeWave, COMMANDS } from './watch-director'
@@ -87,13 +88,18 @@ export function validSnapshot(s: unknown): s is SaveSnapshot {
   if(s.challenge.watchDirector!==undefined&&(![1,2].includes(Number(s.challenge.watchDirector))||s.challenge.watchMastery!==1||s.challenge.weekly!==undefined||s.challenge.commission!==undefined))return false
   if(s.challenge.endurance!==undefined&&(s.challenge.endurance!==true||![1,2].includes(Number(s.challenge.watchDirector))||s.challenge.expedition!==undefined))return false
   const directed=s.challenge as Challenge
+  if(s.challenge.story!==undefined){
+    const m=mission(s.challenge.mission),q=s.challenge.skirmish
+    if(s.challenge.story!==1||!m||s.challenge.watchDirector!==2||s.challenge.endurance||s.challenge.expedition||s.challenge.weekly!==undefined||s.challenge.commission||s.challenge.contract||!object(q)||q.from!==0||q.to!==m.waves.length||q.glow!==m.glow||q.seed!==m.seed||s.seed!==m.seed||s.challenge.variant!==m.map||s.challenge.id!=='story1:'+m.id||s.wave>m.waves.length||m.keeper&&s.challenge.hero!==m.keeper)return false
+    if(m.id==='first-lights'&&(!Array.isArray(s.techniques)||s.techniques.length!==1||s.techniques[0]!=='deep-freeze'))return false
+  }else if(s.challenge.mission!==undefined)return false
   if(shortCampaign(directed)&&s.wave>24)return false
   if(s.challenge.contract!==undefined&&(!s.challenge.watchMastery||!contractDef(s.challenge.contract)||contractDef(s.challenge.contract)!.expedition!==s.challenge.expedition))return false
   if(s.challenge.refinedWatch!==undefined&&(s.challenge.refinedWatch!==1||s.challenge.livingWatch!==1||s.challenge.weekly!==undefined&&!s.challenge.watchExperience))return false
   if(s.stats.lightRestored!==undefined&&(!s.challenge.refinedWatch||!integer(s.stats.lightRestored,0,restorationLimit(s.difficulty as import('./defs').Difficulty))))return false
   if(s.challenge.livingWatch!==undefined&&(s.challenge.livingWatch!==1||s.challenge.watchCraft!==1))return false
   if(s.challenge.weekly!==undefined&&(!integer(s.challenge.weekly,0,5200)||s.challenge.livingWatch!==1||!s.challenge.expedition))return false
-  if(s.challenge.watchCraft?!validTechniques(s.techniques,s.challenge.hero as import('./heroes').HeroId,Number(s.wave),!!s.challenge.expedition,!!s.challenge.watchExperience,!!s.challenge.watchDirector):s.techniques!==undefined)return false
+  if(s.challenge.watchCraft?!validTechniques(s.techniques,s.challenge.hero as import('./heroes').HeroId,Number(s.wave),!!s.challenge.expedition,!!s.challenge.watchExperience,!!s.challenge.watchDirector,directed):s.techniques!==undefined)return false
   if(s.challenge.expedition!==undefined&&(!isExpedition(s.challenge.expedition)||s.challenge.watchDepth!==1||!s.challenge.skirmish||s.challenge.commission!==undefined||s.challenge.blockedPad!==undefined))return false
   if (s.challenge.fixed !== undefined && (s.challenge.fixed !== 1 || s.challenge.compact !== 1 || s.challenge.depth !== 1 || s.challenge.balance !== 1 || s.challenge.guard !== 1 || s.challenge.plans || s.challenge.guardian || s.freeplay || s.wave > 40)) return false
   if (s.challenge.fixed && (s.preparation !== null || s.preparationRound !== 0 || s.challenge.practice !== undefined && typeof s.challenge.practice !== 'boolean' || !s.challenge.skirmish && (s.challenge.commission !== undefined || s.challenge.blockedPad !== undefined))) return false
@@ -113,7 +119,7 @@ export function validSnapshot(s: unknown): s is SaveSnapshot {
     if(w&&w.expedition.id!==e.id)return false
     if(!object(q)||q.from!==0||q.to!==e.waves||q.glow!==(w?.glow??e.glow)||q.seed!==(w?.seed??e.seed)||s.seed!==q.seed||s.challenge.variant!==(w?.variant??e.variant)||s.challenge.id!==(w?.id??`expedition:${e.id}:depth1`)||s.wave>e.waves)return false
   }
-  if (s.challenge.fixed && s.challenge.skirmish && !s.challenge.expedition) {
+  if (s.challenge.fixed && s.challenge.skirmish && !s.challenge.expedition && !s.challenge.story) {
     const commissionId = s.challenge.commission
     const commission = COMMISSIONS.find(c => c.id === commissionId)
     const q = s.challenge.skirmish
@@ -182,7 +188,7 @@ export function validSnapshot(s: unknown): s is SaveSnapshot {
     if(t.sunUsed!==undefined&&(!s.challenge.livingWatch||!integer(t.sunUsed,0,1000000)||t.sunUsed>0&&(t.id!=='owl'||Number(t.b)<2)))return false
     if(t.crownReadyAt!==undefined&&(!s.challenge.watchTactics||t.id!=='cracker'||!t.refinement||!number(t.crownReadyAt,0)))return false
     const ranks = s.challenge.depth ? [...REFINEMENTS, ...LATE_REFINEMENTS] : REFINEMENTS
-    const early=s.challenge.watchExperience?experienceUnlock(t.id as import('./defs').TowerId,s.challenge.hero as import('./heroes').HeroId,!!s.challenge.expedition):undefined
+    const early=storyTowerWave(directed,t.id as import('./defs').TowerId)??(s.challenge.watchExperience?experienceUnlock(t.id as import('./defs').TowerId,s.challenge.hero as import('./heroes').HeroId,!!s.challenge.expedition):undefined)
     if (LATE_TOWERS.includes(t.id as import('./defs').TowerId) && (!s.challenge.depth || (early??(s.challenge.expedition?EXPEDITION_UNLOCK[t.id as keyof typeof EXPEDITION_UNLOCK]:campaignUnlock(directed,t.id === 'storm' ? 16 : 26))) > s.wave + 1)) return false
     if (s.challenge.compact && (!(s.plots as number[]).includes(t.pad) || !integer(t.refinement, 0, ranks.length) || (t.refinement > 0 && (Math.max(t.a, t.b) < 3 || (s.challenge.expedition?(secondWatch(directed)?7:10):campaignUnlock(directed,secondWatch(directed)?16:ranks[t.refinement - 1].wave)) > s.wave + 1)))) return false
     if (!s.challenge.compact && t.refinement !== undefined) return false

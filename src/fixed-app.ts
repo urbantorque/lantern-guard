@@ -1,3 +1,5 @@
+import {mission,storyMission,storyChallenge,missionOpen,nextMission,type MissionId} from './game/story'
+import {campaignScreen} from './ui/campaign'
 import { secondWatch, SECOND_STAGES, commandReadout, designatedTarget, passageDescription } from './game/second-watch'
 import { localPlaytest } from './game/playtest-log'
 import { passagePreview, SECOND_SIGNATURES } from './ui/second-watch'
@@ -64,6 +66,7 @@ export class FixedApp {
   private qa=false
   private selectedContracts=new Set<ContractId>()
   private hero:HeroId='sol'
+  private selectedMission:MissionId='first-lights'
   private endurance=false
   private selectedExpedition=featuredExpedition().id
   private moment=''
@@ -144,6 +147,14 @@ export class FixedApp {
     <section class="watch-launch"><fieldset><legend>Difficulty</legend><div class="segmented">${(['relaxed','standard','nightfall'] as Difficulty[]).map(d=>button('mode:'+d,DIFFICULTY[d].name,this.difficulty===d?'selected':'',false,undefined,this.difficulty===d)).join('')}</div><p>${this.difficulty==='relaxed'?'50 light. A gentler watch.':this.difficulty==='standard'?'25 light. Plan carefully and retry when you need to.':'15 light. Stronger enemies. Retrying records practice.'}</p></fieldset><div>${loadWatch('campaign')&&!loadWatch('campaign')!.snapshot.over?'<p class="menu-save-note">Beginning replaces your saved watch. Your district and expedition are kept.</p>':''}${button('new','Begin watch '+icon('caretRight'),'primary')}<p class="launch-caption">${this.endurance?'An extended defence across forty waves.':'Three acts. A passage choice. A complete defence.'}</p></div></section></div>`,'choose')
     if(focusAction){document.querySelector<HTMLButtonElement>('[data-action="'+focusAction+'"]')?.focus({preventScroll:true});const body=document.querySelector<HTMLElement>('.drawer-body');if(body)body.scrollTop=scroll}
   }
+  private campaign(){
+    this.show('Keep the city alight',campaignScreen(this.profile,this.selectedMission,this.hero,this.difficulty,(map)=>this.preview(map),!!loadWatch('campaign')&&!loadWatch('campaign')!.snapshot.over),'campaign')
+  }
+  private newStory(id:MissionId){
+    if(!missionOpen(this.profile,id))return
+    const rules=storyChallenge(id,this.hero);this.slot='campaign';this.profile.lastHero=rules.hero;writeJSON('profile',this.profile)
+    this.begin(new Sim(this.difficulty,rules,rules.skirmish!.seed));this.writePlanning(this.sim!.snapshot());this.save()
+  }
   private towerDef(id:TowerId){return heroTower(id,this.sim?this.sim.challenge.hero:this.hero)}
   private kitCopy(text:string){
     text=bestiaryText(text)
@@ -167,7 +178,7 @@ export class FixedApp {
   private roster(){
     const id=this.sim?this.sim.challenge.hero:this.hero,h=id?HEROES[id]:null
     const baseUnlocks=this.sim?.challenge.expedition?EXPEDITION_UNLOCK:FIXED_UNLOCK;const unlocks=Object.fromEntries(TOWER_ORDER.map(t=>[t,this.sim?this.sim.keeperWave(t):experienceUnlock(t,id??undefined,false)??campaignUnlock({watchDirector:1,...(this.endurance?{endurance:true as const}:{})},baseUnlocks[t])])) as Record<TowerId,number>
-    this.show(h?`${h.name} · ${h.title}`:'The original keepers',`${h?`<div class="hero-intro"><img src="${heroPortrait(id!)}" alt="${h.name}, ${h.title}"/><div><p class="lead">${h.approach}</p><p class="small muted">${h.tradeoff}</p></div></div>`:''}<p class="small muted">All three heroes are available immediately. Each tower has two specialisations and five stages.</p><div class="roster-list">${[...TOWER_ORDER].sort((a,b)=>unlocks[a]-unlocks[b]).map(t=>`<article><img src="${fixedTowerIcon(t,1,0,0,id)}" alt=""/><div><h3>${heroTower(t,id).name}</h3><p class="roster-role">${role[t]} · Wave ${unlocks[t]} · ${this.sim?.towerCost(t)??experiencePrice(t,id,TOWERS[t].cost)} glow</p><p>${h?h.towers[t].trait:TOWERS[t].blurb}</p><small>${heroTower(t,id).paths.map(p=>p.name).join(' / ')}</small></div></article>`).join('')}</div>${!this.sim?button('choose','Back to watch setup','primary wide'):''}`,'roster')
+    this.show(h?`${h.name} · ${h.title}`:'The original keepers',`${h?`<div class="hero-intro"><img src="${heroPortrait(id!)}" alt="${h.name}, ${h.title}"/><div><p class="lead">${h.approach}</p><p class="small muted">${h.tradeoff}</p></div></div>`:''}<p class="small muted">Three keepers, eight tower roles. Each tower has two specialisations and three stages.</p><div class="roster-list">${[...TOWER_ORDER].sort((a,b)=>unlocks[a]-unlocks[b]).map(t=>`<article><img src="${fixedTowerIcon(t,1,0,0,id)}" alt=""/><div><h3>${heroTower(t,id).name}</h3><p class="roster-role">${role[t]} · Wave ${unlocks[t]} · ${this.sim?.towerCost(t)??experiencePrice(t,id,TOWERS[t].cost)} glow</p><p>${h?h.towers[t].trait:TOWERS[t].blurb}</p><small>${heroTower(t,id).paths.map(p=>p.name).join(' / ')}</small></div></article>`).join('')}</div>${!this.sim?button('choose','Back to watch setup','primary wide'):''}`,'roster')
   }
   private preview(map:number) {
     const level=buildLevel(fixedLevel(map,true,true))
@@ -241,7 +252,7 @@ export class FixedApp {
     }
     const command=$<HTMLButtonElement>('surge-command'),q=s.director?.command??s.mastery?.surge,hero=s.challenge.hero
     const spec=s.director&&hero?COMMANDS[hero]:null
-    command.hidden=!(spec?s.techniques.length>0:commandAvailable(s))||!s.waveActive||!!s.over
+    command.hidden=s.challenge.mission==='first-lights'&&s.wave<4||!(spec?s.techniques.length>0:commandAvailable(s))||!s.waveActive||!!s.over
     command.disabled=!s.waveActive||(spec?!commandTower(s):!s.towers.some(t=>t.id==='storm'))||q?.phase==='release'||q?.phase==='spent'||!!spec&&q?.phase==='held'&&!commandTargets(s).length
     command.dataset.phase=q?.phase??'idle'
     command.textContent=spec?(q?.phase==='held'?(commandTargets(s).length?spec.release:hero==='sol'?'Awaiting burns':'Awaiting targets'):q?.phase==='charging'?'Banking · cancel':q?.phase==='spent'?'Command used':spec.hold):(q?.phase==='held'?'Release surge':q?.phase==='charging'?'Banking · cancel':q?.phase==='release'?'Seeking target':q?.phase==='spent'?'Surge used':'Bank next surge')
@@ -289,7 +300,7 @@ export class FixedApp {
     const next=$('sky-panel-next');if(next)next.textContent=`Next: ${WEATHER[sky.nextWeather].name} in ${clockText(sky.weatherLeft/WATCH_TEMPO)}`
     document.querySelectorAll('.sky-cycle>div').forEach((e,i)=>e.classList.toggle('current',i===Number(sky.night)))
     const offer=$('technique-offer');if(offer){offer.hidden=!!s.over||!techniqueOffers(s).length;offer.textContent=s.director?'Choose signature':`Choose technique ${s.techniques.length+1}/2`}
-    const lesson=watchLesson(s,this.profile.lessons),hint=$('watch-lesson');document.querySelector('[data-action="plot:0"]')?.classList.toggle('teaching',lesson?.id==='refined-place');if(hint){hint.hidden=!lesson||!!this.drawer;hint.textContent=lesson?lesson.text+'  ×':'';hint.setAttribute('aria-label',lesson?lesson.text+' Dismiss tip':'Tip')}
+    const lesson=watchLesson(s,this.profile.lessons),hint=$('watch-lesson');document.querySelector('[data-action="plot:0"]')?.classList.toggle('teaching',lesson?.id==='refined-place'||lesson?.id==='story-place');if(hint){hint.hidden=!lesson||!!this.drawer;hint.textContent=lesson?lesson.text+'  ×':'';hint.setAttribute('aria-label',lesson?lesson.text+' Dismiss tip':'Tip')}
     const obstacle=$('tower-obstacle');if(obstacle&&this.selection?.kind==='tower'){obstacle.textContent=towerObstacle(s,this.selection.tower);obstacle.hidden=!obstacle.textContent}
     const prep=$('prepare-watch');prep.hidden=!this.preparing||!!this.drawer;if(this.preparing)prep.innerHTML=passagePending(s)?'<b>Choose your passage</b><p>Shape the next three waves around your defence.</p>'+button('passages','Inspect both routes','primary'):this.rehearsal?.finished?'<b>Practice complete</b>'+button('practice-report','Review practice','primary'):'<b>'+(this.rehearsal?'Practice · adjust for wave ':'Prepare for wave ')+(s.wave+1-s.waveOffset)+'</b><p>'+(this.rehearsal?'Move, sell or upgrade using the original budget. Only this wave will play.':preparationBeat(s.challenge,s.wave+1))+'</p>'+button('begin-next','Ready · begin wave','primary');
     if(this.rehearsal)$('flow-label').textContent=this.rehearsal.finished?'Practice complete':s.waveActive?'One-wave practice':'Practice · take your time'
@@ -326,7 +337,7 @@ export class FixedApp {
     if(cost!==null) {this.show('A little more room',`<p>Unlock plot ${i+1} for ${cost} glow. Building a tower costs extra.</p>${`<button data-action="unlock:${i}" data-cost="${cost}" class="primary wide">Unlock · ${cost} glow</button>`}`,'plot');return}
     const cards=TOWER_ORDER.filter(id=>s.keeperAllowed(id)).map(id=>`<button data-action="build:${i}:${id}" class="build-card"><img src="${fixedTowerIcon(id,0,0,0,this.sim?.challenge.hero)}" alt=""/><span><b>${this.towerDef(id).name}</b><small>${role[id]} · ${id==='garden'?'Daylight income':secondWatch(s.challenge)?id==='owl'?'Detection & sunlight':'Stable day / night reach':id==='owl'?'Night shelter':lamplit(id)?'Lamplit':'Needs night shelter'}</small>${s.previewBond(i,id)?`<em>Pairs with ${s.previewBond(i,id)!.def.name}</em>`:''}</span><strong>${s.towerCost(id)} <small>glow</small></strong></button>`).join('')
     const next=TOWER_ORDER.filter(id=>s.keeperWave(id)>s.planningWave).sort((a,b)=>s.keeperWave(a)-s.keeperWave(b))[0]
-    this.show(`Build on plot ${i+1}`,`<p class="muted">Choose a tower to preview its coverage before spending.</p><div class="build-list">${cards}</div>${next?`<p class="small muted">${this.towerDef(next).name} arrives at wave ${s.keeperWave(next)}.</p>`:''}`,'build')
+    this.show(`Build on plot ${i+1}`,`<p class="muted">Choose a tower to preview its coverage before spending.</p><div class="build-list">${cards}</div>${next&&s.keeperWave(next)<=s.finalWave?`<p class="small muted">${this.towerDef(next).name} arrives at wave ${s.keeperWave(next)}.</p>`:''}`,'build')
   }
   private towerUpgrades(t:Tower){
     const s=this.sim!,stage=stageOf(t),path=t.b?1:0
@@ -462,6 +473,7 @@ export class FixedApp {
     const rehearsalReady=matchingCheckpoint(s.snapshot(),loadPlanning(this.slot))
     const won=s.over==='won'
     this.show(won?'The lantern is still alight':'A little light for next time',`<p class="eyebrow">${WATCH_NAMES[this.map]} · ${DIFFICULTY[s.difficulty].name}${s.challenge.practice?' · Practice':''}</p><p class="result-number">${s.wave-(won?0:1)-s.waveOffset}<small> waves held</small></p><p>${won?'The district remembers your watch.':s.lastLeak?`${enemyName(s.lastLeak.enemy)} reached the lantern${s.lastLeak.armoured?' with armour remaining':''}${s.lastLeak.hidden?' while still hidden':''}. ${FIXED_TIPS[s.lastLeak.enemy]}`:'Try building around a longer shared stretch of the stream.'}</p>${s.lastLeak?.detail?`<p class="breach-advice"><b>At the marked lower bend</b>${breachAdvice(s.lastLeak)}</p>`:''}${this.contractReport()}<ul class="watch-insights">${watchInsights(s).map(line=>`<li>${line}</li>`).join('')}</ul>${won?button('rematch','Rematch this seed','primary wide'):button('retry',s.difficulty==='nightfall'?'Retry as practice':'Retry this wave','primary wide',!loadPlanning(this.slot))}${!won&&rehearsalReady?button('practice-wave','Practise this wave only','secondary wide')+'<p class="small muted">Adjust the defence, test one wave, then return here. Your result and district rewards stay as recorded.</p>':''}${won&&!s.isChallenge?button('nextmap','Try the next waterway','secondary wide'):''}${nextMastery(this.profile)?`<p class="next-goal"><b>Next: ${nextMastery(this.profile)!.name}</b><span>${nextMastery(this.profile)!.hint}</span></p>`:''}${button('home','Return to the district','secondary wide')}`,'result')
+    if(s.challenge.story){const m=storyMission(s.challenge)!,next=nextMission(this.profile);document.querySelector('.result .drawer-body')?.insertAdjacentHTML('afterbegin',won?`<article class="story-reward"><span>District restored</span><h3>${m.reward}</h3><p>“${m.line}”</p><small>${m.resident}</small></article>${button('campaign',next.id===m.id?'Return to the campaign':'Next · '+next.name,'primary wide')}`:`<p class="mission-context">${m.name} · ${m.brief}</p>`)}
     if(won&&s.challenge.expedition&&s.challenge.weekly===undefined){const e=EXPEDITIONS.find(e=>e.id===s.challenge.expedition)!;document.querySelector('.result .drawer-body')?.insertAdjacentHTML('afterbegin',`<p class="earned-reward">${icon('check')} ${e.reward} earned · ${HEROES[this.hero].name} stamp complete</p>`)}
   }
   private startPractice(repeat=false) {
@@ -518,6 +530,11 @@ export class FixedApp {
     if(cmd==='close'){this.close();return}
     if(cmd==='hero'&&isHero(a)&&this.drawer==='choose'){this.hero=a;this.choose(action);return}
     if(cmd==='roster'){this.roster();return}
+    if(cmd==='campaign'){this.selectedMission=nextMission(this.profile).id;this.campaign();return}
+    if(cmd==='mission'&&mission(a)){this.selectedMission=a as MissionId;this.campaign();return}
+    if(cmd==='story-begin'&&mission(a)){this.newStory(a as MissionId);return}
+    if(cmd==='story-hero'&&isHero(a)){this.hero=a;this.campaign();return}
+    if(cmd==='story-mode'&&['relaxed','standard','nightfall'].includes(a)){this.difficulty=a as Difficulty;this.campaign();return}
     if(cmd==='choose'){this.choose();return}
     if(cmd==='map'){this.map=Number(a);this.choose(action);return}
     if(cmd==='mode'){this.difficulty=a as Difficulty;this.choose(action);return}
@@ -576,7 +593,7 @@ export class FixedApp {
     if(cmd==='move'){this.moving=Number(a);this.close()}
     if(cmd==='sell'){this.change(()=>s.sell(tower()));this.close()}
     if(cmd==='retry'){const p=loadPlanning(this.slot);if(p){p.challenge.practice ||=s.difficulty==='nightfall';p.stats.retries=(s.stats.retries??0)+1;this.begin(Sim.restore(p));this.save()}}
-    if(cmd==='rematch'){if(s.challenge.weekly!==undefined)this.newWeekly(s.challenge.weekly);else if(s.challenge.expedition){const c=contractDef(s.challenge.contract);if(c)this.selectedContracts.add(c.id);else for(const q of CONTRACTS)if(q.expedition===s.challenge.expedition)this.selectedContracts.delete(q.id);this.newExpedition(s.challenge.expedition)}else this.newWatch(s.challenge.commission,s.seed)}
+    if(cmd==='rematch'){if(s.challenge.mission){this.newStory(s.challenge.mission);return}if(s.challenge.weekly!==undefined)this.newWeekly(s.challenge.weekly);else if(s.challenge.expedition){const c=contractDef(s.challenge.contract);if(c)this.selectedContracts.add(c.id);else for(const q of CONTRACTS)if(q.expedition===s.challenge.expedition)this.selectedContracts.delete(q.id);this.newExpedition(s.challenge.expedition)}else this.newWatch(s.challenge.commission,s.seed)}
     if(cmd==='nextmap'){this.map=(this.map+1)%4;this.newWatch()}
     this.refresh()
   }

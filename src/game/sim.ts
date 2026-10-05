@@ -1,4 +1,5 @@
 import { restorationLimit, lateRewardScale, lateUpgradeScale, refinedWave } from './watch-refinement'
+import {storyMission,storyWave,storyTowerWave,type MissionId} from './story'
 import { experienceUnlock, experiencePrice, experienceStats, experienceWave } from './watch-experience'
 import { techniqueOffers, techniqueStats, hasNeighbour, craftWave, dredgerOpen, type TechniqueId } from './watch-craft'
 import { livingWave, escortCover, weeklyWatch } from './living-watch'
@@ -241,6 +242,8 @@ export type SimEvent =
 
 /** Rules a night is played under. Plain nights use {}; tides and weekly nights set several. */
 export interface Challenge {
+  story?:1
+  mission?:MissionId
   watchDirector?: 1 | 2
   endurance?: true
   watchMastery?: 1
@@ -595,6 +598,8 @@ export class Sim {
     }
     this.recomputeRoutes()
     this.buildGateDistances()
+    const mission=storyMission(challenge)
+    if(mission){this.level.def.sources=this.level.def.sources.map(s=>({...s,openWave:s.id==='west'?mission.inlet:s.openWave}));if(mission.id==='first-lights')this.techniques=['deep-freeze']}
   }
 
   // ------------------------------------------------------------------ queries
@@ -731,7 +736,7 @@ export class Sim {
   }
 
   /** Whether this keeper may be built under the night's rules. */
-  keeperWave(id: TowerId): number { const early=this.challenge.watchExperience?experienceUnlock(id,this.challenge.hero,!!this.challenge.expedition):undefined;if(early!==undefined)return early;if(this.challenge.expedition)return EXPEDITION_UNLOCK[id]; if (this.challenge.fixed) return campaignUnlock(this.challenge,FIXED_UNLOCK[id]); return this.challenge.compact && id === 'garden' ? 6 : KEEPER_WAVE[id] }
+  keeperWave(id: TowerId): number {const story=storyTowerWave(this.challenge,id);if(story!==undefined)return story; const early=this.challenge.watchExperience?experienceUnlock(id,this.challenge.hero,!!this.challenge.expedition):undefined;if(early!==undefined)return early;if(this.challenge.expedition)return EXPEDITION_UNLOCK[id]; if (this.challenge.fixed) return campaignUnlock(this.challenge,FIXED_UNLOCK[id]); return this.challenge.compact && id === 'garden' ? 6 : KEEPER_WAVE[id] }
 
   keeperAllowed(id: TowerId): boolean {
     if (this.challenge.fixed) return this.planningWave >= this.keeperWave(id) && !(id === 'garden' && this.challenge.noGarden)
@@ -768,6 +773,7 @@ export class Sim {
   }
 
   waveDef(n: number): WaveDef {
+    if(this.challenge.story)return passageWave(storyWave(this.challenge,n)!,n,this.challenge,this.director)
     if(this.challenge.watchDirector){
       if(this.challenge.expedition)return passageWave(secondWave(authoredExpedition(this.challenge,n),this.challenge,n),n,this.challenge,this.director)
       const beat=campaignBeat(this.challenge,n)
@@ -1311,6 +1317,7 @@ export class Sim {
         if(def.boss){hp*=type==='toad'?2:type==='gloom'?.52:type==='warden'?.48:1;shell*=.7}
         else{hp*=1+Math.max(0,wave-5)*.08;shell*=1+Math.max(0,wave-5)*.04}
       }
+      if(this.challenge.story&&def.boss){hp*=type==='toad'?3:type==='bloomheart'?.85:.65}
     }
     if(this.challenge.weekly!==undefined&&weeklyWatch(this.challenge.weekly).rule.name==='Iron tide')shell*=1.25
     const e: Enemy = {
@@ -2517,6 +2524,7 @@ export class Sim {
     this.events.push({t:'tactic',kind:'interrupt',x:e.x,y:e.y})
   }
   bankCommand():boolean {
+    if(this.challenge.mission==='first-lights'&&this.wave<4)return false
     if(!this.director||this.director.command||!this.waveActive||this.over||!this.techniques.length)return false
     const t=commandTower(this);if(!t)return false
     this.director.command={wave:this.wave,tower:t.uid,phase:'charging'}

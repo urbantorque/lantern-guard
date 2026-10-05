@@ -1,0 +1,46 @@
+[
+  {
+    "width": 1280,
+    "height": 800,
+    "firstPurchase": true,
+    "guidance": true,
+    "saveResume": true,
+    "campaign": true,
+    "reward": true,
+    "localExport": true,
+    "errors": []
+  },
+  {
+    "width": 390,
+    "height": 844,
+    "firstPurchase": true,
+    "guidance": true,
+    "saveResume": true,
+    "campaign": true,
+    "reward": true,
+    "localExport": true,
+    "errors": []
+  },
+  {
+    "width": 320,
+    "height": 740,
+    "firstPurchase": true,
+    "guidance": true,
+    "saveResume": true,
+    "campaign": true,
+    "reward": true,
+    "localExport": true,
+    "errors": []
+  },
+  {
+    "width": 844,
+    "height": 390,
+    "firstPurchase": true,
+    "guidance": true,
+    "saveResume": true,
+    "campaign": true,
+    "reward": true,
+    "localExport": true,
+    "errors": []
+  }
+]
