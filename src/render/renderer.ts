@@ -822,7 +822,9 @@ export class Renderer {
 
   draw(sim: Sim, dt: number, view: ViewState) {
     if(sim.challenge.fixed) {
-      this.time+=dt;this.fx.update(dt)
+      if(!view.paused)this.time+=dt
+      // Combat and scenery freeze, but brief feedback clears out of the plan.
+      this.fx.update(dt)
       this.leakStack=Math.max(0,this.leakStack-dt*1.2)
       const c=this.ctx;c.setTransform(this.dpr,0,0,this.dpr,0,0);c.fillStyle=districtGradient(c,sim,this.ox,this.oy-105*this.scale,720*this.scale,960*this.scale);c.fillRect(0,0,this.w,this.h)
       c.translate(this.ox,this.oy);c.scale(this.scale,this.scale*(this.fixedLandscape?BOARD_DEPTH:1));if(this.fixedLandscape)c.rotate(-Math.PI/2)

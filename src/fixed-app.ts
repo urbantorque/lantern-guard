@@ -715,7 +715,7 @@ export class FixedApp {
       }
       if(this.moment&&s.time>=this.momentUntil)this.moment=''
       r.handleEvents(s)
-      r.draw(s,this.paused?0:dt,{selection:this.selection,preview:this.buildGhost,armed:null,hint:null,paused:hidden||this.paused,forecastWave:this.forecastSelection})
+      r.draw(s,hidden?0:dt,{selection:this.selection,preview:this.buildGhost,armed:null,hint:null,paused:hidden||this.paused,forecastWave:this.forecastSelection})
       if(this.rehearsal&&(s.over||this.rehearsal.finished)&&!this.endShown){this.rehearsal.finished=true;this.practiceResult()}
       if(s.over&&!this.endShown&&!this.rehearsal){
         if(s.won&&s.challenge.watchExperience&&!s.challenge.story&&!s.challenge.siege&&!this.celebrationSeen){this.celebrationSeen=true;this.celebrationLeft=this.profile.settings.reducedMotion?2:5;this.close();this.show('The district wakes',`<p class="lead">Every light you kept is a home waking to morning.</p><img class="district-panorama" src="${districtPanorama(this.profile)}" alt="Your restored canal district"/><p>${PROJECTS.filter(p=>projectProgress(this.profile,p.id)>=1).map(p=>p.name).join(' · ')||'The canal is safe for another morning.'}</p>${button('celebration-done','View watch report','primary wide')}`,'celebration')}

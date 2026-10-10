@@ -33,7 +33,13 @@ try{
    check(close(shotPose({...p,t:1},wide),elevated(p.ex,p.ey,8,wide)),'mortar lands at the hit effect')
    for(let t=0;t<=1;t+=.01)check(Object.values(shotPose({...p,t},wide)).every(Number.isFinite),'finite projectile pose')
   }
-  const rules={fixed:1,compact:1,guard:1,depth:1,balance:1,watchDepth:1,watchCraft:1,livingWatch:1,refinedWatch:1,watchExperience:1,...(tactics?{watchTactics:1}:{}),...(mastery?{watchMastery:1}:{}),...(story?{watchDirector:2}:{}),hero:'ivo',variant:0}
+   const rules={fixed:1,compact:1,guard:1,depth:1,balance:1,watchDepth:1,watchCraft:1,livingWatch:1,refinedWatch:1,watchExperience:1,...(tactics?{watchTactics:1}:{}),...(mastery?{watchMastery:1}:{}),...(story?{watchDirector:2}:{}),hero:'ivo',variant:0}
+   // A paused purchase must show its completed miniature, not a frozen entrance.
+   cv.width=900;cv.height=1100
+   const purchased=new Sim('standard',rules,1047);purchased.build(0,'wick')
+   const freshBuild=Sim.restore(purchased.snapshot()),oldBuild=Sim.restore(purchased.snapshot());oldBuild.towers[0].bornT=-9
+   const planPaint=(s,paused)=>{c.resetTransform();c.clearRect(0,0,900,1100);c.translate(50,140);drawFixedWorld(c,s,{selection:null,hover:null,hint:null,paused},0,[],'reed',1,false,0,false);return cv.toDataURL()}
+   const settled=planPaint(oldBuild,false);check(planPaint(freshBuild,true)===settled,'paused purchase is fully built');check(planPaint(purchased,false)!==settled,'live purchase retains its entrance animation')
   cv.width=1440;cv.height=810;document.body.replaceChildren(cv);cv.style.cssText='width:1440px;height:810px;display:block'
   const scenes=[],profile=[]
   for(let variant=0;variant<4;variant++)for(const wide of [false,true])for(const night of [false,true]){
@@ -51,7 +57,7 @@ try{
    check(JSON.stringify(s.snapshot())===before,'painting must not mutate combat or its save')
    durations.sort((a,b)=>a-b);profile.push({variant,wide,night,towers:s.towers.length,enemies:s.enemies.length,medianMs:durations[22],p95Ms:durations[42]});scenes.push({variant,wide,night})
   }
-  return {icons:iconBounds.length,towersAnimated:8,reducedMotion:8,projectilesReducedMotion:14,beamsReducedMotion:2,projectileEndpoints:4,scenes,profile,renderingDoesNotMutateSave:true,masteryCosmetics:mastery}
+   return {icons:iconBounds.length,towersAnimated:8,reducedMotion:8,projectilesReducedMotion:14,beamsReducedMotion:2,projectileEndpoints:4,pausedPurchaseVisible:true,scenes,profile,renderingDoesNotMutateSave:true,masteryCosmetics:mastery}
  },{tactics,mastery,story})
  assert.deepEqual(errors,[]);writeFileSync(`${out}/invariants.json`,JSON.stringify(result,null,2));console.log(JSON.stringify(result,null,2));console.log('PASS icon bounds, distinct animation, reduced motion, projectile contact, four-map purity and render profiling')
 }finally{await browser.close()}

@@ -119,6 +119,7 @@ export function drawFixedWorld(c:CanvasRenderingContext2D,s:Sim,view:ViewState,s
   const sprites=[...s.towers.map(t=>({x:t.x,y:t.y,t,e:null})),...s.enemies.filter(e=>e.alive).map(e=>({x:e.x,y:e.y,t:null,e})),{x:home.x,y:home.y,t:null,e:null}].sort((a,b)=>wide?b.x-a.x:a.y-b.y)
   for(const item of sprites){
     if(item.t){const t=item.t;let a=arrivals.get(t);if(!a){a={born:s.time-t.bornT<.2?time:-9,upgrade:-9,lastUpgrade:t.upT,fire:t.fireT,shot:s.time-t.fireT<.2?time:-9,angle:t.angle,frame:time};arrivals.set(t,a)}if(a.lastUpgrade!==t.upT){a.lastUpgrade=t.upT;a.upgrade=time}
+      if(view.paused){a.born=Math.min(a.born,time-.65);a.upgrade=Math.min(a.upgrade,time-.6)}
       if(a.fire!==t.fireT){a.fire=t.fireT;a.shot=time}
       const turn=Math.atan2(Math.sin(t.angle-a.angle),Math.cos(t.angle-a.angle));a.angle+=turn*Math.min(1,(time-a.frame)*18);a.frame=time
       if(s.waveActive&&(held===t||s.mastery?.surge?.tower===t.uid&&['held','release'].includes(s.mastery.surge.phase))){upright(c,t.x,t.y,wide,()=>{c.save();const y=t.y-70,col=s.challenge.hero==='sol'?'#ffd196':'#b9f5ff';lightPool(c,t.x,y,33,col,.5,1);c.strokeStyle=col;c.lineWidth=2;c.beginPath();c.ellipse(t.x,y,23,9,reducedMotion?0:Math.sin(time)*.2,0,Math.PI*2);c.stroke();c.restore()})}

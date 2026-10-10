@@ -10,12 +10,12 @@ try{
  for(const item of [...[1,9,17,25,33].map((wave,i)=>({name:'act-'+(i+1),wave,seconds:24})),...['toad','dredger','gloom','warden','bloomheart'].map(cue=>({name:'boss-'+cue,cue,seconds:4}))]){
   const result=await page.evaluate(async item=>{
    const {Sound}=await import('/src/core/audio.ts');const b=await Sound.renderScene({hero:'mira',night:item.wave===17,weather:'clear',campaign:true,wave:item.wave??1,playing:true},item.seconds,item.cue)
-   const a=b.getChannelData(0),bytes=new ArrayBuffer(44+a.length*2),v=new DataView(bytes);let sum=0,peak=0,nonfinite=0
+   const a=b.getChannelData(0),right=b.getChannelData(1),bytes=new ArrayBuffer(44+a.length*4),v=new DataView(bytes);let sum=0,peak=0,nonfinite=0
    const text=(at,s)=>[...s].forEach((c,i)=>v.setUint8(at+i,c.charCodeAt(0)))
-   text(0,'RIFF');v.setUint32(4,36+a.length*2,true);text(8,'WAVE');text(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,b.sampleRate,true);v.setUint32(28,b.sampleRate*2,true);v.setUint16(32,2,true);v.setUint16(34,16,true);text(36,'data');v.setUint32(40,a.length*2,true)
-   for(let i=0;i<a.length;i++){if(!Number.isFinite(a[i]))nonfinite++;sum+=a[i]*a[i];peak=Math.max(peak,Math.abs(a[i]));v.setInt16(44+i*2,Math.max(-1,Math.min(1,a[i]))*32767,true)}
+   text(0,'RIFF');v.setUint32(4,36+a.length*4,true);text(8,'WAVE');text(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,2,true);v.setUint32(24,b.sampleRate,true);v.setUint32(28,b.sampleRate*4,true);v.setUint16(32,4,true);v.setUint16(34,16,true);text(36,'data');v.setUint32(40,a.length*4,true)
+   for(let i=0;i<a.length;i++)for(let channel=0;channel<2;channel++){const sample=channel?right[i]:a[i];if(!Number.isFinite(sample))nonfinite++;sum+=sample*sample;peak=Math.max(peak,Math.abs(sample));v.setInt16(44+i*4+channel*2,Math.max(-1,Math.min(1,sample))*32767,true)}
    let binary='';const u=new Uint8Array(bytes);for(let i=0;i<u.length;i+=16384)binary+=String.fromCharCode(...u.subarray(i,i+16384))
-   return {peak,rms:Math.sqrt(sum/a.length),nonfinite,base64:btoa(binary),seconds:b.duration}
+   return {peak,rms:Math.sqrt(sum/(a.length*2)),nonfinite,channels:2,base64:btoa(binary),seconds:b.duration}
   },item)
   assert(result.peak<.98&&result.peak>.005,item.name+' headroom and audible output');assert.equal(result.nonfinite,0);assert(result.rms>.0005,item.name+' non-silent output')
   writeFileSync(`${out}/${item.name}.wav`,Buffer.from(result.base64,'base64'));delete result.base64;reports.push({name:item.name,...result});console.log('PASS '+item.name+' peak '+result.peak.toFixed(3)+' rms '+result.rms.toFixed(3))
