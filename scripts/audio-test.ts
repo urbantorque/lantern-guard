@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { Sound,profileSound } from '../src/core/audio'
-import { scoreStep,scoreInterval } from '../src/core/watch-score'
+import { scoreStep,scoreInterval,scoreAct } from '../src/core/watch-score'
+import { CombatMix,BOSS_VOICES } from '../src/core/combat-mix'
 
 // Exercise the scheduler without playing sound or depending on a sound device.
 class Param {
@@ -84,3 +85,26 @@ for(const hero of ['sol','mira','ivo'] as const)for(const night of [false,true])
   for(const n of notes){assert(n.gain>0&&n.gain<=.15);assert(n.length>0&&n.length<=4);assert(n.pan>=-1&&n.pan<=1)}
 }
 console.log('PASS original 32-bar form, second-pass variations, three hero parts, chapter layers and boss pulse')
+
+assert.equal(profileSound({...preferences,music:false,ambience:true}).music,0)
+assert(profileSound({...preferences,music:false,ambience:true}).ambience>0)
+assert.equal(profileSound({...preferences,music:true,ambience:false}).ambience,0)
+assert.equal(profileSound({...preferences,music:false}).ambience,0,'old silent atmosphere preference is preserved')
+for(let wave=1;wave<=40;wave++)assert.equal(scoreAct({...scene,wave,campaign:true}),Math.floor((wave-1)/8))
+const acts=[1,9,17,25,33].map(wave=>phrase(0,{campaign:true,wave}))
+for(let i=0;i<acts.length;i++)for(let j=i+1;j<acts.length;j++)assert.notDeepEqual(acts[i],acts[j],'each campaign act has its own arrangement')
+const bossParts=Object.keys(BOSS_VOICES).map(bossId=>phrase(0,{campaign:true,boss:true,bossId}))
+for(let i=0;i<bossParts.length;i++)for(let j=i+1;j<bossParts.length;j++)assert.notDeepEqual(bossParts[i],bossParts[j],'boss motifs differ')
+for(const wave of [1,9,17,25,33])for(const hero of ['sol','mira','ivo'] as const)for(const intensity of [0,.5,1])for(let i=0;i<512;i++){
+ const notes=scoreStep(i,{...scene,campaign:true,wave,hero},intensity)
+ assert(notes.length<=8,'campaign arrangements respect voice budget')
+ for(const n of notes)assert(n.gain>0&&n.gain<=.15&&n.length>0&&n.length<=4&&Number.isFinite(n.midi))
+}
+const mix=new CombatMix()
+assert.deepEqual(Array.from({length:6},()=>mix.admit(0)),[true,true,true,true,false,false])
+assert(mix.admit(.13),'routine sound budget recovers')
+mix.focus(.2,.7);assert(!mix.admit(.3));assert(mix.admit(.3,true),'warnings bypass routine budget');assert(mix.admit(1),'routine combat resumes after cue')
+const voices=[]
+for(const id of Object.keys(BOSS_VOICES)){ctx.currentTime+=3;const n=ctx.nodes.length;sound.bossRoar(id);voices.push(ctx.nodes.slice(n).flatMap(n=>n.frequency.values));const held=ctx.nodes.length;sound.spark();assert.equal(ctx.nodes.length,held,'boss cue reserves space from ordinary fire');ctx.currentTime+=2;sound.spark();assert(ctx.nodes.length>held,'fire resumes after boss cue')}
+assert.equal(new Set(voices.map(v=>JSON.stringify(v))).size,5,'all five boss cues differ in the actual audio graph')
+console.log('PASS five eight-wave musical acts, boss motifs, independent atmosphere and prioritized bounded combat mix')

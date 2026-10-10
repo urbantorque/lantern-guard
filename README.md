@@ -13,15 +13,15 @@ Build one defence through a continuous 40-wave campaign. Keep your towers, upgra
 - **A deliberate command.** Bank a tower's shot, then choose its moment: Sol ignites burns, Mira freezes crowds or interrupts a boss signal, Ivo concentrates lightning into a chosen target. Designate the command tower in its inspection panel; highlighted targets and a live burn/interrupt readout preview the effect. Holding stops automatic fire. Q banks/releases; discard resumes fire and spends a held command for that wave.
 - **Choose your passage.** Restore an island jetty for a permanent thirteenth plot and 180 glow, or reopen a longer side canal for extra runner groups and 90 glow after each of three waves. The decision previews the actual plot and route. It arrives after campaign wave 16, before the hidden fleets and second entrance. Custom chapters, endurance and expeditions retain their original timing.
 - **Three heroes, eight towers each.** Sol brings fire and income, Mira brings control and shared sight, Ivo brings speed and electricity. Each roster has different mechanics, names and architecture; new watches use three stages: Base, Specialisation and Crown.
-- **Quick, live upgrades.** Compare two compact specialisations, commit to one and upgrade while combat continues. Each tower automatically aims for its role, with imminent leaks taking priority.
+- **Build at your own pace.** Pause with the HUD button or P. Reference panels pause combat and the inter-wave countdown automatically; building and tower inspection stay live unless you pause. Mobile placement keeps the Build action visible. Two specialisations show their benefit, trade-off and price, with numbers available on demand.
 - **Distinct crowns and chosen Bonds.** Compatible towers pair automatically over shared water. Choose a different partner or explicitly replace an occupied slot in the tower panel. Changing partners preserves cooldowns. Armour removal, reveals, interrupted healing and signature hits give support towers visible credit.
 - **Three authored twelve-wave expeditions.** Sunforge tests armoured convoys and exposed cores. Moonwake's two visible gates reveal hidden foes for six seconds. Stormglass tests linked escorts, separated targets and two firing passes. Earn copper roofs, moonstone lanterns and prismatic windows; completing the set adds a soundtrack accompaniment. Every expedition remains available.
 - **Visible support.** The Moon spring reveals nearby hidden foes at night. Small Scout auras and location-based percentage bonuses are folded into the new base balance. Detection, Beacon Bonds and stored sunlight remain distinct support decisions.
 - **A watch with room to prepare.** Ordinary waves follow a four-second countdown. Before permanent technique choices, major bosses and the side inlet, the clear river waits for your Ready command. Recovery waves precede bosses, and a two-bank wake tests shared coverage. Combat stays live while you build and upgrade.
 - **Prepare for night.** Daylight fills Garden coffers and Scout sunlight reserves. Night reduces income and speeds up enemies; all towers retain their reach. Rain, mist and breeze shape the atmosphere without hidden combat modifiers. Live Gardens earn for the time each tier worked, preventing last-second harvest exploits.
 - **Store sunlight.** A scout's support stream trades some attack damage for three daylight charges. At night, automatic pulses briefly extend sight and boost nearby fire rate. Stationary pips and a live charge count show the reserve.
-- **An evolving score.** An original 32-bar form with a varied second pass, four waterway arrangements, three hero melodies, a bridge, later-wave accompaniment and a boss pulse. Night changes instrumentation on bar boundaries. Marimba, soft reeds, glass bells and brushed percussion sit alongside water and weather ambience. Defeat sounds distinguish metal, glass and soft creatures. Sound and music preferences remain separate.
-- **A clearer battlefield.** Wide screens show the canal across the screen. Phones keep it vertical and frame the selected tower during upgrades. Glow updates immediately, without flying reward particles.
+- **A score for the long watch.** Five arrangements follow the five eight-wave acts, retaining three keeper melodies and a varied 32-bar form. Each boss has a motif and a distinct material-led arrival sound. Commands and warnings briefly lower the music and suppress routine sound bursts. Ordinary clears use a short acknowledgement; act endings keep the fanfare. Music, canal ambience and combat sounds have separate controls.
+- **A clearer battlefield.** Wide screens show the canal across the screen. Phones keep it vertical and frame the selected tower during upgrades. Current and next forecasts mark their entrances and approaches on the actual map. Armoured chevrons, pale veil edges and luminous support organs distinguish threats. Glow updates immediately, without flying reward particles.
 - **Preview before spending.** Selecting a tower shows a ghost, covered water, coverage and compatible Bonds. Confirm the placement to pay. A lantern threat indicator remains visible while a phone drawer is open. Local cues mark the first effect of an upgrade, armour breaks and Bonds; the report recognises support contributions.
 - **The Dredger.** Sunforge's new final encounter opens its coral core at two marked bends. It takes 60% damage while closed and 140% while open. Slows extend the opportunity; heavy damage and overlapping coverage both help.
 - **Restore three named places during the defence.** The Night Market, Canal Observatory and Waterfront Gardens gain lit stalls, a moving telescope, flowering terraces and residents in the battlefield's existing safe spaces. Act milestones stay on the board; the full campaign result appears after wave 40.
@@ -42,6 +42,9 @@ Open the local URL printed by Vite. Add `?muted=1` for a silent preview. Progres
 
 ```sh
 npm run check       # Regression suites, saves, sky rules and hero balance
+npm run qa:clarity  # Four sizes, larger text, visible purchase actions, pause and forecasts
+node scripts/craft-art-qa.mjs # Restored district, keeper portraits and independent audio controls
+node scripts/craft-audio-qa.mjs # Silent offline rendering of five acts and five boss cues
 npm run test:siege  # Continuous campaign, act checkpoints and save isolation
 npm run balance:siege # Twelve paid 40-wave builds and exact boss resumes
 npm run qa:siege    # Paid fixtures and four-size browser campaign checks
@@ -77,6 +80,8 @@ Development-only `?qa=1&muted=1` offers reproducible planning states at waves 0,
 The [GitHub Pages address](https://urbantorque.github.io/lantern-guard/) keeps its existing URL. A silent preview never changes your saved sound preference. Publish a clean, committed checkout with `./scripts/publish-pages.ps1`; the script builds and pushes the static site to `gh-pages`. See [deployment instructions](docs/WEB-DEPLOYMENT.md).
 
 ## Design and verification
+
+[Clarity, canal craft and campaign audio release](docs/CLARITY-AND-CRAFT.md)
 
 [The Long Watch: continuous 40-wave campaign, act checkpoints and in-run restoration](docs/CONTINUOUS-CAMPAIGN.md)
 

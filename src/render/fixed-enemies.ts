@@ -62,6 +62,12 @@ export function drawFixedEnemy(c:CanvasRenderingContext2D,e:Enemy,reducedMotion=
   if(showBars&&(e.def.boss||e.hp<e.maxHp)){c.fillStyle='#173546';c.fillRect(-barW/2-1,barY-1,barW+2,5);c.fillStyle='#bcf1bb';c.fillRect(-barW/2,barY,barW*Math.max(0,e.hp/e.maxHp),3)}
   // Intact armour is visible in the anatomy. Reserve meters for actual damage.
   if(showBars&&plated&&(e.def.boss||e.shell<e.maxShell)){c.fillStyle='#273d50';c.fillRect(-barW/2,barY+5,barW,2);c.fillStyle='#ffce89';c.fillRect(-barW/2,barY+5,barW*Math.max(0,e.shell/e.maxShell),2)}
-  if(e.signalT&&e.signalT>0){c.strokeStyle='#ffdc8f';c.lineWidth=2;c.beginPath();c.arc(0,0,Math.max(r,46),-Math.PI/2,-Math.PI/2+Math.PI*2*Math.min(1,e.signalT/3));c.stroke()}
+  if(e.signalT&&e.signalT>0){
+    // A backed countdown is visible over both pale paving and dark water.
+    const tellR=Math.max(r,46),arc=-Math.PI/2+Math.PI*2*Math.min(1,e.signalT/3)
+    c.strokeStyle='#102330';c.lineWidth=5;c.beginPath();c.arc(0,0,tellR,-Math.PI/2,arc);c.stroke()
+    c.strokeStyle=e.def.boss?'#ffb36c':'#c9efa6';c.lineWidth=2.6;c.stroke()
+    polygon(c,[[0,-tellR-8],[-5,-tellR-15],[5,-tellR-15]],'#ffdb9b')
+  }
   c.restore()
 }

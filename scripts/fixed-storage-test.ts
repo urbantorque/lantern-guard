@@ -19,7 +19,7 @@ const s=fresh()
 storage.setItem('lanternlocks.run.v3','original legacy run')
 storage.setItem('lanternlocks.progress.v1','original achievements')
 storage.setItem('lanternlocks.settings.v1',JSON.stringify({v:2,muted:true,bigText:true,palette:'clear',reduceMotion:true,guardian:'reed'}))
-assert.deepEqual(loadVillage().settings,{muted:true,largeText:true,clearPalette:true,reducedMotion:true,music:true,effects:true})
+assert.deepEqual(loadVillage().settings,{muted:true,largeText:true,clearPalette:true,reducedMotion:true,music:true,effects:true,ambience:true})
 assert.equal(loadVillage().guardian,'reed')
 assert(saveWatch(s,[],'campaign'));s.build(0,'wick');assert(saveWatch(s,[],'campaign'))
 assert.equal(loadWatch('campaign')!.snapshot.towers.length,1)
@@ -33,6 +33,9 @@ assert.equal(storage.getItem('lanternlocks.progress.v1'),'original achievements'
 console.log('PASS corrupt primary recovery, failed-write recovery and untouched legacy profile/run')
 
 const profile=loadVillage();s.wave=5;s.stats.cheered={drip:20};recordWatch(profile,s)
+const oldSettings={...profile.settings} as Partial<typeof profile.settings>;delete oldSettings.ambience;oldSettings.music=false
+writeJSON('profile',{...profile,settings:oldSettings});assert.equal(loadVillage().settings.ambience,false,'old atmosphere-off preference survives migration');assert.equal(loadVillage().records['0:standard:standard'].wave,5)
+writeJSON('profile',{...profile,settings:{...profile.settings,music:false,ambience:true}});assert.equal(loadVillage().settings.ambience,true,'new independent preference survives reload');writeJSON('profile',profile)
 recordWatch(profile,s);assert.equal(profile.journal.drip,20);assert.equal(profile.settlement,1)
 s.stats.cheered.drip=10;recordWatch(profile,s);assert.equal(profile.journal.drip,20)
 s.stats.cheered.drip=25;recordWatch(profile,s);assert.equal(profile.journal.drip,25)

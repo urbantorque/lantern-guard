@@ -7,16 +7,18 @@ import {block,lightPool,polygon,setArchitectureLight} from './architecture'
 import {BRASS,STONE,TAU,arch,leaf,line,orb,oval,vessel} from './miniature-art'
 import {drawProjectMiniature} from './place-art'
 import {PROJECTS} from '../game/district-projects'
+import {paintQuayGround,quayHouse} from './quay-art'
 
 const noise=(n:number)=>{const v=Math.sin(n*127.1+311.7)*43758.5453;return v-Math.floor(v)}
 const trees=new Map<string,HTMLCanvasElement>()
 function crown(day:boolean,style:number){
  const key=day+':'+style;let cv=trees.get(key);if(cv)return cv
  cv=document.createElement('canvas');cv.width=160;cv.height=170;const c=cv.getContext('2d')!;c.scale(2,2);c.translate(40,74)
- const shades=day?['#597e60','#739c6e','#91b17a','#aec28a']:['#254951','#305d5c','#457571','#638b7c']
+ const shades=day?['#294b48','#3f6860','#6d8c72','#abb08a']:['#19333e','#254b52','#386568','#728c7e']
  for(const [i,[x,y,r]]of [[0,-27,18],[-13,-35,15],[13,-39,17],[-4,-50,18],[8,-58,14]].entries()){
-  const g=c.createRadialGradient(x-5,y-7,1,x,y,r);g.addColorStop(0,shades[3]);g.addColorStop(.5,shades[2-i%2]);g.addColorStop(1,shades[0]);c.fillStyle=g;c.beginPath();c.ellipse(x,y,r,r*.85,0,0,TAU);c.fill()
-  for(let j=0;j<5;j++){const a=j*2.4+i;leaf(c,x+Math.cos(a)*r*.55,y+Math.sin(a)*r*.4,4+j%2,-.5+a,shades[(j+i)%3+1])}
+   const g=c.createLinearGradient(x-r,y-r,x+r,y+r);g.addColorStop(0,shades[2]);g.addColorStop(.45,shades[1]);g.addColorStop(1,shades[0]);c.fillStyle=g;c.beginPath()
+   for(let j=0;j<13;j++){const a=j*TAU/13,rr=r*(.83+noise(i*17+j)*.2),px=x+Math.cos(a)*rr,py=y+Math.sin(a)*rr*.86;j?c.lineTo(px,py):c.moveTo(px,py)}c.closePath();c.fill()
+   for(let j=0;j<6;j++){const a=j*2.4+i;leaf(c,x+Math.cos(a)*r*.55,y-3+Math.sin(a)*r*.4,5+j%2,-.5+a,shades[j%2+2])}
  }
  if(style===2)for(let i=0;i<9;i++)oval(c,(noise(i+81)-.5)*35,-28-noise(i+20)*36,2,1.8,day?'#edcaa0':'#bad2b0')
  trees.set(key,cv);return cv
@@ -27,8 +29,8 @@ export function groveCanopies(c:CanvasRenderingContext2D,s:Sim,time:number,reduc
 /** Ground detail is deterministic and painted once into the terrain cache. */
 export function paintCanalLandscape(c:CanvasRenderingContext2D,s:Sim,stage:number,keepsakes:readonly string[],wide:boolean){
  const day=!s.sky.night,urban=secondWatch(s.challenge),mat=districtStyle(s.challenge.variant);setArchitectureLight(c,day)
- for(let i=0;i<34;i++){const x=noise(i+4)*900-80,y=noise(i+75)*980-80;c.fillStyle=day?(i%2?'#d8d8aa14':'#2d705a0b'):'#7aa29106';c.beginPath();c.ellipse(x,y,30+noise(i+123)*100,20+noise(i+333)*60,i,0,TAU);c.fill()}
- for(let i=0;i<1600;i++){const x=noise(i+91)*920-50,y=noise(i+822)*1070-140;c.fillStyle=day?(i%3?'#354e4421':'#e2e9bd5c'):'#b8ceb511';c.fillRect(x,y,.5+noise(i+11)*2,.5+noise(i+32))}
+  if(urban)paintQuayGround(c,s)
+  else for(let i=0;i<34;i++){const x=noise(i+4)*900-80,y=noise(i+75)*980-80;c.fillStyle=day?(i%2?'#d8d8aa14':'#2d705a0b'):'#7aa29106';c.beginPath();c.ellipse(x,y,30+noise(i+123)*100,20+noise(i+333)*60,i,0,TAU);c.fill()}
  c.lineJoin='round';c.lineCap='round'
  const network=()=>{c.beginPath();for(const seg of s.level.segs.values())seg.line.pts.forEach((p,i)=>i?c.lineTo(p.x,p.y):c.moveTo(p.x,p.y));c.stroke()}
  c.save();c.translate(3,8);c.strokeStyle=day?'#264e4945':'#061b3199';c.lineWidth=78;network();c.restore()
@@ -58,7 +60,8 @@ export function paintCanalLandscape(c:CanvasRenderingContext2D,s:Sim,stage:numbe
   const {x,y,style}=p
   if(p.kind==='tree'){oval(c,x+9,y+3,28,10,day?'#183f4430':'#071e3033');line(c,[[x,y],[x-2,y-31]],day?'#6d6a4f':'#344f52',5);line(c,[[x-1,y-15],[x-12,y-33]],day?'#827653':'#40575a',2.5);return}
   const project=PROJECTS[houseIndex++%3],restored=keepsakes.find(k=>k.startsWith('project:'+project.id+':')),restoration=Number(keepsakes.find(k=>k.startsWith('stage:'+project.id+':'))?.split(':')[2]??0)
-  if(restored||restoration){c.save();c.translate(x,y);c.scale(.8,.8);drawProjectMiniature(c,0,0,project.id,restored?3:restoration,project.colours[restored?.endsWith(':1')?1:0],!day);c.restore();return}
+   if(restored||restoration){c.save();c.translate(x,y);c.scale(.96,.96);drawProjectMiniature(c,0,0,project.id,restored?3:restoration,project.colours[restored?.endsWith(':1')?1:0],!day);c.restore();return}
+   if(urban){quayHouse(c,x,y,style,!day);return}
   const w=34+style%2*5,h=(urban?46:28)+style%3*5,[front,roof,side]=urban?['#71837f','#a7b3a0','#314f5b']:mat.walls
   oval(c,x+8,y+4,37,15,day?'#294e442b':'#0c283331');vessel(c,x,y+2,31,10,3,STONE)
   if(!day)lightPool(c,x,y,40,'#ffce91',.42)

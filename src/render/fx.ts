@@ -3,7 +3,7 @@ import type { EnemyId } from '../game/defs'
 import { drawCheer } from './enemies'
 import { glowSprite, P, withAlpha } from './palette'
 
-export type PKind = 'spark' | 'ink' | 'ring' | 'firefly' | 'text' | 'shard' | 'flash' | 'mote' | 'note' | 'cheer' | 'petal' | 'pillar' | 'orbit' | 'link' | 'arc' | 'impact' | 'shock'
+export type PKind = 'spark' | 'ink' | 'ring' | 'firefly' | 'text' | 'shard' | 'flash' | 'mote' | 'note' | 'cheer' | 'petal' | 'pillar' | 'orbit' | 'link' | 'arc' | 'impact' | 'shock' | 'ripple'
 
 export interface Particle {
   kind: PKind
@@ -198,6 +198,12 @@ export class Fx {
     for (const p of this.list) {
       const k = p.life / p.max
       switch (p.kind) {
+        case 'ripple': {
+          const age=1-k,r=p.size*(.45+age*.8)
+          ctx.globalAlpha=Math.sin(Math.min(1,age*3)*Math.PI/2)*k*.4;ctx.strokeStyle=p.color;ctx.lineWidth=1.4
+          for(let i=0;i<2;i++){ctx.beginPath();ctx.ellipse(p.x,p.y,r*(1-i*.25),r*.6*(1-i*.25),0,.25,Math.PI*1.86);ctx.stroke()}
+          break
+        }
         case 'impact': {
           // A brief cut of light at contact, kept upright in either camera.
           const reach=p.size*(.45+(1-k)*.55)

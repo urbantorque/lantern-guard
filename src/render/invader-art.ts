@@ -49,8 +49,9 @@ function ironclaw(c:C,e:Enemy,t:number,col:string){
  for(const side of [-1,1])for(let i=0;i<3;i++)limb(c,[[side*.5,-.18],[side*(.92+i*.12),-.55+i*.36],[side*(1.35+i*.06),.12+i*.21+Math.sin(t*8+i*2)*.11]],'#566974',.09)
  hide(c,0,-.25,.76,.59,'#4b4650')
  for(const side of [-1,1]){const snap=.1+Math.max(0,Math.sin(t*3+side))*.18;limb(c,[[side*.6,-.35],[side*1.02,-.84],[side*1.18,-1.15]],col,.19);c.save();c.translate(side*1.18,-1.15);c.scale(side,1);plate(c,[[-.16,.13],[-.24,-.2],[.02,-.67],[.17,-.29],[.08,-.13],[.32,-.45-snap],[.41,-.08],[.17,.18]],col,'#d6ad86');c.restore()}
- if(e.shell>0){plate(c,[[-.79,-.3],[-.75,-.93],[-.33,-1.28],[.33,-1.28],[.8,-.9],[.8,-.3],[0,-.07]],col,'#d1ad8b');for(const side of [-1,1]){blade(c,side*.55,-1.02,side*.21,-.38,.17);line(c,[[side*.12,-1.13],[side*.17,-.4],[side*.6,-.28]],'#714e46',.045)}rivets(c,[[-.46,-.82],[.46,-.82],[-.46,-.42],[.46,-.42]])}
- else plate(c,[[-.62,-.4],[-.39,-.88],[.39,-.88],[.65,-.4],[0,-.18]],'#8f5550','#c9967a')
+  if(e.shell>0){plate(c,[[-.79,-.3],[-.75,-.93],[-.33,-1.28],[.33,-1.28],[.8,-.9],[.8,-.3],[0,-.07]],col,'#d1ad8b');for(const side of [-1,1]){blade(c,side*.55,-1.02,side*.21,-.38,.17);line(c,[[side*.12,-1.13],[side*.17,-.4],[side*.6,-.28]],'#714e46',.045)}rivets(c,[[-.46,-.82],[.46,-.82],[-.46,-.42],[.46,-.42]])}
+  else plate(c,[[-.62,-.4],[-.39,-.88],[.39,-.88],[.65,-.4],[0,-.18]],'#8f5550','#c9967a')
+  if(e.shell>0){line(c,[[-.59,-.88],[0,-.52],[.59,-.88]],'#f0c897',.13);line(c,[[-.57,-1.02],[0,-.68],[.57,-1.02]],'#392c30',.085)}
  for(const side of [-1,1])slit(c,side*.29,-.39,.19,'#ff854d',-side*.15);jaws(c,0,-.12,.49,.11,4)
 }
 function cinderwing(c:C,_e:Enemy,t:number,col:string){
@@ -63,7 +64,8 @@ function wraithRay(c:C,_e:Enemy,t:number,col:string){
  const flex=Math.sin(t*4)*.13
  line(c,[[0,.1],[.15,.58],[-.18,1.17+flex],[.2,1.53]],INK,.11);line(c,[[0,.1],[.15,.58],[-.18,1.17+flex],[.2,1.53]],'#86b4c9',.045);blade(c,.2,1.53,.21,.22,.1,'#bfd9d6')
  for(const side of [-1,1]){plate(c,[[0,-.99],[side*.64,-.57],[side*1.66,-.36+flex],[side*1.22,.03],[side*1.38,.3],[side*.68,.18],[side*.4,.56],[0,.1]],'#34455f',col);for(let i=0;i<3;i++)line(c,[[side*.12,-.67+i*.18],[side*.69,-.35+i*.17],[side*(1.23-i*.18),-.24+i*.23]],'#80ccdf9c',.03)}
- plate(c,[[0,-1.21],[-.38,-.62],[-.2,.18],[0,.35],[.2,.18],[.38,-.62]],'#202e48','#a9dfe7');slit(c,-.18,-.56,.13,'#9ceeff',.3);slit(c,.18,-.56,.13,'#9ceeff',-.3);jaws(c,0,-.1,.25,.12,3)
+  plate(c,[[0,-1.21],[-.38,-.62],[-.2,.18],[0,.35],[.2,.18],[.38,-.62]],'#202e48','#a9dfe7');slit(c,-.18,-.56,.13,'#9ceeff',.3);slit(c,.18,-.56,.13,'#9ceeff',-.3);jaws(c,0,-.1,.25,.12,3)
+  for(const side of [-1,1])line(c,[[side*.38,-.7],[side*.94,-.42],[side*1.57,-.35+flex]],'#b4e3f0',.085)
 }
 function blightSac(c:C,_e:Enemy,t:number,col:string){
  const pulse=1+Math.sin(t*3)*.045;c.save();c.scale(pulse,pulse)
@@ -78,7 +80,10 @@ function leechChoir(c:C,e:Enemy,t:number,col:string){
  const pulse=.7+Math.sin(t*2)*.08;hide(c,0,-.62,.68,.65,col)
  plate(c,[[-.87,-.31],[-.71,-1.03],[-.28,-1.44],[0,-1.13],[.28,-1.44],[.71,-1.03],[.87,-.31],[.32,-.5],[0,-.2],[-.32,-.5]],'#2e4450','#8aafa1')
  for(const side of [-1,1])line(c,[[side*.64,-.82],[side*.37,-.5],[side*.41,-.03]],col,.045)
- oval(c,0,-.61,.23*pulse,.33*pulse,'#a4e9aa');plate(c,[[-.22,-.92],[.22,-.92],[.14,-.46],[0,-.3],[-.14,-.46]],'#172d38','#6b9892');slit(c,-.115,-.68,.09,'#b9ffc3',.35);slit(c,.115,-.68,.09,'#b9ffc3',-.35)
+  oval(c,0,-.61,.23*pulse,.33*pulse,'#a4e9aa');plate(c,[[-.22,-.92],[.22,-.92],[.14,-.46],[0,-.3],[-.14,-.46]],'#172d38','#6b9892');slit(c,-.115,-.68,.09,'#b9ffc3',.35);slit(c,.115,-.68,.09,'#b9ffc3',-.35)
+  // One luminous organ reads at phone size; fine face detail is secondary.
+  plate(c,[[0,-1.12],[.19,-.92],[0,-.7],[-.19,-.92]],'#b7efad','#edffd8')
+  for(const side of [-1,1])line(c,[[side*.7,-.88],[side*.62,-.37],[side*.37,-.19]],'#b4e6a5',.09)
  if((e.signalT??0)>0){c.strokeStyle='#b2e9ab';c.lineWidth=.035;c.beginPath();c.ellipse(0,-.48,1.05,.76,0,0,TAU);c.stroke()}
 }
 function obsidianCrawler(c:C,e:Enemy,t:number,col:string){

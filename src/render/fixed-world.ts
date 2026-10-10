@@ -49,7 +49,7 @@ export function drawFixedWorld(c:CanvasRenderingContext2D,s:Sim,view:ViewState,s
   drawSunReserves(c,s,reducedMotion,wide)
   drawSecondWatch(c,s,time,reducedMotion,wide)
   if(view.forecastWave)drawThreatMap(c,s,view.forecastWave,wide,scale)
-  if(hasMoonArches(s.challenge)&&(!s.challenge.siege||s.planningWave>=17))for(const arch of MOON_ARCHES){
+  if(hasMoonArches(s.challenge)&&(!s.challenge.siege||(view.forecastWave??s.planningWave)>=17))for(const arch of MOON_ARCHES){
     const seg=s.level.segs.get(arch.seg)!,p=seg.line.at(seg.line.length*arch.fraction,{x:0,y:0,tx:0,ty:0}),nx=-p.ty,ny=p.tx
     c.save();c.strokeStyle='#b1e7e2';c.lineWidth=3;c.shadowColor='#b5ffef';c.shadowBlur=reducedMotion?0:8
     c.beginPath();c.moveTo(p.x+nx*29,p.y+ny*29);c.lineTo(p.x-nx*29,p.y-ny*29);c.stroke();c.shadowBlur=0
@@ -64,7 +64,7 @@ export function drawFixedWorld(c:CanvasRenderingContext2D,s:Sim,view:ViewState,s
     const p=lowerBend(s),g=lowerGuard(s);c.save();c.strokeStyle=g.damage>=2&&g.scouts>=1?'#c8fff0':'#c6cbe9';c.lineWidth=2;c.setLineDash([5,4]);c.beginPath();c.arc(p.x,p.y,25,0,Math.PI*2);c.stroke();c.setLineDash([])
     upright(c,p.x,p.y,wide,()=>{c.font='600 11px "DM Sans Variable",sans-serif';c.textAlign='center';c.fillStyle=s.sky.night?'#d5edf5':'#2a485c';c.fillText('LAST LANTERN',p.x,p.y+43)});c.restore()
   }
-  if(s.challenge.watchCraft&&(s.challenge.expedition==='sunforge'&&s.planningWave>=10||(!!s.challenge.story||!!s.challenge.siege)&&s.waveDef(Math.min(s.finalWave,s.planningWave)).groups.some(g=>g.type==='dredger'))){
+  if(s.challenge.watchCraft&&(s.challenge.expedition==='sunforge'&&s.planningWave>=10||(!!s.challenge.story||!!s.challenge.siege)&&s.waveDef(Math.min(s.finalWave,view.forecastWave??s.planningWave)).groups.some(g=>g.type==='dredger'))){
     for(const bend of DREDGER_BENDS){const seg=s.level.segs.get(bend.segment);if(!seg)continue
       c.save();c.strokeStyle='#ffe0a4';c.lineWidth=3;c.setLineDash([4,7]);c.beginPath()
       for(let d=-DREDGER_WINDOW;d<=DREDGER_WINDOW;d+=5){const p=seg.line.at(seg.line.length*bend.fraction+d,{x:0,y:0,tx:0,ty:0});if(d===-DREDGER_WINDOW)c.moveTo(p.x,p.y);else c.lineTo(p.x,p.y)}c.stroke();c.setLineDash([])
@@ -141,7 +141,8 @@ export function drawFixedWorld(c:CanvasRenderingContext2D,s:Sim,view:ViewState,s
   if(sky.weather==='mist')for(let i=0;i<4;i++){const drift=reducedMotion?0:Math.sin(time*.15+i)*30;lightPool(c,160+i*120+drift,120+i*180,260,sky.night?'#bddeef':'#f2ffe9',sky.night?.08:.1,.2)}
   if(sky.weather==='rain'&&!reducedMotion){c.strokeStyle=sky.night?'#b4e2ee66':'#2c6e7d55';c.lineWidth=1;for(let i=0;i<36;i++){const x=(i*173+time*12)%720,y=(i*97+time*160)%840;c.beginPath();c.moveTo(x,y);c.lineTo(x-3,y+12);c.stroke()}}
   if(sky.weather==='breeze'&&!reducedMotion){c.fillStyle='#ffd594b0';for(let i=0;i<7;i++){const x=(i*173+time*28)%720,y=80+i*105+Math.sin(time+i)*7;c.save();c.translate(x,y);c.rotate(time+i);c.fillRect(-3,-1,6,2);c.restore()}}
-  if(!s.waveActive)for(const source of s.level.def.sources){if(source.openWave>s.finalWave||source.openWave>s.planningWave&&source.id!=='west')continue;const p=s.level.segs.get(source.seg)!.line.at(0,{x:0,y:0,tx:0,ty:0});c.fillStyle=sky.night?'#d8efde':'#244f5b';c.font=`550 ${Math.max(15,10/scale)}px "DM Sans Variable",sans-serif`;c.textAlign=source.id==='west'?'left':'center';upright(c,p.x,p.y,wide,()=>c.fillText(source.id==='west'?(s.planningWave<source.openWave?'Opens · wave '+source.openWave:'Side inlet'):'Main inlet',p.x,p.y-44))}
+  if(view.forecastWave)drawThreatMap(c,s,view.forecastWave,wide,scale,true)
+  if(!s.waveActive&&!view.forecastWave)for(const source of s.level.def.sources){if(source.openWave>s.finalWave||source.openWave>s.planningWave&&source.id!=='west')continue;const p=s.level.segs.get(source.seg)!.line.at(0,{x:0,y:0,tx:0,ty:0});c.fillStyle=sky.night?'#d8efde':'#244f5b';c.font=`550 ${Math.max(15,10/scale)}px "DM Sans Variable",sans-serif`;c.textAlign=source.id==='west'?'left':'center';upright(c,p.x,p.y,wide,()=>c.fillText(source.id==='west'?(s.planningWave<source.openWave?'Opens · wave '+source.openWave:'Side inlet'):'Main inlet',p.x,p.y-44))}
 }
 
 const icons=new Map<string,string>()

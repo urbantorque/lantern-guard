@@ -5,6 +5,8 @@ export interface AudioScene {
   wave?:number
   playing?:boolean
   boss?:boolean
+  bossId?:string
+  campaign?:boolean
   overture?:boolean
   district?:number
   outcome?:'won'|'lost'|null
@@ -41,12 +43,17 @@ const themes={
     [0,2,-1,3,2,-1,1,-1],[2,-1,1,-1,0,-1,-1,-1],
   ],
 }
+/** The campaign's musical chapters follow its eight-wave acts exactly. */
+export const scoreAct=(scene:AudioScene)=>scene.campaign?Math.max(0,Math.min(4,Math.floor(((scene.wave??1)-1)/8))):Math.min(3,Math.floor((scene.wave??0)/10))
+const actRoutes=[0,8,16,20,24]
+const actVoices:Voice[]=['felt','marimba','harp','reed','felt']
+const bossPhrases:Record<string,number[]>={toad:[0,0,7,3],dredger:[0,7,0,1],gloom:[0,12,10,7],warden:[0,0,1,7],bloomheart:[0,3,7,14]}
 export function scoreStep(step:number,scene:AudioScene,intensity:number):ScoreNote[] {
   const beat=step%16,bar=Math.floor(step/16)%32,pass=Math.floor(step/512)%2
-  const section=Math.floor(bar/8),chapter=Math.min(3,Math.floor((scene.wave??0)/10))
+  const section=Math.floor(bar/8),chapter=scoreAct(scene)
   const district=Math.max(0,Math.min(3,scene.district??0))
   // Each waterway has a harmonic route and motif, with a 64-bar return variation.
-  const chordBar=(bar+[0,8,16,24][district])%32
+  const chordBar=(bar+(scene.campaign?actRoutes[chapter]:[0,8,16,24][district]))%32
   const [root,third]=chords[chordBar],notes:ScoreNote[]=[]
   const add=(voice:Voice,midi:number,length:number,gain:number,pan=0)=>{
     // Deterministic phrasing: softer offbeats and a gradual answer within each phrase.
@@ -63,7 +70,7 @@ export function scoreStep(step:number,scene:AudioScene,intensity:number):ScoreNo
   }
   if(beat===0){
     add('bass',root-12,scene.night?2.8:1.6,.13)
-    for(const [i,n]of [0,7,third+12].entries())add(section===2?'strings':'pad',root+n,3.5,.023,[-.5,.1,.5][i])
+    for(const [i,n]of [0,7,third+12].entries())add(section===2||scene.campaign&&chapter>=3?'strings':'pad',root+n,3.5,.023,[-.5,.1,.5][i])
   }
   if(beat===8&&active&&(chapter>0||scene.boss))add('bass',root-5,1,.065)
   const phrase=themes[hero][(bar+district*2)%8]
@@ -72,7 +79,7 @@ export function scoreStep(step:number,scene:AudioScene,intensity:number):ScoreNo
     const degree=phrase[beat/2]
     if(degree>=0){
       const octave=section===2?-12:pass&&bar%4<2?12:0
-      const voice:Voice=scene.night?(section===2?'reed':'felt'):hero==='ivo'?'marimba':hero==='mira'?'harp':'felt'
+       const voice:Voice=scene.campaign?actVoices[chapter]:scene.night?(section===2?'reed':'felt'):hero==='ivo'?'marimba':hero==='mira'?'harp':'felt'
       add(voice,root+12+tones[degree]+octave,hero==='mira'?1.8:1.25,energy>.75?.067:.085,Math.sin(bar*1.7)*.22)
     }
   }
@@ -81,7 +88,15 @@ export function scoreStep(step:number,scene:AudioScene,intensity:number):ScoreNo
     add(hero==='mira'?'felt':'harp',root+tones[(bar+beat+pass)%4],.85,.03,beat<8?-.42:.42)
   }
   if((chapter>=1||section===1)&&beat===14&&bar%2===0&&energy<.8)add('bell',root+24+third,1.8,.033,.35)
-  if(scene.boss&&beat%4===2)add('lead',root+(beat%8===2?0:7),.28,.042,-.2)
+  if(scene.boss&&beat%4===2){const motif=bossPhrases[scene.bossId??'toad']??bossPhrases.toad;add(scene.bossId==='gloom'?'reed':'lead',root+motif[Math.floor(beat/4)],.28,.042,-.2)}
+  // Copper's measured pulse, the moon's spacious answer, and the final act's
+  // returning keeper theme give each act a texture without adding a louder mix.
+  if(scene.campaign&&active&&!scene.boss&&beat===6&&energy<.75){
+    if(chapter===1)add('marimba',root-5,.35,.038,-.25)
+    if(chapter===2&&bar%2===0)add('reed',root+19,1.8,.035,.3)
+    if(chapter===3)add('strings',root-12,1.4,.045,-.2)
+    if(chapter===4)add('bell',root+24+third,1.5,.03,.25)
+  }
   // An answering phrase in the second half leaves the lead room to breathe.
   if(section>=2&&bar%2===1&&(beat===5||beat===13))add(scene.night?'marimba':'reed',root+tones[(bar+district+pass)%4],.85,.04,beat===5?-.38:.38)
   // A four-bar hero signature answers the main melody. It changes register at dusk.
@@ -100,4 +115,4 @@ export function scoreStep(step:number,scene:AudioScene,intensity:number):ScoreNo
   }
   return notes
 }
-export const scoreInterval=(scene:AudioScene)=>scene.outcome?.28:scene.boss?.19:scene.night?.23:.21
+export const scoreInterval=(scene:AudioScene)=>scene.outcome?.28:scene.boss?.19:scene.campaign?[.235,.22,.245,.215,.205][scoreAct(scene)]:scene.night?.23:.21

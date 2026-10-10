@@ -3,7 +3,7 @@ import {mkdirSync,writeFileSync} from 'node:fs'
 import assert from 'node:assert/strict'
 const require=createRequire(import.meta.url)
 const {chromium}=require(process.env.PLAYWRIGHT_PATH||'C:/Users/roger/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright')
-const story=process.argv.includes('--story'),mastery=story||process.argv.includes('--mastery'),tactics=mastery||process.argv.includes('--tactics'),out=story?'artifacts/story-release':mastery?'artifacts/mastery-qa':tactics?'artifacts/tactics-qa':'artifacts/visual-overhaul';mkdirSync(out,{recursive:true})
+const story=process.argv.includes('--story'),mastery=story||process.argv.includes('--mastery'),tactics=mastery||process.argv.includes('--tactics'),out=process.env.QA_OUT||(story?'artifacts/story-release':mastery?'artifacts/mastery-qa':tactics?'artifacts/tactics-qa':'artifacts/visual-overhaul');mkdirSync(out,{recursive:true})
 const browser=await chromium.launch({headless:true,executablePath:process.env.EDGE_PATH||'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe',args:['--mute-audio']})
 try{
  const page=await browser.newPage({viewport:{width:1440,height:900}}),errors=[];page.on('pageerror',e=>errors.push(e.message))

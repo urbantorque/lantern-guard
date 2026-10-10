@@ -28,14 +28,14 @@ export interface VillageProfile {
   journal: Partial<Record<EnemyId,number>>
   settlement: number
   lastMap: number
-  settings: { largeText:boolean; reducedMotion:boolean; muted:boolean; clearPalette:boolean; music:boolean; effects:boolean }
+  settings: { largeText:boolean; reducedMotion:boolean; muted:boolean; clearPalette:boolean; music:boolean; effects:boolean; ambience:boolean }
 }
 export let storageMessage = ''
 export function readJSON(key:string): unknown { try {return JSON.parse(localStorage.getItem(PREFIX+key) ?? 'null')} catch { return null } }
 export function writeJSON(key:string,value:unknown) { try { localStorage.setItem(PREFIX+key,JSON.stringify(value)); storageChanged(); return true } catch {storageMessage='Saving is unavailable. Keep this tab open to preserve your current watch.'; return false} }
 export function loadVillage(): VillageProfile {
   const legacy=loadSettings()
-  const empty: VillageProfile = {v:1,guardian:legacy.guardian,records:{},credits:{},commissions:[],journal:{},settlement:0,lastMap:0,settings:{largeText:legacy.bigText===true,reducedMotion:legacy.reduceMotion===true||(legacy.reduceMotion===null&&typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches),muted:legacy.muted===true,clearPalette:legacy.palette==='clear',music:true,effects:true}}
+  const empty: VillageProfile = {v:1,guardian:legacy.guardian,records:{},credits:{},commissions:[],journal:{},settlement:0,lastMap:0,settings:{largeText:legacy.bigText===true,reducedMotion:legacy.reduceMotion===true||(legacy.reduceMotion===null&&typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches),muted:legacy.muted===true,clearPalette:legacy.palette==='clear',music:true,effects:true,ambience:true}}
   const p=readJSON('profile') as VillageProfile | null
   if(!p || p.v!==1 || !p.records || !p.credits || !Array.isArray(p.commissions) || !p.journal || !p.settings) return empty
   const nonnegative=(n:unknown):n is number=>typeof n==='number'&&Number.isFinite(n)&&n>=0
@@ -44,7 +44,7 @@ export function loadVillage(): VillageProfile {
   if(!Object.values(p.records).every(r=>r&&nonnegative(r.wave)&&r.wave<=40&&nonnegative(r.light)&&typeof r.won==='boolean'&&typeof r.practice==='boolean'))return empty
   if(!Object.values(p.credits).every(c=>c&&nonnegative(c.wave)&&journal(c.journal)))return empty
   const contractRecords=Object.fromEntries(Object.entries(p.contractRecords&&typeof p.contractRecords==='object'?p.contractRecords:{}).filter(([key,r])=>CONTRACTS.some(c=>key.startsWith(c.id+':')&&isHero(key.slice(c.id.length+1)))&&r&&Number.isInteger(r.light)&&r.light>=0&&r.light<=50))
-  return {...empty,...p,contractRecords,mastery:Array.isArray(p.mastery)?p.mastery.filter(id=>MASTERY.some(m=>m.id===id)):[],districtStyles:validStyles(p.districtStyles),lessons:Array.isArray(p.lessons)?p.lessons.filter(k=>typeof k==='string').slice(0,20):[],lastHero:isHero(p.lastHero)?p.lastHero:'sol',guardian:['lantern','ember','reed','tide'].includes(p.guardian??'')?p.guardian:'lantern',commissions:p.commissions.filter(id=>['market','glass','garden'].includes(id)||isExpedition(id)),settings:{...empty.settings,...p.settings}}
+  return {...empty,...p,contractRecords,mastery:Array.isArray(p.mastery)?p.mastery.filter(id=>MASTERY.some(m=>m.id===id)):[],districtStyles:validStyles(p.districtStyles),lessons:Array.isArray(p.lessons)?p.lessons.filter(k=>typeof k==='string').slice(0,20):[],lastHero:isHero(p.lastHero)?p.lastHero:'sol',guardian:['lantern','ember','reed','tide'].includes(p.guardian??'')?p.guardian:'lantern',commissions:p.commissions.filter(id=>['market','glass','garden'].includes(id)||isExpedition(id)),settings:{...empty.settings,...p.settings,ambience:p.settings.ambience??p.settings.music??true}}
 }
 export function loadWatch(slot:Slot): {snapshot:SaveSnapshotV2;blooms:number[]} | null {
   try {

@@ -338,11 +338,13 @@ export class Renderer {
           if (sim.challenge.fixed) {
             this.addBloom(ev)
             if (!this.settings.reduceMotion && (ev.boss || pops < 5)) {
-              fx.add({kind:'shock',x:ev.x,y:ev.y,size:ev.boss?82:23,color:withAlpha(col,.8),life:ev.boss?.55:.3})
+              if(ev.boss)fx.add({kind:'shock',x:ev.x,y:ev.y,size:82,color:withAlpha(col,.8),life:.55})
+              fx.add({kind:'ripple',x:ev.x,y:ev.y,size:ev.boss?52:18,color:'#a2c4c0',life:ev.boss?1.4:.8})
               const hit=elevated(ev.x,ev.y,8,this.fixedLandscape)
-              fx.flash(hit.x,hit.y,ev.boss?54:22,col,.18)
-              fx.shards(hit.x,hit.y,'#9aa9a2',ev.boss?10:3)
-              fx.burst(hit.x,hit.y,P.cream,ev.boss?10:2,ev.boss?160:70,2.5,.3)
+              fx.flash(hit.x,hit.y,ev.boss?54:12,col,.14)
+              const metal=['shell','vshell','skiff','warden','dredger'].includes(ev.enemy)
+              fx.shards(hit.x,hit.y,metal?'#bf9972':ev.enemy==='veil'?'#93c9df':'#677d78',ev.boss?10:metal?3:1)
+              if(ev.boss)fx.burst(hit.x,hit.y,P.cream,10,160,2.5,.3)
               if(ev.boss)fx.burst(hit.x,hit.y,P.amberHi,12,160,3,.55)
             }
             sound.creaturePop(ev.enemy,big)
@@ -397,9 +399,12 @@ export class Renderer {
            }
           const label=elevated(ev.x,ev.y,46,this.fixedLandscape)
           if(!sim.director||decisive||ev.kind==='debut')fx.text(label.x,label.y,ev.label,colour,decisive?16:14,decisive?1.1:.85)
-          if(ev.label.startsWith('Core open'))sound.encounter('open')
+          if(ev.label.startsWith('Ignition ·'))sound.command('sol')
+          else if(ev.label.startsWith('Stillwater ·'))sound.command('mira')
+          else if(ev.label.startsWith('Discharge ·'))sound.command('ivo')
+          else if(ev.label.startsWith('Core open'))sound.encounter('open')
           else if(ev.label.startsWith('Crown unleashed'))sound.encounter('crown')
-          else if(ev.label.startsWith('Break the tether'))sound.encounter('warning')
+          else if(ev.label.startsWith('Break the tether'))sound.encounter('warning',sim.enemies.find(e=>e.alive&&e.def.boss)?.def.id)
           else if(ev.kind==='debut')sound.tactic('sun')
           break
         }
@@ -433,7 +438,7 @@ export class Renderer {
             if(!this.settings.reduceMotion){fx.flash(hit.x,hit.y,18,c,.2);fx.burst(hit.x,hit.y,c,calm?1:3,90,2.2,.3);if(sim.challenge.fixed)fx.add({kind:'impact',x:hit.x,y:hit.y,color:c,size:11,life:.17,rot:.4})}
           } else if (sim.challenge.fixed && !this.settings.reduceMotion) {
             const hit=elevated(ev.x,ev.y,8,this.fixedLandscape)
-            fx.flash(hit.x,hit.y,18,ev.hue,.16)
+            fx.flash(hit.x,hit.y,ev.kind==='bolt'?24:10,ev.hue,ev.kind==='bolt'?.16:.09)
             fx.add({kind:'impact',x:hit.x,y:hit.y,color:ev.hue,size:ev.kind==='bolt'?17:11,life:ev.kind==='bolt'?.2:.14})
           } else if (!calm && Math.random() < 0.6) fx.burst(ev.x, ev.y, ev.hue, 2, 110, 2.5, 0.25)
           break
@@ -457,6 +462,7 @@ export class Renderer {
               fx.add({kind:'impact',x:hit.x,y:hit.y,size:Math.min(28,ev.r*.55),color:'#ffc181',life:.23})
               fx.flash(hit.x,hit.y,Math.min(48,ev.r*.75),P.coral,.2)
               fx.burst(hit.x,hit.y,'#ffe6aa',ev.big?8:4,ev.r*1.8,2.4,.4)
+              fx.add({kind:'ripple',x:ev.x,y:ev.y,size:ev.r*.6,color:'#90b4b7',life:.9})
             }
             sound.boom(ev.big);break
           }
@@ -469,7 +475,7 @@ export class Renderer {
         }
         case 'toll': {
           // the toll's true area is centred on the keeper's pad; a small ring rings out at the bell mouth
-          fx.ring(ev.x, ev.y, ev.r, withAlpha(P.ice, 0.85), 0.7, 4)
+          fx.ring(ev.x, ev.y, ev.r, withAlpha(P.ice, sim.challenge.fixed?.42:.85), sim.challenge.fixed?.48:.7, sim.challenge.fixed?1.5:4)
           if (ev.stun) fx.ring(ev.x, ev.y, ev.r * 0.8, '#ffffff', 0.5, 6)
           const tower=sim.challenge.fixed?sim.towers.find(t=>t.id==='bell'&&t.x===ev.x&&t.y===ev.y):null
           const mouth=tower?elevated(ev.x,ev.y,-fixedShotOrigin(tower).y,this.fixedLandscape):{x:ev.x,y:ev.y-36}
@@ -507,9 +513,9 @@ export class Renderer {
           sound.waveStart()
           break
         case 'waveEnd':
-          sound.waveClear()
+          sound.waveClear(sim.wave,!!sim.challenge.siege)
           if(!sim.challenge.fixed)fx.text(this.levelBuilt!.def.home.x, this.levelBuilt!.def.home.y - 120, `+${ev.bonus + ev.income} glow`, P.amberHi, 26, 1.8)
-          fx.ring(this.levelBuilt!.def.home.x, this.levelBuilt!.def.home.y, 200, withAlpha(P.amberHi, 0.7), 1.2, 4)
+          if(!sim.challenge.siege||sim.wave%8===0)fx.ring(this.levelBuilt!.def.home.x, this.levelBuilt!.def.home.y, 200, withAlpha(P.amberHi, 0.7), 1.2, 4)
           haptic(20)
           break
         case 'income':
@@ -521,7 +527,7 @@ export class Renderer {
           break
         case 'spawn':
           if (ev.boss) {
-            sound.bossRoar()
+            sound.bossRoar(ev.type)
             this.addShake(0.6)
             fx.ring(ev.x, Math.max(20, ev.y), 140, withAlpha(P.pale, 0.7), 1.2, 6)
           }
@@ -592,7 +598,7 @@ export class Renderer {
           fx.flash(ev.x, ev.y, 120, P.pale, 0.6)
           fx.ring(ev.x, ev.y, 150, P.pale, 1, 6)
           this.addShake(0.7)
-          sound.bossRoar()
+          sound.bossRoar(sim.enemies.find(e=>e.alive&&e.def.boss&&Math.hypot(e.x-ev.x,e.y-ev.y)<10)?.def.id,true)
           break
         case 'jam':
           if (ev.on) sound.deny()

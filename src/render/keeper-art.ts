@@ -7,6 +7,12 @@ export const TOWER_COLOURS:Record<TowerId,Glaze>={
  wick:{front:'#dd8446',roof:'#ffe4a3',side:'#834943',accent:'#ffd175'},cracker:{front:'#c65f64',roof:'#ffd9b3',side:'#653d4c',accent:'#ffb590'},bell:{front:'#409fa3',roof:'#c5f5e5',side:'#285465',accent:'#a8f1e5'},owl:{front:'#578b72',roof:'#e1e8b3',side:'#304f4e',accent:'#dcf3a1'},garden:{front:'#66915d',roof:'#d8df9d',side:'#345653',accent:'#ebed9a'},beam:{front:'#c1a45c',roof:'#fff0bc',side:'#66564d',accent:'#ffe5a1'},storm:{front:'#728bac',roof:'#d9eaf2',side:'#3b4a66',accent:'#b4ecfa'},ballista:{front:'#8e7061',roof:'#e7c28d',side:'#4c4e57',accent:'#d2eee5'},
 }
 const rank=(t:Miniature)=>t.refinement?4:Math.max(t.a,t.b)
+/** Fast strike, heavier return. Recoil is a pose; firing cadence stays in Sim. */
+export function weaponRecoil(id:TowerId,since:number){
+  const heavy=id==='cracker'||id==='ballista',peak=heavy?.055:.028,decay=heavy?7:15
+  if(since<0||since>1.5)return 0
+  return since<peak?Math.sin(since/peak*Math.PI/2):Math.exp(-(since-peak)*decay)
+}
 /** Bevelled hardware contrasts with the district's softer ceramic buildings. */
 function armour(c:CanvasRenderingContext2D,p:number[][],m:Glaze){
  const xs=p.map(v=>v[0]),ys=p.map(v=>v[1]),g=c.createLinearGradient(Math.min(...xs),Math.min(...ys),Math.max(...xs)+1,Math.max(...ys)+1)
@@ -83,7 +89,7 @@ function foundation(c:CanvasRenderingContext2D,t:Miniature,day:boolean){
 export function drawFixedTower(c:CanvasRenderingContext2D,x:number,y:number,t:Miniature){
  const s=rank(t),m=TOWER_COLOURS[t.id],special=s>=2,crown=s===4,day=isDaylit(c),still=!!t.reducedMotion
  const time=still?0:t.time??0,since=still?9:t.since??9,charge=Math.max(0,Math.min(1,t.charge??.45)),aim=t.angle??-.65,mu=fixedMuzzle(t)
- const kick=Math.min(1,2.4*Math.exp(-since*12)*Math.sin(Math.min(1,since/.1)*Math.PI/2)),flare=Math.max(0,1-since/.13),settle=Math.sin(since*23)*Math.exp(-since*8)
+  const kick=weaponRecoil(t.id,since),flare=Math.max(0,1-since/(t.id==='cracker'?.15:.09)),settle=Math.sin(since*23)*Math.exp(-since*8)
  c.save();c.translate(x,y)
  if(!still&&(t.age??9)<.65){const q=Math.min(1,(t.age??9)/.65),rise=1-(1-q)**3;c.translate(0,(1-rise)*24);c.scale(1+Math.sin(q*Math.PI)*.055,Math.max(.1,rise+Math.sin(q*Math.PI)*.1))}
  if(!still&&(t.upAge??9)<.6){const q=Math.sin((t.upAge??9)/.6*Math.PI);c.scale(1+q*.045,1+q*.06)}
@@ -99,7 +105,9 @@ export function drawFixedTower(c:CanvasRenderingContext2D,x:number,y:number,t:Mi
   orb(c,0,0,10,m.accent,m.side);c.save();c.rotate(aim);const end=special&&t.b?26:19
   armour(c,[[3,-6],[end-3,-4],[end,0],[end-3,4],[3,6]],m);line(c,[[4,-3],[end-2,-2]],BRASS.roof,1.8);line(c,[[7,3],[end-3,3]],BRASS.side,2);oval(c,end,0,2.2,4,'#362e33',BRASS.front);oval(c,end+.5,0,1,2.4,'#fff0af');ignition(c,end+1,0,0,flare,'#ffc779');c.restore();lightPool(c,0,0,16+flare*10,m.accent,.2+flare*.5,1);c.restore()
  }else if(t.id==='cracker'){
-  const n=special&&!t.b?3:2
+   const n=special&&!t.b?3:2
+   // The breech opens on recoil and the piston returns ahead of the next shot.
+   for(const side of [-1,1]){line(c,[[side*12,-29],[side*12,mu.y+18+kick*8]],'#213c46',5);line(c,[[side*12,-29],[side*12,mu.y+23+kick*8]],'#e6c08b',2)}
   for(let i=0;i<n;i++){const px=(i-(n-1)/2)*14,cy=mu.y+16+(i%2)*3+kick*(i===0?10:6);vessel(c,px,cy,8,4,19+s*2,m);vessel(c,px,cy-16-s*2,9,4.6,5,BRASS);oval(c,px,cy-21-s*2,6,3,'#273943');oval(c,px,cy-21-s*2,3.6,1.8,flare>.01?'#fff1c2':'#bc7758');line(c,[[px-4,cy-13],[px-4,cy-3]],m.roof,1.4)}
   for(const side of [-1,1]){line(c,[[side*19,-23],[side*20,mu.y+10+kick*7]],BRASS.side,5);line(c,[[side*19,-24],[side*20,mu.y+11+kick*7]],BRASS.roof,1.6);armour(c,[[side*9,-24],[side*23,-32],[side*25,-21],[side*13,-17]],m)}
   gear(c,-23,-26,6,charge*TAU,BRASS.front);gear(c,23,-26,5,-charge*TAU,BRASS.front);vent(c,-5,-27,4,m.accent)
@@ -147,7 +155,7 @@ export function drawFixedTower(c:CanvasRenderingContext2D,x:number,y:number,t:Mi
   if(!still&&flare>0){c.save();c.globalAlpha=flare;for(let i=0;i<3;i++){const a=i*TAU/3+time*3;line(c,[[Math.cos(a)*8,cy-11+Math.sin(a)*8],[Math.cos(a+.25)*18,cy-11+Math.sin(a+.25)*18],[Math.cos(a)*27,cy-11+Math.sin(a)*27]],'#e2fbff',1.2)}c.restore()}
   if(t.volleyCharge!==undefined)for(let i=0;i<3;i++)orb(c,(i-1)*8,-28-s*2,2.3,i<t.volleyCharge?'#e8fcff':'#5b6b81',m.side)
  }else{
-  const cy=mu.y+4;vessel(c,0,cy+12,12,5,8,BRASS);c.save();c.translate(0,cy);c.rotate(aim+Math.PI/2);const pull=still?4:charge*10-kick*12
+   const cy=mu.y+4;vessel(c,0,cy+12,12,5,8,BRASS);c.save();c.translate(-Math.cos(aim)*kick*4,cy-Math.sin(aim)*kick*4);c.rotate(aim+Math.PI/2);const pull=still?4:charge*10-kick*12
   line(c,[[0,12],[0,-28]],m.side,10);line(c,[[-2,10],[-2,-27]],m.roof,2);c.strokeStyle=m.front;c.lineWidth=5;c.beginPath();c.moveTo(-27,-14);c.quadraticCurveTo(-18,-30,0,-22);c.quadraticCurveTo(18,-30,27,-14);c.stroke();line(c,[[-27,-14],[0,pull],[27,-14]],'#f4e4be',1.3);line(c,[[0,7-kick*10],[0,-34-kick*5]],BRASS.roof,2.8);polygon(c,[[0,-42],[-4,-31],[4,-31]],'#e8efe0');gear(c,-9,8,4,charge*2,BRASS.front);gear(c,9,8,4,-charge*2,BRASS.front)
   for(const side of [-1,1]){armour(c,[[side*7,-19],[side*17,-27],[side*28,-17],[side*27,-11],[side*16,-20]],m);line(c,[[side*5,10],[side*5,-24]],BRASS.front,1.2);oval(c,side*26,-15,2,2,m.accent)}
   if(special&&!t.b){line(c,[[-29,-9],[-19,-21]],'#aac7be',2);line(c,[[29,-9],[19,-21]],'#aac7be',2)}

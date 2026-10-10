@@ -5,6 +5,7 @@
  */
 
 import { scoreStep,scoreInterval,type AudioScene,type ScoreNote } from './watch-score'
+import { CombatMix,BOSS_VOICES } from './combat-mix'
 export type { AudioScene } from './watch-score'
 const PENTA = [0, 2, 4, 7, 9] // major pentatonic degrees
 const BASE_MIDI = 62 // D4
@@ -23,8 +24,8 @@ export interface AudioSettings {
   muted: boolean
 }
 /** A silent test URL overrides this session without changing saved preferences. */
-export const profileSound=(prefs:{muted:boolean;music:boolean;effects:boolean},silent=false):AudioSettings=>({
-  sfx:prefs.effects?.7:0,music:prefs.music?.6:0,ambience:prefs.music?.35:0,muted:silent||prefs.muted,
+export const profileSound=(prefs:{muted:boolean;music:boolean;effects:boolean;ambience?:boolean},silent=false):AudioSettings=>({
+  sfx:prefs.effects?.7:0,music:prefs.music?.6:0,ambience:(prefs.ambience??prefs.music)?.35:0,muted:silent||prefs.muted,
 })
 
 type Rate = { last: number; count: number }
@@ -35,11 +36,13 @@ export class Sound {
   private master!: GainNode
   private sfxBus!: GainNode
   private musicBus!: GainNode
+  private musicFocus!: GainNode
   private ambBus!: GainNode
   private noiseBuf!: AudioBuffer
   private beamOsc: OscillatorNode | null = null
   private beamGain: GainNode | null = null
   private rates = new Map<string, Rate>()
+  private mix=new CombatMix()
   private musicNext = 0
   private musicStep = 0
   private musicScene:AudioScene={night:false,weather:'clear'}
@@ -74,13 +77,15 @@ export class Sound {
       this.sfxBus = ctx.createGain()
       this.musicBus = ctx.createGain()
       this.ambBus = ctx.createGain()
+      this.master.gain.value=0;this.sfxBus.gain.value=0;this.musicBus.gain.value=0;this.ambBus.gain.value=0
       this.sfxBus.connect(this.master)
-      this.musicBus.connect(this.master)
+      this.musicFocus=ctx.createGain()
+      this.musicBus.connect(this.musicFocus).connect(this.master)
       // A quiet, filtered echo gives the plucked melody space without a large
       // sample download or a wash of reverb over combat cues.
       const send=ctx.createGain(),delay=ctx.createDelay(1),echo=ctx.createBiquadFilter(),feedback=ctx.createGain()
       send.gain.value=.18;delay.delayTime.value=.3;echo.type='lowpass';echo.frequency.value=1800;feedback.gain.value=.2
-      this.musicBus.connect(send).connect(delay).connect(echo).connect(this.master)
+      this.musicFocus.connect(send).connect(delay).connect(echo).connect(this.master)
       echo.connect(feedback).connect(delay)
       this.ambBus.connect(this.master)
       const len = ctx.sampleRate * 2
@@ -103,9 +108,14 @@ export class Sound {
     this.ambBus.gain.setTargetAtTime(this.settings.ambience * 0.5, t, 0.05)
   }
 
-  private get audible(){return !!this.ctx&&this.ctx.state==='running'&&!this.settings.muted&&!(typeof document!=='undefined'&&document.hidden)}
+  private get audible(){return !!this.ctx&&(this.offlineRendering||this.ctx.state==='running')&&!this.settings.muted&&!(typeof document!=='undefined'&&document.hidden)}
+  private focus(seconds:number){
+    if(!this.ctx||this.settings.sfx<=0)return
+    this.mix.focus(this.ctx.currentTime,seconds)
+    this.musicFocus.gain.setTargetAtTime(.38,this.ctx.currentTime,.035)
+  }
   private ok(key: string, maxPerSec: number): boolean {
-    if (!this.audible) return false
+    if (!this.audible||this.settings.sfx<=0) return false
     const now = this.ctx!.currentTime
     let r = this.rates.get(key)
     if (!r) {
@@ -113,6 +123,7 @@ export class Sound {
       this.rates.set(key, r)
     }
     if (now - r.last > 1 / maxPerSec) {
+      if(!this.mix.admit(now,/^(encounter|boss|leak|tap|deny|command)/.test(key)))return false
       r.last = now
       return true
     }
@@ -261,12 +272,15 @@ export class Sound {
   }
 
   /** Mechanical tells, a low impact and a short bright release leave room for the score. */
-  encounter(kind:'warning'|'open'|'interrupt'|'crown') {
+  encounter(kind:'warning'|'open'|'interrupt'|'crown',bossId?:string) {
     if(!this.ok('encounter:'+kind,2))return
+    this.focus(kind==='warning'?.65:.4)
+    const material=BOSS_VOICES[bossId??'']
     if(kind==='warning'){
-      this.tone(146.83,'triangle',.02,.32,.12)
-      this.tone(155.56,'sine',.02,.3,.07,undefined,.12)
-      this.noise(.12,'bandpass',850,3,.09)
+      const f=material?material.root*2:146.83
+      this.tone(f,'triangle',.02,.32,.12)
+      this.tone(f*(material?.metal?1.5:1.0595),'sine',.02,.3,.07,undefined,.12)
+      this.noise(.12,'bandpass',material?.filter??850,3,.09)
       return
     }
     const f=kind==='crown'?73.42:kind==='interrupt'?98:82.41
@@ -363,6 +377,7 @@ export class Sound {
 
   leak() {
     if (!this.ok('leak', 5)) return
+    this.focus(.55)
     const ctx = this.ctx!
     const { o } = this.tone(220, 'triangle', 0.01, 0.5, 0.14)
     o.frequency.exponentialRampToValueAtTime(110, ctx.currentTime + 0.45)
@@ -377,19 +392,39 @@ export class Sound {
     this.gate()
   }
 
-  waveClear() {
+  waveClear(wave=0,campaign=false) {
     if (!this.audible) return
+    if(campaign&&wave%8!==0){
+      // A small confirmation leaves the continuous siege moving forward.
+      this.tone(scaleNote(wave%3+5),'sine',.008,.34,.065)
+      this.tone(scaleNote(wave%3+8),'sine',.01,.3,.025,undefined,.11)
+      return
+    }
+    this.focus(.65)
     const chord = [0, 2, 4, 5, 7]
     chord.forEach((c, i) => this.tone(scaleNote(c + 5), 'sine', 0.004, 1.2, 0.08, undefined, i * 0.07))
     chord.forEach((c, i) => this.tone(scaleNote(c + 10), 'triangle', 0.004, 0.6, 0.025, undefined, 0.2 + i * 0.07))
   }
 
-  bossRoar() {
-    if (!this.audible) return
-    const { o, g } = this.tone(55, 'sawtooth', 0.4, 2.2, 0.16)
-    o.frequency.exponentialRampToValueAtTime(38, this.ctx!.currentTime + 2.4)
-    void g
-    this.noise(1.8, 'lowpass', 240, 1, 0.2, 0.1)
+  bossRoar(kind='toad',phase=false) {
+    if (!this.ok('boss',1)) return
+    this.focus(phase?.8:1.25)
+    const voice=BOSS_VOICES[kind]??BOSS_VOICES.toad,duration=phase?.7:1.45
+    voice.partials.forEach((partial,i)=>{
+      const f=voice.root*partial,{o,t}=this.tone(f,'sine',voice.metal?.005:.13,duration/(1+i*.2),.16/(i+1),undefined,i*.045)
+      o.frequency.exponentialRampToValueAtTime(f*(kind==='gloom'?1.35:voice.metal?.94:.72),t+duration*.9)
+    })
+    this.noise(duration*.65,voice.metal?'bandpass':'lowpass',voice.filter,voice.metal?3:.7,.12,.035)
+    if(voice.metal)for(let i=0;i<3;i++)this.tone(voice.root*(i%2?5.4:2.76),'sine',.002,.2,.055,undefined,.18+i*.19)
+    if(kind==='bloomheart')for(let i=0;i<3;i++)this.noise(.12,'bandpass',1500+i*500,3,.035,.25+i*.2)
+  }
+
+  command(hero:'sol'|'mira'|'ivo'){
+    if(!this.ok('command',3))return
+    this.focus(.75)
+    if(hero==='sol'){this.tone(73.42,'sine',.003,.5,.25);this.noise(.3,'lowpass',1800,.8,.2);this.tone(293.66,'triangle',.004,.22,.07,undefined,.05)}
+    if(hero==='mira'){for(const [i,f]of [587.33,880,1174.66].entries())this.tone(f,'sine',.004,.75-i*.1,.11/(i+1),undefined,i*.025);this.noise(.32,'highpass',4200,.7,.08)}
+    if(hero==='ivo'){this.noise(.05,'bandpass',3400,2,.28);const {o,t}=this.tone(392,'triangle',.002,.35,.18);o.frequency.exponentialRampToValueAtTime(49,t+.32);this.tone(98,'sine',.015,.5,.15,undefined,.025)}
   }
 
   tap() {
@@ -506,10 +541,22 @@ export class Sound {
     return offline.startRendering()
   }
 
+  /** Export the actual campaign arrangement or a boss cue for silent QA. */
+  static async renderScene(scene:AudioScene,seconds=16,cue?:string){
+    const offline=new OfflineAudioContext(2,Math.ceil(seconds*22050),22050)
+    const audio=new Sound(()=>offline as unknown as AudioContext,true)
+    audio.settings=profileSound({muted:false,music:!cue,ambience:!cue,effects:true});audio.unlock()
+    if(cue)audio.bossRoar(cue)
+    else for(let step=0,at=0;at<seconds;step++,at+=scoreInterval(scene))for(const note of scoreStep(step,scene,.6))audio.instrument(note,at,scene.hero)
+    return offline.startRendering()
+  }
+
   /** Continuous musical form. Hero, chapter and dusk arrangements change on bar lines. */
   tick(dt:number,intensity:number,scene:AudioScene={night:false,weather:'clear'}) {
     if(!this.audible)return
     const ctx=this.ctx!,now=ctx.currentTime
+    const focus=this.settings.sfx>0&&this.mix.focused(now)
+    this.musicFocus.gain.setTargetAtTime(focus?.38:1,now,focus?.035:.35)
     this.weatherGain?.gain.setTargetAtTime(scene.weather==='rain'?.09:scene.weather==='breeze'?.035:.001,now,.7)
     this.musicEnergy+=(intensity-this.musicEnergy)*Math.min(1,dt*2)
     if(scene.night&&this.settings.ambience>0&&Math.random()<dt*.25){

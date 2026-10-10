@@ -46,7 +46,9 @@ export function drawCanalShot(c:CanvasRenderingContext2D,p:Proj,time:number,redu
   c.save();c.translate(pose.x,pose.y);c.rotate(pose.angle)
   const tail=reduced?8:p.kind==='bolt'?32:p.kind==='rocket'?27:lob?11:23
   if(!lob){const g=c.createLinearGradient(-tail,0,5,0);g.addColorStop(0,colour+'00');g.addColorStop(.6,colour+'65');g.addColorStop(1,colour);c.fillStyle=g;c.beginPath();c.moveTo(-tail,0);c.quadraticCurveTo(-8,-4.5,4,0);c.quadraticCurveTo(-8,4.5,-tail,0);c.fill()}
-  lightPool(c,0,0,p.heavy?13:8,colour,.4,1)
+   // Physical steel and feathers keep a crisp edge; only ignited or charged
+   // ammunition emits light. That distinction survives a crowded volley.
+   if(lob||p.kind==='spark'||p.kind==='rocket'||p.beacon)lightPool(c,0,0,p.heavy?13:8,colour,p.beacon?.5:.3,1)
   if(p.kind==='bolt'){
    if(p.beacon){line(c,[[-34,-3],[11,-3]],'#aaffed',1.5);line(c,[[-34,3],[11,3]],'#aaffed',1.5);lightPool(c,4,0,18,'#d8fff2',.55,1)}
    line(c,[[-20,0],[3,0]],'#172e38',4);line(c,[[-20,-.6],[3,-.6]],'#f0d39e',1.8)
@@ -63,7 +65,8 @@ export function drawCanalShot(c:CanvasRenderingContext2D,p:Proj,time:number,redu
    polygon(c,[[9,0],[2,-3.5],[-7,-3.5],[-7,3.5],[2,3.5]],'#b88364');polygon(c,[[9,0],[2,-3.5],[2,3.5]],'#ffe0a3');line(c,[[-5,-2],[2,-2]],'#f8e3b6',1)
    for(const side of [-1,1])polygon(c,[[-4,side*2],[-10,side*6],[-8,0]],side<0?'#c9d7c5':'#608a8e')
   }else if(lob){
-   const r=p.heavy?5:3.8;oval(c,0,0,r*1.15,r,'#483b45','#edc78f');polygon(c,[[r,0],[1,-r],[-2,-r],[-2,r],[1,r]],'#cb8d64');line(c,[[0,-r+.5],[0,r-.5]],'#ffedba',1.4);line(c,[[1,-r+1],[r-1,-.6]],'#fff7d7',.8)
+    const r=p.heavy?5.8:4.2;oval(c,0,0,r*1.15,r,'#483b45','#edc78f');polygon(c,[[r,0],[1,-r],[-2,-r],[-2,r],[1,r]],'#cb8d64');line(c,[[0,-r+.5],[0,r-.5]],'#ffedba',1.4);line(c,[[1,-r+1],[r-1,-.6]],'#fff7d7',.8)
+    const seam=reduced?0:Math.sin(p.t*18)*r*.5;line(c,[[-r*.65,seam],[1,seam*.4],[r*.55,-seam*.3]],'#322d35',.9)
    polygon(c,[[-r,-2],[-r-5,-3],[-r-3,0],[-r-5,3],[-r,2]],'#a3b9b0');oval(c,-r-2,0,2.1,1.1,'#fff3bf')
   }else{
    const r=p.heavy?4:2.8

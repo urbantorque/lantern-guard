@@ -9,7 +9,7 @@ import { projectDetails } from './place-art'
 
 const terrain=new WeakMap<Sim['level'],{key:string;canvas:HTMLCanvasElement}>()
 const cityGround=[
- {day:['#2b4849','#4b6056','#263f48'],night:['#0c2531','#183a3e','#0e2430']},
+ {day:['#233c46','#344c52','#1e3642'],night:['#101f2c','#192e39','#0e202e']},
  {day:['#49433e','#6c6452','#30474c'],night:['#292e37','#383f3e','#162d37']},
  {day:['#304c50','#546c64','#2c4850'],night:['#193841','#254847','#142f3c']},
  {day:['#3e4e60','#586c73','#2c4252'],night:['#222e49','#2a4055','#15283d']},
@@ -52,7 +52,7 @@ export function livingDistrict(c:CanvasRenderingContext2D,s:Sim,time:number,redu
       const {x,y}=p
       upright(c,x,y,wide,()=>{
         c.save();lightPool(c,x,y,restored?45:25,'#ffe5ac',s.sky.night||celebrating?.6:.18)
-        if(restored){c.save();c.translate(x,y);c.scale(.8,.8);projectDetails(c,0,0,id,time,reduced);c.restore()}
+        if(restored){c.save();c.translate(x,y);c.scale(.96,.96);projectDetails(c,0,0,id,time,reduced);c.restore()}
         // Residents stay on reserved plazas, never over water or tower plots.
         if(!s.waveActive||celebrating)for(let j=0;j<2;j++){const dx=x-10+j*20+(reduced?0:Math.sin(time*.7+i+j)*3),dy=y+18;c.fillStyle='#ffe2ae';c.beginPath();c.arc(dx,dy-6,2.5,0,Math.PI*2);c.fill();c.fillStyle=j?'#a2dace':'#cf9398';c.fillRect(dx-2,dy-3,4,6)}
         c.restore()

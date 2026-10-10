@@ -1,6 +1,6 @@
 import type { Sim } from '../game/sim'
 import { secondWatch, designatedTarget } from '../game/second-watch'
-import { commandTargets } from '../game/watch-director'
+import { commandTargets,commandTower } from '../game/watch-director'
 import { upright } from './board-view'
 import { block, lightPool } from './architecture'
 
@@ -22,6 +22,15 @@ export function drawSecondWatch(c:CanvasRenderingContext2D,s:Sim,time:number,sti
     for(const side of [-1,1]){const x=p.x-p.ty*37*side,y=p.y+p.tx*37*side;upright(c,x,y,wide,()=>{block(c,x,y,14,13,25,'#385563','#a6b6a1');c.strokeStyle='#d2b276';c.lineWidth=3;c.beginPath();c.arc(x,y-24,9,0,Math.PI*2);c.stroke()})}
   }
   if(!signals){c.restore();return}
+  const owner=commandTower(s),phase=s.director?.command?.phase
+  if(owner&&phase){
+    // Mark the actual weapon that is giving up its normal fire for a command.
+    // Four brass corners remain visible without adding another combat label.
+    const r=34,pulse=still?1:.8+Math.sin(time*3)*.2
+    c.strokeStyle=phase==='held'?'#ffe5ad':'#b4d4d7';c.lineWidth=phase==='held'?3:2;c.globalAlpha=pulse
+    for(const sx of [-1,1])for(const sy of [-1,1]){c.beginPath();c.moveTo(owner.x+sx*(r-10),owner.y+sy*r);c.lineTo(owner.x+sx*r,owner.y+sy*r);c.lineTo(owner.x+sx*r,owner.y+sy*(r-10));c.stroke()}
+    c.globalAlpha=1
+  }
   for(const boss of s.enemies){
     if(!boss.alive||!boss.channelLink||(boss.signalT??0)<=0)continue
     const escort=s.enemies.find(e=>e.alive&&e.uid===boss.channelLink);if(!escort)continue
