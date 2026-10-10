@@ -9,6 +9,7 @@ import { ENEMIES, type EnemyId } from '../game/defs'
 import type { ViewState } from './renderer'
 import { drawFixedTower, TOWER_COLOURS } from './fixed-towers'
 import { drawFixedEnemy } from './fixed-enemies'
+import {drawThreatMap} from './threat-map'
 import { currentPalette } from './palette'
 import { block, setArchitectureLight, lightPool } from './architecture'
 
@@ -47,6 +48,7 @@ export function drawFixedWorld(c:CanvasRenderingContext2D,s:Sim,view:ViewState,s
   drawLandmark(c,s,time,reducedMotion,wide)
   drawSunReserves(c,s,reducedMotion,wide)
   drawSecondWatch(c,s,time,reducedMotion,wide)
+  if(view.forecastWave)drawThreatMap(c,s,view.forecastWave,wide,scale)
   if(hasMoonArches(s.challenge)&&(!s.challenge.siege||s.planningWave>=17))for(const arch of MOON_ARCHES){
     const seg=s.level.segs.get(arch.seg)!,p=seg.line.at(seg.line.length*arch.fraction,{x:0,y:0,tx:0,ty:0}),nx=-p.ty,ny=p.tx
     c.save();c.strokeStyle='#b1e7e2';c.lineWidth=3;c.shadowColor='#b5ffef';c.shadowBlur=reducedMotion?0:8
@@ -80,7 +82,7 @@ export function drawFixedWorld(c:CanvasRenderingContext2D,s:Sim,view:ViewState,s
   if(ghost){
     const reach=s.effRange(ghost),night=s.nightRange(ghost)
     c.save();c.strokeStyle='#ffe5a1';c.fillStyle='#ffe5a115';c.lineWidth=2;c.beginPath();c.arc(ghost.x,ghost.y,reach,0,Math.PI*2);c.fill();c.stroke()
-    c.setLineDash([5,5]);c.strokeStyle='#b699df';c.beginPath();c.arc(ghost.x,ghost.y,night,0,Math.PI*2);c.stroke();c.setLineDash([])
+    if(Math.abs(night-reach)>3){c.setLineDash([5,5]);c.strokeStyle='#b699df';c.beginPath();c.arc(ghost.x,ghost.y,night,0,Math.PI*2);c.stroke();c.setLineDash([])}
     c.strokeStyle='#ffe5a1';c.lineWidth=7;c.lineCap='round'
     for(const seg of s.level.segs.values()){
       if(seg.id==='inlet'&&s.planningWave<(s.level.def.sources.find(q=>q.id==='west')?.openWave??99))continue

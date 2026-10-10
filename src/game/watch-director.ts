@@ -33,9 +33,9 @@ export const PASSAGES = [
 ] as const
 
 export const COMMANDS = {
-  sol:{tower:'cracker' as TowerId,name:'Ignition',hold:'Bank ignition',release:'Ignite burns',help:'Bank a Blast shot, stopping that tower. Ignite visible burns in its reach for 2.5 times up to 2 seconds of remaining fire. That fire is consumed.'},
-  mira:{tower:'bell' as TowerId,name:'Stillwater',hold:'Hold pulse',release:'Release tide',help:'Hold a Chime pulse, stopping that tower. Release a 1.25s freeze and a longer slow. A signalling boss is interrupted and exposed for 4s.'},
-  ivo:{tower:'storm' as TowerId,name:'Discharge',hold:'Bank discharge',release:'Focus discharge',help:'Bank a lightning volley, stopping that tower. Release its energy into one armour-piercing hit. Capacitor waits for its third volley; Forked current gives up its chain.'},
+  sol:{tower:'cracker' as TowerId,name:'Ignition',hold:'Prepare ignition',release:'Release ignition',help:'Prepare a Blast shot. This tower stops firing while it holds the command. Release to detonate visible burns in reach for 2.5 times up to 2 seconds of remaining fire. That fire is consumed.'},
+  mira:{tower:'bell' as TowerId,name:'Stillwater',hold:'Prepare freeze',release:'Release freeze',help:'Prepare a Chime pulse. This tower stops firing while it holds the command. Release a 1.25s freeze and a longer slow. A signalling boss is interrupted and exposed for 4s.'},
+  ivo:{tower:'storm' as TowerId,name:'Discharge',hold:'Prepare discharge',release:'Release discharge',help:'Prepare a lightning volley. This tower stops firing while it holds the command. Release one armour-piercing hit. Capacitor waits for its third volley; Forked current gives up its chain.'},
 } as const
 export function commandTower(s:Sim):Tower|null {
   const hero=s.challenge.hero;if(!s.director||!hero)return null

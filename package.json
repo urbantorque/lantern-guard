@@ -22,7 +22,7 @@
     "balance:reedbank": "tsx scripts/waterway-balance.ts",
     "ios:sync": "npm run build && cap sync ios",
     "ios:open": "cap open ios",
-    "check": "npm run typecheck && npm test && npm run test:release && npm run test:growth && npm run test:guard && npm run test:journey && npm run test:refinement && npm run test:gardens && npm run test:compact && npm run test:replay && npm run test:depth && npm run test:balance && npm run test:integrity && npm run test:fixed-storage && npm run test:fixed && npm run test:environment && npm run test:heroes && npm run test:hero-progression && npm run test:district-layout && npm run test:continuous && npm run test:audio && npm run test:experience && npm run test:watch-depth && npm run test:watch-craft && npm run test:living && npm run test:watch-refinement && npm run test:watch-experience && npm run test:watch-tactics && npm run test:watch-mastery && npm run test:watch-director && npm run test:second-watch && npm run test:progression-trust && npm run test:story && npm run test:story-systems && npm run test:siege",
+    "check": "npm run typecheck && npm test && npm run test:release && npm run test:growth && npm run test:guard && npm run test:journey && npm run test:refinement && npm run test:gardens && npm run test:compact && npm run test:replay && npm run test:depth && npm run test:balance && npm run test:integrity && npm run test:fixed-storage && npm run test:fixed && npm run test:environment && npm run test:heroes && npm run test:hero-progression && npm run test:district-layout && npm run test:continuous && npm run test:audio && npm run test:experience && npm run test:watch-depth && npm run test:watch-craft && npm run test:living && npm run test:watch-refinement && npm run test:watch-experience && npm run test:watch-tactics && npm run test:watch-mastery && npm run test:watch-director && npm run test:second-watch && npm run test:progression-trust && npm run test:story && npm run test:story-systems && npm run test:siege && npm run test:clarity",
     "qa:fixtures": "tsx scripts/qa-fixtures.ts",
     "qa:gallery": "tsx scripts/gallery-fixtures.ts",
     "test:gardens": "tsx scripts/gardens-test.ts",
@@ -80,7 +80,9 @@
     "qa:story": "npm run test:story && npm run balance:story && node scripts/story-browser-qa.mjs && node scripts/story-release-qa.mjs && node scripts/visual-invariants.mjs --story && node scripts/story-art-qa.mjs",
     "test:siege": "tsx scripts/siege-test.ts",
     "balance:siege": "tsx scripts/siege-balance.ts",
-    "qa:siege": "npm run test:siege && npm run balance:siege && node scripts/siege-browser-qa.mjs"
+    "qa:siege": "npm run test:siege && npm run balance:siege && node scripts/siege-browser-qa.mjs",
+    "test:clarity": "tsx scripts/clarity-test.ts",
+    "qa:clarity": "node scripts/clarity-browser-qa.mjs"
   },
   "type": "module",
   "devDependencies": {

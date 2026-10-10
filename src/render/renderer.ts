@@ -38,6 +38,7 @@ export interface ViewState {
   armed: TowerId | null
   hint: { x: number; y: number; label?: string } | null
   paused: boolean
+  forecastWave?: number|null
   /** Keyboard focus on the map: a pad or lock the player is pointing at with the arrow keys. */
   cursor?: { x: number; y: number; r: number } | null
 }
