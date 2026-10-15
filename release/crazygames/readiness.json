@@ -1,7 +1,7 @@
 {
   "edition": "CrazyGames Basic Launch",
   "zipSha256": "fecbe7136737ab6d46496a16c000f83048eb22e328f5cef2b10f688fb478d505",
-  "sourceCommit": "8f7e03f2885661b5e827b61040a5475dc88876e8",
+  "sourceCommit": "4b156a34184a4c9163eec0ad5ef7c0786c204740",
   "automatedChecks": "passed",
   "campaignWaves": 40,
   "ads": false,
