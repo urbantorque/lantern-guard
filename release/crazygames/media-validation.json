@@ -1,0 +1,45 @@
+{
+  "covers": [
+    {
+      "file": "release/crazygames/cover-landscape.png",
+      "width": 1920,
+      "height": 1080,
+      "bytes": 1573076,
+      "sha256": "c0b48d425adb41050952e7a1f84de3c1cb80edf6ee95dd1db3b31c87fd40ad8f"
+    },
+    {
+      "file": "release/crazygames/cover-portrait.png",
+      "width": 800,
+      "height": 1200,
+      "bytes": 945799,
+      "sha256": "bbd7a7cf36e7ab96ada635e2c9b4297b59138ac80f009c1d5aa34a8e85d8378e"
+    },
+    {
+      "file": "release/crazygames/cover-square.png",
+      "width": 800,
+      "height": 800,
+      "bytes": 704086,
+      "sha256": "3114361baff52ee942bf5fa0a3a1be9ea300ff6b182ebf967572e587f9e63d31"
+    }
+  ],
+  "previews": [
+    {
+      "file": "release/crazygames/preview-landscape.webm",
+      "bytes": 5310442,
+      "duration": 16.207001,
+      "width": 1920,
+      "height": 1080,
+      "audioTracks": 0,
+      "sha256": "75573e4231830357ebac6cc99d2f6e82dc16be4db824fc4ddb292a2ef8d20b56"
+    },
+    {
+      "file": "release/crazygames/preview-portrait.webm",
+      "bytes": 5775188,
+      "duration": 16.336188,
+      "width": 1080,
+      "height": 1620,
+      "audioTracks": 0,
+      "sha256": "e66f0605271312822244dbfa91c1305c8dc48c2a4a2bb4249a2ec0725e79cb4a"
+    }
+  ]
+}

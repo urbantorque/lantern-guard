@@ -1,0 +1,80 @@
+{
+  "edition": "CrazyGames Basic Launch",
+  "sdk": false,
+  "advertising": false,
+  "entry": "index.html",
+  "campaignWaves": 40,
+  "sourceCommit": "8f7e03f2885661b5e827b61040a5475dc88876e8",
+  "trackedChanges": true,
+  "fileCount": 13,
+  "uncompressedBytes": 3370167,
+  "zipBytes": 2869441,
+  "zipSha256": "fecbe7136737ab6d46496a16c000f83048eb22e328f5cef2b10f688fb478d505",
+  "files": [
+    {
+      "path": "assets/dm-sans-latin-ext-wght-normal-BOFOeGcA.woff2",
+      "bytes": 18228,
+      "sha256": "a5d38fe99f930275684999b462c7123faa063d9e44e73b4b241723d884aa0f49"
+    },
+    {
+      "path": "assets/dm-sans-latin-wght-normal-Xz1IZZA0.woff2",
+      "bytes": 36932,
+      "sha256": "9fea608a947e67020c33cad9a6fe3d60c54119dfb8cff87768a8117a15ed7543"
+    },
+    {
+      "path": "assets/index-C8oYnnkF.css",
+      "bytes": 99868,
+      "sha256": "a3e08680ead65b0e6cd37c5f338bc3c3c0bd0a9bea42be13843a92a22166881d"
+    },
+    {
+      "path": "assets/index-CYHAspmJ.js",
+      "bytes": 612821,
+      "sha256": "8b8c76eaf7a9dccbd43e2c6167bc2abb99eb649688333ec5cf259b4c536dda7e"
+    },
+    {
+      "path": "assets/nightward-city-v2-DyPsqnu6.webp",
+      "bytes": 266026,
+      "sha256": "1eb04a07f60f033cfcaa0fea3c348a4a695e3b2f67f74ac502c8bcac6abed623"
+    },
+    {
+      "path": "assets/web-Bgr91k4y.js",
+      "bytes": 844,
+      "sha256": "59cf477ec5e27d9842975026f083e5d54f8b2a801626a06f4e31dfb42549bda6"
+    },
+    {
+      "path": "assets/web-CmedCI-u.js",
+      "bytes": 1192,
+      "sha256": "8a03b642aceda2895bb5751c7d58722e322798c052bee80c04e95cc0538bfcb1"
+    },
+    {
+      "path": "assets/web-DnmGupyf.js",
+      "bytes": 894,
+      "sha256": "f92d1ec4a70d9bf3d991ff84a0466552e7c13e8dde9aaddf4bd146e9077ed8bd"
+    },
+    {
+      "path": "icon.svg",
+      "bytes": 632,
+      "sha256": "888f3a1679e83702a450fd17d30eb44f7ff44f8c2ba975c97124bb1c4911843a"
+    },
+    {
+      "path": "index.html",
+      "bytes": 1075,
+      "sha256": "7643e6abed7bd046b87b73b12a7d24ec892bf7e74fd01d2c5e4d2d7890697ecc"
+    },
+    {
+      "path": "nightward-city-v2.webp",
+      "bytes": 266026,
+      "sha256": "1eb04a07f60f033cfcaa0fea3c348a4a695e3b2f67f74ac502c8bcac6abed623"
+    },
+    {
+      "path": "nightward-nocturne.png",
+      "bytes": 1962485,
+      "sha256": "5cda1e968a46302b3c97d6871876347a17d6d4ffb2e0fefdc6370c1d5ac5f5df"
+    },
+    {
+      "path": "nightward-title.webp",
+      "bytes": 103144,
+      "sha256": "60a509583c450ae18ed80fb1fa1aff3e9e787e1d8dd84a1958dbb6aee60a6f07"
+    }
+  ]
+}

@@ -33,6 +33,7 @@ import { fixedEnemyIcon as enemyIcon } from './render/fixed-world'
 import { icon } from './ui/icons'
 import { sound, profileSound } from './core/audio'
 import { watchAppState } from './core/platform'
+import { crazyGamesBuild } from './core/portal'
 import { upgradeBenefits, STREAM_ROLES, streamChoice } from './game/fixed-copy'
 import { wardenEscorts } from './game/harbour'
 import { WATCH_TEMPO, waveCountdown } from './game/watch-tempo'
@@ -83,6 +84,7 @@ export class FixedApp {
   private frameBudget=new FrameBudget()
   private playtest=localPlaytest()
   private nextWaveIn:number|null=null
+  private portalReturn=false
   private buildGhost:TowerId|null=null
   private preparedWave=0
   private celebrationLeft=0
@@ -93,6 +95,7 @@ export class FixedApp {
 
   private get preparing(){const s=this.sim;return !!s&&!s.waveActive&&!s.over&&(passagePending(s)||!!this.rehearsal?.finished||this.preparedWave!==s.wave+1&&(!!this.rehearsal||!!preparationBeat(s.challenge,s.wave+1)))}
   private get paused(){return battlePaused(this.planning,this.drawer)}
+  private get portalOpening(){return crazyGamesBuild&&!!this.sim?.challenge.siege&&this.sim.wave===0&&!this.sim.waveActive&&!this.sim.over}
 
   constructor() {
     this.qa=import.meta.env.DEV && new URLSearchParams(location.search).has('qa')
@@ -107,7 +110,7 @@ export class FixedApp {
     })
     document.addEventListener('keydown',e=>this.key(e))
     watchAppState(()=>{this.background=true;this.accumulator=0;this.save();sound.suspend()},()=>{this.background=false;this.lastFrame=0;this.accumulator=0;if(sound.ctx)sound.unlock()})
-    this.home()
+    if(crazyGamesBuild)this.enterPortal();else this.home()
     if(this.qa) {
       const bar=document.createElement('nav');bar.className='qa-bar';bar.innerHTML=[0,15,30,39].map(n=>button('fixture:'+n,'Test wave '+n)).join('')+button('fixture:day','Test day')+button('fixture:night','Test night')+button('fixture:dredger','Test Dredger');$('app').append(bar)
     }
@@ -126,6 +129,17 @@ export class FixedApp {
     sound.beam(0);document.body.classList.remove('playing')
     this.save();this.rehearsal=null;this.sim=null;this.renderer=null;this.observer?.disconnect();this.drawer='';this.nextWaveIn=null
     $('app').innerHTML=titleScreen(this.profile,loadWatch('campaign')?.snapshot,loadWatch('commission')?.snapshot,loadWatch('siege')?.snapshot)
+  }
+  private enterPortal(){
+    const run=loadWatch('siege')
+    if(run){
+      this.slot='siege';this.begin(Sim.restore(run.snapshot),run.blooms)
+      this.portalReturn=!this.sim!.over&&(this.sim!.wave>0||this.sim!.towers.length>0)
+      this.planning=this.portalReturn;this.refresh();return
+    }
+    // A damaged save must remain recoverable, rather than being replaced by onboarding.
+    try{if(localStorage.getItem('lanternlocks.fixed1.siege')||localStorage.getItem('lanternlocks.fixed1.siege.backup')){this.home();return}}catch{/* Storage failure is reported by the existing save UI. */}
+    this.hero='sol';this.difficulty='standard';this.newSiege()
   }
   private show(title:string,content:string,kind='') {
     this.aiming=false
@@ -215,8 +229,9 @@ export class FixedApp {
   }
   private begin(sim:Sim,blooms:number[]=[]) {
     this.aiming=false
+    this.portalReturn=false
     this.planning=false;this.forecastSelection=null
-    this.playtest.start({hero:sim.challenge.hero??'original',map:sim.challenge.variant??0,rules:sim.challenge.watchDirector??0,format:sim.challenge.id??'watch',wave:sim.wave,width:innerWidth,height:innerHeight})
+    this.playtest.start({hero:sim.challenge.hero??'original',map:sim.challenge.variant??0,rules:sim.challenge.watchDirector??0,format:sim.challenge.id??'watch',wave:sim.wave,width:innerWidth,height:innerHeight,entry:crazyGamesBuild?'crazygames-basic':'standalone'})
     this.rehearsal=null
     if(!sim.isChallenge)this.endurance=!!sim.challenge.endurance
     document.body.classList.add('playing')
@@ -333,6 +348,17 @@ export class FixedApp {
     const lesson=watchLesson(s,this.profile.lessons),hint=$('watch-lesson');document.querySelector('[data-action="plot:0"]')?.classList.toggle('teaching',lesson?.id==='refined-place'||lesson?.id==='story-place');if(hint){hint.hidden=!lesson||!!this.drawer||this.preparing;hint.textContent=lesson?lesson.text+'  ×':'';hint.setAttribute('aria-label',lesson?lesson.text+' Dismiss tip':'Tip')}
     const obstacle=$('tower-obstacle');if(obstacle&&this.selection?.kind==='tower'){obstacle.textContent=towerObstacle(s,this.selection.tower);obstacle.hidden=!obstacle.textContent}
     const prep=$('prepare-watch');prep.hidden=!this.preparing||!!this.drawer;if(this.preparing)prep.innerHTML=passagePending(s)?'<b>Choose your passage</b><p>Shape the next three waves around your defence.</p>'+button('passages','Inspect both routes','primary'):this.rehearsal?.finished?'<b>Practice complete</b>'+button('practice-report','Review practice','primary'):'<b>'+(this.rehearsal?'Practice · adjust for wave ':s.challenge.siege&&siegeBoundary(s.wave)?siegeAct(s.wave+1).name+' · Wave ':'Prepare for wave ')+(s.wave+1-s.waveOffset)+'</b><p>'+(this.rehearsal?'Adjust the defence using the original budget.':preparationSummary(s)||preparationBeat(s.challenge,s.wave+1))+'</p>'+button('begin-next','Ready · begin wave','primary');
+    document.querySelector('.game')?.classList.toggle('portal-opening',this.portalOpening||this.portalReturn)
+    if(this.portalReturn){
+      prep.hidden=!!this.drawer
+      prep.innerHTML='<b>Your defence is saved</b><p>'+s.towers.length+' towers · '+s.lives+' light · Wave '+Math.max(1,s.wave)+'/40. Continue when you are ready.</p>'+button('portal-continue','Continue defence','primary')
+    }else if(this.portalOpening){
+      $('wave').innerHTML='<span>Prepare</span><b>1<small> / 40</small></b>'
+      prep.hidden=!!this.drawer
+      prep.innerHTML=s.towers.length?'<b>Your first tower is ready</b><p>It fires automatically. Keep building as you defend all 40 waves.</p>'+button('begin-next','Begin wave 1','primary'):'<b>Defend the lantern</b><p>Place a Spark by the lit bend. Your towers stay for all 40 waves.</p>'+button('portal-build','Preview Spark','primary')
+      $('board-status').textContent=''
+      if(!s.towers.length)document.querySelector('[data-action="plot:0"]')?.classList.add('teaching')
+    }
     if(this.rehearsal)$('flow-label').textContent=this.rehearsal.finished?'Practice complete':s.waveActive?'One-wave practice':'Practice · take your time'
     const watch=$('lantern-watch'),danger=s.enemies.filter(e=>e.alive&&e.remaining<360);watch.hidden=!this.drawer||!danger.length;watch.classList.toggle('urgent',danger.some(e=>e.remaining<150));watch.textContent=danger.length+' approaching the lantern';
     const breach=$('breach-review');if(breach)breach.hidden=!s.lastLeak?.detail
@@ -363,6 +389,7 @@ export class FixedApp {
     }
     this.buildGhost=null;this.selection=p.tower?{kind:'tower',tower:p.tower}:{kind:'pad',index:i}
     if(p.tower){this.towerSheet(p.tower);return}
+    if(this.portalOpening&&!s.towers.length&&s.challenge.hero==='sol'&&s.padAvailable(i)){this.buildPreview(i,'wick');return}
     const cost=s.plotCost(i)
     if(cost!==null) {this.show('A little more room',`<p>Unlock plot ${i+1} for ${cost} glow. Building a tower costs extra.</p>${`<button data-action="unlock:${i}" data-cost="${cost}" class="primary wide">Unlock · ${cost} glow</button>`}`,'plot');return}
     const cards=TOWER_ORDER.filter(id=>s.keeperAllowed(id)).map(id=>`<button data-action="build:${i}:${id}" class="build-card"><img src="${fixedTowerIcon(id,0,0,0,this.sim?.challenge.hero)}" alt=""/><span><b>${ROLE_NAMES[id]} <span class="build-name">${this.towerDef(id).name}</span></b><small>${role[id]}</small>${s.previewBond(i,id)?`<em>Pairs with ${s.previewBond(i,id)!.def.name}</em>`:''}</span><strong>${s.towerCost(id)} <small>glow</small></strong></button>`).join('')
@@ -393,7 +420,8 @@ export class FixedApp {
     const assessment=placementReadout(s,t)
     const partner=s.previewBond(pad,id),sheltered=s.sheltered(t),reach=Math.round(s.effRange(t)),night=Math.round(s.nightRange(t))
     this.show(t.def.name,`<div class="placement-summary"><img src="${fixedTowerIcon(id,0,0,0,s.challenge.hero)}" alt=""/><div><b>${ROLE_NAMES[id]} · ${role[id]}</b><p>${t.def.blurb}</p></div></div><p class="placement-judgement">${assessment.tradeoff}</p>${partner?`<p class="placement-bond">Pairs with ${ROLE_NAMES[partner.id]} · ${partner.def.name}</p>`:''}${s.challenge.contract==='small-company'&&s.towers.length>=6?'<p class="notice">A seventh tower misses Small company.</p>':''}<details class="placement-details"><summary>Coverage & details</summary><p>Gold water is covered. Cyan marks shared Bond reach.</p><div class="coverage-zones">${assessment.zones.map(z=>`<span><b>${z.percent}%</b>${z.label}</span>`).join('')}</div><p>${reach} reach${secondWatch(s.challenge)?'':` · ${night} at night · ${lamplit(id)?'Lamplit':sheltered?'Sheltered':'Outside scout shelter'}`}</p>${partner?`<p>${bondHelp(s,id,partner.id)}</p>`:''}</details>`,'placement')
-    document.querySelector('.drawer.placement')?.insertAdjacentHTML('beforeend',`<footer class="placement-actions">${button('plot:'+pad,'Change tower','text-button')}<button class="primary" data-action="place:${pad}:${id}" data-cost="${s.towerCost(id)}">Build here · ${s.towerCost(id)}</button></footer>`)
+    const firstSpark=this.portalOpening&&!s.towers.length&&s.challenge.hero==='sol'
+    document.querySelector('.drawer.placement')?.insertAdjacentHTML('beforeend',`<footer class="placement-actions">${button(firstSpark?'close':'plot:'+pad,firstSpark?'Choose plot':'Change tower','text-button')}<button class="primary" data-action="place:${pad}:${id}" data-cost="${s.towerCost(id)}">Build here · ${s.towerCost(id)}</button></footer>`)
     this.refresh()
   }
   private bondControls(t:Tower){
@@ -625,7 +653,9 @@ export class FixedApp {
     if(cmd==='sound'){this.profile.settings.muted=!this.profile.settings.muted;writeJSON('profile',this.profile);this.applySettings();sound.unlock();this.refresh();return}
     if(cmd==='guardian'){this.guardian=a;this.profile.guardian=a;writeJSON('profile',this.profile);if(this.renderer)this.renderer.crest=a;this.settings();return}
     if(!s)return
-    if(cmd==='pause'){if(this.paused){this.planning=false;if(this.drawer&&!['tower','build','placement','plot'].includes(this.drawer))this.close()}else this.planning=true;this.accumulator=0;this.refresh();return}
+    if(cmd==='portal-build'&&this.portalOpening&&!s.towers.length){this.buildPreview(0,'wick');return}
+    if(cmd==='portal-continue'){this.portalReturn=false;this.planning=false;this.accumulator=0;this.refresh();return}
+    if(cmd==='pause'){if(this.paused){this.portalReturn=false;this.planning=false;if(this.drawer&&!['tower','build','placement','plot'].includes(this.drawer))this.close()}else this.planning=true;this.accumulator=0;this.refresh();return}
     if(cmd==='siege-progress'){this.show('The Long Watch',`<p class="lead">${siegeHeld(s)}/40 waves held · ${s.lives} light remaining</p>${siegeTimeline(siegeHeld(s))}<p class="small muted">Your towers and upgrades carry through every act.</p>`,'siege-progress');return}
     if(cmd==='retry-act'){const retry=retrySiegeAct(s);if(retry){this.begin(retry.sim,retry.blooms);this.writePlanning(retry.sim.snapshot());this.save()}return}
     if(cmd==='passages'){this.passages();return}
@@ -644,7 +674,7 @@ export class FixedApp {
     if(cmd==='techniques'){this.techniqueSheet();return}
     if(cmd==='technique'){if(s.chooseTechnique(a as TechniqueId)){this.save();this.close();this.recap=(s.challenge.livingWatch?livingTechnique(a as TechniqueId)?.name:undefined)??TECHNIQUES.find(t=>t.id===a)!.name;this.recap+=' chosen.'}return}
     const tower=()=>s.towers.find(t=>t.uid===Number(a))!
-    if(cmd==='begin-next'){this.planning=false;this.preparedWave=s.wave+1;this.close();this.startNextWave();return}
+    if(cmd==='begin-next'){if(this.portalOpening&&!s.towers.length)return;this.portalReturn=false;this.planning=false;this.preparedWave=s.wave+1;this.close();this.startNextWave();return}
     if(cmd==='celebration-done'){this.celebrationLeft=0;this.result();return}
     if(cmd==='link'){const first=tower(),other=s.towers.find(t=>t.uid===Number(b));if(first&&other){this.change(()=>s.selectBond(first,other,Number(action.split(':')[3]??-1)));this.towerSheet(first)}return}
     if(cmd==='menu')this.menu()

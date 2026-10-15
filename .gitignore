@@ -1,6 +1,9 @@
 node_modules
 dist
 dist-artifact
+dist-crazygames/
+release/crazygames/nightward-basic.zip
+artifacts/crazygames/
 .playwright-cli
 
 .recovery/

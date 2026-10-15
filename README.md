@@ -31,6 +31,8 @@ The original three five-wave District Commissions remain accessible from Expedit
 
 ## Play and develop
 
+For portal distribution, `npm run build:crazygames` creates a separate ad-free Basic Launch ZIP with direct battlefield entry and paused save restoration. `npm run preview:crazygames` serves it locally. The [CrazyGames launch guide](docs/CRAZYGAMES-BASIC-LAUNCH.md) covers production QA, submission artwork, listing fields and the remaining human/device playtest.
+
 Requires Node.js 22 or later.
 
 ```sh

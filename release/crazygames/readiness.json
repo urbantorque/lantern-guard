@@ -1,0 +1,17 @@
+{
+  "edition": "CrazyGames Basic Launch",
+  "zipSha256": "fecbe7136737ab6d46496a16c000f83048eb22e328f5cef2b10f688fb478d505",
+  "sourceCommit": "8f7e03f2885661b5e827b61040a5475dc88876e8",
+  "automatedChecks": "passed",
+  "campaignWaves": 40,
+  "ads": false,
+  "sdk": false,
+  "humanPlaytest": "pending",
+  "physicalMobileTest": "pending",
+  "publisherSubmission": "not submitted",
+  "remaining": [
+    "Observe eight newcomer sessions using newcomer-sessions.csv",
+    "Verify intended physical browser/device support",
+    "Account owner uploads and submits through CrazyGames developer portal"
+  ]
+}
