@@ -4,13 +4,18 @@
   "advertising": false,
   "entry": "index.html",
   "campaignWaves": 40,
-  "sourceCommit": "4b156a34184a4c9163eec0ad5ef7c0786c204740",
-  "trackedChanges": false,
-  "fileCount": 13,
-  "uncompressedBytes": 3370167,
-  "zipBytes": 2869441,
-  "zipSha256": "fecbe7136737ab6d46496a16c000f83048eb22e328f5cef2b10f688fb478d505",
+  "sourceCommit": "a0309827b9a956d198cc5a2010aa43c815660c65",
+  "trackedChanges": true,
+  "fileCount": 14,
+  "uncompressedBytes": 3380742,
+  "zipBytes": 2872150,
+  "zipSha256": "1575670ae46d9046122fe56c69ed532ed460e6b889e0f262cd1471a523648fc0",
   "files": [
+    {
+      "path": "THIRD-PARTY-NOTICES.txt",
+      "bytes": 10575,
+      "sha256": "480974f885a0fd0b2a988b92e10bbee2b6b173d5f4a044972deee0c905fb7a0f"
+    },
     {
       "path": "assets/dm-sans-latin-ext-wght-normal-BOFOeGcA.woff2",
       "bytes": 18228,

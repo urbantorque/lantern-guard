@@ -5,6 +5,7 @@ import assert from 'node:assert/strict'
 const out='release/crazygames',read=p=>JSON.parse(readFileSync(p,'utf8')),hash=p=>createHash('sha256').update(readFileSync(p)).digest('hex')
 const manifest=read(`${out}/build-manifest.json`),browser=read('artifacts/crazygames/browser-report.json'),media=read('artifacts/crazygames/media-report.json')
 assert.equal(manifest.zipSha256,hash(`${out}/nightward-basic.zip`))
+assert(manifest.files.some(f=>f.path==='THIRD-PARTY-NOTICES.txt'),'Include the bundled font, icon and runtime licence notices')
 for(const f of manifest.files){const unpacked=execFileSync('tar',['-xOf',`${out}/nightward-basic.zip`,f.path],{maxBuffer:25_000_000});assert.equal(createHash('sha256').update(unpacked).digest('hex'),f.sha256,'ZIP extraction: '+f.path)}
 assert.equal(browser.viewports.length,12,'Run the full portal QA, not --smoke')
 for(const v of browser.viewports){assert(v.firstPlacement&&v.fortyWaves&&v.resumeExact&&v.upgradesVisible);assert.deepEqual(v.errors,[]);assert.deepEqual(v.bad,[]);assert.deepEqual(v.external,[])}

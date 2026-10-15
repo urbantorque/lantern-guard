@@ -28,6 +28,8 @@ The portal browser check starts its own loopback server and tests the production
 
 The package script enforces a 20 MB total-size ceiling, 1,500-file ceiling and relative entry assets. It removes the unnecessary title-image preload in the portal edition. `build-manifest.json` records sizes, SHA-256 checksums and source revision. Rebuild after a code change; the ZIP is generated and excluded from Git.
 
+Both production editions include `THIRD-PARTY-NOTICES.txt`, generated from the installed DM Sans, Phosphor Icons and Capacitor packages. It preserves their full copyright and licence notices. The release check requires this file in the upload ZIP.
+
 ## Submission assets
 
 Copy-ready listing fields are in `release/crazygames/listing.json`.
@@ -61,6 +63,12 @@ Run a real Chrome/Edge browser pass and physical Android/iPhone browser sessions
 ## Portal submission and decisions
 
 The developer account owner still needs to complete the CrazyGames account/billing details, upload the ZIP, covers and previews, paste the listing, select actually verified devices, review the current terms and submit for publisher QA. This preparation does not register an account, accept publishing terms or publish the game.
+
+For assisted submission, the owner signs in at https://developer.crazygames.com/login (or uses **Join now**), completes verification and any account terms in the browser, and leaves the dashboard open. The assistant can then upload the prepared files, enter listing fields and run the portal preview. Passwords and verification codes should stay in the browser.
+
+If the portal requires billing onboarding, the owner completes **Account → Billing**, including their actual individual/company details and any tax declarations. CrazyGames' [billing documentation](https://docs.crazygames.com/payouts/) allows **Hold payments** in step 2 to finish onboarding without adding bank/payment details yet. This defers payouts. Do not invent identity, tax or payment information.
+
+Any publishing agreement or rights declaration is shown to the owner for review at the point it appears. The eight-session newcomer study above is our recommended product check, not a CrazyGames account-registration requirement. Physical device checks remain necessary before claiming verified mobile support; a desktop-only initial submission avoids making an unverified mobile claim.
 
 Use non-exclusive distribution initially. The public GitHub Pages edition remains available. Do not select an exclusive arrangement while another public browser version remains live without resolving that conflict.
 
