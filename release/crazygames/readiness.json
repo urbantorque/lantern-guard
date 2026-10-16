@@ -8,10 +8,11 @@
   "sdk": false,
   "humanPlaytest": "pending",
   "physicalMobileTest": "pending",
-  "publisherSubmission": "not submitted",
+  "publisherSubmission": "awaiting review",
+  "publisherSubmittedOn": "2026-10-16",
   "remaining": [
     "Observe eight newcomer sessions using newcomer-sessions.csv",
     "Verify intended physical browser/device support",
-    "Complete required account details, review publishing terms and confirm submission in the CrazyGames developer portal"
+    "Await CrazyGames review and respond to any requested fixes."
   ]
 }

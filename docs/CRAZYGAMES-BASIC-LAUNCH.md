@@ -66,7 +66,9 @@ Run a real Chrome/Edge browser pass and physical Android/iPhone browser sessions
 
 The public developer credit is **Urban Torque**. The account owner uploaded the verified build and confirmed that the hosted preview loads, accepts tower placement and starts wave 1 in their usual browser. That is a user-reported hosted smoke test; the in-app browser's game-file host was blocked by Cloudflare. The automated local checks remain separate evidence. No mobile support claim is selected.
 
-The listing, all three covers and both MP4 previews are saved in the existing draft. The final page is **Finalize submission**. It requires the Developer Portal terms acceptance and a PEGI 12 suitability declaration; the portal also reports that billing details are incomplete or unavailable. No final submission has been made. The owner must complete billing onboarding and review these declarations before **Submit for approval**.
+**Submitted on 16 October 2026.** The owner completed billing and explicitly approved both the Developer Portal terms and the PEGI 12 suitability declaration. The portal confirms **AWAITING REVIEW**, with the uploaded build marked **Submitted**. The listing includes all three covers and both MP4 previews. This is a submission receipt, not approval or a live launch; CrazyGames will notify the owner after review.
+
+`release/crazygames/publisher-status.json` records the observed status against the exact ZIP hash. The release check carries that status into `readiness.json` only when its archive matches the submitted build. A new build with a different hash remains unsubmitted until its own receipt is recorded. Private portal and preview identifiers remain outside the public repository.
 
 For assisted submission, the owner signs in at https://developer.crazygames.com/login (or uses **Join now**), completes verification and any account terms in the browser, and leaves the dashboard open. The assistant can then upload the prepared files, enter listing fields and run the portal preview. Passwords and verification codes should stay in the browser.
 
