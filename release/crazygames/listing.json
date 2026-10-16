@@ -1,10 +1,11 @@
 {
   "title": "Nightward",
+  "developer": "Urban Torque",
   "shortDescription": "Build one defence. Hold the canal for 40 escalating waves.",
   "description": "Keep a lantern-lit canal city standing through one continuous 40-wave siege. Place towers around the bends, choose their specialisations and combine damage, slowing and sight to stop armoured convoys and hidden fleets.\n\nYour towers, upgrades, glow and remaining light carry through five acts. Time a keeper command to ignite a crowd, interrupt a boss or strike through armour. Defeat five bosses and watch the Night Market, Canal Observatory and Waterfront Gardens come back to life.\n\nStart with Sol, then try Mira and Ivo from the campaign menu. Pause whenever you need to plan. Your defence saves automatically on this browser, and Standard and Gentle modes offer free retries from the start of the current act. Short expeditions and encounter practice are also available.",
   "controls": "Mouse or touch: select a build plot, preview a tower and confirm its placement. Select a tower to upgrade or manage it. Use the on-screen pause button to plan. Keyboard: P pauses or resumes; Q banks or releases your keeper command once unlocked; Escape closes a panel; Tab moves between controls. All gameplay actions also have on-screen controls.",
   "categorySuggestion": "Strategy",
-  "tagSuggestions": ["Tower Defense", "Defense", "Strategy", "Singleplayer"],
+  "tagSuggestions": ["Tower Defense", "Defense", "1 Player", "2D"],
   "technology": "HTML5 / TypeScript / Canvas 2D / Web Audio",
   "entryFile": "index.html",
   "launchStage": "Basic Launch",
@@ -16,6 +17,6 @@
   "externalRequests": "None made by the game build.",
   "developerNotes": "New profiles enter the full 40-wave campaign directly as Sol on Standard. Existing campaigns restore paused, with a Continue defence action. Menus retain keeper and difficulty selection, expeditions, custom games and encounter practice. No custom fullscreen control or cross-promotion links. Physical mobile validation and publisher QA must be completed before declaring those devices supported.",
   "covers": {"landscape": "cover-landscape.png", "portrait": "cover-portrait.png", "square": "cover-square.png"},
-  "previews": {"landscape": "preview-landscape.webm", "portrait": "preview-portrait.webm"},
+  "previews": {"landscape": "preview-landscape.mp4", "portrait": "preview-portrait.mp4"},
   "publishingRecommendation": "Non-exclusive. Existing public GitHub Pages version remains available. Do not opt into exclusivity without reviewing the existing distribution."
 }

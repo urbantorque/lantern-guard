@@ -4,42 +4,48 @@
       "file": "release/crazygames/cover-landscape.png",
       "width": 1920,
       "height": 1080,
-      "bytes": 1573076,
-      "sha256": "c0b48d425adb41050952e7a1f84de3c1cb80edf6ee95dd1db3b31c87fd40ad8f"
+      "bytes": 670099,
+      "sha256": "28f7d70605d0dd03fd0cd2ac1e1040110eea88c06cf4d75a0eae8ccf30bd65f8"
     },
     {
       "file": "release/crazygames/cover-portrait.png",
       "width": 800,
       "height": 1200,
-      "bytes": 945799,
-      "sha256": "bbd7a7cf36e7ab96ada635e2c9b4297b59138ac80f009c1d5aa34a8e85d8378e"
+      "bytes": 409060,
+      "sha256": "01f49b9e421340944f703fef42346e5916d68091971f07776a96b0af02614fb0"
     },
     {
       "file": "release/crazygames/cover-square.png",
       "width": 800,
       "height": 800,
-      "bytes": 704086,
-      "sha256": "3114361baff52ee942bf5fa0a3a1be9ea300ff6b182ebf967572e587f9e63d31"
+      "bytes": 339606,
+      "sha256": "db4090918c00051127d686f1d70ff7249d609cba53616b7844d6a589317cdfe1"
     }
   ],
   "previews": [
     {
-      "file": "release/crazygames/preview-landscape.webm",
-      "bytes": 5310442,
-      "duration": 16.207001,
+      "file": "release/crazygames/preview-landscape.mp4",
+      "bytes": 5179828,
+      "duration": 16.21,
       "width": 1920,
       "height": 1080,
       "audioTracks": 0,
-      "sha256": "75573e4231830357ebac6cc99d2f6e82dc16be4db824fc4ddb292a2ef8d20b56"
+      "codec": "h264",
+      "container": "mp4",
+      "decodedEntireFile": true,
+      "sha256": "1ee13ad788e98134b1b620f0c8540ed01f8df3c2acdd45f34bf1c9ab746a67f2"
     },
     {
-      "file": "release/crazygames/preview-portrait.webm",
-      "bytes": 5775188,
-      "duration": 16.336188,
+      "file": "release/crazygames/preview-portrait.mp4",
+      "bytes": 4528382,
+      "duration": 16.34,
       "width": 1080,
       "height": 1620,
       "audioTracks": 0,
-      "sha256": "e66f0605271312822244dbfa91c1305c8dc48c2a4a2bb4249a2ec0725e79cb4a"
+      "codec": "h264",
+      "container": "mp4",
+      "decodedEntireFile": true,
+      "sha256": "4da17a535d7f52f8e3f1d284bc6ec207a0b76af6e9e3e7fa9cd0af3bd78cdb83"
     }
   ]
 }

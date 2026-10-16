@@ -8,7 +8,7 @@ const report=[]
 try{const page=await browser.newPage();await page.goto(base+'/?muted=1')
  for(const [name,w,h]of [['landscape',1920,1080],['portrait',1080,1620]]){
   const result=await page.evaluate(async({base,name})=>{
-   const v=document.createElement('video');v.muted=true;v.preload='auto';v.src=base+'/release/crazygames/preview-'+name+'.webm'
+   const v=document.createElement('video');v.muted=true;v.preload='auto';v.src=base+'/release/crazygames/preview-'+name+'.mp4'
    await new Promise((resolve,reject)=>{v.onloadedmetadata=resolve;v.onerror=reject});await v.play();v.pause()
    const duration=v.duration
    v.currentTime=6;await new Promise(resolve=>v.onseeked=resolve)
@@ -16,7 +16,7 @@ try{const page=await browser.newPage();await page.goto(base+'/?muted=1')
    return{duration,width:v.videoWidth,height:v.videoHeight,audioTracks:v.captureStream().getAudioTracks().length,frame:c.toDataURL().split(',')[1]}
   },{base,name})
   assert.equal(result.width,w);assert.equal(result.height,h);assert(result.duration>=15&&result.duration<=20,`Preview duration ${result.duration}`);assert.equal(result.audioTracks,0)
-  const file=`release/crazygames/preview-${name}.webm`,bytes=statSync(file).size;assert(bytes<50_000_000)
+  const file=`release/crazygames/preview-${name}.mp4`,bytes=statSync(file).size;assert(bytes<50_000_000)
   writeFileSync(`${out}/preview-frame-${name}.png`,Buffer.from(result.frame,'base64'));delete result.frame;report.push({file,bytes,...result});console.log(`PASS ${name} preview: ${result.duration.toFixed(2)}s, ${w}x${h}, no audio`)
  }
  writeFileSync(`${out}/media-report.json`,JSON.stringify(report,null,2)+'\n')

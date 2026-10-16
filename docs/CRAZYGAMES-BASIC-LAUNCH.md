@@ -14,7 +14,7 @@ npm run build:crazygames
 npm run preview:crazygames
 ```
 
-The preview runs at `http://127.0.0.1:4176/`. The ZIP is `release/crazygames/nightward-basic.zip`; `index.html` is at its root. Upload the ZIP, not the entire release folder. `dist-crazygames/` contains the extracted game only. Standard `npm run build` still creates the normal menu-led edition in `dist/`.
+The preview runs at `http://127.0.0.1:4176/`. The ZIP is `release/crazygames/nightward-basic.zip`; `index.html` is at its root. The current portal upload area accepts the extracted game files: drag the contents of `dist-crazygames/` into it, preserving the `assets/` folder. Do not upload the entire release folder or the listing media as game files. The ZIP remains the verified archive of those same files. Standard `npm run build` still creates the normal menu-led edition in `dist/`.
 
 ```sh
 npm run qa:crazygames
@@ -39,10 +39,12 @@ Copy-ready listing fields are in `release/crazygames/listing.json`.
 | Landscape cover | 1920 × 1080 | Authored composition of existing game models |
 | Portrait cover | 800 × 1200 | Same identity, recomposed for portrait |
 | Square cover | 800 × 800 | Same identity, recomposed for square |
-| Landscape preview | 1920 × 1080 | Silent Dredger encounter capture |
-| Portrait preview | 1080 × 1620 | Silent Dredger encounter capture |
+| Landscape preview | 1920 × 1080, H.264 MP4 | Silent Dredger encounter capture |
+| Portrait preview | 1080 × 1620, H.264 MP4 | Silent Dredger encounter capture |
 
 Covers contain only the game title, without platform logos, borders or promotional slogans. Videos begin on the matching cover and show real gameplay at the normal simulation tempo. They contain no audio track, cursor, promotional text or letterboxing.
+
+The live submission form accepts **MP4 or MOV**, so upload the `.mp4` previews. The `.webm` files are source captures. Set `FFMPEG_PATH` to a local FFmpeg executable with `libx264`, then run `node scripts/crazygames-mp4.mjs` to convert both captures, replace the opening cover frame and verify full decoding, dimensions, duration and silence. `--verify-only` checks existing MP4s without encoding. The default executable path is the local `imageio-ffmpeg` install under ignored `artifacts/crazygames/encoder/`. Title placement clears the different badge overlays shown by the portal's landscape, portrait and square crop tools.
 
 With the development server running, `npm run qa:crazygames-media` verifies both exported videos and saves representative frames for inspection. After the full portal QA and media checks, `npm run check:crazygames-release` verifies the upload hash, cover dimensions and evidence, then writes the release validation reports. `readiness.json` keeps human/device testing and publisher submission explicitly separate from automated checks.
 
@@ -62,7 +64,9 @@ Run a real Chrome/Edge browser pass and physical Android/iPhone browser sessions
 
 ## Portal submission and decisions
 
-The developer account owner still needs to complete the CrazyGames account/billing details, upload the ZIP, covers and previews, paste the listing, select actually verified devices, review the current terms and submit for publisher QA. This preparation does not register an account, accept publishing terms or publish the game.
+The public developer credit is **Urban Torque**. The account owner uploaded the verified build and confirmed that the hosted preview loads, accepts tower placement and starts wave 1 in their usual browser. That is a user-reported hosted smoke test; the in-app browser's game-file host was blocked by Cloudflare. The automated local checks remain separate evidence. No mobile support claim is selected.
+
+The listing, all three covers and both MP4 previews are saved in the existing draft. The final page is **Finalize submission**. It requires the Developer Portal terms acceptance and a PEGI 12 suitability declaration; the portal also reports that billing details are incomplete or unavailable. No final submission has been made. The owner must complete billing onboarding and review these declarations before **Submit for approval**.
 
 For assisted submission, the owner signs in at https://developer.crazygames.com/login (or uses **Join now**), completes verification and any account terms in the browser, and leaves the dashboard open. The assistant can then upload the prepared files, enter listing fields and run the portal preview. Passwords and verification codes should stay in the browser.
 

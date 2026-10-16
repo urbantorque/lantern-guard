@@ -31,9 +31,11 @@ export function drawCover(canvas:HTMLCanvasElement){
  c.beginPath();c.moveTo(sx,sy);c.quadraticCurveTo((sx+ex)/2,Math.min(sy,ey)-100,ex,ey);c.strokeStyle='#ffc96c35';c.lineWidth=12;c.stroke();c.strokeStyle='#ffe5a8';c.lineWidth=3;c.stroke()
  lightPool(c,ex,ey,65,'#ffc56d',.8,1);c.fillStyle='#fff0be';c.beginPath();c.arc(ex,ey,7,0,Math.PI*2);c.fill()
  // Only the game title appears on covers, per the publisher's artwork rules.
- const titleY=wide?145:portrait?240:185,titleSize=wide?132:136
+  // Publisher badge rectangles differ by aspect ratio. Keep landscape/square
+  // titles to their right and the portrait title below the reserved region.
+  const sideTitle=!portrait,titleY=wide?140:portrait?420:190,titleSize=sideTitle?92:136
  const shade=c.createLinearGradient(0,0,0,titleY+120);shade.addColorStop(0,'#061722');shade.addColorStop(.58,'#061722eb');shade.addColorStop(1,'#06172200');c.fillStyle=shade;c.fillRect(0,0,w,titleY+120)
- c.textAlign='center';c.font=`800 ${titleSize}px "DM Sans Variable",sans-serif`;c.letterSpacing='-6px'
- c.shadowColor='#00000090';c.shadowBlur=14;c.shadowOffsetY=7;c.fillStyle='#f5dba3';c.fillText('NIGHTWARD',500,titleY,900)
+  c.textAlign=sideTitle?'right':'center';c.font=`800 ${titleSize}px "DM Sans Variable",sans-serif`;c.letterSpacing='-6px'
+  c.shadowColor='#00000090';c.shadowBlur=14;c.shadowOffsetY=7;c.fillStyle='#f5dba3';c.fillText('NIGHTWARD',sideTitle?950:500,titleY,sideTitle?530:900)
  c.shadowBlur=0;c.shadowOffsetY=0;c.restore()
 }
