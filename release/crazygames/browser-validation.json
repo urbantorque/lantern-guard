@@ -1,168 +1,295 @@
 {
-  "edition": "production Basic Launch, served under a nested path",
+  "version": 2,
+  "checkedAt": "2026-10-19T06:41:08.448Z",
+  "sourceCommit": "9fecb8fae4e3d711be7720a3204fedd233a8e943",
+  "zipSha256": "c57196362c784b8a6a220bfcab9543d2437717a9de3b143abd83d86ad609dbd2",
+  "edition": "Packaged CrazyGames production build, served under /games/nightward/",
+  "method": "Actual browser UI interaction through the Codex browser. No hidden-state injection in production checks.",
   "viewports": [
     {
-      "width": 907,
+      "battlefield": {
+        "height": 366,
+        "width": 907.3333740234376,
+        "x": 0,
+        "y": 48
+      },
+      "battlefieldFits": true,
+      "controlsFit": true,
       "height": 510,
-      "readyMs": 1570,
-      "firstPlacement": true,
-      "fortyWaves": true,
-      "resumeExact": true,
-      "upgradesVisible": true,
-      "largeText": false,
-      "errors": [],
-      "bad": [],
-      "external": []
+      "noHorizontalOverflow": true,
+      "outside": [],
+      "width": 907
     },
     {
-      "width": 821,
+      "battlefield": {
+        "height": 318,
+        "width": 821.3333740234375,
+        "x": 0,
+        "y": 48
+      },
+      "battlefieldFits": true,
+      "controlsFit": true,
       "height": 462,
-      "readyMs": 772,
-      "firstPlacement": true,
-      "fortyWaves": true,
-      "resumeExact": true,
-      "upgradesVisible": true,
-      "largeText": false,
-      "errors": [],
-      "bad": [],
-      "external": []
+      "noHorizontalOverflow": true,
+      "outside": [],
+      "width": 821
     },
     {
-      "width": 1216,
+      "battlefield": {
+        "height": 524,
+        "width": 1216,
+        "x": 0,
+        "y": 52
+      },
+      "battlefieldFits": true,
+      "controlsFit": true,
       "height": 684,
-      "readyMs": 748,
-      "firstPlacement": true,
-      "fortyWaves": true,
-      "resumeExact": true,
-      "upgradesVisible": true,
-      "largeText": false,
-      "errors": [],
-      "bad": [],
-      "external": []
+      "noHorizontalOverflow": true,
+      "outside": [],
+      "width": 1216
     },
     {
-      "width": 1077,
+      "battlefield": {
+        "height": 446,
+        "width": 1077.3333740234375,
+        "x": 0,
+        "y": 52
+      },
+      "battlefieldFits": true,
+      "controlsFit": true,
       "height": 606,
-      "readyMs": 720,
-      "firstPlacement": true,
-      "fortyWaves": true,
-      "resumeExact": true,
-      "upgradesVisible": true,
-      "largeText": false,
-      "errors": [],
-      "bad": [],
-      "external": []
+      "noHorizontalOverflow": true,
+      "outside": [],
+      "width": 1077
     },
     {
-      "width": 1366,
+      "battlefield": {
+        "height": 608,
+        "width": 1366,
+        "x": 0,
+        "y": 52
+      },
+      "battlefieldFits": true,
+      "controlsFit": true,
       "height": 768,
-      "readyMs": 732,
-      "firstPlacement": true,
-      "fortyWaves": true,
-      "resumeExact": true,
-      "upgradesVisible": true,
-      "largeText": false,
-      "errors": [],
-      "bad": [],
-      "external": []
+      "noHorizontalOverflow": true,
+      "outside": [],
+      "width": 1366
     },
     {
-      "width": 1920,
+      "battlefield": {
+        "height": 920,
+        "width": 1800,
+        "x": 60,
+        "y": 52
+      },
+      "battlefieldFits": true,
+      "controlsFit": true,
       "height": 1080,
-      "readyMs": 753,
-      "firstPlacement": true,
-      "fortyWaves": true,
-      "resumeExact": true,
-      "upgradesVisible": true,
-      "largeText": false,
-      "errors": [],
-      "bad": [],
-      "external": []
+      "noHorizontalOverflow": true,
+      "outside": [],
+      "width": 1920
     },
     {
-      "width": 1536,
+      "battlefield": {
+        "height": 704,
+        "width": 1536,
+        "x": 0,
+        "y": 52
+      },
+      "battlefieldFits": true,
+      "controlsFit": true,
       "height": 864,
-      "readyMs": 764,
-      "firstPlacement": true,
-      "fortyWaves": true,
-      "resumeExact": true,
-      "upgradesVisible": true,
-      "largeText": false,
-      "errors": [],
-      "bad": [],
-      "external": []
+      "noHorizontalOverflow": true,
+      "outside": [],
+      "width": 1536
     },
     {
-      "width": 1280,
+      "battlefield": {
+        "height": 560,
+        "width": 1280,
+        "x": 0,
+        "y": 52
+      },
+      "battlefieldFits": true,
+      "controlsFit": true,
       "height": 720,
-      "readyMs": 751,
-      "firstPlacement": true,
-      "fortyWaves": true,
-      "resumeExact": true,
-      "upgradesVisible": true,
-      "largeText": false,
-      "errors": [],
-      "bad": [],
-      "external": []
+      "noHorizontalOverflow": true,
+      "outside": [],
+      "width": 1280
     },
     {
-      "width": 800,
+      "battlefield": {
+        "height": 306,
+        "width": 800,
+        "x": 0,
+        "y": 48
+      },
+      "battlefieldFits": true,
+      "controlsFit": true,
       "height": 450,
-      "readyMs": 759,
-      "firstPlacement": true,
-      "fortyWaves": true,
-      "resumeExact": true,
-      "upgradesVisible": true,
-      "largeText": false,
-      "errors": [],
-      "bad": [],
-      "external": []
+      "noHorizontalOverflow": true,
+      "outside": [],
+      "width": 800
     },
     {
-      "width": 1080,
+      "battlefield": {
+        "height": 447.3333435058594,
+        "width": 1080,
+        "x": 0,
+        "y": 52
+      },
+      "battlefieldFits": true,
+      "controlsFit": true,
       "height": 607,
-      "readyMs": 747,
-      "firstPlacement": true,
-      "fortyWaves": true,
-      "resumeExact": true,
-      "upgradesVisible": true,
-      "largeText": false,
-      "errors": [],
-      "bad": [],
-      "external": []
+      "noHorizontalOverflow": true,
+      "outside": [],
+      "width": 1080
+    },
+    {
+      "battlefield": {
+        "height": 650,
+        "width": 390,
+        "x": 0,
+        "y": 52
+      },
+      "battlefieldFits": true,
+      "controlsFit": true,
+      "height": 844,
+      "noHorizontalOverflow": true,
+      "outside": [],
+      "width": 390
+    },
+    {
+      "battlefield": {
+        "height": 546,
+        "width": 320,
+        "x": 0,
+        "y": 52
+      },
+      "battlefieldFits": true,
+      "controlsFit": true,
+      "height": 740,
+      "noHorizontalOverflow": true,
+      "outside": [],
+      "width": 320
+    }
+  ],
+  "inspectors": [
+    {
+      "width": 320,
+      "height": 740,
+      "stationary": true,
+      "choices": [
+        {
+          "text": "Choose209 glow",
+          "visible": true
+        },
+        {
+          "text": "Choose209 glow",
+          "visible": true
+        }
+      ],
+      "noHorizontalOverflow": true
     },
     {
       "width": 390,
       "height": 844,
-      "readyMs": 743,
-      "firstPlacement": true,
-      "fortyWaves": true,
-      "resumeExact": true,
-      "upgradesVisible": true,
-      "largeText": false,
-      "errors": [],
-      "bad": [],
-      "external": []
+      "stationary": true,
+      "choices": [
+        {
+          "text": "Choose209 glow",
+          "visible": true
+        },
+        {
+          "text": "Choose209 glow",
+          "visible": true
+        }
+      ],
+      "noHorizontalOverflow": true
     },
     {
-      "width": 320,
-      "height": 740,
-      "readyMs": 729,
-      "firstPlacement": true,
-      "fortyWaves": true,
-      "resumeExact": true,
-      "upgradesVisible": true,
-      "largeText": true,
-      "errors": [],
-      "bad": [],
-      "external": []
+      "width": 821,
+      "height": 462,
+      "stationary": true,
+      "choices": [
+        {
+          "text": "Choose209 glow",
+          "visible": true
+        },
+        {
+          "text": "Choose209 glow",
+          "visible": true
+        }
+      ],
+      "noHorizontalOverflow": true
+    },
+    {
+      "width": 907,
+      "height": 510,
+      "stationary": true,
+      "choices": [
+        {
+          "text": "Choose209 glow",
+          "visible": true
+        },
+        {
+          "text": "Choose209 glow",
+          "visible": true
+        }
+      ],
+      "noHorizontalOverflow": true
     }
   ],
-  "continuity8to9": true,
-  "freeActRetry": true,
-  "lateForecast": true,
-  "completedSavePreserved": true,
-  "damagedSavePreserved": true,
+  "flows": {
+    "paidFirstPlacement": true,
+    "manualWave1": true,
+    "pausedReloadVisible": true,
+    "stationaryInspectors": true,
+    "signatureChoices": true,
+    "directCommand": true,
+    "firstBossForecast": true,
+    "finalVictory": true,
+    "menuNavigation": true,
+    "reducedMotionUi": true
+  },
+  "productionEvidence": {
+    "opening": "At 907x510, Preview Spark opened its coverage panel; Build here spent 110 of 330 glow. Begin wave 1 changed Prepare to Wave 1/40. Pause and reload retained 25 light, 220 glow, one Spark and the 0:46 sky timer. Continue defence was offered.",
+    "openingSourceCommit": "3e0dbee",
+    "finalPackage": "9fecb8f only removes duplicate labels from the short-screen tower inspector. The final package was reloaded; saved state, twelve settled viewport layouts, corrected inspector choices, menu navigation and Reduced motion toggle were verified again.",
+    "layouts": "One paused production defence resized across twelve viewports. All visible main-screen buttons and battlefield bounds fit; no horizontal document overflow. This is a layout matrix, not twelve full playthroughs.",
+    "inspectors": "320x740, 390x844, 821x462 and 907x510: battlefield bounds remain unchanged; both purchase buttons fit within the scrollable inspector body with no horizontal overflow. The initial 907 clipping was fixed and rechecked.",
+    "accessibility": "Reduced motion and Larger text were enabled through Settings, survived reload, and both upgrade choices remained visible at 320x740. Test preferences were restored. The final package Reduced motion switch was also toggled and checked.",
+    "menus": "Watch menu, Settings, Save & return to district, The Long Watch, new-campaign choices and the continuation route were exercised."
+  },
+  "developmentScenarioEvidence": {
+    "sourceCommit": "aef8938e61d9f363e1380914dcd05fda6ee2ee1b",
+    "scope": "Development-only paid campaign scenarios. The later commits only change inspector CSS, checkpoint menu copy and QA documentation; encounter mechanics are unchanged.",
+    "signatureChoices": "Both signature cards were visible at 907x510, 821x462 and 390x844; choosing Wildfire returned to Ready. The duplicate preparation action was removed.",
+    "directCommand": "An actual Stillwater activation reported 4 targets and Used / next wave. Model tests separately verify ordinary fire continues and there is no second use.",
+    "firstBossForecast": "Mire Tyrant and an 8-light breach cost appeared in the wave-8 forecast.",
+    "finalVictory": "A paid Mira Undertow wave-40 scenario was resumed through the UI and reached the 40/40 victory report with 3 light. This is not an unaided human campaign run.",
+    "media": "Both preview recordings capture this paid late-game scenario at normal simulation tempo."
+  },
+  "consoleErrors": [],
+  "humanPlaytest": false,
   "physicalDeviceTested": false,
-  "humanPlaytest": false
+  "limits": [
+    "No hosted CrazyGames QA run for this candidate yet.",
+    "No real newcomer retention or satisfaction data.",
+    "No physical phone, sustained hardware performance or human audio listening certification.",
+    "CLI browser helper was not executed for this candidate."
+  ],
+  "screenshots": [
+    "artifacts/resubmission/production-inspector-320.jpg",
+    "artifacts/resubmission/production-inspector-907.jpg",
+    "artifacts/resubmission/final-assault-1216.jpg"
+  ],
+  "simulationEvidence": {
+    "opening": "artifacts/resubmission/opening-balance.json",
+    "campaign": "artifacts/siege/balance.json",
+    "referenceCampaignWins": 8,
+    "referenceCampaigns": 12,
+    "allKeepersHaveWinningBuildOnBothPassages": true
+  }
 }

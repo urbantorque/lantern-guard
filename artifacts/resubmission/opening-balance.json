@@ -1,0 +1,241 @@
+[
+  {
+    "hero": "sol",
+    "adaptive": false,
+    "wave": 4,
+    "light": 0,
+    "seconds": 101,
+    "waves": [
+      {
+        "wave": 1,
+        "light": 25,
+        "glow": 212
+      },
+      {
+        "wave": 2,
+        "light": 25,
+        "glow": 333
+      },
+      {
+        "wave": 3,
+        "light": 15,
+        "glow": 455
+      },
+      {
+        "wave": 4,
+        "light": 0,
+        "glow": 463
+      }
+    ]
+  },
+  {
+    "hero": "sol",
+    "adaptive": true,
+    "wave": 8,
+    "light": 25,
+    "seconds": 130,
+    "waves": [
+      {
+        "wave": 1,
+        "light": 25,
+        "glow": 113
+      },
+      {
+        "wave": 2,
+        "light": 25,
+        "glow": 234
+      },
+      {
+        "wave": 3,
+        "light": 25,
+        "glow": 165
+      },
+      {
+        "wave": 4,
+        "light": 25,
+        "glow": 163
+      },
+      {
+        "wave": 5,
+        "light": 25,
+        "glow": 315
+      },
+      {
+        "wave": 6,
+        "light": 25,
+        "glow": 197
+      },
+      {
+        "wave": 7,
+        "light": 25,
+        "glow": 361
+      },
+      {
+        "wave": 8,
+        "light": 25,
+        "glow": 325
+      }
+    ]
+  },
+  {
+    "hero": "mira",
+    "adaptive": false,
+    "wave": 5,
+    "light": 0,
+    "seconds": 136,
+    "waves": [
+      {
+        "wave": 1,
+        "light": 25,
+        "glow": 212
+      },
+      {
+        "wave": 2,
+        "light": 25,
+        "glow": 333
+      },
+      {
+        "wave": 3,
+        "light": 18,
+        "glow": 457
+      },
+      {
+        "wave": 4,
+        "light": 5,
+        "glow": 594
+      },
+      {
+        "wave": 5,
+        "light": 0,
+        "glow": 600
+      }
+    ]
+  },
+  {
+    "hero": "mira",
+    "adaptive": true,
+    "wave": 8,
+    "light": 13,
+    "seconds": 189,
+    "waves": [
+      {
+        "wave": 1,
+        "light": 25,
+        "glow": 172
+      },
+      {
+        "wave": 2,
+        "light": 21,
+        "glow": 289
+      },
+      {
+        "wave": 3,
+        "light": 21,
+        "glow": 211
+      },
+      {
+        "wave": 4,
+        "light": 21,
+        "glow": 159
+      },
+      {
+        "wave": 5,
+        "light": 21,
+        "glow": 161
+      },
+      {
+        "wave": 6,
+        "light": 21,
+        "glow": 328
+      },
+      {
+        "wave": 7,
+        "light": 21,
+        "glow": 202
+      },
+      {
+        "wave": 8,
+        "light": 13,
+        "glow": 507
+      }
+    ]
+  },
+  {
+    "hero": "ivo",
+    "adaptive": false,
+    "wave": 4,
+    "light": 0,
+    "seconds": 101,
+    "waves": [
+      {
+        "wave": 1,
+        "light": 25,
+        "glow": 212
+      },
+      {
+        "wave": 2,
+        "light": 25,
+        "glow": 333
+      },
+      {
+        "wave": 3,
+        "light": 14,
+        "glow": 454
+      },
+      {
+        "wave": 4,
+        "light": 0,
+        "glow": 466
+      }
+    ]
+  },
+  {
+    "hero": "ivo",
+    "adaptive": true,
+    "wave": 8,
+    "light": 25,
+    "seconds": 155,
+    "waves": [
+      {
+        "wave": 1,
+        "light": 25,
+        "glow": 113
+      },
+      {
+        "wave": 2,
+        "light": 25,
+        "glow": 234
+      },
+      {
+        "wave": 3,
+        "light": 25,
+        "glow": 365
+      },
+      {
+        "wave": 4,
+        "light": 25,
+        "glow": 233
+      },
+      {
+        "wave": 5,
+        "light": 25,
+        "glow": 235
+      },
+      {
+        "wave": 6,
+        "light": 25,
+        "glow": 202
+      },
+      {
+        "wave": 7,
+        "light": 25,
+        "glow": 366
+      },
+      {
+        "wave": 8,
+        "light": 25,
+        "glow": 420
+      }
+    ]
+  }
+]
