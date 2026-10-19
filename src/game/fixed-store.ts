@@ -1,4 +1,5 @@
 import { CONTRACTS, contractStatus } from './watch-mastery'
+import {audioLevels,type AudioLevels} from '../core/audio-levels'
 import { campaignBeat } from './watch-director'
 import { watchRecord } from './record-view'
 import { validStyles, type ProjectId } from './district-projects'
@@ -16,6 +17,7 @@ export type Slot = 'campaign' | 'commission' | 'siege' | 'practice'
 export interface FixedRecord { wave: number; light: number; won: boolean; practice: boolean }
 export interface VillageProfile {
   v: 1
+  audioLevels?: AudioLevels
   districtStyles?: Partial<Record<ProjectId,0|1>>
   lessons?: string[]
   mastery?: MasteryId[]
@@ -44,7 +46,7 @@ export function loadVillage(): VillageProfile {
   if(!Object.values(p.records).every(r=>r&&nonnegative(r.wave)&&r.wave<=40&&nonnegative(r.light)&&typeof r.won==='boolean'&&typeof r.practice==='boolean'))return empty
   if(!Object.values(p.credits).every(c=>c&&nonnegative(c.wave)&&journal(c.journal)))return empty
   const contractRecords=Object.fromEntries(Object.entries(p.contractRecords&&typeof p.contractRecords==='object'?p.contractRecords:{}).filter(([key,r])=>CONTRACTS.some(c=>key.startsWith(c.id+':')&&isHero(key.slice(c.id.length+1)))&&r&&Number.isInteger(r.light)&&r.light>=0&&r.light<=50))
-  return {...empty,...p,contractRecords,mastery:Array.isArray(p.mastery)?p.mastery.filter(id=>MASTERY.some(m=>m.id===id)):[],districtStyles:validStyles(p.districtStyles),lessons:Array.isArray(p.lessons)?p.lessons.filter(k=>typeof k==='string').slice(0,20):[],lastHero:isHero(p.lastHero)?p.lastHero:'sol',guardian:['lantern','ember','reed','tide'].includes(p.guardian??'')?p.guardian:'lantern',commissions:p.commissions.filter(id=>['market','glass','garden'].includes(id)||isExpedition(id)),settings:{...empty.settings,...p.settings,ambience:p.settings.ambience??p.settings.music??true}}
+  return {...empty,...p,audioLevels:audioLevels(p.audioLevels),contractRecords,mastery:Array.isArray(p.mastery)?p.mastery.filter(id=>MASTERY.some(m=>m.id===id)):[],districtStyles:validStyles(p.districtStyles),lessons:Array.isArray(p.lessons)?p.lessons.filter(k=>typeof k==='string').slice(0,20):[],lastHero:isHero(p.lastHero)?p.lastHero:'sol',guardian:['lantern','ember','reed','tide'].includes(p.guardian??'')?p.guardian:'lantern',commissions:p.commissions.filter(id=>['market','glass','garden'].includes(id)||isExpedition(id)),settings:{...empty.settings,...p.settings,ambience:p.settings.ambience??p.settings.music??true}}
 }
 export function loadWatch(slot:Slot): {snapshot:SaveSnapshotV2;blooms:number[]} | null {
   try {

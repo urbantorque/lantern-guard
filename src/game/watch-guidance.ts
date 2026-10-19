@@ -2,8 +2,10 @@ import type { Sim } from './sim'
 import { enemyName } from './bestiary'
 import { BESTIARY } from './bestiary'
 import {storyLesson} from './story'
+import {ROLE_NAMES} from './watch-clarity'
 
 export function watchLesson(s:Sim,seen:readonly string[]=[]){
+  if(seen.includes('coach-disabled'))return null
   if(s.challenge.siege===2){
     if(s.over||s.enemies.some(e=>e.alive&&e.def.boss))return null
     return [
@@ -12,6 +14,9 @@ export function watchLesson(s:Sim,seen:readonly string[]=[]){
       {id:'siege2-armour',when:s.planningWave===3&&!s.towers.some(t=>t.id==='cracker'),text:'Armour incoming. Build a Blast over the same bend.'},
       {id:'siege2-command',when:s.wave===4&&!!s.techniques.length&&!s.director?.commands,text:'Your command charges as towers fire. Tap the gold button when enemies enter its ring.'},
       {id:'siege2-upgrade',when:s.wave>=5&&s.wave<=6&&!s.towers.some(t=>t.a+t.b>0),text:'Tap a tower to specialise it. Choose a weapon for the next threat.'},
+      {id:'siege2-healer',when:s.planningWave>=7&&s.planningWave<=9&&s.waveDef(s.planningWave).groups.some(g=>g.type==='mender'),text:'Repair escorts heal their neighbours. Concentrate heavy damage and interrupt their pulse.'},
+      {id:'siege2-hidden',when:s.keeperAllowed('owl')&&!s.towers.some(t=>t.id==='owl')&&s.waveDef(s.planningWave).groups.some(g=>g.type==='veil'||g.type==='vshell'),text:'Hidden fleets need Scout sight. Cover the same water as your damage towers.'},
+      {id:'siege2-night',when:s.keeperAllowed('owl')&&!s.sky.night&&s.sky.phaseLeft<20&&s.towers.some(t=>t.id==='owl'),text:'Support Scouts store sunlight for night. Your towers keep their reach.'},
     ].find(h=>h.when&&!seen.includes(h.id))??null
   }
   if(s.challenge.mission==='first-lights'){const lesson=storyLesson(s);return lesson&&!seen.includes(lesson.id)?lesson:null}
@@ -28,19 +33,19 @@ export function watchLesson(s:Sim,seen:readonly string[]=[]){
 export function watchInsights(s:Sim):string[]{
   if(s.challenge.watchExperience){
     const lines:string[]=[],support=[...s.towers].sort((a,b)=>(b.interrupts??0)-(a.interrupts??0)||b.spotted-a.spotted||b.slowed-a.slowed)[0]
-    if(support){if(support.interrupts)lines.push(`${support.def.name} interrupted ${support.interrupts} ${s.challenge.watchTactics?'boss signals':'healing pulses'}.`);else if(support.spotted)lines.push(`${support.def.name} revealed ${support.spotted} hidden foes for your defence.`);else if(support.slowed)lines.push(`${support.def.name} landed ${support.slowed} slowing hits.`)}
+    if(support){if(support.interrupts)lines.push(`${ROLE_NAMES[support.id]} interrupted ${support.interrupts} ${s.challenge.watchTactics?'boss signals':'healing pulses'}.`);else if(support.spotted)lines.push(`${ROLE_NAMES[support.id]} revealed ${support.spotted} hidden foes for your defence.`);else if(support.slowed)lines.push(`${ROLE_NAMES[support.id]} landed ${support.slowed} slowing hits.`)}
     const armour=[...s.towers].sort((a,b)=>(b.armourRemoved??0)-(a.armourRemoved??0))[0]
-    if(armour?.armourRemoved)lines.push(`${armour.def.name} removed ${Math.round(armour.armourRemoved)} armour.`)
+    if(armour?.armourRemoved)lines.push(`${ROLE_NAMES[armour.id]} removed ${Math.round(armour.armourRemoved)} armour.`)
     const signature=[...s.towers].sort((a,b)=>(b.signatureHits??0)-(a.signatureHits??0))[0]
     if(s.stats.firesSpread)lines.push(`Wildfire spread to ${s.stats.firesSpread} neighbouring foes.`)
-    if(signature?.signatureHits)lines.push(`${signature.def.name} landed ${signature.signatureHits} signature hits.`)
+    if(signature?.signatureHits)lines.push(`${ROLE_NAMES[signature.id]} landed ${signature.signatureHits} signature hits.`)
     const leak=Object.entries(s.stats.leaksBy).sort((a,b)=>(b[1]??0)-(a[1]??0))[0]
     if(leak)lines.push(`Next watch: ${BESTIARY[leak[0] as keyof typeof BESTIARY].counter}`)
-    else if(lines.length<3){const top=[...s.towers].sort((a,b)=>(b.damageDealt??0)-(a.damageDealt??0))[0];if(top)lines.push(`${top.def.name} dealt ${Math.round(top.damageDealt??0).toLocaleString()} damage.`)}
+    else if(lines.length<3){const top=[...s.towers].sort((a,b)=>(b.damageDealt??0)-(a.damageDealt??0))[0];if(top)lines.push(`${ROLE_NAMES[top.id]} dealt ${Math.round(top.damageDealt??0).toLocaleString()} damage.`)}
     return lines
   }
   const top=[...s.towers].sort((a,b)=>(b.damageDealt??0)-(a.damageDealt??0))[0]
-  const lines=top&&(top.damageDealt??0)>0?[`${top.def.name} led damage: ${Math.round(top.damageDealt??0).toLocaleString()}.`]:[]
+  const lines=top&&(top.damageDealt??0)>0?[`${ROLE_NAMES[top.id]} led damage: ${Math.round(top.damageDealt??0).toLocaleString()}.`]:[]
   const seen=s.towers.reduce((n,t)=>n+t.spotted,0),slows=s.towers.reduce((n,t)=>n+t.slowed,0)
   if(seen)lines.push(`Scouts revealed ${seen} hidden foes.`)
   else if(slows)lines.push(`Chimes landed ${slows} slowing hits.`)

@@ -4,6 +4,7 @@ import './nocturne-style.css'
 import './siege-style.css'
 import './craft-style.css'
 import './resubmission-style.css'
+import './approval-style.css'
 import { FixedApp } from './fixed-app'
 
 import { initializePlatform } from './core/platform'

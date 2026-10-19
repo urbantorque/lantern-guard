@@ -6,6 +6,7 @@
 
 import { scoreStep,scoreInterval,type AudioScene,type ScoreNote } from './watch-score'
 import { CombatMix,BOSS_VOICES } from './combat-mix'
+import {audioLevels,type AudioLevels} from './audio-levels'
 export type { AudioScene } from './watch-score'
 const PENTA = [0, 2, 4, 7, 9] // major pentatonic degrees
 const BASE_MIDI = 62 // D4
@@ -24,8 +25,8 @@ export interface AudioSettings {
   muted: boolean
 }
 /** A silent test URL overrides this session without changing saved preferences. */
-export const profileSound=(prefs:{muted:boolean;music:boolean;effects:boolean;ambience?:boolean},silent=false):AudioSettings=>({
-  sfx:prefs.effects?.7:0,music:prefs.music?.6:0,ambience:(prefs.ambience??prefs.music)?.35:0,muted:silent||prefs.muted,
+export const profileSound=(prefs:{muted:boolean;music:boolean;effects:boolean;ambience?:boolean},silent=false,levels?:Partial<AudioLevels>):AudioSettings=>({
+  sfx:prefs.effects?audioLevels(levels).effects:0,music:prefs.music?audioLevels(levels).music:0,ambience:(prefs.ambience??prefs.music)?audioLevels(levels).ambience:0,muted:silent||prefs.muted,
 })
 
 type Rate = { last: number; count: number }
@@ -35,6 +36,9 @@ export class Sound {
   ctx: AudioContext | null = null
   private master!: GainNode
   private sfxBus!: GainNode
+  private effectsFocus!: GainNode
+  private priorityBus!: GainNode
+  private cueVoice=false
   private musicBus!: GainNode
   private musicFocus!: GainNode
   private ambBus!: GainNode
@@ -78,7 +82,10 @@ export class Sound {
       this.musicBus = ctx.createGain()
       this.ambBus = ctx.createGain()
       this.master.gain.value=0;this.sfxBus.gain.value=0;this.musicBus.gain.value=0;this.ambBus.gain.value=0
-      this.sfxBus.connect(this.master)
+      this.effectsFocus=ctx.createGain()
+      this.priorityBus=ctx.createGain()
+      this.sfxBus.connect(this.effectsFocus).connect(this.master)
+      this.priorityBus.connect(this.master)
       this.musicFocus=ctx.createGain()
       this.musicBus.connect(this.musicFocus).connect(this.master)
       // A quiet, filtered echo gives the plucked melody space without a large
@@ -104,6 +111,7 @@ export class Sound {
     const m = this.settings.muted ? 0 : 1
     this.master.gain.setTargetAtTime(m * 0.9, t, 0.05)
     this.sfxBus.gain.setTargetAtTime(this.settings.sfx, t, 0.05)
+    this.priorityBus.gain.setTargetAtTime(this.settings.sfx, t, 0.05)
     this.musicBus.gain.setTargetAtTime(this.settings.music * 0.8, t, 0.05)
     this.ambBus.gain.setTargetAtTime(this.settings.ambience * 0.5, t, 0.05)
   }
@@ -113,6 +121,7 @@ export class Sound {
     if(!this.ctx||this.settings.sfx<=0)return
     this.mix.focus(this.ctx.currentTime,seconds)
     this.musicFocus.gain.setTargetAtTime(.38,this.ctx.currentTime,.035)
+    this.effectsFocus.gain.setTargetAtTime(.24,this.ctx.currentTime,.018)
   }
   private ok(key: string, maxPerSec: number): boolean {
     if (!this.audible||this.settings.sfx<=0) return false
@@ -123,7 +132,9 @@ export class Sound {
       this.rates.set(key, r)
     }
     if (now - r.last > 1 / maxPerSec) {
-      if(!this.mix.admit(now,/^(encounter|boss|leak|tap|deny|command)/.test(key)))return false
+      const priority=/^(encounter|boss|leak|tap|deny|command)/.test(key)
+      if(!this.mix.admit(now,priority))return false
+      this.cueVoice=priority
       r.last = now
       return true
     }
@@ -145,7 +156,7 @@ export class Sound {
     o.frequency.setValueAtTime(freq, t)
     o.detune.value = detune
     this.env(g, t, a, peak, d)
-    o.connect(g).connect(bus ?? this.sfxBus)
+    o.connect(g).connect(bus ?? (this.cueVoice?this.priorityBus:this.sfxBus))
     o.start(t)
     o.stop(t + a + d + 0.05)
     if(!this.offlineRendering)o.onended=()=>{o.disconnect();g.disconnect()}
@@ -163,7 +174,7 @@ export class Sound {
     f.Q.value = q
     const g = ctx.createGain()
     this.env(g, t, 0.003, peak, dur)
-    src.connect(f).connect(g).connect(bus ?? this.sfxBus)
+    src.connect(f).connect(g).connect(bus ?? (this.cueVoice?this.priorityBus:this.sfxBus))
     src.start(t, Math.random() * 1.5)
     src.stop(t + dur + 0.05)
     if(!this.offlineRendering)src.onended=()=>{src.disconnect();f.disconnect();g.disconnect()}
@@ -564,6 +575,7 @@ export class Sound {
     const ctx=this.ctx!,now=ctx.currentTime
     const focus=this.settings.sfx>0&&this.mix.focused(now)
     this.musicFocus.gain.setTargetAtTime(focus?.38:1,now,focus?.035:.35)
+    this.effectsFocus.gain.setTargetAtTime(focus?.24:1,now,focus?.018:.22)
     this.weatherGain?.gain.setTargetAtTime(scene.weather==='rain'?.09:scene.weather==='breeze'?.035:.001,now,.7)
     this.musicEnergy+=(intensity-this.musicEnergy)*Math.min(1,dt*2)
     if(scene.night&&this.settings.ambience>0&&Math.random()<dt*.25){

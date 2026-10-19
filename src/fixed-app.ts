@@ -1,3 +1,7 @@
+import {audioLevels,type AudioLevels} from './core/audio-levels'
+import {advanceWatchFrame} from './game/frame-clock'
+import {lessonCard,threatCard,recoveryCard} from './ui/watch-coach'
+import {campaignMilestone,recoveryPlan} from './game/watch-coach'
 import {signatureChoice,signatureDiagram} from './ui/signature-choice'
 import {directCommand,commandReady,commandCharge,DIRECT_COMMAND_HELP} from './game/watch-director'
 import {mission,storyMission,storyChallenge,nextMission,type MissionId} from './game/story'
@@ -93,6 +97,8 @@ export class FixedApp {
   private celebrationSeen=false
   private projectNotice=''
   private projectNoticeLeft=0
+  private retrySuggestion:ReturnType<typeof recoveryPlan>=null
+  private witnessed=new Set<string>()
   private rehearsal:{original:SaveSnapshotV2;blooms:number[];checkpoint:SaveSnapshotV2;finished:boolean}|null=null
 
   private get preparing(){const s=this.sim;return !!s&&!s.waveActive&&!s.over&&(passagePending(s)||!!this.rehearsal?.finished||this.preparedWave!==s.wave+1&&(!!this.rehearsal||!!preparationBeat(s.challenge,s.wave+1)))}
@@ -110,6 +116,13 @@ export class FixedApp {
       const target=(e.target as HTMLElement).closest<HTMLButtonElement>('[data-action]')
       if(target && !target.disabled) { sound.unlock(); this.action(target.dataset.action!) }
     })
+    document.addEventListener('input',e=>{
+      const input=e.target;if(!(input instanceof HTMLInputElement)||!['music','effects','ambience'].includes(input.dataset.volume??''))return
+      const key=input.dataset.volume as keyof AudioLevels
+      this.profile.audioLevels={...audioLevels(this.profile.audioLevels),[key]:Number(input.value)/100}
+      const output=document.getElementById('level-'+key);if(output)output.textContent=input.value+'%'
+      writeJSON('profile',this.profile);this.applySettings();sound.unlock()
+    })
     document.addEventListener('keydown',e=>this.key(e))
     watchAppState(()=>{this.background=true;this.accumulator=0;this.save();sound.suspend()},()=>{this.background=false;this.lastFrame=0;this.accumulator=0;if(sound.ctx)sound.unlock()})
     if(crazyGamesBuild)this.enterPortal();else this.home()
@@ -125,7 +138,7 @@ export class FixedApp {
   private applySettings() {
     document.documentElement.classList.toggle('large-text',this.profile.settings.largeText)
     document.documentElement.classList.toggle('reduced-motion',this.profile.settings.reducedMotion)
-    sound.settings=profileSound(this.profile.settings,this.sessionMuted); sound.applySettings()
+    sound.settings=profileSound(this.profile.settings,this.sessionMuted,this.profile.audioLevels); sound.applySettings()
     setPalette(this.profile.settings.clearPalette?'clear':'standard')
     if(this.renderer) { this.renderer.settings={calmFx:true,reduceMotion:this.profile.settings.reducedMotion,shake:false}; this.renderer.setBigText(this.profile.settings.largeText) }
   }
@@ -203,8 +216,8 @@ export class FixedApp {
     text=bestiaryText(text)
     const hero=this.sim?this.sim.challenge.hero:this.hero;if(!hero)return text
     text=text.replaceAll('An Owl guides a Wickling hit','A scout guides a spark').replaceAll('an Owl','a scout tower').replaceAll('An Owl','A scout tower')
-    for(const id of TOWER_ORDER)text=text.replaceAll(TOWERS[id].name,HEROES[hero].towers[id].name)
-    return text.replace(/\bWicklings\b/g,HEROES[hero].towers.wick.name+' towers').replace(/\bMoonbells\b/g,HEROES[hero].towers.bell.name+' towers').replace(/\bLighthouses\b/g,HEROES[hero].towers.beam.name+' towers').replace(/\bOwls\b/g,'scout towers').replace(/\bOwl\b/g,'scout tower').replace(/(?<!Waterfront )\bGardens\b/g,'income towers').replace(/\bCrackers\b/g,'blast towers').replace(/\bBallistas\b/g,'bolt towers')
+    for(const id of TOWER_ORDER)text=text.replaceAll(TOWERS[id].name,ROLE_NAMES[id])
+    return text.replace(/\bWicklings\b/g,'Spark towers').replace(/\bMoonbells\b/g,'Chime towers').replace(/\bLighthouses\b/g,'Beam towers').replace(/\bOwls\b/g,'scout towers').replace(/\bOwl\b/g,'scout tower').replace(/(?<!Waterfront )\bGardens\b/g,'income towers').replace(/\bCrackers\b/g,'blast towers').replace(/\bBallistas\b/g,'bolt towers')
   }
   private towerFacts(t:Tower){
     const s=t.stats,n=(x:number)=>Number(x.toFixed(2)),facts:string[]=[]
@@ -221,7 +234,7 @@ export class FixedApp {
   private roster(){
     const id=this.sim?this.sim.challenge.hero:this.hero,h=id?HEROES[id]:null
     const baseUnlocks=this.sim?.challenge.expedition?EXPEDITION_UNLOCK:FIXED_UNLOCK;const unlocks=Object.fromEntries(TOWER_ORDER.map(t=>[t,this.sim?this.sim.keeperWave(t):experienceUnlock(t,id??undefined,false)??campaignUnlock({watchDirector:1,...(this.endurance?{endurance:true as const}:{})},baseUnlocks[t])])) as Record<TowerId,number>
-    this.show(h?`${h.name} · ${h.title}`:'The original keepers',`${h?`<div class="hero-intro"><img src="${heroPortrait(id!)}" alt="${h.name}, ${h.title}"/><div><p class="lead">${h.approach}</p><p class="small muted">${h.tradeoff}</p></div></div>`:''}<p class="small muted">Three keepers, eight tower roles. Each tower has two specialisations and three stages.</p><div class="roster-list">${[...TOWER_ORDER].sort((a,b)=>unlocks[a]-unlocks[b]).map(t=>`<article><img src="${fixedTowerIcon(t,1,0,0,id)}" alt=""/><div><h3>${heroTower(t,id).name}</h3><p class="roster-role">${role[t]} · Wave ${unlocks[t]} · ${this.sim?.towerCost(t)??experiencePrice(t,id,TOWERS[t].cost)} glow</p><p>${h?h.towers[t].trait:TOWERS[t].blurb}</p><small>${heroTower(t,id).paths.map(p=>p.name).join(' / ')}</small></div></article>`).join('')}</div>${!this.sim?button('choose','Back to watch setup','primary wide'):''}`,'roster')
+    this.show(h?`${h.name} · ${h.title}`:'The original keepers',`${h?`<div class="hero-intro"><img src="${heroPortrait(id!)}" alt="${h.name}, ${h.title}"/><div><p class="lead">${h.approach}</p><p class="small muted">${h.tradeoff}</p></div></div>`:''}<p class="small muted">Three keepers, eight tower roles. Each tower has two specialisations and three stages.</p><div class="roster-list">${[...TOWER_ORDER].sort((a,b)=>unlocks[a]-unlocks[b]).map(t=>`<article><img src="${fixedTowerIcon(t,1,0,0,id)}" alt=""/><div><h3>${ROLE_NAMES[t]} <small>${heroTower(t,id).name}</small></h3><p class="roster-role">${role[t]} · Wave ${unlocks[t]} · ${this.sim?.towerCost(t)??experiencePrice(t,id,TOWERS[t].cost)} glow</p><p>${h?h.towers[t].trait:TOWERS[t].blurb}</p><small>${heroTower(t,id).paths.map(p=>p.name).join(' / ')}</small></div></article>`).join('')}</div>${!this.sim?button('choose','Back to watch setup','primary wide'):''}`,'roster')
   }
   private preview(map:number) {
     const level=buildLevel(fixedLevel(map,true,true))
@@ -244,8 +257,8 @@ export class FixedApp {
     this.rehearsal=null
     if(!sim.isChallenge)this.endurance=!!sim.challenge.endurance
     document.body.classList.add('playing')
-    this.sim=sim;if(sim.challenge.hero)this.hero=sim.challenge.hero;this.map=sim.challenge.variant??0;this.difficulty=sim.difficulty;this.selection=null;this.moving=null;this.accumulator=0;this.endShown=false;this.drawer='';this.recap='';this.lastHUD='';this.nextWaveIn=null;this.buildGhost=null;this.preparedWave=0;this.celebrationLeft=0;this.celebrationSeen=false;this.projectNotice='';this.projectNoticeLeft=0;this.moment='';this.momentUntil=0
-    $('app').innerHTML=`<main class="game"><header class="hud"><div class="stat">${icon('heart')}<b id="light"></b><span>Light</span></div><div class="stat">${icon('sparkle')}<b id="glow"></b><span>Glow</span></div><div class="wave-stat" id="wave"></div>${button('menu',icon('gear')+'<span class="sr-only">Watch menu</span>','icon-button')}</header><section id="battlefield" class="battlefield" aria-label="Battlefield"><canvas id="canvas" aria-label="Fixed paths through the district"></canvas><div id="plots" aria-label="Tower plots"></div><button id="sky" class="sky-strip" data-action="sky"></button><div id="board-status" class="board-status"></div><div id="lantern-watch" class="lantern-watch" hidden aria-live="polite"></div><div id="prepare-watch" class="prepare-watch" hidden></div><div id="district-notice" class="district-notice" role="status" hidden></div><button id="watch-lesson" class="watch-lesson" data-action="lesson" hidden></button><div id="boss-status" class="boss-status" hidden></div><div id="battle-moment" class="battle-moment" role="status" hidden></div><div class="map-caption"><span id="map-name">${WATCH_NAMES[this.map]}${sim.challenge.hero?" · "+HEROES[sim.challenge.hero].name:""}</span><span id="act"></span></div></section><footer class="playbar"><div class="wave-brief"><button data-action="forecast" class="forecast-button" id="forecast"></button><span id="wave-recap" class="wave-recap"></span><button id="breach-review" data-action="breach-review" class="text-button breach-review" hidden>Review the breach</button></div><button id="technique-offer" data-action="techniques" class="technique-offer" hidden>Choose a technique</button><div id="command-controls" class="command-controls"><span id="command-readout" class="command-readout"></span><button id="command-aim" data-action="command-aim" class="command-aim" hidden>Choose target</button><button id="surge-command" data-action="surge" class="surge-command" hidden></button><button id="command-discard" data-action="command-cancel" class="command-discard" aria-label="Discard banked command and resume automatic fire" hidden>${icon('close')}</button></div><div class="watch-flow"><span id="flow-label"></span><div id="wave-progress" class="wave-progress" role="progressbar" aria-label="Wave cleared" aria-valuemin="0" aria-valuemax="100"><i></i></div></div></footer></main><div id="modal-root"></div><div id="live" class="sr-only" aria-live="polite"></div><p id="save-warning" role="status"></p>`
+    this.sim=sim;if(sim.challenge.hero)this.hero=sim.challenge.hero;this.map=sim.challenge.variant??0;this.difficulty=sim.difficulty;this.selection=null;this.moving=null;this.accumulator=0;this.endShown=false;this.drawer='';this.recap='';this.lastHUD='';this.nextWaveIn=null;this.buildGhost=null;this.preparedWave=0;this.celebrationLeft=0;this.celebrationSeen=false;this.projectNotice='';this.projectNoticeLeft=0;this.moment='';this.momentUntil=0;this.witnessed.clear();this.retrySuggestion=null
+    $('app').innerHTML=`<main class="game"><header class="hud"><div class="stat">${icon('heart')}<b id="light"></b><span>Light</span></div><div class="stat">${icon('sparkle')}<b id="glow"></b><span>Glow</span></div><div class="wave-stat" id="wave"></div>${button('menu',icon('gear')+'<span class="sr-only">Watch menu</span>','icon-button')}</header><section id="battlefield" class="battlefield" aria-label="Battlefield"><canvas id="canvas" aria-label="Fixed paths through the district"></canvas><div id="plots" aria-label="Tower plots"></div><button id="sky" class="sky-strip" data-action="sky"></button><div id="board-status" class="board-status"></div><div id="lantern-watch" class="lantern-watch" hidden aria-live="polite"></div><div id="prepare-watch" class="prepare-watch" hidden></div><div id="district-notice" class="district-notice" role="status" hidden></div><aside id="watch-lesson" class="watch-lesson" aria-label="Teaching tip" hidden></aside><div id="campaign-goal" class="campaign-goal" hidden></div><div id="boss-status" class="boss-status" hidden></div><div id="battle-moment" class="battle-moment" role="status" hidden></div><div class="map-caption"><span id="map-name">${WATCH_NAMES[this.map]}${sim.challenge.hero?" · "+HEROES[sim.challenge.hero].name:""}</span><span id="act"></span></div></section><footer class="playbar"><div class="wave-brief"><button data-action="forecast" class="forecast-button" id="forecast"></button><span id="wave-recap" class="wave-recap"></span><button id="breach-review" data-action="breach-review" class="text-button breach-review" hidden>Review the breach</button></div><button id="technique-offer" data-action="techniques" class="technique-offer" hidden>Choose a technique</button><div id="command-controls" class="command-controls"><span id="command-readout" class="command-readout"></span><button id="command-aim" data-action="command-aim" class="command-aim" hidden>Choose target</button><button id="surge-command" data-action="surge" class="surge-command" hidden></button><button id="command-discard" data-action="command-cancel" class="command-discard" aria-label="Discard banked command and resume automatic fire" hidden>${icon('close')}</button></div><div class="watch-flow"><span id="flow-label"></span><div id="wave-progress" class="wave-progress" role="progressbar" aria-label="Wave cleared" aria-valuemin="0" aria-valuemax="100"><i></i></div></div></footer></main><div id="modal-root"></div><div id="live" class="sr-only" aria-live="polite"></div><p id="save-warning" role="status"></p>`
     this.renderer=new Renderer($<HTMLCanvasElement>('canvas')); this.renderer.attach(sim);if(blooms.length)this.renderer.importBlooms(blooms)
     document.querySelector('.hud .icon-button')?.insertAdjacentHTML('beforebegin','<button id="pause-toggle" data-action="pause" class="icon-button pause-toggle" aria-label="Pause to plan">'+icon('pause')+'</button>')
     $('battlefield').insertAdjacentHTML('beforeend','<div id="pause-status" class="pause-status" role="status" hidden>Paused · plan your defence</div>')
@@ -257,6 +270,7 @@ export class FixedApp {
     this.renderer.bunting=this.profile.commissions.includes('market')
     this.renderer.keepsakes=districtKeepsakes(this.profile);this.renderer.crest=this.guardian
     this.applySettings()
+    if(this.portalOpening&&!sim.towers.length){this.selection={kind:'pad',index:0};this.buildGhost='wick'}
     this.observer?.disconnect(); this.observer=new ResizeObserver(()=>this.resize());this.observer.observe($('battlefield'));this.resize();this.refresh()
     this.qaControls()
   }
@@ -282,7 +296,7 @@ export class FixedApp {
       // A phone inspector frames its selected tower. Off-camera plots return
       // to the keyboard order when the full board is restored on Close.
       if(point.y+22<0||point.y-84>this.renderer!.h)return ''
-      const label=p.tower?`${p.tower.def.name}, ${secondWatch(s.challenge)?SECOND_STAGES[stageOf(p.tower)===4?2:stageOf(p.tower)===2?1:0]:STAGES[stageOf(p.tower)]}, plot ${i+1}`:s.padAvailable(i)?`Build on plot ${i+1}`:`Unlock plot ${i+1} for ${s.plotCost(i)} glow`
+      const label=p.tower?`${ROLE_NAMES[p.tower.id]}, ${secondWatch(s.challenge)?SECOND_STAGES[stageOf(p.tower)===4?2:stageOf(p.tower)===2?1:0]:STAGES[stageOf(p.tower)]}, plot ${i+1}`:s.padAvailable(i)?`Build on plot ${i+1}`:`Unlock plot ${i+1} for ${s.plotCost(i)} glow`
       const empty=!p.tower,open=s.padAvailable(i)
       return `<button class="plot-hit${empty?' is-empty':''}${empty&&!open?' is-locked':''}" data-action="plot:${i}" style="left:${point.x}px;top:${point.y}px;--tower-hit:${Math.max(44,Math.min(84,90*this.renderer!.scale))}px" aria-label="${label}">${empty?`<span class="plot-marker" aria-hidden="true">${open?icon('plus'):icon('lock')}</span><span class="plot-label" aria-hidden="true">${open?'Build':s.plotCost(i)+' glow'}</span>`:`<span class="plot-number">${i+1}</span>`}</button>`
     }).join('')
@@ -364,24 +378,26 @@ export class FixedApp {
     const next=$('sky-panel-next');if(next)next.textContent=`Next: ${WEATHER[sky.nextWeather].name} in ${clockText(sky.weatherLeft/WATCH_TEMPO)}`
     document.querySelectorAll('.sky-cycle>div').forEach((e,i)=>e.classList.toggle('current',i===Number(sky.night)))
     const offer=$('technique-offer');if(offer){offer.hidden=!!s.over||!techniqueOffers(s).length||this.preparing;offer.textContent=s.director?'Choose signature':`Choose technique ${s.techniques.length+1}/2`}
-    const lesson=watchLesson(s,this.profile.lessons),hint=$('watch-lesson');document.querySelector('[data-action="plot:0"]')?.classList.toggle('teaching',lesson?.id==='refined-place'||lesson?.id==='story-place'||lesson?.id==='siege2-place');if(hint){hint.hidden=!lesson||!!this.drawer||this.preparing||!!boss;hint.textContent=lesson?lesson.text+'  ×':'';hint.setAttribute('aria-label',lesson?lesson.text+' Dismiss tip':'Tip')}
+    const lesson=watchLesson(s,this.profile.lessons),hint=$('watch-lesson');document.querySelector('[data-action="plot:0"]')?.classList.toggle('teaching',lesson?.id==='refined-place'||lesson?.id==='story-place'||lesson?.id==='siege2-place');if(hint){hint.hidden=!lesson||!!this.drawer||!!boss||this.portalOpening;if(lesson&&hint.dataset.lesson!==lesson.id){hint.innerHTML=lessonCard(s,lesson);hint.dataset.lesson=lesson.id}}
+    const milestone=campaignMilestone(s),goal=$('campaign-goal');goal.hidden=!milestone||!!this.drawer||!!boss||!hint.hidden;if(milestone)goal.textContent=milestone.label
+    if(this.retrySuggestion&&!s.waveActive){const advice=this.retrySuggestion;document.querySelectorAll('.plot-hit').forEach(p=>p.classList.toggle('recovery-target',p.getAttribute('data-action')==='plot:'+advice.plot));$('board-status').textContent=advice.text}
     const obstacle=$('tower-obstacle');if(obstacle&&this.selection?.kind==='tower'){obstacle.textContent=towerObstacle(s,this.selection.tower);obstacle.hidden=!obstacle.textContent}
     const prep=$('prepare-watch');prep.hidden=!this.preparing||!!this.drawer;if(this.preparing)prep.innerHTML=passagePending(s)?'<b>Choose your passage</b><p>Shape the next three waves around your defence.</p>'+button('passages','Inspect both routes','primary'):techniqueOffers(s).length?'<b>Choose your signature</b><p>Shape your defence before wave '+(s.wave+1)+'.</p>'+button('techniques','Choose signature','primary'):this.rehearsal?.finished?'<b>Practice complete</b>'+button('practice-report','Review practice','primary'):'<b>'+(this.rehearsal?'Practice · adjust for wave ':s.challenge.siege&&siegeBoundary(s.wave)?siegeAct(s.wave+1).name+' · Wave ':'Prepare for wave ')+(s.wave+1-s.waveOffset)+'</b><p>'+(this.rehearsal?'Adjust the defence using the original budget.':preparationSummary(s)||preparationBeat(s.challenge,s.wave+1))+'</p>'+button('begin-next','Ready · begin wave','primary');
     document.querySelector('.game')?.classList.toggle('portal-opening',this.portalOpening||this.portalReturn)
     if(this.portalReturn){
       prep.hidden=!!this.drawer
-      prep.innerHTML='<b>Your defence is saved</b><p>'+s.towers.length+' towers · '+s.lives+' light · Wave '+Math.max(1,s.wave)+'/40. Continue when you are ready.</p>'+button('portal-continue','Continue defence','primary')
+      prep.innerHTML='<b>Your defence is saved</b><p>'+s.towers.length+(s.towers.length===1?' tower · ':' towers · ')+s.lives+' light · Wave '+Math.max(1,s.wave)+'/40.</p><small>'+ (campaignMilestone(s)?.label??'')+'</small>'+button('portal-continue','Continue defence','primary')
     }else if(this.portalOpening){
       $('wave').innerHTML='<span>Prepare</span><b>1<small> / 40</small></b>'
       prep.hidden=!!this.drawer
-      prep.innerHTML=s.towers.length?'<b>Your first tower is ready</b><p>It fires automatically. Keep building as you defend all 40 waves.</p>'+button('begin-next','Begin wave 1','primary'):'<b>Defend the lantern</b><p>Place a Spark by the lit bend. Your towers stay for all 40 waves.</p>'+button('portal-build','Preview Spark','primary')
+      prep.innerHTML=s.towers.length?'<b>Your Spark is ready</b><p>Fires automatically. Wave 1 begins in '+Math.ceil(this.nextWaveIn??4)+'s. Pause to plan.</p>'+button('begin-next','Begin now','primary'):'<b>Defend the lantern</b><p>Gold water shows Spark coverage. Build it here, then the first wave begins.</p>'+button('opening-place','Build Spark · '+s.towerCost('wick')+' glow','primary')
       $('board-status').textContent=''
       if(!s.towers.length)document.querySelector('[data-action="plot:0"]')?.classList.add('teaching')
     }
     if(this.rehearsal)$('flow-label').textContent=this.rehearsal.finished?'Practice complete':s.waveActive?'One-wave practice':'Practice · take your time'
     const watch=$('lantern-watch'),danger=s.enemies.filter(e=>e.alive&&e.remaining<360);watch.hidden=!this.drawer||!danger.length;watch.classList.toggle('urgent',danger.some(e=>e.remaining<150));watch.textContent=danger.length+' approaching the lantern';
     const breach=$('breach-review');if(breach)breach.hidden=!s.lastLeak?.detail
-    const notice=$('district-notice');notice.hidden=this.projectNoticeLeft<=0||s.waveActive;if(!notice.hidden)notice.textContent=this.projectNotice;
+    const notice=$('district-notice');notice.hidden=this.projectNoticeLeft<=0||!!this.drawer||!!boss;if(!notice.hidden)notice.textContent=this.projectNotice;
     $('save-warning').textContent=storageMessage
     document.querySelectorAll<HTMLButtonElement>('[data-cost]').forEach(b=>{b.disabled=s.glow<Number(b.dataset.cost)||s.planningWave<Number(b.dataset.wave??0)||!!s.over})
     if($('inspector-state')){
@@ -411,9 +427,9 @@ export class FixedApp {
     if(this.portalOpening&&!s.towers.length&&s.challenge.hero==='sol'&&s.padAvailable(i)){this.buildPreview(i,'wick');return}
     const cost=s.plotCost(i)
     if(cost!==null) {this.show('A little more room',`<p>Unlock plot ${i+1} for ${cost} glow. Building a tower costs extra.</p>${`<button data-action="unlock:${i}" data-cost="${cost}" class="primary wide">Unlock · ${cost} glow</button>`}`,'plot');return}
-    const cards=TOWER_ORDER.filter(id=>s.keeperAllowed(id)).map(id=>`<button data-action="build:${i}:${id}" class="build-card"><img src="${fixedTowerIcon(id,0,0,0,this.sim?.challenge.hero)}" alt=""/><span><b>${ROLE_NAMES[id]} <span class="build-name">${this.towerDef(id).name}</span></b><small>${role[id]}</small>${s.previewBond(i,id)?`<em>Pairs with ${s.previewBond(i,id)!.def.name}</em>`:''}</span><strong>${s.towerCost(id)} <small>glow</small></strong></button>`).join('')
+    const cards=TOWER_ORDER.filter(id=>s.keeperAllowed(id)).map(id=>`<button data-action="build:${i}:${id}" class="build-card"><img src="${fixedTowerIcon(id,0,0,0,this.sim?.challenge.hero)}" alt=""/><span><b>${ROLE_NAMES[id]} <span class="build-name">${this.towerDef(id).name}</span></b><small>${role[id]}</small>${s.previewBond(i,id)?`<em>Pairs with ${ROLE_NAMES[s.previewBond(i,id)!.id]}</em>`:''}</span><strong>${s.towerCost(id)} <small>glow</small></strong></button>`).join('')
     const next=TOWER_ORDER.filter(id=>s.keeperWave(id)>s.planningWave).sort((a,b)=>s.keeperWave(a)-s.keeperWave(b))[0]
-    this.show(`Build on plot ${i+1}`,`<p class="muted">Choose a tower to preview its coverage before spending.</p><div class="build-list">${cards}</div>${next&&s.keeperWave(next)<=s.finalWave?`<p class="small muted">${this.towerDef(next).name} arrives at wave ${s.keeperWave(next)}.</p>`:''}`,'build')
+    this.show(`Build on plot ${i+1}`,`<p class="muted">Choose a tower to preview its coverage before spending.</p><div class="build-list">${cards}</div>${next&&s.keeperWave(next)<=s.finalWave?`<p class="small muted">${ROLE_NAMES[next]} arrives at wave ${s.keeperWave(next)}.</p>`:''}`,'build')
   }
   private towerUpgrades(t:Tower){
     const s=this.sim!,stage=stageOf(t),path=t.b?1:0
@@ -468,7 +484,7 @@ export class FixedApp {
   private forecast(current=this.sim?.waveActive??false) {
     const s=this.sim!,n=forecastWave(s,current),w=s.waveDef(n)
     const counts=new Map<EnemyId,number>();w.groups.forEach(g=>counts.set(g.type,(counts.get(g.type)??0)+g.count))
-    this.show(`Wave ${n-s.waveOffset} forecast`,`${s.waveActive&&s.wave<s.finalWave?`<nav class="forecast-tabs" aria-label="Forecast wave">${button('forecast:current','Current · '+(s.wave-s.waveOffset),current?'selected':'',false,undefined,current)}${button('forecast:next','Next · '+(s.wave+1-s.waveOffset),!current?'selected':'',false,undefined,!current)}</nav>`:''}<p class="forecast-advice">${w.note}</p><div class="threat-roster">${[...counts].map(([id,count])=>`<article><img src="${enemyIcon(id)}" alt=""/><div><b>${count} × ${enemyName(id)}</b><span>${BESTIARY[id].role}</span></div></article>`).join('')}</div>${[...counts.keys()].some(id=>ENEMIES[id].boss)?`<p class="fatal-breach">${bossBreachText(s,[...counts.keys()].find(id=>ENEMIES[id].boss)!)} Stop it before the lantern.</p>`:''}<details class="forecast-details"><summary>Arrival times & counters</summary>${s.challenge.watchTactics?`<ol class="encounter-sequence" aria-label="Arrival sequence">${[...new Set(w.groups.map(g=>g.at))].sort((a,b)=>a-b).map(at=>`<li><b>${at===0?'Opening':'+'+Number((at/WATCH_TEMPO).toFixed(1))+'s'}</b><span>${w.groups.filter(g=>g.at===at).map(g=>`${g.count} ${enemyName(g.type)} · ${g.src==='west'?'side inlet':'main inlet'}`).join('; ')}</span></li>`).join('')}</ol>`:''}${[...counts.keys()].map(id=>`<p><b>${enemyName(id)}</b> · ${FIXED_TIPS[id]}</p>`).join('')}<p>Wave reward: ${Math.round((s.challenge.expedition?expeditionBonus(n):campaignReward(s.challenge,n))*DIFFICULTY[s.difficulty].bonus)+(w.clearBonus??0)} glow, plus defeated enemies and Gardens.</p></details>`,'forecast')
+    this.show(`Wave ${n-s.waveOffset} forecast`,`${s.waveActive&&s.wave<s.finalWave?`<nav class="forecast-tabs" aria-label="Forecast wave">${button('forecast:current','Current · '+(s.wave-s.waveOffset),current?'selected':'',false,undefined,current)}${button('forecast:next','Next · '+(s.wave+1-s.waveOffset),!current?'selected':'',false,undefined,!current)}</nav>`:''}${threatCard(s,n)}<p class="forecast-advice">${w.note}</p><div class="threat-roster">${[...counts].map(([id,count])=>`<article><img src="${enemyIcon(id)}" alt=""/><div><b>${count} × ${enemyName(id)}</b><span>${BESTIARY[id].role}</span></div></article>`).join('')}</div>${[...counts.keys()].some(id=>ENEMIES[id].boss)?`<p class="fatal-breach">${bossBreachText(s,[...counts.keys()].find(id=>ENEMIES[id].boss)!)} Stop it before the lantern.</p>`:''}<details class="forecast-details"><summary>Arrival times & counters</summary>${s.challenge.watchTactics?`<ol class="encounter-sequence" aria-label="Arrival sequence">${[...new Set(w.groups.map(g=>g.at))].sort((a,b)=>a-b).map(at=>`<li><b>${at===0?'Opening':'+'+Number((at/WATCH_TEMPO).toFixed(1))+'s'}</b><span>${w.groups.filter(g=>g.at===at).map(g=>`${g.count} ${enemyName(g.type)} · ${g.src==='west'?'side inlet':'main inlet'}`).join('; ')}</span></li>`).join('')}</ol>`:''}${[...counts.keys()].map(id=>`<p><b>${enemyName(id)}</b> · ${FIXED_TIPS[id]}</p>`).join('')}<p>Wave reward: ${Math.round((s.challenge.expedition?expeditionBonus(n):campaignReward(s.challenge,n))*DIFFICULTY[s.difficulty].bonus)+(w.clearBonus??0)} glow, plus defeated enemies and Gardens.</p></details>`,'forecast')
     this.forecastSelection=n
   }
   private skyForecast() {
@@ -567,8 +583,8 @@ export class FixedApp {
     this.show(l.name,`<p class="lead">${l.help}</p><p class="small muted">The coloured ring marks its area. This landmark works automatically.</p><h3>Prepare for night</h3><p class="small muted">${SUN_HELP} Choose the support stream on a scout tower to store sunlight.</p><h3>Build a Bond</h3><p class="small muted">Compatible towers pair automatically over shared water. ${s.challenge.watchExperience?'Select a tower and open Choose Bond partner to change a pair. ':''}Your pairs stay together while coverage overlaps. One partner per tower.</p><div class="bond-recipes">${([['bell','cracker'],['owl','wick'],['bell','beam'],['garden','storm'],['owl','ballista']] as const).map(([a,b])=>`<p><b>${{bell:'Chime',cracker:'Blast',owl:'Scout',wick:'Spark',beam:'Beam',garden:'Garden',storm:'Storm',ballista:'Bolt'}[a]} + ${{bell:'Chime',cracker:'Blast',owl:'Scout',wick:'Spark',beam:'Beam',garden:'Garden',storm:'Storm',ballista:'Bolt'}[b]}</b><span>${bondHelp(s,a,b)}</span></p>`).join('')}</div><p class="small muted">${s.challenge.expedition?'Bond slots open at waves 3 and 7.':`Bond slots open at waves ${campaignUnlock(s.challenge,5)} and ${campaignUnlock(s.challenge,20)}.`} Both towers must reach a target for their bonus to activate.</p>`,'landmark')
   }
   private settings() {
-    const s=this.profile.settings
-    this.show('Settings',`<h3>Sound</h3>${this.sessionMuted?'<p class="notice">This playtest link is silent. Your saved sound preference is unchanged.</p>':''}<div class="setting-list">${button('setting:muted',`<span>Sound</span><b>${s.muted?'Off':'On'}</b>`,'',this.sessionMuted)}${([['music','Music'],['ambience','Canal & weather'],['effects','Combat sounds']] as const).map(([key,name])=>`<button data-action="setting:${key}" role="switch" aria-checked="${s[key]}"><span>${name}</span><b>${s[key]?'On':'Off'}</b></button>`).join('')}</div><h3>Display</h3><div class="setting-list">${([['largeText','Larger text'],['reducedMotion','Reduced motion'],['clearPalette','Distinct colours']] as const).map(([key,name])=>`<button data-action="setting:${key}" role="switch" aria-checked="${s[key]}"><span>${name}</span><b>${s[key]?'On':'Off'}</b></button>`).join('')}</div><p class="muted">Reduced motion stills the water, weather and tower animation and softens combat effects. Use Pause to build at your own pace. Menus and guides pause automatically. Switching apps protects your run and silences sound.</p><h3>District crest</h3><p class="small muted">A cosmetic detail on your towers. Your hero stays the same.</p><div class="segmented">${['lantern','ember','reed','tide'].map(g=>button('guardian:'+g,g[0].toUpperCase()+g.slice(1),this.guardian===g?'selected':'')).join('')}</div><p class="small muted">Keyboard: P pauses or resumes. Q activates your command (prepare/release in older watches). Tab moves between controls. Escape closes a panel.</p>`,'settings')
+    const s=this.profile.settings,levels=audioLevels(this.profile.audioLevels)
+    this.show('Settings',`<h3>Sound</h3>${this.sessionMuted?'<p class="notice">This playtest link is silent. Your saved sound preference is unchanged.</p>':''}<div class="setting-list">${button('setting:muted',`<span>Sound</span><b>${s.muted?'Off':'On'}</b>`,'',this.sessionMuted)}${([['music','Music'],['ambience','Canal & weather'],['effects','Combat sounds']] as const).map(([key,name])=>`<button data-action="setting:${key}" role="switch" aria-checked="${s[key]}"><span>${name}</span><b>${s[key]?'On':'Off'}</b></button>`).join('')}</div>${([['music','Music'],['effects','Combat sounds'],['ambience','Canal & weather']] as const).map(([key,label])=>`<label class="volume-setting" for="volume-${key}"><span>${label} volume</span><output id="level-${key}">${Math.round(levels[key]*100)}%</output><input id="volume-${key}" type="range" min="0" max="100" step="5" value="${Math.round(levels[key]*100)}" data-volume="${key}" aria-label="${label} volume"/></label>`).join('')}<h3>Display</h3><div class="setting-list">${([['largeText','Larger text'],['reducedMotion','Reduced motion'],['clearPalette','Distinct colours']] as const).map(([key,name])=>`<button data-action="setting:${key}" role="switch" aria-checked="${s[key]}"><span>${name}</span><b>${s[key]?'On':'Off'}</b></button>`).join('')}</div><p class="muted">Reduced motion stills the water, weather and tower animation and softens combat effects. Use Pause to build at your own pace. Menus and guides pause automatically. Switching apps protects your run and silences sound.</p><h3>Teaching tips</h3><p class="small muted">Visual tips introduce counters as they arrive. Hide them at any time.</p>${button('coach-show','Show teaching tips again','secondary wide')}<h3>District crest</h3><p class="small muted">A cosmetic detail on your towers. Your hero stays the same.</p><div class="segmented">${['lantern','ember','reed','tide'].map(g=>button('guardian:'+g,g[0].toUpperCase()+g.slice(1),this.guardian===g?'selected':'')).join('')}</div><p class="small muted">Keyboard: P pauses or resumes. Q activates your command (prepare/release in older watches). Tab moves between controls. Escape closes a panel.</p>`,'settings')
     document.querySelector('.settings .drawer-body')?.insertAdjacentHTML('beforeend',`<h3>Local playtest recording</h3><p class="small muted">Optional game events stay on this device. Export them yourself to review purchases, commands and mission timing. Nothing is uploaded.</p><div class="setting-list">${button('playtest-toggle','Recording · '+(this.playtest.enabled?'On':'Off'))}${button('playtest-export','Export playtest log')}${button('playtest-clear','Clear recording')}</div>`)
   }
   private menu() {const s=this.sim!;this.show('Defence menu',`${button('roster',s.challenge.hero?HEROES[s.challenge.hero].name+' · View eight towers':'Original district roster','hero-roster-link secondary wide')}<p>${WATCH_NAMES[this.map]} · ${DIFFICULTY[this.difficulty].name}${this.sim?.challenge.practice?' · Practice':''}</p>${s.challenge.contract?button('contract-status','Mastery contract','secondary wide'):''}${s.director||s.challenge.watchMastery&&s.challenge.hero==='ivo'&&s.challenge.expedition==='sunforge'?button('surge-help','Hero command guide','secondary wide'):''}${button('forecast','Wave forecast','secondary wide')}${button('bestiary','Creature guide','secondary wide')}${s.challenge.watchCraft?button('techniques','Keeper signature','secondary wide'):''}${button('sky','Day, night & weather','secondary wide')}${button('district','District & journal','secondary wide')}${button('settings','Settings','secondary wide')}${this.rehearsal?button('practice-return','Leave practice · return to report','secondary wide'):button('home','Save & return to district','secondary wide')}<p class="small muted">Waves never advance while you are away.</p>`,'menu')}
@@ -578,7 +594,7 @@ export class FixedApp {
     const won=s.over==='won'
     if(s.challenge.siege){
       const checkpoint=loadActCheckpoint(s),held=siegeHeld(s),acts=SIEGE_ACTS.filter(a=>held>=a.to).length
-      this.show(won?'The city held until dawn':'The defence was breached',`<p class="eyebrow">The Long Watch · ${DIFFICULTY[s.difficulty].name}</p><p class="result-number">${held}<small> / 40 waves held</small></p>${won?`<img class="district-panorama" src="${districtPanorama(this.profile)}" alt="The restored market, observatory and waterfront gardens"/><p>Your defence carried through all five acts. ${s.lives} light remains.</p><p class="resident-line">“Leave a lamp by the water. I want to see what opens tonight.”<small>Jori, gardener</small></p>`:`<p>${siegeAct(s.wave).name} · ${acts} ${acts===1?'act':'acts'} held.</p><p>${s.lastLeak?`${enemyName(s.lastLeak.enemy)} reached the lantern${s.lastLeak.armoured?' with armour remaining':''}. ${FIXED_TIPS[s.lastLeak.enemy]}`:'Reconsider the coverage around your final bend.'}</p>${s.lastLeak?.detail?`<p class="breach-advice">${breachAdvice(s.lastLeak)}</p>`:''}${checkpoint?`${button('retry-act',`Retry from wave ${checkpoint.snapshot.wave+1}`,'primary wide')}<p class="small muted">Return to your saved towers, glow and light at this checkpoint. Reconsider your purchases. Earlier waves stay held.</p>`:s.difficulty==='nightfall'?'<p class="notice">Nightfall ends on defeat. Your district rewards stay earned.</p>':'<p class="notice">An act checkpoint is unavailable for this defence.</p>'}${rehearsalReady?button('practice-wave','Practise the breached wave','secondary wide'):''}`}
+      this.show(won?'The city held until dawn':'The defence was breached',`<p class="eyebrow">The Long Watch · ${DIFFICULTY[s.difficulty].name}</p><p class="result-number">${held}<small> / 40 waves held</small></p>${won?`<img class="district-panorama" src="${districtPanorama(this.profile)}" alt="The restored market, observatory and waterfront gardens"/><p>Your defence carried through all five acts. ${s.lives} light remains.</p><p class="resident-line">“Leave a lamp by the water. I want to see what opens tonight.”<small>Jori, gardener</small></p>`:`<p>${siegeAct(s.wave).name} · ${acts} ${acts===1?'act':'acts'} held.</p><p>${s.lastLeak?`${enemyName(s.lastLeak.enemy)} reached the lantern${s.lastLeak.armoured?' with armour remaining':''}. ${FIXED_TIPS[s.lastLeak.enemy]}`:'Reconsider the coverage around your final bend.'}</p>${s.lastLeak?.detail?`<p class="breach-advice">${breachAdvice(s.lastLeak)}</p>`:''}${recoveryCard(s)}${checkpoint?`${button('retry-act',`Retry from wave ${checkpoint.snapshot.wave+1}`,'primary wide')}<p class="small muted">Return to your saved towers, glow and light at this checkpoint. Reconsider your purchases. Earlier waves stay held.</p>`:s.difficulty==='nightfall'?'<p class="notice">Nightfall ends on defeat. Your district rewards stay earned.</p>':'<p class="notice">An act checkpoint is unavailable for this defence.</p>'}${rehearsalReady?button('practice-wave','Practise the breached wave','secondary wide'):''}`}
       <details class="mission-report"><summary>Defence report</summary><ul class="watch-insights">${watchInsights(s).map(line=>`<li>${line}</li>`).join('')}</ul><p>${s.director?.commands??0} commands released · ${s.stats.retries??0} act retries</p></details>${button('campaign',won?'Defend with another keeper':'Plan a new defence','secondary wide')}${button('home','Return to the district','text-button wide')}`,'result siege-result');return
     }
     if(won&&s.challenge.story){
@@ -654,6 +670,7 @@ export class FixedApp {
     if(cmd==='hero'&&isHero(a)&&this.drawer==='choose'){this.hero=a;this.choose(action);return}
     if(cmd==='roster'){this.roster();return}
     if(cmd==='campaign'){this.selectedMission=nextMission(this.profile).id;this.campaign();return}
+    if(cmd==='extras'){this.show('More ways to play',`${button('expeditions','Expeditions · 12 waves','secondary wide')}${button('short-practice','Encounter practice','secondary wide')}${button('choose','Custom games','secondary wide')}${loadWatch('commission')?button('resume:commission','Continue expedition','text-button wide'):''}${loadWatch('campaign')?button('resume:campaign','Earlier defence','text-button wide'):''}`,'extras');return}
     if(cmd==='short-practice'){this.shortPractice();return}
     if(cmd==='siege-begin'){this.newSiege();return}
     if(cmd==='siege-hero'&&isHero(a)){this.hero=a;this.campaign();return}
@@ -687,11 +704,12 @@ export class FixedApp {
     if(cmd==='sound'){this.profile.settings.muted=!this.profile.settings.muted;writeJSON('profile',this.profile);this.applySettings();sound.unlock();this.refresh();return}
     if(cmd==='guardian'){this.guardian=a;this.profile.guardian=a;writeJSON('profile',this.profile);if(this.renderer)this.renderer.crest=a;this.settings();return}
     if(!s)return
+    if(cmd==='opening-place'&&this.portalOpening&&!s.towers.length){this.action('place:0:wick');return}
     if(cmd==='portal-build'&&this.portalOpening&&!s.towers.length){this.buildPreview(0,'wick');return}
     if(cmd==='portal-continue'){this.portalReturn=false;this.planning=false;this.accumulator=0;this.refresh();return}
     if(cmd==='pause'){if(this.paused){this.portalReturn=false;this.planning=false;if(this.drawer&&!['tower','build','placement','plot'].includes(this.drawer))this.close()}else this.planning=true;this.accumulator=0;this.refresh();return}
     if(cmd==='siege-progress'){this.show('The Long Watch',`<p class="lead">${siegeHeld(s)}/40 waves held · ${s.lives} light remaining</p>${siegeTimeline(siegeHeld(s))}<p class="small muted">Your towers and upgrades carry through every act.</p>`,'siege-progress');return}
-    if(cmd==='retry-act'){const retry=retrySiegeAct(s);if(retry){this.begin(retry.sim,retry.blooms);this.writePlanning(retry.sim.snapshot());this.save()}return}
+    if(cmd==='retry-act'){const advice=recoveryPlan(s),retry=retrySiegeAct(s);if(retry){this.begin(retry.sim,retry.blooms);this.retrySuggestion=advice;this.recap=advice?.text??'';this.planning=true;this.writePlanning(retry.sim.snapshot());this.save();this.refresh()}return}
     if(cmd==='passages'){this.passages();return}
     if(cmd==='passage'){if(s.choosePassage(a as Passage)){this.close();this.writePlanning(s.snapshot());this.save();this.recap='Passage chosen.'}return}
     if(cmd==='command-cancel'){s.cancelCommand();if(this.drawer==='surge-help')this.close();this.save();this.refresh();return}
@@ -704,6 +722,8 @@ export class FixedApp {
     if(cmd==='aim-cancel'){this.aiming=false;this.refresh();$('command-aim').focus();return}
     if(cmd==='command-target'){if(s.designateTarget(Number(a))){this.aiming=false;this.save();this.close();this.refresh();$('surge-command').focus()}else{this.recap='That target has left your reach. Choose another.';this.refresh()}return}
     if(cmd==='surge'){const q=s.director?.command??s.mastery?.surge;if(q?.phase==='charging')s.cancelSurge();else if(q?.phase==='held')s.releaseSurge();else s.bankSurge();this.save();this.refresh();return}
+    if(cmd==='coach-hide'){this.profile.lessons=[...new Set([...(this.profile.lessons??[]),'coach-disabled'])];if(!this.qa)writeJSON('profile',this.profile);this.refresh();return}
+    if(cmd==='coach-show'){this.profile.lessons=[];writeJSON('profile',this.profile);this.settings();return}
     if(cmd==='lesson'){const tip=watchLesson(s,this.profile.lessons);if(tip){this.profile.lessons??=[];this.profile.lessons.push(tip.id);if(!this.qa)writeJSON('profile',this.profile)}this.refresh();return}
     if(cmd==='techniques'){this.techniqueSheet();return}
     if(cmd==='technique'){if(s.chooseTechnique(a as TechniqueId)){this.save();this.close();this.recap=(s.challenge.livingWatch?livingTechnique(a as TechniqueId)?.name:undefined)??TECHNIQUES.find(t=>t.id===a)!.name;this.recap+=' chosen.'}return}
@@ -714,12 +734,12 @@ export class FixedApp {
     if(cmd==='menu')this.menu()
     if(cmd==='landmark')this.landmarkSheet()
     if(cmd==='sky')this.skyForecast()
-    if(cmd==='breach-review'&&s.lastLeak?.detail)this.show('Where the defence gave way',`<p class="lead">${enemyName(s.lastLeak.enemy)} reached the lantern on wave ${s.lastLeak.wave}.</p><p>${breachAdvice(s.lastLeak)}</p><p class="small muted">The ! marker shows the lower bend used for this coverage check. This records the final breach, not every enemy in the wave.</p>`,'breach-review')
+    if(cmd==='breach-review'&&s.lastLeak?.detail)this.show('Where the defence gave way',`<p class="lead">${enemyName(s.lastLeak.enemy)} reached the lantern on wave ${s.lastLeak.wave}.</p><p>${breachAdvice(s.lastLeak)}</p>${recoveryCard(s)}<p class="small muted">The ! marker shows the lower bend used for this coverage check. This records the final breach, not every enemy in the wave.</p>`,'breach-review')
     if(cmd==='forecast')this.forecast(a==='current')
     if(cmd==='plot')this.selectPlot(Number(a))
     if(cmd==='unlock'){this.change(()=>s.unlockPlot(Number(a)));this.selectPlot(Number(a))}
     if(cmd==='build'){this.buildPreview(Number(a),b as TowerId);return}
-    if(cmd==='place'){this.change(()=>s.build(Number(a),b as TowerId));const t=s.pads[Number(a)].tower;if(t){this.close();this.selection={kind:'tower',tower:t};this.recap=`${t.def.name} ready.`}}
+    if(cmd==='place'){const first=this.portalOpening&&!s.towers.length;this.change(()=>s.build(Number(a),b as TowerId));const t=s.pads[Number(a)].tower;if(t){this.close();this.selection={kind:'tower',tower:t};this.recap=`${ROLE_NAMES[t.id]} ready.`;if(first){this.preparedWave=1;this.nextWaveIn=4;this.planning=false}}}
     if(cmd==='upgrade'){const t=tower();if(t){this.change(()=>stageOf(t)===3?s.refine(t):s.upgrade(t,Number(b) as 0|1));this.towerSheet(t,true)}}
     if(cmd==='specialise'){const t=tower();if(t){this.change(()=>s.specialise(t,Number(b) as 0|1));this.towerSheet(t,true)}}
     if(cmd==='bond'){const t=tower();this.change(()=>s.bond(t,s.towers.find(q=>q.uid===Number(b))!));this.towerSheet(t)}
@@ -752,7 +772,7 @@ export class FixedApp {
       if(!hidden)this.playtest.tick(dt)
       this.nextWaveIn=waveCountdown(this.nextWaveIn,dt,s.towers.length>0||s.wave>s.waveOffset,s.waveActive,hidden||this.preparing||this.paused,!!s.over)
       if(this.nextWaveIn===0&&!hidden&&!this.preparing&&!this.paused)this.startNextWave()
-      if(!hidden&&!this.paused&&s.waveActive&&!s.over){this.accumulator+=dt*WATCH_TEMPO*(this.drawer?1:cleanupSpeed(s));while(this.accumulator>=DT&&s.waveActive&&!s.over){s.step(DT);this.accumulator-=DT}}
+      if(!hidden&&!this.paused&&s.waveActive&&!s.over){this.accumulator=advanceWatchFrame(this.accumulator,dt,WATCH_TEMPO*(this.drawer?1:cleanupSpeed(s)),()=>s.step(DT),()=>s.waveActive&&!s.over)}
       else this.accumulator=0
       for(const e of s.events) {
         if(['build','upgrade','sell','leak','waveStart','waveEnd','victory','defeat'].includes(e.t)){this.playtest.record(e.t,{wave:s.wave,glow:Math.floor(s.glow),light:s.lives,...('tower' in e?{tower:e.tower}:{}),...('weight' in e?{lost:e.weight}:{})});if(['waveEnd','victory','defeat'].includes(e.t))this.playtest.flush()}
@@ -761,11 +781,11 @@ export class FixedApp {
         if(e.t==='waveEnd') {
           const damage=s.waveReports.find(q=>q.wave===e.n)?.damage??{}
           const top=Object.entries(damage).sort((a,b)=>(b[1]??0)-(a[1]??0))[0]
-          this.recap=`Wave ${e.n-s.waveOffset} held · +${e.bonus+e.income} glow${top?` · ${this.towerDef(top[0] as TowerId).name}`:''}`
+          this.recap=`Wave ${e.n-s.waveOffset} held · +${e.bonus+e.income} glow${top?` · ${ROLE_NAMES[top[0] as TowerId]}`:''}`
           this.nextWaveIn=null
           if(this.rehearsal)this.rehearsal.finished=true
           const unlock=TOWER_ORDER.find(id=>s.keeperWave(id)===s.wave+1)
-          if(unlock)this.recap+=` · ${this.towerDef(unlock).name} unlocked`
+          if(unlock)this.recap+=` · ${ROLE_NAMES[unlock]} unlocked`
           const before=PROJECTS.filter(p=>projectProgress(this.profile,p.id)>=1).map(p=>p.id);
           if(!this.qa&&!this.rehearsal)recordWatch(this.profile,s);
           const restored=PROJECTS.filter(p=>projectProgress(this.profile,p.id)>=1&&!before.includes(p.id));if(restored.length){this.projectNotice=restored.map(p=>p.name).join(' & ')+' restored';this.projectNoticeLeft=7}
@@ -777,6 +797,11 @@ export class FixedApp {
           if(this.drawer==='tower'&&this.selection?.kind==='tower')this.towerSheet(this.selection.tower)
         }
         if(e.t==='defeat'||e.t==='victory'){if(!this.qa&&!this.rehearsal)recordWatch(this.profile,s);this.save()}
+      }
+      if(s.challenge.siege===2&&s.waveActive&&s.wave<=7&&!s.enemies.some(e=>e.alive&&e.def.boss)&&!this.profile.lessons?.includes('coach-disabled')&&(!this.moment||s.time>=this.momentUntil)){
+        const proof=[{id:'slow',yes:s.towers.some(t=>t.id==='bell'&&(t.slowed??0)>0),text:'Chime slowed the front · more time under fire'},
+          {id:'armour',yes:s.towers.some(t=>t.id==='cracker'&&(t.armourRemoved??0)>0),text:'Blast stripped armour · the hull is vulnerable'}].find(p=>p.yes&&!this.witnessed.has(p.id))
+        if(proof){this.witnessed.add(proof.id);this.moment=proof.text;this.momentUntil=s.time+3.5}
       }
       if(this.moment&&s.time>=this.momentUntil)this.moment=''
       r.handleEvents(s)
