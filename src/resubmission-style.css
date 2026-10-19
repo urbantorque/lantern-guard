@@ -58,6 +58,7 @@ body .home-title{letter-spacing:-.045em}.campaign-other{opacity:.8}
  body .drawer.live-panel{top:56px;bottom:104px;width:300px}
  body .drawer.live-panel>header{min-height:42px;padding:6px 12px}
  body .drawer.tower .drawer-body{padding:7px 12px}
+ body .drawer.tower .inspector-toolbar,body .drawer.tower .upgrade-hint{display:none}
  body .drawer.tower .tower-heading{margin:0 0 5px;gap:8px}
  body .drawer.tower .tower-heading img{width:34px;height:36px}
  body .drawer.tower .tower-synergy{font-size:11px;line-height:1.2;margin:4px 0}
