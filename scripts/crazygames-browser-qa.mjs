@@ -31,7 +31,7 @@ try{
   if(width===320){await page.locator('[data-action="menu"]').click();await page.locator('[data-action="settings"]').click();await page.locator('[data-action="setting:largeText"]').click();await page.locator('button[data-action="close"]').click()}
   await visible('[data-action="portal-build"]');await visible('[data-action="plot:0"]');await shot('opening')
   await page.locator('[data-action="plot:0"]').click();await visible('[data-action="place:0:wick"]');await shot('placement')
-  await page.locator('.placement-actions [data-action="close"]').click();assert.equal((await saved()).glow,440);assert.equal((await saved()).towers.length,0);await page.locator('[data-action="portal-build"]').click()
+  await page.locator('.placement-actions [data-action="close"]').click();assert.equal((await saved()).glow,330);assert.equal((await saved()).towers.length,0);await page.locator('[data-action="portal-build"]').click()
   await page.locator('[data-action="place:0:wick"]').click();await visible('[data-action="begin-next"]');assert.equal((await saved()).towers.length,1)
   await page.locator('[data-action="begin-next"]').click();await page.waitForTimeout(650);await shot('first-wave')
   await page.locator('[data-action="menu"]').click();await page.locator('[data-action="home"]').click();const before=await saved()
@@ -51,7 +51,7 @@ try{
  await page.locator('[data-action="begin-next"]').click();await page.locator('[data-action="menu"]').click();await page.locator('[data-action="home"]').click();const next=await savedIn(page)
  const investment=s=>s.towers.map(({uid,id,pad,a,b,refinement,spent})=>({uid,id,pad,a,b,refinement,spent}))
  assert.equal(next.wave,9);assert.equal(next.challenge.skirmish.to,40);assert.deepEqual(investment(next),investment(boundary));assert.equal(next.glow,boundary.glow);assert.equal(next.lives,boundary.lives)
- await inject(fixture('active-17'));await page.locator('[data-action="portal-continue"]').click();await page.locator('[data-action="pause"]').click();await page.locator('[data-action="forecast"]').click();assert.equal(await page.locator('#dialog-title').innerText(),'Wave 18 forecast');await page.screenshot({path:`${out}/late-forecast.png`})
+ await inject(fixture('active-17'));await page.locator('[data-action="portal-continue"]').click();await page.locator('[data-action="pause"]').click();await page.locator('[data-action="forecast"]').click();assert.equal(await page.locator('#dialog-title').innerText(),'Wave 17 forecast');await page.screenshot({path:`${out}/late-forecast.png`})
  const checkpoint=fixture('boundary-24'),lost=Sim.restore(checkpoint);lost.startWave();lost.over='lost';lost.lives=0
  await leave();await page.evaluate(value=>localStorage.setItem('lanternlocks.fixed1.siege.checkpoints',value),JSON.stringify({v:1,entries:[encodeRun(checkpoint,[])]}));await inject(lost.snapshot())
  await page.locator('[data-action="retry-act"]').click();assert.equal((await savedIn(page)).lives,checkpoint.lives);assert.equal((await savedIn(page)).glow,checkpoint.glow);assert.deepEqual(investment(await savedIn(page)),investment(checkpoint))
