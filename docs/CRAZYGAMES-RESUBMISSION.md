@@ -12,7 +12,7 @@ All 40 waves remain one continuous defence. The new preparation tools apply to s
 4. **Trust the loss report.** New wave reports aggregate actual light lost across all escaped enemies. Recommendations use the dominant observed loss, distinguish lower-bend samples from whole-route evidence, and check the restored checkpoint's unlocked towers, money and available plots. An unaffordable or locked tower never receives a misleading “build here” marker. Older reports without aggregate evidence remain explicitly limited to their last recorded escape.
 5. **See the city return.** Held waves 5, 8, 16, 24, 32 and 40 reveal the actual restored building with a brief light treatment and musical resolution. The banner can be skipped and expires automatically; reduced motion uses a shorter, static treatment. The final beacon lights the canal before the victory report. Towers, resources and campaign progress stay in place.
 
-The package is **297,217 bytes (0.30 MB)**, **832,424 bytes unpacked**, and **10 files**. Source: `98e9d66f6f255eea644fefa9075efb49f345aae9`. SHA-256: `edac99a0f76f8e81b93d37bd93d1c61d90a6cb8fd5b274de2ccda3767b4c5d7d`.
+The package is **297,217 bytes (0.30 MB)**, **832,424 bytes unpacked**, and **10 files**. Source: `678dae7a0d21a27da394a0125fcc42e3de388731`. SHA-256: `edac99a0f76f8e81b93d37bd93d1c61d90a6cb8fd5b274de2ccda3767b4c5d7d`.
 
 ## Criteria and evidence
 

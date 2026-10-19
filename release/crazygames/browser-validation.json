@@ -1,7 +1,7 @@
 {
   "version": 2,
-  "checkedAt": "2026-10-19T22:21:47.480Z",
-  "sourceCommit": "98e9d66f6f255eea644fefa9075efb49f345aae9",
+  "checkedAt": "2026-10-19T22:22:57.366Z",
+  "sourceCommit": "678dae7a0d21a27da394a0125fcc42e3de388731",
   "zipSha256": "edac99a0f76f8e81b93d37bd93d1c61d90a6cb8fd5b274de2ccda3767b4c5d7d",
   "edition": "Packaged CrazyGames production build under /games/nightward/",
   "method": "Actual UI interaction through the in-app browser, with read-only DOM geometry and paid simulation checkpoints for development encounter tests. No hidden-state injection.",
