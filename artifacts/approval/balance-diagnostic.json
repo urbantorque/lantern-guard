@@ -1,0 +1,2437 @@
+[
+  {
+    "hero": "mira",
+    "adapted": false,
+    "passage": "convoy",
+    "won": false,
+    "wave": 16,
+    "light": 0,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 0,
+        "spent": 319,
+        "a": 0,
+        "b": 2
+      },
+      {
+        "id": "bell",
+        "pad": 3,
+        "spent": 435,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "cracker",
+        "pad": 6,
+        "spent": 580,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "cracker",
+        "pad": 10,
+        "spent": 580,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "bell",
+        "pad": 7,
+        "spent": 435,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "cracker",
+        "pad": 1,
+        "spent": 580,
+        "a": 2,
+        "b": 0
+      }
+    ],
+    "waves": [
+      {
+        "wave": 1,
+        "light": 25,
+        "bank": 172,
+        "leak": null
+      },
+      {
+        "wave": 2,
+        "light": 21,
+        "bank": 289,
+        "leak": {
+          "enemy": "skitter",
+          "route": "",
+          "hidden": false,
+          "armoured": false,
+          "wave": 2,
+          "light": 1,
+          "detail": {
+            "cause": "coverage",
+            "x": 520.7066656890356,
+            "y": 710.5383521736543,
+            "segment": "e2",
+            "hp": 0.9860000000000002,
+            "shell": 0,
+            "damageTowers": 0,
+            "controlTowers": 0
+          }
+        }
+      },
+      {
+        "wave": 3,
+        "light": 15,
+        "bank": 129,
+        "leak": {
+          "enemy": "shell",
+          "route": "",
+          "hidden": false,
+          "armoured": true,
+          "wave": 3,
+          "light": 2,
+          "detail": {
+            "cause": "armour",
+            "x": 520.7066656890356,
+            "y": 710.5383521736543,
+            "segment": "e2",
+            "hp": 2,
+            "shell": 4.058999999999999,
+            "damageTowers": 0,
+            "controlTowers": 0
+          }
+        }
+      },
+      {
+        "wave": 4,
+        "light": 9,
+        "bank": 271,
+        "leak": {
+          "enemy": "shell",
+          "route": "",
+          "hidden": false,
+          "armoured": true,
+          "wave": 4,
+          "light": 2,
+          "detail": {
+            "cause": "armour",
+            "x": 520.7066656890356,
+            "y": 710.5383521736543,
+            "segment": "e2",
+            "hp": 2,
+            "shell": 2.6092499999999967,
+            "damageTowers": 0,
+            "controlTowers": 0
+          }
+        }
+      },
+      {
+        "wave": 5,
+        "light": 9,
+        "bank": 223,
+        "leak": null
+      },
+      {
+        "wave": 6,
+        "light": 9,
+        "bank": 190,
+        "leak": null
+      },
+      {
+        "wave": 7,
+        "light": 9,
+        "bank": 354,
+        "leak": null
+      },
+      {
+        "wave": 8,
+        "light": 1,
+        "bank": 366,
+        "leak": {
+          "enemy": "toad",
+          "route": "",
+          "hidden": false,
+          "armoured": false,
+          "wave": 8,
+          "light": 8,
+          "detail": {
+            "cause": "coverage",
+            "x": 520.7066656890356,
+            "y": 710.5383521736543,
+            "segment": "e2",
+            "hp": 254.20200000000034,
+            "shell": 0,
+            "damageTowers": 0,
+            "controlTowers": 0
+          }
+        }
+      },
+      {
+        "wave": 9,
+        "light": 1,
+        "bank": 213,
+        "leak": null
+      },
+      {
+        "wave": 10,
+        "light": 1,
+        "bank": 209,
+        "leak": null
+      },
+      {
+        "wave": 11,
+        "light": 1,
+        "bank": 421,
+        "leak": null
+      },
+      {
+        "wave": 12,
+        "light": 1,
+        "bank": 269,
+        "leak": null
+      },
+      {
+        "wave": 13,
+        "light": 1,
+        "bank": 219,
+        "leak": null
+      },
+      {
+        "wave": 14,
+        "light": 1,
+        "bank": 491,
+        "leak": null
+      },
+      {
+        "wave": 15,
+        "light": 1,
+        "bank": 364,
+        "leak": null
+      },
+      {
+        "wave": 16,
+        "light": 0,
+        "bank": 22,
+        "leak": {
+          "enemy": "dredger",
+          "route": "",
+          "hidden": false,
+          "armoured": false,
+          "wave": 16,
+          "light": 10,
+          "detail": {
+            "cause": "pressure",
+            "x": 520.7066656890356,
+            "y": 710.5383521736543,
+            "segment": "e2",
+            "hp": 247.41000000000008,
+            "shell": 0,
+            "damageTowers": 1,
+            "controlTowers": 0
+          }
+        }
+      }
+    ]
+  },
+  {
+    "hero": "mira",
+    "adapted": false,
+    "passage": "runners",
+    "won": false,
+    "wave": 16,
+    "light": 0,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 0,
+        "spent": 319,
+        "a": 0,
+        "b": 2
+      },
+      {
+        "id": "bell",
+        "pad": 3,
+        "spent": 435,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "cracker",
+        "pad": 6,
+        "spent": 580,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "cracker",
+        "pad": 10,
+        "spent": 580,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "bell",
+        "pad": 7,
+        "spent": 435,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "cracker",
+        "pad": 1,
+        "spent": 580,
+        "a": 2,
+        "b": 0
+      }
+    ],
+    "waves": [
+      {
+        "wave": 1,
+        "light": 25,
+        "bank": 172,
+        "leak": null
+      },
+      {
+        "wave": 2,
+        "light": 21,
+        "bank": 289,
+        "leak": {
+          "enemy": "skitter",
+          "route": "",
+          "hidden": false,
+          "armoured": false,
+          "wave": 2,
+          "light": 1,
+          "detail": {
+            "cause": "coverage",
+            "x": 520.7066656890356,
+            "y": 710.5383521736543,
+            "segment": "e2",
+            "hp": 0.9860000000000002,
+            "shell": 0,
+            "damageTowers": 0,
+            "controlTowers": 0
+          }
+        }
+      },
+      {
+        "wave": 3,
+        "light": 15,
+        "bank": 129,
+        "leak": {
+          "enemy": "shell",
+          "route": "",
+          "hidden": false,
+          "armoured": true,
+          "wave": 3,
+          "light": 2,
+          "detail": {
+            "cause": "armour",
+            "x": 520.7066656890356,
+            "y": 710.5383521736543,
+            "segment": "e2",
+            "hp": 2,
+            "shell": 4.058999999999999,
+            "damageTowers": 0,
+            "controlTowers": 0
+          }
+        }
+      },
+      {
+        "wave": 4,
+        "light": 9,
+        "bank": 271,
+        "leak": {
+          "enemy": "shell",
+          "route": "",
+          "hidden": false,
+          "armoured": true,
+          "wave": 4,
+          "light": 2,
+          "detail": {
+            "cause": "armour",
+            "x": 520.7066656890356,
+            "y": 710.5383521736543,
+            "segment": "e2",
+            "hp": 2,
+            "shell": 2.6092499999999967,
+            "damageTowers": 0,
+            "controlTowers": 0
+          }
+        }
+      },
+      {
+        "wave": 5,
+        "light": 9,
+        "bank": 223,
+        "leak": null
+      },
+      {
+        "wave": 6,
+        "light": 9,
+        "bank": 190,
+        "leak": null
+      },
+      {
+        "wave": 7,
+        "light": 9,
+        "bank": 354,
+        "leak": null
+      },
+      {
+        "wave": 8,
+        "light": 1,
+        "bank": 366,
+        "leak": {
+          "enemy": "toad",
+          "route": "",
+          "hidden": false,
+          "armoured": false,
+          "wave": 8,
+          "light": 8,
+          "detail": {
+            "cause": "coverage",
+            "x": 520.7066656890356,
+            "y": 710.5383521736543,
+            "segment": "e2",
+            "hp": 254.20200000000034,
+            "shell": 0,
+            "damageTowers": 0,
+            "controlTowers": 0
+          }
+        }
+      },
+      {
+        "wave": 9,
+        "light": 1,
+        "bank": 213,
+        "leak": null
+      },
+      {
+        "wave": 10,
+        "light": 1,
+        "bank": 209,
+        "leak": null
+      },
+      {
+        "wave": 11,
+        "light": 1,
+        "bank": 421,
+        "leak": null
+      },
+      {
+        "wave": 12,
+        "light": 1,
+        "bank": 269,
+        "leak": null
+      },
+      {
+        "wave": 13,
+        "light": 1,
+        "bank": 219,
+        "leak": null
+      },
+      {
+        "wave": 14,
+        "light": 1,
+        "bank": 491,
+        "leak": null
+      },
+      {
+        "wave": 15,
+        "light": 1,
+        "bank": 364,
+        "leak": null
+      },
+      {
+        "wave": 16,
+        "light": 0,
+        "bank": 22,
+        "leak": {
+          "enemy": "dredger",
+          "route": "",
+          "hidden": false,
+          "armoured": false,
+          "wave": 16,
+          "light": 10,
+          "detail": {
+            "cause": "pressure",
+            "x": 520.7066656890356,
+            "y": 710.5383521736543,
+            "segment": "e2",
+            "hp": 247.41000000000008,
+            "shell": 0,
+            "damageTowers": 1,
+            "controlTowers": 0
+          }
+        }
+      }
+    ]
+  },
+  {
+    "hero": "mira",
+    "adapted": true,
+    "passage": "convoy",
+    "won": true,
+    "wave": 40,
+    "light": 2,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 0,
+        "spent": 1021,
+        "a": 0,
+        "b": 3
+      },
+      {
+        "id": "bell",
+        "pad": 3,
+        "spent": 1392,
+        "a": 3,
+        "b": 0
+      },
+      {
+        "id": "cracker",
+        "pad": 6,
+        "spent": 1857,
+        "a": 3,
+        "b": 0
+      },
+      {
+        "id": "cracker",
+        "pad": 10,
+        "spent": 580,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "bell",
+        "pad": 7,
+        "spent": 1392,
+        "a": 3,
+        "b": 0
+      },
+      {
+        "id": "owl",
+        "pad": 1,
+        "spent": 1578,
+        "a": 0,
+        "b": 3
+      },
+      {
+        "id": "beam",
+        "pad": 12,
+        "spent": 986,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "garden",
+        "pad": 5,
+        "spent": 2135,
+        "a": 3,
+        "b": 0
+      },
+      {
+        "id": "ballista",
+        "pad": 2,
+        "spent": 2088,
+        "a": 2,
+        "b": 0
+      }
+    ],
+    "waves": [
+      {
+        "wave": 1,
+        "light": 25,
+        "bank": 322,
+        "leak": null
+      },
+      {
+        "wave": 2,
+        "light": 21,
+        "bank": 289,
+        "leak": {
+          "enemy": "skitter",
+          "route": "",
+          "hidden": false,
+          "armoured": false,
+          "wave": 2,
+          "light": 1,
+          "detail": {
+            "cause": "coverage",
+            "x": 520.7066656890356,
+            "y": 710.5383521736543,
+            "segment": "e2",
+            "hp": 0.9860000000000002,
+            "shell": 0,
+            "damageTowers": 0,
+            "controlTowers": 0
+          }
+        }
+      },
+      {
+        "wave": 3,
+        "light": 21,
+        "bank": 220,
+        "leak": null
+      },
+      {
+        "wave": 4,
+        "light": 21,
+        "bank": 168,
+        "leak": null
+      },
+      {
+        "wave": 5,
+        "light": 20,
+        "bank": 319,
+        "leak": {
+          "enemy": "skitter",
+          "route": "",
+          "hidden": false,
+          "armoured": false,
+          "wave": 5,
+          "light": 1,
+          "detail": {
+            "cause": "coverage",
+            "x": 520.7066656890356,
+            "y": 710.5383521736543,
+            "segment": "e2",
+            "hp": 1.0999999999999999,
+            "shell": 0,
+            "damageTowers": 0,
+            "controlTowers": 0
+          }
+        }
+      },
+      {
+        "wave": 6,
+        "light": 20,
+        "bank": 201,
+        "leak": null
+      },
+      {
+        "wave": 7,
+        "light": 20,
+        "bank": 156,
+        "leak": null
+      },
+      {
+        "wave": 8,
+        "light": 12,
+        "bank": 458,
+        "leak": {
+          "enemy": "toad",
+          "route": "",
+          "hidden": false,
+          "armoured": false,
+          "wave": 8,
+          "light": 8,
+          "detail": {
+            "cause": "coverage",
+            "x": 520.7066656890356,
+            "y": 710.5383521736543,
+            "segment": "e2",
+            "hp": 164.45000000000053,
+            "shell": 0,
+            "damageTowers": 0,
+            "controlTowers": 0
+          }
+        }
+      },
+      {
+        "wave": 9,
+        "light": 12,
+        "bank": 355,
+        "leak": null
+      },
+      {
+        "wave": 10,
+        "light": 12,
+        "bank": 275,
+        "leak": null
+      },
+      {
+        "wave": 11,
+        "light": 12,
+        "bank": 487,
+        "leak": null
+      },
+      {
+        "wave": 12,
+        "light": 12,
+        "bank": 405,
+        "leak": null
+      },
+      {
+        "wave": 13,
+        "light": 12,
+        "bank": 317,
+        "leak": null
+      },
+      {
+        "wave": 14,
+        "light": 12,
+        "bank": 589,
+        "leak": null
+      },
+      {
+        "wave": 15,
+        "light": 12,
+        "bank": 462,
+        "leak": null
+      },
+      {
+        "wave": 16,
+        "light": 2,
+        "bank": 466,
+        "leak": {
+          "enemy": "dredger",
+          "route": "",
+          "hidden": false,
+          "armoured": false,
+          "wave": 16,
+          "light": 10,
+          "detail": {
+            "cause": "pressure",
+            "x": 520.7066656890356,
+            "y": 710.5383521736543,
+            "segment": "e2",
+            "hp": 263.7814000000001,
+            "shell": 0,
+            "damageTowers": 1,
+            "controlTowers": 0
+          }
+        }
+      },
+      {
+        "wave": 17,
+        "light": 2,
+        "bank": 579,
+        "leak": null
+      },
+      {
+        "wave": 18,
+        "light": 2,
+        "bank": 352,
+        "leak": null
+      },
+      {
+        "wave": 19,
+        "light": 2,
+        "bank": 709,
+        "leak": null
+      },
+      {
+        "wave": 20,
+        "light": 2,
+        "bank": 621,
+        "leak": null
+      },
+      {
+        "wave": 21,
+        "light": 2,
+        "bank": 346,
+        "leak": null
+      },
+      {
+        "wave": 22,
+        "light": 2,
+        "bank": 750,
+        "leak": null
+      },
+      {
+        "wave": 23,
+        "light": 2,
+        "bank": 419,
+        "leak": null
+      },
+      {
+        "wave": 24,
+        "light": 2,
+        "bank": 1071,
+        "leak": null
+      },
+      {
+        "wave": 25,
+        "light": 2,
+        "bank": 544,
+        "leak": null
+      },
+      {
+        "wave": 26,
+        "light": 2,
+        "bank": 945,
+        "leak": null
+      },
+      {
+        "wave": 27,
+        "light": 2,
+        "bank": 407,
+        "leak": null
+      },
+      {
+        "wave": 28,
+        "light": 2,
+        "bank": 847,
+        "leak": null
+      },
+      {
+        "wave": 29,
+        "light": 2,
+        "bank": 365,
+        "leak": null
+      },
+      {
+        "wave": 30,
+        "light": 2,
+        "bank": 824,
+        "leak": null
+      },
+      {
+        "wave": 31,
+        "light": 2,
+        "bank": 1286,
+        "leak": null
+      },
+      {
+        "wave": 32,
+        "light": 2,
+        "bank": 911,
+        "leak": null
+      },
+      {
+        "wave": 33,
+        "light": 2,
+        "bank": 1420,
+        "leak": null
+      },
+      {
+        "wave": 34,
+        "light": 2,
+        "bank": 529,
+        "leak": null
+      },
+      {
+        "wave": 35,
+        "light": 2,
+        "bank": 1019,
+        "leak": null
+      },
+      {
+        "wave": 36,
+        "light": 2,
+        "bank": 1552,
+        "leak": null
+      },
+      {
+        "wave": 37,
+        "light": 2,
+        "bank": 703,
+        "leak": null
+      },
+      {
+        "wave": 38,
+        "light": 2,
+        "bank": 1308,
+        "leak": null
+      },
+      {
+        "wave": 39,
+        "light": 2,
+        "bank": 652,
+        "leak": null
+      },
+      {
+        "wave": 40,
+        "light": 2,
+        "bank": 1594,
+        "leak": null
+      }
+    ]
+  },
+  {
+    "hero": "mira",
+    "adapted": true,
+    "passage": "runners",
+    "won": false,
+    "wave": 32,
+    "light": 0,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 0,
+        "spent": 1021,
+        "a": 0,
+        "b": 3
+      },
+      {
+        "id": "bell",
+        "pad": 3,
+        "spent": 1392,
+        "a": 3,
+        "b": 0
+      },
+      {
+        "id": "cracker",
+        "pad": 6,
+        "spent": 580,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "cracker",
+        "pad": 10,
+        "spent": 580,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "bell",
+        "pad": 7,
+        "spent": 435,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "owl",
+        "pad": 1,
+        "spent": 1578,
+        "a": 0,
+        "b": 3
+      },
+      {
+        "id": "beam",
+        "pad": 2,
+        "spent": 986,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "ballista",
+        "pad": 4,
+        "spent": 720,
+        "a": 0,
+        "b": 0
+      },
+      {
+        "id": "garden",
+        "pad": 5,
+        "spent": 667,
+        "a": 2,
+        "b": 0
+      }
+    ],
+    "waves": [
+      {
+        "wave": 1,
+        "light": 25,
+        "bank": 322,
+        "leak": null
+      },
+      {
+        "wave": 2,
+        "light": 21,
+        "bank": 289,
+        "leak": {
+          "enemy": "skitter",
+          "route": "",
+          "hidden": false,
+          "armoured": false,
+          "wave": 2,
+          "light": 1,
+          "detail": {
+            "cause": "coverage",
+            "x": 520.7066656890356,
+            "y": 710.5383521736543,
+            "segment": "e2",
+            "hp": 0.9860000000000002,
+            "shell": 0,
+            "damageTowers": 0,
+            "controlTowers": 0
+          }
+        }
+      },
+      {
+        "wave": 3,
+        "light": 21,
+        "bank": 220,
+        "leak": null
+      },
+      {
+        "wave": 4,
+        "light": 21,
+        "bank": 168,
+        "leak": null
+      },
+      {
+        "wave": 5,
+        "light": 20,
+        "bank": 319,
+        "leak": {
+          "enemy": "skitter",
+          "route": "",
+          "hidden": false,
+          "armoured": false,
+          "wave": 5,
+          "light": 1,
+          "detail": {
+            "cause": "coverage",
+            "x": 520.7066656890356,
+            "y": 710.5383521736543,
+            "segment": "e2",
+            "hp": 1.0999999999999999,
+            "shell": 0,
+            "damageTowers": 0,
+            "controlTowers": 0
+          }
+        }
+      },
+      {
+        "wave": 6,
+        "light": 20,
+        "bank": 201,
+        "leak": null
+      },
+      {
+        "wave": 7,
+        "light": 20,
+        "bank": 156,
+        "leak": null
+      },
+      {
+        "wave": 8,
+        "light": 12,
+        "bank": 458,
+        "leak": {
+          "enemy": "toad",
+          "route": "",
+          "hidden": false,
+          "armoured": false,
+          "wave": 8,
+          "light": 8,
+          "detail": {
+            "cause": "coverage",
+            "x": 520.7066656890356,
+            "y": 710.5383521736543,
+            "segment": "e2",
+            "hp": 164.45000000000053,
+            "shell": 0,
+            "damageTowers": 0,
+            "controlTowers": 0
+          }
+        }
+      },
+      {
+        "wave": 9,
+        "light": 12,
+        "bank": 355,
+        "leak": null
+      },
+      {
+        "wave": 10,
+        "light": 12,
+        "bank": 275,
+        "leak": null
+      },
+      {
+        "wave": 11,
+        "light": 12,
+        "bank": 487,
+        "leak": null
+      },
+      {
+        "wave": 12,
+        "light": 12,
+        "bank": 405,
+        "leak": null
+      },
+      {
+        "wave": 13,
+        "light": 12,
+        "bank": 317,
+        "leak": null
+      },
+      {
+        "wave": 14,
+        "light": 12,
+        "bank": 589,
+        "leak": null
+      },
+      {
+        "wave": 15,
+        "light": 12,
+        "bank": 462,
+        "leak": null
+      },
+      {
+        "wave": 16,
+        "light": 2,
+        "bank": 466,
+        "leak": {
+          "enemy": "dredger",
+          "route": "",
+          "hidden": false,
+          "armoured": false,
+          "wave": 16,
+          "light": 10,
+          "detail": {
+            "cause": "pressure",
+            "x": 520.7066656890356,
+            "y": 710.5383521736543,
+            "segment": "e2",
+            "hp": 263.7814000000001,
+            "shell": 0,
+            "damageTowers": 1,
+            "controlTowers": 0
+          }
+        }
+      },
+      {
+        "wave": 17,
+        "light": 2,
+        "bank": 833,
+        "leak": null
+      },
+      {
+        "wave": 18,
+        "light": 2,
+        "bank": 664,
+        "leak": null
+      },
+      {
+        "wave": 19,
+        "light": 2,
+        "bank": 430,
+        "leak": null
+      },
+      {
+        "wave": 20,
+        "light": 2,
+        "bank": 742,
+        "leak": null
+      },
+      {
+        "wave": 21,
+        "light": 2,
+        "bank": 362,
+        "leak": null
+      },
+      {
+        "wave": 22,
+        "light": 2,
+        "bank": 688,
+        "leak": null
+      },
+      {
+        "wave": 23,
+        "light": 2,
+        "bank": 1009,
+        "leak": null
+      },
+      {
+        "wave": 24,
+        "light": 2,
+        "bank": 663,
+        "leak": null
+      },
+      {
+        "wave": 25,
+        "light": 2,
+        "bank": 505,
+        "leak": null
+      },
+      {
+        "wave": 26,
+        "light": 2,
+        "bank": 484,
+        "leak": null
+      },
+      {
+        "wave": 27,
+        "light": 2,
+        "bank": 867,
+        "leak": null
+      },
+      {
+        "wave": 28,
+        "light": 2,
+        "bank": 1307,
+        "leak": null
+      },
+      {
+        "wave": 29,
+        "light": 2,
+        "bank": 717,
+        "leak": null
+      },
+      {
+        "wave": 30,
+        "light": 2,
+        "bank": 1166,
+        "leak": null
+      },
+      {
+        "wave": 31,
+        "light": 2,
+        "bank": 671,
+        "leak": null
+      },
+      {
+        "wave": 32,
+        "light": 0,
+        "bank": 736,
+        "leak": {
+          "enemy": "warden",
+          "route": "",
+          "hidden": false,
+          "armoured": false,
+          "wave": 32,
+          "light": 10,
+          "detail": {
+            "cause": "pressure",
+            "x": 520.7066656890356,
+            "y": 710.5383521736543,
+            "segment": "e2",
+            "hp": 35.564400624986575,
+            "shell": 0,
+            "damageTowers": 1,
+            "controlTowers": 1
+          }
+        }
+      }
+    ]
+  },
+  {
+    "hero": "ivo",
+    "adapted": false,
+    "passage": "convoy",
+    "won": false,
+    "wave": 24,
+    "light": 0,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 0,
+        "spent": 319,
+        "a": 0,
+        "b": 2
+      },
+      {
+        "id": "storm",
+        "pad": 6,
+        "spent": 812,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "bell",
+        "pad": 3,
+        "spent": 435,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "cracker",
+        "pad": 10,
+        "spent": 580,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "storm",
+        "pad": 1,
+        "spent": 812,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "owl",
+        "pad": 7,
+        "spent": 493,
+        "a": 0,
+        "b": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 5,
+        "spent": 580,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "storm",
+        "pad": 12,
+        "spent": 812,
+        "a": 2,
+        "b": 0
+      }
+    ],
+    "waves": [
+      {
+        "wave": 1,
+        "light": 25,
+        "bank": 113,
+        "leak": null
+      },
+      {
+        "wave": 2,
+        "light": 25,
+        "bank": 234,
+        "leak": null
+      },
+      {
+        "wave": 3,
+        "light": 25,
+        "bank": 365,
+        "leak": null
+      },
+      {
+        "wave": 4,
+        "light": 25,
+        "bank": 233,
+        "leak": null
+      },
+      {
+        "wave": 5,
+        "light": 25,
+        "bank": 235,
+        "leak": null
+      },
+      {
+        "wave": 6,
+        "light": 25,
+        "bank": 202,
+        "leak": null
+      },
+      {
+        "wave": 7,
+        "light": 25,
+        "bank": 366,
+        "leak": null
+      },
+      {
+        "wave": 8,
+        "light": 17,
+        "bank": 386,
+        "leak": {
+          "enemy": "toad",
+          "route": "",
+          "hidden": false,
+          "armoured": false,
+          "wave": 8,
+          "light": 8,
+          "detail": {
+            "cause": "pressure",
+            "x": 520.7066656890356,
+            "y": 710.5383521736543,
+            "segment": "e2",
+            "hp": 61.377132000000685,
+            "shell": 0,
+            "damageTowers": 1,
+            "controlTowers": 0
+          }
+        }
+      },
+      {
+        "wave": 9,
+        "light": 17,
+        "bank": 193,
+        "leak": null
+      },
+      {
+        "wave": 10,
+        "light": 17,
+        "bank": 398,
+        "leak": null
+      },
+      {
+        "wave": 11,
+        "light": 17,
+        "bank": 190,
+        "leak": null
+      },
+      {
+        "wave": 12,
+        "light": 17,
+        "bank": 418,
+        "leak": null
+      },
+      {
+        "wave": 13,
+        "light": 17,
+        "bank": 343,
+        "leak": null
+      },
+      {
+        "wave": 14,
+        "light": 17,
+        "bank": 292,
+        "leak": null
+      },
+      {
+        "wave": 15,
+        "light": 17,
+        "bank": 545,
+        "leak": null
+      },
+      {
+        "wave": 16,
+        "light": 7,
+        "bank": 397,
+        "leak": {
+          "enemy": "dredger",
+          "route": "",
+          "hidden": false,
+          "armoured": false,
+          "wave": 16,
+          "light": 10,
+          "detail": {
+            "cause": "pressure",
+            "x": 520.7066656890356,
+            "y": 710.5383521736543,
+            "segment": "e2",
+            "hp": 251.72394333999955,
+            "shell": 0,
+            "damageTowers": 1,
+            "controlTowers": 0
+          }
+        }
+      },
+      {
+        "wave": 17,
+        "light": 7,
+        "bank": 330,
+        "leak": null
+      },
+      {
+        "wave": 18,
+        "light": 7,
+        "bank": 347,
+        "leak": null
+      },
+      {
+        "wave": 19,
+        "light": 7,
+        "bank": 285,
+        "leak": null
+      },
+      {
+        "wave": 20,
+        "light": 7,
+        "bank": 597,
+        "leak": null
+      },
+      {
+        "wave": 21,
+        "light": 7,
+        "bank": 387,
+        "leak": null
+      },
+      {
+        "wave": 22,
+        "light": 7,
+        "bank": 713,
+        "leak": null
+      },
+      {
+        "wave": 23,
+        "light": 7,
+        "bank": 502,
+        "leak": null
+      },
+      {
+        "wave": 24,
+        "light": 0,
+        "bank": 576,
+        "leak": {
+          "enemy": "gloom",
+          "route": "",
+          "hidden": false,
+          "armoured": false,
+          "wave": 24,
+          "light": 10,
+          "detail": {
+            "cause": "pressure",
+            "x": 520.7066656890356,
+            "y": 710.5383521736543,
+            "segment": "e2",
+            "hp": 129.58051075000304,
+            "shell": 0,
+            "damageTowers": 2,
+            "controlTowers": 0
+          }
+        }
+      }
+    ]
+  },
+  {
+    "hero": "ivo",
+    "adapted": false,
+    "passage": "runners",
+    "won": false,
+    "wave": 24,
+    "light": 0,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 0,
+        "spent": 319,
+        "a": 0,
+        "b": 2
+      },
+      {
+        "id": "storm",
+        "pad": 6,
+        "spent": 812,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "bell",
+        "pad": 3,
+        "spent": 435,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "cracker",
+        "pad": 10,
+        "spent": 580,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "storm",
+        "pad": 1,
+        "spent": 812,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "owl",
+        "pad": 7,
+        "spent": 493,
+        "a": 0,
+        "b": 2
+      },
+      {
+        "id": "cracker",
+        "pad": 2,
+        "spent": 580,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "storm",
+        "pad": 5,
+        "spent": 812,
+        "a": 2,
+        "b": 0
+      }
+    ],
+    "waves": [
+      {
+        "wave": 1,
+        "light": 25,
+        "bank": 113,
+        "leak": null
+      },
+      {
+        "wave": 2,
+        "light": 25,
+        "bank": 234,
+        "leak": null
+      },
+      {
+        "wave": 3,
+        "light": 25,
+        "bank": 365,
+        "leak": null
+      },
+      {
+        "wave": 4,
+        "light": 25,
+        "bank": 233,
+        "leak": null
+      },
+      {
+        "wave": 5,
+        "light": 25,
+        "bank": 235,
+        "leak": null
+      },
+      {
+        "wave": 6,
+        "light": 25,
+        "bank": 202,
+        "leak": null
+      },
+      {
+        "wave": 7,
+        "light": 25,
+        "bank": 366,
+        "leak": null
+      },
+      {
+        "wave": 8,
+        "light": 17,
+        "bank": 386,
+        "leak": {
+          "enemy": "toad",
+          "route": "",
+          "hidden": false,
+          "armoured": false,
+          "wave": 8,
+          "light": 8,
+          "detail": {
+            "cause": "pressure",
+            "x": 520.7066656890356,
+            "y": 710.5383521736543,
+            "segment": "e2",
+            "hp": 61.377132000000685,
+            "shell": 0,
+            "damageTowers": 1,
+            "controlTowers": 0
+          }
+        }
+      },
+      {
+        "wave": 9,
+        "light": 17,
+        "bank": 193,
+        "leak": null
+      },
+      {
+        "wave": 10,
+        "light": 17,
+        "bank": 398,
+        "leak": null
+      },
+      {
+        "wave": 11,
+        "light": 17,
+        "bank": 190,
+        "leak": null
+      },
+      {
+        "wave": 12,
+        "light": 17,
+        "bank": 418,
+        "leak": null
+      },
+      {
+        "wave": 13,
+        "light": 17,
+        "bank": 343,
+        "leak": null
+      },
+      {
+        "wave": 14,
+        "light": 17,
+        "bank": 292,
+        "leak": null
+      },
+      {
+        "wave": 15,
+        "light": 17,
+        "bank": 545,
+        "leak": null
+      },
+      {
+        "wave": 16,
+        "light": 7,
+        "bank": 397,
+        "leak": {
+          "enemy": "dredger",
+          "route": "",
+          "hidden": false,
+          "armoured": false,
+          "wave": 16,
+          "light": 10,
+          "detail": {
+            "cause": "pressure",
+            "x": 520.7066656890356,
+            "y": 710.5383521736543,
+            "segment": "e2",
+            "hp": 251.72394333999955,
+            "shell": 0,
+            "damageTowers": 1,
+            "controlTowers": 0
+          }
+        }
+      },
+      {
+        "wave": 17,
+        "light": 7,
+        "bank": 344,
+        "leak": null
+      },
+      {
+        "wave": 18,
+        "light": 7,
+        "bank": 355,
+        "leak": null
+      },
+      {
+        "wave": 19,
+        "light": 7,
+        "bank": 767,
+        "leak": null
+      },
+      {
+        "wave": 20,
+        "light": 7,
+        "bank": 479,
+        "leak": null
+      },
+      {
+        "wave": 21,
+        "light": 7,
+        "bank": 269,
+        "leak": null
+      },
+      {
+        "wave": 22,
+        "light": 7,
+        "bank": 595,
+        "leak": null
+      },
+      {
+        "wave": 23,
+        "light": 7,
+        "bank": 384,
+        "leak": null
+      },
+      {
+        "wave": 24,
+        "light": 0,
+        "bank": 458,
+        "leak": {
+          "enemy": "gloom",
+          "route": "",
+          "hidden": false,
+          "armoured": false,
+          "wave": 24,
+          "light": 10,
+          "detail": {
+            "cause": "pressure",
+            "x": 520.7066656890356,
+            "y": 710.5383521736543,
+            "segment": "e2",
+            "hp": 189.4485010000021,
+            "shell": 0,
+            "damageTowers": 2,
+            "controlTowers": 0
+          }
+        }
+      }
+    ]
+  },
+  {
+    "hero": "ivo",
+    "adapted": true,
+    "passage": "convoy",
+    "won": false,
+    "wave": 32,
+    "light": 0,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 0,
+        "spent": 1021,
+        "a": 0,
+        "b": 3
+      },
+      {
+        "id": "bell",
+        "pad": 3,
+        "spent": 1392,
+        "a": 3,
+        "b": 0
+      },
+      {
+        "id": "storm",
+        "pad": 6,
+        "spent": 812,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "cracker",
+        "pad": 10,
+        "spent": 580,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "storm",
+        "pad": 1,
+        "spent": 812,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "owl",
+        "pad": 7,
+        "spent": 1578,
+        "a": 0,
+        "b": 3
+      },
+      {
+        "id": "beam",
+        "pad": 12,
+        "spent": 986,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "bell",
+        "pad": 5,
+        "spent": 435,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "ballista",
+        "pad": 2,
+        "spent": 720,
+        "a": 0,
+        "b": 0
+      }
+    ],
+    "waves": [
+      {
+        "wave": 1,
+        "light": 25,
+        "bank": 322,
+        "leak": null
+      },
+      {
+        "wave": 2,
+        "light": 23,
+        "bank": 291,
+        "leak": {
+          "enemy": "skitter",
+          "route": "",
+          "hidden": false,
+          "armoured": false,
+          "wave": 2,
+          "light": 1,
+          "detail": {
+            "cause": "coverage",
+            "x": 520.7066656890356,
+            "y": 710.5383521736543,
+            "segment": "e2",
+            "hp": 0.8799999999999999,
+            "shell": 0,
+            "damageTowers": 0,
+            "controlTowers": 0
+          }
+        }
+      },
+      {
+        "wave": 3,
+        "light": 23,
+        "bank": 142,
+        "leak": null
+      },
+      {
+        "wave": 4,
+        "light": 23,
+        "bank": 290,
+        "leak": null
+      },
+      {
+        "wave": 5,
+        "light": 23,
+        "bank": 242,
+        "leak": null
+      },
+      {
+        "wave": 6,
+        "light": 23,
+        "bank": 200,
+        "leak": null
+      },
+      {
+        "wave": 7,
+        "light": 23,
+        "bank": 364,
+        "leak": null
+      },
+      {
+        "wave": 8,
+        "light": 15,
+        "bank": 384,
+        "leak": {
+          "enemy": "toad",
+          "route": "",
+          "hidden": false,
+          "armoured": false,
+          "wave": 8,
+          "light": 8,
+          "detail": {
+            "cause": "pressure",
+            "x": 520.7066656890356,
+            "y": 710.5383521736543,
+            "segment": "e2",
+            "hp": 62.8615360000007,
+            "shell": 0,
+            "damageTowers": 1,
+            "controlTowers": 0
+          }
+        }
+      },
+      {
+        "wave": 9,
+        "light": 15,
+        "bank": 191,
+        "leak": null
+      },
+      {
+        "wave": 10,
+        "light": 15,
+        "bank": 396,
+        "leak": null
+      },
+      {
+        "wave": 11,
+        "light": 15,
+        "bank": 188,
+        "leak": null
+      },
+      {
+        "wave": 12,
+        "light": 15,
+        "bank": 416,
+        "leak": null
+      },
+      {
+        "wave": 13,
+        "light": 15,
+        "bank": 341,
+        "leak": null
+      },
+      {
+        "wave": 14,
+        "light": 13,
+        "bank": 287,
+        "leak": {
+          "enemy": "skiff",
+          "route": "",
+          "hidden": false,
+          "armoured": false,
+          "wave": 14,
+          "light": 2,
+          "detail": {
+            "cause": "runaway",
+            "x": 520.7066656890356,
+            "y": 710.5383521736543,
+            "segment": "e2",
+            "hp": 3.2812021000000016,
+            "shell": 0,
+            "damageTowers": 1,
+            "controlTowers": 0
+          }
+        }
+      },
+      {
+        "wave": 15,
+        "light": 13,
+        "bank": 540,
+        "leak": null
+      },
+      {
+        "wave": 16,
+        "light": 3,
+        "bank": 392,
+        "leak": {
+          "enemy": "dredger",
+          "route": "",
+          "hidden": false,
+          "armoured": false,
+          "wave": 16,
+          "light": 10,
+          "detail": {
+            "cause": "pressure",
+            "x": 520.7066656890356,
+            "y": 710.5383521736543,
+            "segment": "e2",
+            "hp": 235.36790319999955,
+            "shell": 0,
+            "damageTowers": 1,
+            "controlTowers": 0
+          }
+        }
+      },
+      {
+        "wave": 17,
+        "light": 3,
+        "bank": 505,
+        "leak": null
+      },
+      {
+        "wave": 18,
+        "light": 3,
+        "bank": 332,
+        "leak": null
+      },
+      {
+        "wave": 19,
+        "light": 3,
+        "bank": 365,
+        "leak": null
+      },
+      {
+        "wave": 20,
+        "light": 3,
+        "bank": 677,
+        "leak": null
+      },
+      {
+        "wave": 21,
+        "light": 3,
+        "bank": 353,
+        "leak": null
+      },
+      {
+        "wave": 22,
+        "light": 3,
+        "bank": 679,
+        "leak": null
+      },
+      {
+        "wave": 23,
+        "light": 3,
+        "bank": 468,
+        "leak": null
+      },
+      {
+        "wave": 24,
+        "light": 3,
+        "bank": 1062,
+        "leak": null
+      },
+      {
+        "wave": 25,
+        "light": 3,
+        "bank": 475,
+        "leak": null
+      },
+      {
+        "wave": 26,
+        "light": 3,
+        "bank": 843,
+        "leak": null
+      },
+      {
+        "wave": 27,
+        "light": 3,
+        "bank": 482,
+        "leak": null
+      },
+      {
+        "wave": 28,
+        "light": 3,
+        "bank": 844,
+        "leak": null
+      },
+      {
+        "wave": 29,
+        "light": 3,
+        "bank": 324,
+        "leak": null
+      },
+      {
+        "wave": 30,
+        "light": 3,
+        "bank": 731,
+        "leak": null
+      },
+      {
+        "wave": 31,
+        "light": 3,
+        "bank": 1115,
+        "leak": null
+      },
+      {
+        "wave": 32,
+        "light": 0,
+        "bank": 107,
+        "leak": {
+          "enemy": "warden",
+          "route": "",
+          "hidden": false,
+          "armoured": false,
+          "wave": 32,
+          "light": 10,
+          "detail": {
+            "cause": "pressure",
+            "x": 520.7066656890356,
+            "y": 710.5383521736543,
+            "segment": "e2",
+            "hp": 103.12638087997385,
+            "shell": 0,
+            "damageTowers": 2,
+            "controlTowers": 1
+          }
+        }
+      }
+    ]
+  },
+  {
+    "hero": "ivo",
+    "adapted": true,
+    "passage": "runners",
+    "won": false,
+    "wave": 32,
+    "light": 0,
+    "roster": [
+      {
+        "id": "wick",
+        "pad": 0,
+        "spent": 1021,
+        "a": 0,
+        "b": 3
+      },
+      {
+        "id": "bell",
+        "pad": 3,
+        "spent": 1392,
+        "a": 3,
+        "b": 0
+      },
+      {
+        "id": "storm",
+        "pad": 6,
+        "spent": 812,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "cracker",
+        "pad": 10,
+        "spent": 580,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "storm",
+        "pad": 1,
+        "spent": 812,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "owl",
+        "pad": 7,
+        "spent": 493,
+        "a": 0,
+        "b": 2
+      },
+      {
+        "id": "beam",
+        "pad": 5,
+        "spent": 986,
+        "a": 2,
+        "b": 0
+      },
+      {
+        "id": "bell",
+        "pad": 2,
+        "spent": 1392,
+        "a": 3,
+        "b": 0
+      },
+      {
+        "id": "ballista",
+        "pad": 4,
+        "spent": 720,
+        "a": 0,
+        "b": 0
+      }
+    ],
+    "waves": [
+      {
+        "wave": 1,
+        "light": 25,
+        "bank": 322,
+        "leak": null
+      },
+      {
+        "wave": 2,
+        "light": 23,
+        "bank": 291,
+        "leak": {
+          "enemy": "skitter",
+          "route": "",
+          "hidden": false,
+          "armoured": false,
+          "wave": 2,
+          "light": 1,
+          "detail": {
+            "cause": "coverage",
+            "x": 520.7066656890356,
+            "y": 710.5383521736543,
+            "segment": "e2",
+            "hp": 0.8799999999999999,
+            "shell": 0,
+            "damageTowers": 0,
+            "controlTowers": 0
+          }
+        }
+      },
+      {
+        "wave": 3,
+        "light": 23,
+        "bank": 142,
+        "leak": null
+      },
+      {
+        "wave": 4,
+        "light": 23,
+        "bank": 290,
+        "leak": null
+      },
+      {
+        "wave": 5,
+        "light": 23,
+        "bank": 242,
+        "leak": null
+      },
+      {
+        "wave": 6,
+        "light": 23,
+        "bank": 200,
+        "leak": null
+      },
+      {
+        "wave": 7,
+        "light": 23,
+        "bank": 364,
+        "leak": null
+      },
+      {
+        "wave": 8,
+        "light": 15,
+        "bank": 384,
+        "leak": {
+          "enemy": "toad",
+          "route": "",
+          "hidden": false,
+          "armoured": false,
+          "wave": 8,
+          "light": 8,
+          "detail": {
+            "cause": "pressure",
+            "x": 520.7066656890356,
+            "y": 710.5383521736543,
+            "segment": "e2",
+            "hp": 62.8615360000007,
+            "shell": 0,
+            "damageTowers": 1,
+            "controlTowers": 0
+          }
+        }
+      },
+      {
+        "wave": 9,
+        "light": 15,
+        "bank": 191,
+        "leak": null
+      },
+      {
+        "wave": 10,
+        "light": 15,
+        "bank": 396,
+        "leak": null
+      },
+      {
+        "wave": 11,
+        "light": 15,
+        "bank": 188,
+        "leak": null
+      },
+      {
+        "wave": 12,
+        "light": 15,
+        "bank": 416,
+        "leak": null
+      },
+      {
+        "wave": 13,
+        "light": 15,
+        "bank": 341,
+        "leak": null
+      },
+      {
+        "wave": 14,
+        "light": 13,
+        "bank": 287,
+        "leak": {
+          "enemy": "skiff",
+          "route": "",
+          "hidden": false,
+          "armoured": false,
+          "wave": 14,
+          "light": 2,
+          "detail": {
+            "cause": "runaway",
+            "x": 520.7066656890356,
+            "y": 710.5383521736543,
+            "segment": "e2",
+            "hp": 3.2812021000000016,
+            "shell": 0,
+            "damageTowers": 1,
+            "controlTowers": 0
+          }
+        }
+      },
+      {
+        "wave": 15,
+        "light": 13,
+        "bank": 540,
+        "leak": null
+      },
+      {
+        "wave": 16,
+        "light": 3,
+        "bank": 392,
+        "leak": {
+          "enemy": "dredger",
+          "route": "",
+          "hidden": false,
+          "armoured": false,
+          "wave": 16,
+          "light": 10,
+          "detail": {
+            "cause": "pressure",
+            "x": 520.7066656890356,
+            "y": 710.5383521736543,
+            "segment": "e2",
+            "hp": 235.36790319999955,
+            "shell": 0,
+            "damageTowers": 1,
+            "controlTowers": 0
+          }
+        }
+      },
+      {
+        "wave": 17,
+        "light": 3,
+        "bank": 759,
+        "leak": null
+      },
+      {
+        "wave": 18,
+        "light": 3,
+        "bank": 490,
+        "leak": null
+      },
+      {
+        "wave": 19,
+        "light": 3,
+        "bank": 532,
+        "leak": null
+      },
+      {
+        "wave": 20,
+        "light": 3,
+        "bank": 559,
+        "leak": null
+      },
+      {
+        "wave": 21,
+        "light": 3,
+        "bank": 349,
+        "leak": null
+      },
+      {
+        "wave": 22,
+        "light": 3,
+        "bank": 675,
+        "leak": null
+      },
+      {
+        "wave": 23,
+        "light": 3,
+        "bank": 350,
+        "leak": null
+      },
+      {
+        "wave": 24,
+        "light": 3,
+        "bank": 944,
+        "leak": null
+      },
+      {
+        "wave": 25,
+        "light": 3,
+        "bank": 357,
+        "leak": null
+      },
+      {
+        "wave": 26,
+        "light": 3,
+        "bank": 725,
+        "leak": null
+      },
+      {
+        "wave": 27,
+        "light": 3,
+        "bank": 364,
+        "leak": null
+      },
+      {
+        "wave": 28,
+        "light": 3,
+        "bank": 726,
+        "leak": null
+      },
+      {
+        "wave": 29,
+        "light": 3,
+        "bank": 1163,
+        "leak": null
+      },
+      {
+        "wave": 30,
+        "light": 3,
+        "bank": 613,
+        "leak": null
+      },
+      {
+        "wave": 31,
+        "light": 3,
+        "bank": 997,
+        "leak": null
+      },
+      {
+        "wave": 32,
+        "light": 0,
+        "bank": 117,
+        "leak": {
+          "enemy": "warden",
+          "route": "",
+          "hidden": false,
+          "armoured": false,
+          "wave": 32,
+          "light": 10,
+          "detail": {
+            "cause": "pressure",
+            "x": 520.7066656890356,
+            "y": 710.5383521736543,
+            "segment": "e2",
+            "hp": 41.648062500002084,
+            "shell": 0,
+            "damageTowers": 2,
+            "controlTowers": 0
+          }
+        }
+      }
+    ]
+  }
+]

@@ -1,7 +1,7 @@
 {
   "edition": "CrazyGames Basic Launch resubmission",
-  "zipSha256": "c57196362c784b8a6a220bfcab9543d2437717a9de3b143abd83d86ad609dbd2",
-  "sourceCommit": "9fecb8fae4e3d711be7720a3204fedd233a8e943",
+  "zipSha256": "89ef8fe1ff62c0c776e79cb7d9066ccb5ce84ae23f607a02d4d94b5ce7dfbd42",
+  "sourceCommit": "5c54bb04741324aeafbb0eac5c48750c07ebfffb",
   "automatedChecks": "passed",
   "browserChecks": "passed",
   "campaignWaves": 40,
@@ -10,12 +10,14 @@
   "sdk": false,
   "humanPlaytest": "pending",
   "physicalMobileTest": "pending",
+  "humanAudioListening": "pending",
   "publisherSubmission": "prepared; not submitted",
   "publisherSubmittedOn": null,
   "previousSubmissionStatus": "rejected",
   "remaining": [
     "Observe eight newcomer sessions using newcomer-sessions.csv",
     "Verify intended physical browser/device support",
+    "Listen to the mix on speakers and headphones",
     "Upload this candidate and check the hosted QA preview",
     "Review and submit this build through the CrazyGames developer portal"
   ]

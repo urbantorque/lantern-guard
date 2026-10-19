@@ -1,22 +1,57 @@
 {
-  "sourceCommit": "9fecb8fae4e3d711be7720a3204fedd233a8e943",
-  "zipSha256": "c57196362c784b8a6a220bfcab9543d2437717a9de3b143abd83d86ad609dbd2",
+  "sourceCommit": "5c54bb04741324aeafbb0eac5c48750c07ebfffb",
+  "zipSha256": "89ef8fe1ff62c0c776e79cb7d9066ccb5ce84ae23f607a02d4d94b5ce7dfbd42",
   "checks": [
-    { "command": "npm run check", "exitCode": 0, "result": "Full regression suite passed, including test:resubmission" },
-    { "command": "npm run build:crazygames", "exitCode": 0, "result": "Final production archive built from a clean tracked checkout" },
-    { "command": "npm run build", "exitCode": 0, "result": "Standalone production edition built and typechecked" },
-    { "command": "npm run test:portal-opening", "exitCode": 0, "result": "Three seeded paid openings preserve 25 light and reach 322 glow after wave 1" },
-    { "command": "npm run balance:siege", "exitCode": 0, "result": "8 of 12 paid Standard reference campaigns won; each keeper has a winning build on both passages" },
-    { "command": "node scripts/crazygames-mp4.mjs", "exitCode": 0, "result": "Both MP4s encoded and fully decoded; required dimensions, 15-20 seconds, no audio tracks" },
-    { "command": "npm run check:crazygames-release", "exitCode": 0, "result": "Exact ZIP extraction checksums, twelve viewport measurements, scoped UI evidence, three covers and two previews passed" },
-    { "command": "git diff --check", "exitCode": 0, "result": "No whitespace errors" }
+    {
+      "command": "npm run check",
+      "exitCode": 0,
+      "result": "Full regression suite including contextual coach, recovery, audio gain tests and 30/60/120/144/165 Hz simulation parity"
+    },
+    {
+      "command": "npm run build:crazygames",
+      "exitCode": 0,
+      "result": "Exact archive built from clean tracked source: 10 files, 817512 bytes unpacked, 292460 bytes ZIP"
+    },
+    {
+      "command": "npm run build",
+      "exitCode": 0,
+      "result": "Standalone production build and typechecks pass"
+    },
+    {
+      "command": "npm run test:portal-opening",
+      "exitCode": 0,
+      "result": "Three seeded paid openings: 25 light, 322 glow after wave 1"
+    },
+    {
+      "command": "npm run balance:siege",
+      "exitCode": 0,
+      "result": "8/12 Standard reference wins; every keeper has a winning route on both passages"
+    },
+    {
+      "command": "npm run balance:approval",
+      "exitCode": 0,
+      "result": "Eight paid diagnostic runs reproduce failures and verify preparation improves both affected builds on both passages"
+    },
+    {
+      "command": "node scripts/crazygames-mp4.mjs",
+      "exitCode": 0,
+      "result": "Both silent H.264 MP4 files encoded and fully decoded; representative frames visually inspected"
+    },
+    {
+      "command": "npm run check:crazygames-release",
+      "exitCode": 0,
+      "result": "Exact ZIP entries, source provenance, twelve layouts, scoped flows, covers and silent MP4s verified"
+    },
+    {
+      "command": "git diff --check",
+      "exitCode": 0,
+      "result": "No whitespace errors"
+    }
   ],
   "notes": [
-    "Final changes during the full regression run were inspector CSS, campaign menu copy and supplemental CLI QA assertions. Final builds typechecked the resulting source.",
-    "Balance references and encounter fixtures are simulations, not human enjoyment or retention measurements.",
-    "Production browser layout tests and development encounter tests are distinguished in browser-validation.json.",
-    "The optional CLI browser helper was not executed in this environment.",
-    "Vite reports the existing main JavaScript chunk exceeds its 500 kB advisory threshold; both builds succeed. The complete portal package is 3.40 MB unpacked."
+    "Vite retains a 500 kB advisory warning for the uncompressed main JS chunk. The entire game archive is 0.29 MB.",
+    "Reference simulations establish viable strategies, not human enjoyment or retention.",
+    "No game rule or balance change was made in this latest quality pass. Published siege1 and current siege2 saves retain their rules."
   ],
   "humanNewcomerSessions": "pending",
   "physicalDeviceTesting": "pending",

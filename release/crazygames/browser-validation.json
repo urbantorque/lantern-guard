@@ -1,10 +1,10 @@
 {
   "version": 2,
-  "checkedAt": "2026-10-19T06:41:08.448Z",
-  "sourceCommit": "9fecb8fae4e3d711be7720a3204fedd233a8e943",
-  "zipSha256": "c57196362c784b8a6a220bfcab9543d2437717a9de3b143abd83d86ad609dbd2",
-  "edition": "Packaged CrazyGames production build, served under /games/nightward/",
-  "method": "Actual browser UI interaction through the Codex browser. No hidden-state injection in production checks.",
+  "checkedAt": "2026-10-19T11:34:40.094Z",
+  "sourceCommit": "5c54bb04741324aeafbb0eac5c48750c07ebfffb",
+  "zipSha256": "89ef8fe1ff62c0c776e79cb7d9066ccb5ce84ae23f607a02d4d94b5ce7dfbd42",
+  "edition": "Packaged CrazyGames production build under /games/nightward/",
+  "method": "Actual UI interaction in the Codex in-app browser. Fresh local profile, read-only DOM geometry, no hidden-state injection. Rendering pixel ratio approximately 1.",
   "viewports": [
     {
       "battlefield": {
@@ -148,20 +148,6 @@
     },
     {
       "battlefield": {
-        "height": 650,
-        "width": 390,
-        "x": 0,
-        "y": 52
-      },
-      "battlefieldFits": true,
-      "controlsFit": true,
-      "height": 844,
-      "noHorizontalOverflow": true,
-      "outside": [],
-      "width": 390
-    },
-    {
-      "battlefield": {
         "height": 546,
         "width": 320,
         "x": 0,
@@ -173,77 +159,83 @@
       "noHorizontalOverflow": true,
       "outside": [],
       "width": 320
+    },
+    {
+      "battlefield": {
+        "height": 650,
+        "width": 390,
+        "x": 0,
+        "y": 52
+      },
+      "battlefieldFits": true,
+      "controlsFit": true,
+      "height": 844,
+      "noHorizontalOverflow": true,
+      "outside": [],
+      "width": 390
     }
   ],
   "inspectors": [
     {
-      "width": 320,
       "height": 740,
-      "stationary": true,
-      "choices": [
+      "upgradeButtons": [
         {
-          "text": "Choose209 glow",
+          "text": "Choose Crowd volleys · 209 glow",
           "visible": true
         },
         {
-          "text": "Choose209 glow",
+          "text": "Choose Piercing sparks · 209 glow",
           "visible": true
         }
       ],
-      "noHorizontalOverflow": true
+      "width": 320
     },
     {
-      "width": 390,
       "height": 844,
-      "stationary": true,
-      "choices": [
+      "upgradeButtons": [
         {
-          "text": "Choose209 glow",
+          "text": "Choose Crowd volleys · 209 glow",
           "visible": true
         },
         {
-          "text": "Choose209 glow",
+          "text": "Choose Piercing sparks · 209 glow",
           "visible": true
         }
       ],
-      "noHorizontalOverflow": true
+      "width": 390
     },
     {
-      "width": 821,
       "height": 462,
-      "stationary": true,
-      "choices": [
+      "upgradeButtons": [
         {
-          "text": "Choose209 glow",
+          "text": "Choose Crowd volleys · 209 glow",
           "visible": true
         },
         {
-          "text": "Choose209 glow",
+          "text": "Choose Piercing sparks · 209 glow",
           "visible": true
         }
       ],
-      "noHorizontalOverflow": true
+      "width": 821
     },
     {
-      "width": 907,
       "height": 510,
-      "stationary": true,
-      "choices": [
+      "upgradeButtons": [
         {
-          "text": "Choose209 glow",
+          "text": "Choose Crowd volleys · 209 glow",
           "visible": true
         },
         {
-          "text": "Choose209 glow",
+          "text": "Choose Piercing sparks · 209 glow",
           "visible": true
         }
       ],
-      "noHorizontalOverflow": true
+      "width": 907
     }
   ],
   "flows": {
     "paidFirstPlacement": true,
-    "manualWave1": true,
+    "automaticWave1": true,
     "pausedReloadVisible": true,
     "stationaryInspectors": true,
     "signatureChoices": true,
@@ -251,45 +243,34 @@
     "firstBossForecast": true,
     "finalVictory": true,
     "menuNavigation": true,
-    "reducedMotionUi": true
+    "reducedMotionUi": true,
+    "savedVolume": true,
+    "skippableTips": true
   },
-  "productionEvidence": {
-    "opening": "At 907x510, Preview Spark opened its coverage panel; Build here spent 110 of 330 glow. Begin wave 1 changed Prepare to Wave 1/40. Pause and reload retained 25 light, 220 glow, one Spark and the 0:46 sky timer. Continue defence was offered.",
-    "openingSourceCommit": "3e0dbee",
-    "finalPackage": "9fecb8f only removes duplicate labels from the short-screen tower inspector. The final package was reloaded; saved state, twelve settled viewport layouts, corrected inspector choices, menu navigation and Reduced motion toggle were verified again.",
-    "layouts": "One paused production defence resized across twelve viewports. All visible main-screen buttons and battlefield bounds fit; no horizontal document overflow. This is a layout matrix, not twelve full playthroughs.",
-    "inspectors": "320x740, 390x844, 821x462 and 907x510: battlefield bounds remain unchanged; both purchase buttons fit within the scrollable inspector body with no horizontal overflow. The initial 907 clipping was fixed and rechecked.",
-    "accessibility": "Reduced motion and Larger text were enabled through Settings, survived reload, and both upgrade choices remained visible at 320x740. Test preferences were restored. The final package Reduced motion switch was also toggled and checked.",
-    "menus": "Watch menu, Settings, Save & return to district, The Long Watch, new-campaign choices and the continuation route were exercised."
-  },
-  "developmentScenarioEvidence": {
-    "sourceCommit": "aef8938e61d9f363e1380914dcd05fda6ee2ee1b",
-    "scope": "Development-only paid campaign scenarios. The later commits only change inspector CSS, checkpoint menu copy and QA documentation; encounter mechanics are unchanged.",
-    "signatureChoices": "Both signature cards were visible at 907x510, 821x462 and 390x844; choosing Wildfire returned to Ready. The duplicate preparation action was removed.",
-    "directCommand": "An actual Stillwater activation reported 4 targets and Used / next wave. Model tests separately verify ordinary fire continues and there is no second use.",
-    "firstBossForecast": "Mire Tyrant and an 8-light breach cost appeared in the wave-8 forecast.",
-    "finalVictory": "A paid Mira Undertow wave-40 scenario was resumed through the UI and reached the 40/40 victory report with 3 light. This is not an unaided human campaign run.",
-    "media": "Both preview recordings capture this paid late-game scenario at normal simulation tempo."
+  "flowScope": {
+    "production": [
+      "One click spends 110 of 330 glow; wave 1 starts automatically and clears with 25 light / 322 glow",
+      "Twelve viewport layouts at the first counter lesson, not twelve campaign playthroughs",
+      "Hide tips persists after reload; saved defence reloads paused",
+      "Spark inspector leaves the canvas bounds unchanged; both upgrade actions fit four compact viewports",
+      "Music 60 to 25 percent and Reduced motion On persist after reload; defaults restored after verification",
+      "Title, continue and More ways to play navigation; new title art rendered without missing resources"
+    ],
+    "developmentPaidFixtures": [
+      "Wave 3: both signature benefits/costs inspected, Wildfire chosen",
+      "Wave 7: first boss forecast shows counter and actual 8-light cost",
+      "Wave 40: Stillwater used once, button disabled, victory observed with 3 light",
+      "Landscape and portrait 16-second gameplay captures; three model-based cover exports"
+    ]
   },
   "consoleErrors": [],
   "humanPlaytest": false,
   "physicalDeviceTested": false,
-  "limits": [
-    "No hosted CrazyGames QA run for this candidate yet.",
-    "No real newcomer retention or satisfaction data.",
-    "No physical phone, sustained hardware performance or human audio listening certification.",
-    "CLI browser helper was not executed for this candidate."
-  ],
-  "screenshots": [
-    "artifacts/resubmission/production-inspector-320.jpg",
-    "artifacts/resubmission/production-inspector-907.jpg",
-    "artifacts/resubmission/final-assault-1216.jpg"
-  ],
-  "simulationEvidence": {
-    "opening": "artifacts/resubmission/opening-balance.json",
-    "campaign": "artifacts/siege/balance.json",
-    "referenceCampaignWins": 8,
-    "referenceCampaigns": 12,
-    "allKeepersHaveWinningBuildOnBothPassages": true
-  }
+  "humanAudioListening": false,
+  "hostedPublisherPreview": false,
+  "notes": [
+    "Local browser routing initially showed an unrelated app in the old tab. Those views were excluded. Production evidence comes from a fresh tab at localhost:5193 with verified Nightward UI.",
+    "Browser tests were muted. Audio graph tests verify gain routing, priority ducking, restore, cue rate limits and background suspension. A listening session remains outstanding.",
+    "Development encounter fixtures are paid simulation snapshots, not fresh human playthroughs."
+  ]
 }

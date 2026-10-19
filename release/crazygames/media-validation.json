@@ -25,27 +25,27 @@
   "previews": [
     {
       "file": "release/crazygames/preview-landscape.mp4",
-      "bytes": 4818696,
-      "duration": 15.73,
+      "bytes": 4065623,
+      "duration": 15.45,
       "width": 1920,
       "height": 1080,
       "audioTracks": 0,
       "codec": "h264",
       "container": "mp4",
       "decodedEntireFile": true,
-      "sha256": "f988e7fa253d4ad12b851d72ad3c23595377aa3ca3937c181a40c3f8a185a056"
+      "sha256": "c1f0a25c160e5b4fa05433d962f605f8749652cc4cdb331d0eee9b87083fd21a"
     },
     {
       "file": "release/crazygames/preview-portrait.mp4",
-      "bytes": 4683636,
-      "duration": 15.86,
+      "bytes": 3351109,
+      "duration": 15.5,
       "width": 1080,
       "height": 1620,
       "audioTracks": 0,
       "codec": "h264",
       "container": "mp4",
       "decodedEntireFile": true,
-      "sha256": "e7c2552da0f008b58c9b4170970969cce3aa346ef4e5d1aad2de7a06e963504b"
+      "sha256": "559c03bc1a550b1feb66bce7a41bc2351c3c265fc44a89003ca8c75a4f0383fe"
     }
   ]
 }

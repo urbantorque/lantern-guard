@@ -4,12 +4,12 @@
   "advertising": false,
   "entry": "index.html",
   "campaignWaves": 40,
-  "sourceCommit": "9fecb8fae4e3d711be7720a3204fedd233a8e943",
+  "sourceCommit": "5c54bb04741324aeafbb0eac5c48750c07ebfffb",
   "trackedChanges": false,
-  "fileCount": 14,
-  "uncompressedBytes": 3401254,
-  "zipBytes": 2876471,
-  "zipSha256": "c57196362c784b8a6a220bfcab9543d2437717a9de3b143abd83d86ad609dbd2",
+  "fileCount": 10,
+  "uncompressedBytes": 817512,
+  "zipBytes": 292460,
+  "zipSha256": "89ef8fe1ff62c0c776e79cb7d9066ccb5ce84ae23f607a02d4d94b5ce7dfbd42",
   "files": [
     {
       "path": "THIRD-PARTY-NOTICES.txt",
@@ -27,34 +27,29 @@
       "sha256": "9fea608a947e67020c33cad9a6fe3d60c54119dfb8cff87768a8117a15ed7543"
     },
     {
-      "path": "assets/index-DNT4jzVV.js",
-      "bytes": 623122,
-      "sha256": "e14517b968c4f0db99e9a1b4399fe9fd16cf7421c8e894aad9b6f3e6a5f75b0a"
+      "path": "assets/index-Bs2rKKYP.css",
+      "bytes": 112716,
+      "sha256": "acb8885bce67093a10bdae9ec546e196d5530e930d85ab452427f7d5995b625a"
     },
     {
-      "path": "assets/index-Vk2f4TbB.css",
-      "bytes": 110079,
-      "sha256": "754bfcda874150168366902d3221c2b3cd3756b717fde7c71cc2dd20af1a1289"
+      "path": "assets/index-DvrbxCPc.js",
+      "bytes": 634424,
+      "sha256": "22a8854300d7596fb6fd54419f3fbec284c823fb19cc91c7ef74924c0435220b"
     },
     {
-      "path": "assets/nightward-city-v2-DyPsqnu6.webp",
-      "bytes": 266026,
-      "sha256": "1eb04a07f60f033cfcaa0fea3c348a4a695e3b2f67f74ac502c8bcac6abed623"
-    },
-    {
-      "path": "assets/web-8l7itmDL.js",
-      "bytes": 894,
-      "sha256": "2a1ef0aa1ac987b8e7d94f05baca2d1e73151aea1160b996e777654830785d14"
-    },
-    {
-      "path": "assets/web-CC-nmq0h.js",
+      "path": "assets/web-BsmGZ60J.js",
       "bytes": 1192,
-      "sha256": "b69f749652f424935957fb6d8826e5c5b87c08ff58ea5273448609567ebe36c9"
+      "sha256": "c9f6e4660acbd0ace4862ad884f2bd0e892700b9108a45787163e41f210c8a13"
     },
     {
-      "path": "assets/web-qtcsViq4.js",
+      "path": "assets/web-DoSaompb.js",
       "bytes": 844,
-      "sha256": "2b33e33c14e53af5a3d985aa429b0ccc595b320fe0674728e43a1b8b7fba6774"
+      "sha256": "69bb0224ab12c2e5277bfffac25f35c48445858b3f74cf686d2af0dc27cd1e82"
+    },
+    {
+      "path": "assets/web-MqucsCyb.js",
+      "bytes": 894,
+      "sha256": "cda2c8f4dd0c82e55245b798ddeab7623c0b781dc4e1497ab4982c44cb0dc17e"
     },
     {
       "path": "icon.svg",
@@ -64,22 +59,7 @@
     {
       "path": "index.html",
       "bytes": 1075,
-      "sha256": "2267f337091d3e3c19cbc404e1741caffc5706fd77b6b6abc8febf10545009a2"
-    },
-    {
-      "path": "nightward-city-v2.webp",
-      "bytes": 266026,
-      "sha256": "1eb04a07f60f033cfcaa0fea3c348a4a695e3b2f67f74ac502c8bcac6abed623"
-    },
-    {
-      "path": "nightward-nocturne.png",
-      "bytes": 1962485,
-      "sha256": "5cda1e968a46302b3c97d6871876347a17d6d4ffb2e0fefdc6370c1d5ac5f5df"
-    },
-    {
-      "path": "nightward-title.webp",
-      "bytes": 103144,
-      "sha256": "60a509583c450ae18ed80fb1fa1aff3e9e787e1d8dd84a1958dbb6aee60a6f07"
+      "sha256": "316e5ac11ab9b882ef2eade611ee981fe6ddd09b14f746b24cf089fe3bf0012f"
     }
   ]
 }
