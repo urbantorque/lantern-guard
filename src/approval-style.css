@@ -20,3 +20,6 @@ body .watch-lesson{max-width:450px;padding:8px 10px;border-radius:5px;z-index:3}
 @media(orientation:portrait){.restoration-reveal{bottom:12px;padding:12px;gap:10px}.restoration-reveal b{font-size:17px}.restoration-reveal p{font-size:12px}.restoration-reveal button{padding:8px}.boss-status{max-width:calc(100% - 20px)}}
 
 .prepare-watch p[hidden]{display:none!important}.coach-actions button.coach-show{color:#142b32!important}.qa-bar{bottom:auto;top:4px;right:calc(50% - 50px)}
+@media(max-width:420px),(orientation:landscape) and (max-height:540px){.drawer .reserve-warning{font-size:11px;line-height:1.35;padding:6px 8px;margin:5px 0}}
+.drawer.placement.guided .placement-summary,.drawer.placement.guided .placement-judgement,.drawer.placement.guided .placement-bond{display:none}.drawer.placement.guided .guided-placement{margin:0 0 8px;padding:7px 10px;font-size:12px;line-height:1.4}
+@media(orientation:portrait){body .drawer.placement.guided>header{min-height:42px;padding:4px 12px}body .drawer.placement.guided .drawer-body{padding:8px 12px}}
