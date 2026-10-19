@@ -4,6 +4,16 @@ import { BESTIARY } from './bestiary'
 import {storyLesson} from './story'
 
 export function watchLesson(s:Sim,seen:readonly string[]=[]){
+  if(s.challenge.siege===2){
+    if(s.over||s.enemies.some(e=>e.alive&&e.def.boss))return null
+    return [
+      {id:'siege2-place',when:!s.towers.length,text:'Build beside the bend. Gold water shows where your tower can hit.'},
+      {id:'siege2-slow',when:s.planningWave===2&&!s.towers.some(t=>t.id==='bell'),text:'Fast fins incoming. Add a Chime beside your Spark.'},
+      {id:'siege2-armour',when:s.planningWave===3&&!s.towers.some(t=>t.id==='cracker'),text:'Armour incoming. Build a Blast over the same bend.'},
+      {id:'siege2-command',when:s.wave===4&&!!s.techniques.length&&!s.director?.commands,text:'Your command charges as towers fire. Tap the gold button when enemies enter its ring.'},
+      {id:'siege2-upgrade',when:s.wave>=5&&s.wave<=6&&!s.towers.some(t=>t.a+t.b>0),text:'Tap a tower to specialise it. Choose a weapon for the next threat.'},
+    ].find(h=>h.when&&!seen.includes(h.id))??null
+  }
   if(s.challenge.mission==='first-lights'){const lesson=storyLesson(s);return lesson&&!seen.includes(lesson.id)?lesson:null}
   if(s.challenge.refinedWatch)return openingLesson(s,seen)
   if(!s.challenge.watchCraft||s.wave>10)return null

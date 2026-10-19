@@ -36,7 +36,11 @@ export function experienceTechnique(id:TechniqueId){
 
 /** Preparation is driven by the next encounter, never by real-world waiting. */
 export function preparationBeat(c:Challenge,wave:number):string|null {
-  if(c.siege)return SIEGE_PREPARATIONS[wave]??null
+  if(c.siege){
+    if(c.siege===1&&[2,3].includes(wave))return null
+    if(c.siege===1&&wave===4)return 'Choose a signature and prepare your first held command.'
+    return SIEGE_PREPARATIONS[wave]??null
+  }
   if(c.story)return storyMission(c)?.preparations[wave]??null
   if(!c.watchExperience||wave<=1)return null
   if(techniqueWaves(c).includes(wave))return 'Choose your technique and shape the next stretch.'

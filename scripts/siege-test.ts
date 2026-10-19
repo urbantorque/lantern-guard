@@ -63,7 +63,7 @@ assert.equal(bestSiegeWave(practice),0);assert.equal(projectStage(practice,'gard
 const earned={...loadVillage(),records:{'story1:first-lights:standard:mira:standard':{wave:6,light:25,won:true,practice:false}}};assert.equal(projectStage(earned,'market'),1)
 console.log('PASS in-run restoration at authored milestones, idempotence, practice exclusion and earlier rewards retained')
 
-for(const changes of [{siege:2},{story:1},{variant:2},{endurance:true},{id:'siege2'},{skirmish:{from:8,to:40,glow:440,seed:27041}}]){const snap=fresh().snapshot();Object.assign(snap.challenge,changes);assert(!validSnapshot(snap))}
+for(const changes of [{siege:3},{story:1},{variant:2},{endurance:true},{id:'siege3'},{skirmish:{from:8,to:40,glow:440,seed:27041}}]){const snap=fresh().snapshot();Object.assign(snap.challenge,changes);assert(!validSnapshot(snap))}
 const boss=fresh();boss.wave=15;assert(boss.startWave());for(let i=0;i<370;i++)boss.step(DT);assert(boss.enemies.some(e=>e.def.id==='dredger'));assert(validSnapshot(boss.snapshot()),'Dredger saves stay valid while the engine is alive')
 const before=storage.getItem('lanternlocks.fixed1.siege');storage.fail=true;assert(!saveWatch(fresh(),[],'siege'));storage.fail=false;assert.equal(storage.getItem('lanternlocks.fixed1.siege'),before)
 storage.setItem('lanternlocks.fixed1.siege.checkpoints',JSON.stringify({v:1,entries:[encodeRun({...atEight,glow:-1},[])]}));assert.equal(loadActCheckpoint(boundary),null)

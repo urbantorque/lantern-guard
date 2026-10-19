@@ -1,5 +1,5 @@
 import {mission,storyTowerWave} from './story'
-import {siegeTowerWave,SIEGE_GLOW} from './siege'
+import {siegeTowerWave,SIEGE_GLOW,LEGACY_SIEGE_GLOW} from './siege'
 import { secondWatch } from './second-watch'
 import {restorationLimit} from './watch-refinement'
 import { campaignUnlock, shortCampaign, routeWave, COMMANDS } from './watch-director'
@@ -91,7 +91,7 @@ export function validSnapshot(s: unknown): s is SaveSnapshot {
   const directed=s.challenge as Challenge
   if(s.challenge.siege!==undefined){
     const q=s.challenge.skirmish
-    if(s.challenge.siege!==1||s.challenge.story||s.challenge.mission||s.challenge.endurance||s.challenge.expedition||s.challenge.weekly!==undefined||s.challenge.commission||s.challenge.contract||s.challenge.blockedPad!==undefined||s.challenge.watchDirector!==2||s.challenge.variant!==0||s.challenge.id!=='siege1'||!object(q)||q.from!==0||q.to!==40||q.glow!==SIEGE_GLOW||!integer(q.seed,0,4294967295)||s.seed!==q.seed)return false
+    if((s.challenge.siege!==1&&s.challenge.siege!==2)||s.challenge.story||s.challenge.mission||s.challenge.endurance||s.challenge.expedition||s.challenge.weekly!==undefined||s.challenge.commission||s.challenge.contract||s.challenge.blockedPad!==undefined||s.challenge.watchDirector!==2||s.challenge.variant!==0||s.challenge.id!=='siege'+s.challenge.siege||!object(q)||q.from!==0||q.to!==40||q.glow!==(s.challenge.siege===1?LEGACY_SIEGE_GLOW:SIEGE_GLOW)||!integer(q.seed,0,4294967295)||s.seed!==q.seed)return false
   }
   if(s.challenge.story!==undefined){
     const m=mission(s.challenge.mission),q=s.challenge.skirmish

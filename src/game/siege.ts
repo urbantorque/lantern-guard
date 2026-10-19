@@ -4,9 +4,10 @@ import type {HeroId} from './heroes'
 import type {Group,WaveDef} from './waves'
 
 /** A separate rules boundary: published short missions and watches keep their balance. */
-export const SIEGE_VERSION=1 as const
+export const SIEGE_VERSION=2 as const
 export const SIEGE_WAVES=40
-export const SIEGE_GLOW=440
+export const SIEGE_GLOW=330
+export const LEGACY_SIEGE_GLOW=440
 export const SIEGE_INLET=17
 export const SIEGE_PASSAGE=16
 export const SIEGE_ACTS=[
@@ -19,25 +20,31 @@ export const SIEGE_ACTS=[
 export const siegeAct=(wave:number)=>SIEGE_ACTS[Math.max(0,Math.min(4,Math.floor((wave-1)/8)))]
 export const siegeBoundary=(wave:number)=>wave>=0&&wave<40&&wave%8===0
 export function siegeChallenge(hero:HeroId='mira',seed=27041):Challenge {
- return {fixed:1,compact:1,guard:1,depth:1,balance:1,watchDepth:1,watchCraft:1,livingWatch:1,refinedWatch:1,watchExperience:1,watchTactics:1,watchMastery:1,watchDirector:2,siege:SIEGE_VERSION,hero,variant:0,id:'siege1',skirmish:{from:0,to:40,glow:SIEGE_GLOW,seed}}
+ return {fixed:1,compact:1,guard:1,depth:1,balance:1,watchDepth:1,watchCraft:1,livingWatch:1,refinedWatch:1,watchExperience:1,watchTactics:1,watchMastery:1,watchDirector:2,siege:SIEGE_VERSION,hero,variant:0,id:'siege2',skirmish:{from:0,to:40,glow:SIEGE_GLOW,seed}}
 }
 export function siegeTowerWave(c:Challenge,id:TowerId):number|undefined {
  if(!c.siege)return undefined
- return ({wick:1,bell:c.hero==='mira'?1:2,cracker:c.hero==='sol'?2:4,storm:c.hero==='ivo'?3:11,garden:9,owl:12,beam:13,ballista:19})[id]
+ return ({wick:1,bell:c.hero==='mira'?1:2,cracker:c.siege===2?3:c.hero==='sol'?2:4,storm:c.hero==='ivo'?3:11,garden:9,owl:12,beam:13,ballista:19})[id]
 }
 /** Original plot/bond thresholds are mapped explicitly; no early Crown rush. */
 export const siegeUnlock=(c:Challenge,n:number)=>c.siege?({6:5,11:17,16:17,21:25,26:29,31:33} as Record<number,number>)[n]??n:undefined
-export const siegeReward=(wave:number)=>95+wave*9+(wave%8===0?130:0)
+export const siegeReward=(wave:number,c?:Challenge)=>(c?.siege===1?95+wave*9:90+wave*8)+(wave%8===0?130:0)
 export const siegeHeld=(s:Pick<Sim,'wave'|'waveActive'|'over'>)=>Math.max(0,s.wave-(s.waveActive||s.over==='lost'?1:0))
-export const siegeCheckpointWave=(s:Pick<Sim,'wave'|'waveActive'|'over'>)=>Math.min(32,Math.floor(siegeHeld(s)/8)*8)
+export const firstShopOpen=(s:Pick<Sim,'challenge'|'wave'|'waveActive'|'over'>)=>s.challenge.siege===2&&siegeHeld(s)>=5
+export const siegeCheckpointWave=(s:Pick<Sim,'wave'|'waveActive'|'over'> & Partial<Pick<Sim,'challenge'>>)=>s.challenge?.siege===2&&siegeHeld(s)%8===7?siegeHeld(s):Math.min(32,Math.floor(siegeHeld(s)/8)*8)
+export const siegeCheckpointBoundary=(s:Pick<Sim,'wave'|'challenge'>)=>siegeBoundary(s.wave)||s.challenge.siege===2&&s.wave<40&&s.wave%8===7
+/** Standard bosses make a visible, finite breach. Nightfall retains original costs. */
+export const siegeBossBreach=(c:Challenge,difficulty:string,id:EnemyId)=>c.siege===2&&difficulty!=='nightfall'?(id==='toad'?8:id==='bloomheart'?12:10):null
 export function sameSiege(a:SaveSnapshotV2,b:SaveSnapshotV2){
- return a.challenge.siege===1&&b.challenge.siege===1&&a.seed===b.seed&&a.difficulty===b.difficulty&&a.challenge.hero===b.challenge.hero&&a.challenge.id===b.challenge.id
+ return !!a.challenge.siege&&a.challenge.siege===b.challenge.siege&&a.seed===b.seed&&a.difficulty===b.difficulty&&a.challenge.hero===b.challenge.hero&&a.challenge.id===b.challenge.id
 }
 export const SIEGE_RESTORATION={market:[8,16,24],observatory:[16,24,40],gardens:[24,32,40]} as const
 export const SIEGE_PREPARATIONS:Record<number,string>={
  1:'Your defence stays with you for all 40 waves. Place sparks beside the upper bend; add control over the same water.',
- 4:'Choose a keeper signature. Bank its command when you can afford to pause that tower, then release into a useful target.',
- 8:'The Brood Captain links an escort before calling reinforcements. Break that tether or interrupt its signal.',
+ 2:'Fast fins outrun isolated sparks. Put a Chime beside your Spark so they cover the same bend.',
+ 3:'Armour reaches the bend. Add a Blast where it shares water with your Chime.',
+ 4:'Choose a signature for the towers you can build now. Your command charges automatically during combat.',
+  8:'The Mire Tyrant links an escort before calling reinforcements. Break that tether or interrupt its signal.',
  9:'First Lights held. Your towers, glow and remaining light carry on. Repair convoys are approaching; prepare heavy damage.',
  16:'The Dredger exposes its core at two marked bends. Hold it in overlapping damage. After this wave, choose a permanent passage.',
  17:'The second entrance opens. The arches reveal hidden fleets for six seconds. Place sight and finishing damage below the meeting point. Crowns are now available.',
@@ -50,14 +57,14 @@ export const SIEGE_PREPARATIONS:Record<number,string>={
 const g=(type:EnemyId,count:number,gap=.8,at=0,src:Group['src']='north'):Group=>({type,count,gap,at,src})
 const w=(encounter:string,note:string,...groups:Group[]):WaveDef=>({encounter,note,groups})
 export const SIEGE_ENCOUNTERS:WaveDef[]=[
- w('Light the bend','Place your first damage tower beside the upper bend.',g('drip',10,1.4)),
- w('Fast water','Slowing runners gives sparks another volley.',g('drip',8,1),g('skitter',5,1.2,7)),
- w('Shared water','Let control and damage cover the same bend.',g('drip',18,.6),g('skitter',6,.8,9)),
- w('A signature in the dark','Choose a signature and try its held command.',g('drip',20,.4),g('shell',2,2,6)),
- w('Copper at the gate','A small armoured front tests heavy damage.',g('shell',4,1.7),g('drip',16,.55,5)),
- w('The first packed wake','Blast the crowd behind the front.',g('shell',5,1.4),g('wisp',24,.28,6),g('skitter',6,.9,13)),
- w('Before the captain','A shorter crossing. Strengthen the firing line.',g('shell',4,2),g('skitter',8,1,8)),
- w('The Brood Captain','Break its linked escort or interrupt the call.',g('toad',1,1,5),g('shell',4,1.5),g('wisp',24,.3,9)),
+ w('Light the bend','Build a Spark at the upper bend. Watch its whole firing window.',g('drip',6,1)),
+ w('Catch the runners','Place a Chime beside your Spark. Slowed fins stay in reach longer.',g('skitter',9,.65),g('drip',8,.7,4)),
+ w('Crack the armour','Copper plates resist sparks. A Blast hits armour at full strength.',g('shell',4,1.6),g('drip',12,.55,4)),
+ w('Choose your fire','Your signature works now. Use your command on the packed front.',g('shell',4,1.3),g('drip',24,.3,4)),
+ w('A light in the market','Slow the front and blast the wake. The first shop reopens when you hold.',g('shell',6,1.4),g('skitter',10,.6,7)),
+ w('The first packed wake','Blast the swarm while your Spark catches the runners.',g('shell',6,1.3),g('wisp',30,.23,4),g('skitter',9,.65,11)),
+  w('Before the captain','A healer follows the armour. Catch it with damage and control before it repairs the front.',g('shell',5,1.6),g('mender',1,1,5),g('skitter',6,.85,9)),
+ w('Mire Tyrant','Break its glowing escort or use your command during its call.',g('toad',1,1,5),g('shell',6,1.2),g('wisp',26,.3,9)),
  w('Iron on the horizon','Your existing defence faces a heavier front.',g('shell',9,1.4),g('wisp',28,.3,6)),
  w('The sheltered surgeon','Break the armour before its repairs catch up.',g('shell',10,1.2),g('mender',1,1,5),g('skitter',12,.65,11)),
  w('Long firing lines','A long column rewards piercing shots.',g('shell',13,1.3),g('wisp',34,.25,5)),
@@ -91,4 +98,14 @@ export const SIEGE_ENCOUNTERS:WaveDef[]=[
  w('The garden holds its breath','A shorter fleet. Spend your last reserve and prepare a command.',g('vshell',18,1.8),g('skiff',14,1.4,9,'west')),
  w('Last Bloom','Break the healing tether, interrupt the signal and strike the exposed core.',g('bloomheart',1,1,6),g('vshell',24,1.3),g('mender',3,4,9),g('skiff',20,1,14,'west')),
 ]
-export const siegeWave=(n:number)=>SIEGE_ENCOUNTERS[Math.max(0,Math.min(39,n-1))]
+const LEGACY_OPENING:WaveDef[]=[
+ w('Light the bend','Place your first damage tower beside the upper bend.',g('drip',10,1.4)),
+ w('Fast water','Slowing runners gives sparks another volley.',g('drip',8,1),g('skitter',5,1.2,7)),
+ w('Shared water','Let control and damage cover the same bend.',g('drip',18,.6),g('skitter',6,.8,9)),
+ w('A signature in the dark','Choose a signature and try its held command.',g('drip',20,.4),g('shell',2,2,6)),
+ w('Copper at the gate','A small armoured front tests heavy damage.',g('shell',4,1.7),g('drip',16,.55,5)),
+ w('The first packed wake','Blast the crowd behind the front.',g('shell',5,1.4),g('wisp',24,.28,6),g('skitter',6,.9,13)),
+ w('Before the captain','A shorter crossing. Strengthen the firing line.',g('shell',4,2),g('skitter',8,1,8)),
+ w('The Brood Captain','Break its linked escort or interrupt the call.',g('toad',1,1,5),g('shell',4,1.5),g('wisp',24,.3,9)),
+]
+export const siegeWave=(n:number,c?:Challenge)=>c?.siege===1&&n<=8?LEGACY_OPENING[Math.max(0,n-1)]:SIEGE_ENCOUNTERS[Math.max(0,Math.min(39,n-1))]

@@ -1,5 +1,6 @@
 import { restorationLimit, lateRewardScale, lateUpgradeScale, refinedWave } from './watch-refinement'
-import {siegeTowerWave,siegeWave,SIEGE_INLET} from './siege'
+import {siegeTowerWave,siegeWave,SIEGE_INLET,siegeBossBreach} from './siege'
+import {directCommand,commandReady} from './watch-director'
 import {storyMission,storyWave,storyTowerWave,type MissionId} from './story'
 import { experienceUnlock, experiencePrice, experienceStats, experienceWave } from './watch-experience'
 import { techniqueOffers, techniqueStats, hasNeighbour, craftWave, dredgerOpen, type TechniqueId } from './watch-craft'
@@ -243,7 +244,7 @@ export type SimEvent =
 
 /** Rules a night is played under. Plain nights use {}; tides and weekly nights set several. */
 export interface Challenge {
-  siege?:1
+  siege?:1|2
   story?:1
   mission?:MissionId
   watchDirector?: 1 | 2
@@ -776,7 +777,7 @@ export class Sim {
   }
 
   waveDef(n: number): WaveDef {
-    if(this.challenge.siege)return passageWave(siegeWave(n),n,this.challenge,this.director)
+    if(this.challenge.siege)return passageWave(siegeWave(n,this.challenge),n,this.challenge,this.director)
     if(this.challenge.story)return passageWave(storyWave(this.challenge,n)!,n,this.challenge,this.director)
     if(this.challenge.watchDirector){
       if(this.challenge.expedition)return passageWave(secondWave(authoredExpedition(this.challenge,n),this.challenge,n),n,this.challenge,this.director)
@@ -1715,6 +1716,7 @@ export class Sim {
     this.decWave(e.wave)
     // greed has a price: escapees from a short rich run cost double light
     let w = e.def.weight * (e.rich ? RICH_LEAK : 1)
+    if(e.def.boss)w=siegeBossBreach(this.challenge,this.difficulty,e.def.id)??w
     if (this.activePreparation('ward', e.wave) && this.preparation!.charges > 0) {
       const saved = Math.min(w, this.preparation!.charges)
       this.preparation!.charges -= saved; w -= saved
@@ -2532,6 +2534,13 @@ export class Sim {
     this.events.push({t:'tactic',kind:'interrupt',x:e.x,y:e.y})
   }
   bankCommand():boolean {
+    if(directCommand(this)){
+      if(!commandReady(this)||!commandTargets(this).length)return false
+      const t=commandTower(this)!
+      this.director!.command={wave:this.wave,tower:t.uid,phase:'held'}
+      if(this.releaseCommand())return true
+      this.director!.command=null;return false
+    }
     if(this.challenge.mission==='first-lights'&&this.wave<4)return false
     if(!this.director||this.director.command||!this.waveActive||this.over||!this.techniques.length)return false
     const t=commandTower(this);if(!t)return false
@@ -2550,9 +2559,10 @@ export class Sim {
     const targets=commandTargets(this);if(!targets.length)return false
     let affected=0
     if(hero==='sol')for(const e of targets){
-      const consumed=Math.min(2,e.burnT),damage=consumed*e.burnDps*2.5
+      const consumed=Math.min(2,e.burnT),damage=consumed*e.burnDps*2.5+(directCommand(this)?Math.max(8,t.stats.damage*.75):0)
       e.burnT-=consumed;if(e.burnT<=0){e.burnDps=0;delete e.burnSource}
       this.damage(e,damage,true,t,true);affected++
+      if(directCommand(this)&&e.alive&&(e.signalT??0)>0){this.interruptChannel(e);t.interrupts=(t.interrupts??0)+1}
       this.events.push({t:'tactic',kind:'ignite',x:e.x,y:e.y})
     }
     if(hero==='mira')for(const e of targets){
@@ -2570,7 +2580,7 @@ export class Sim {
       this.damage(target,t.stats.damage*power,true,t);t.tolls++;affected=1
       this.events.push({t:'arc',x:t.x,y:t.y,tx:target.x,ty:target.y},{t:'tactic',kind:'charged',x:target.x,y:target.y})
     }
-    q.phase='spent';this.director!.commands++;t.signatureHits=(t.signatureHits??0)+affected;t.cd=t.stats.interval;t.fireT=this.time
+    q.phase='spent';this.director!.commands++;t.signatureHits=(t.signatureHits??0)+affected;if(!directCommand(this))t.cd=t.stats.interval;t.fireT=this.time
     this.events.push({t:'craft',kind:hero==='mira'?'freeze':'bond',x:t.x,y:t.y,label:`${COMMANDS[hero].name} · ${affected} ${affected===1?'target':'targets'}`})
     if(hero==='mira')this.events.push({t:'toll',x:t.x,y:t.y,r:this.effRange(t),stun:true,tier:Math.max(t.a,t.b)})
     return true

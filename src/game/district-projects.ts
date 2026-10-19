@@ -26,7 +26,7 @@ export function projectProgress(p:VillageProfile,id:ProjectId){
   if(id==='observatory')return p.commissions.includes('moonwake')?1:Math.max(story,Math.min(1,best/25))
   return Math.min(1,Math.max(story,best/40,heroes.size/2))
 }
-export function bestSiegeWave(p:Pick<VillageProfile,'records'>){return Math.max(0,...Object.entries(p.records).filter(([key,r])=>/^siege1:(relaxed|standard|nightfall):(sol|mira|ivo):standard$/.test(key)&&!r.practice).map(([,r])=>r.wave))}
+export function bestSiegeWave(p:Pick<VillageProfile,'records'>){return Math.max(0,...Object.entries(p.records).filter(([key,r])=>/^siege[12]:(relaxed|standard|nightfall):(sol|mira|ivo):standard$/.test(key)&&!r.practice).map(([,r])=>r.wave))}
 export function validStyles(value:unknown):Partial<Record<ProjectId,0|1>>{
   if(!value||typeof value!=='object')return {}
   return Object.fromEntries(PROJECTS.flatMap(p=>{const v=(value as Record<string,unknown>)[p.id];return v===0||v===1?[[p.id,v]]:[]}))

@@ -53,6 +53,12 @@ export function designatedTarget(s: Sim) {
 }
 
 export function commandReadout(s:Sim, tower:Tower|null, targets:Sim['enemies']) {
+  if(s.challenge.siege===2){
+    if(!tower)return 'Build a '+(s.challenge.hero==='sol'?'Blast':s.challenge.hero==='mira'?'Chime':'Storm')+' to use your command.'
+    if(s.director?.command?.phase==='spent')return 'Used this wave · recharges next wave'
+    if(!targets.length)return tower.def.name+' · waiting for enemies in reach'
+    return `${targets.length} ${targets.length===1?'target':'targets'} in reach${s.challenge.hero!=='ivo'&&targets.some(e=>(e.signalT??0)>0)?' · INTERRUPT NOW':''}`
+  }
   if (!tower) return 'Select a command tower in its inspection panel.'
   const owner=`${tower.def.name}${s.director?.command?.phase==='held'?' · holding fire':''}`
   if (s.challenge.hero==='sol') return `${owner} · ${targets.length} burns${targets.length?` · first expires in ${Math.min(...targets.map(e=>e.burnT)).toFixed(1)}s`:''}`

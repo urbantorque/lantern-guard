@@ -13,7 +13,7 @@ export const campaignBeat = (c:Challenge,n:number) => shortCampaign(c) ? CAMPAIG
 export const campaignUnlock = (c:Challenge,n:number) => siegeUnlock(c,n)??storyUnlock(c,n)??(shortCampaign(c) ? Math.max(1,CAMPAIGN_WAVES.findIndex(w=>w>=n)+1) : n)
 /** Transfer the removed waves' clear income into the retained encounter. */
 export function campaignReward(c:Challenge,n:number){
-  if(c.siege)return siegeReward(n)
+  if(c.siege)return siegeReward(n,c)
   if(c.story)return storyReward(c,n)??0
   if(!shortCampaign(c))return 125+n*15
   const previous=n>1?campaignBeat(c,n-1):0,current=campaignBeat(c,n)
@@ -37,6 +37,14 @@ export const COMMANDS = {
   mira:{tower:'bell' as TowerId,name:'Stillwater',hold:'Prepare freeze',release:'Release freeze',help:'Prepare a Chime pulse. This tower stops firing while it holds the command. Release a 1.25s freeze and a longer slow. A signalling boss is interrupted and exposed for 4s.'},
   ivo:{tower:'storm' as TowerId,name:'Discharge',hold:'Prepare discharge',release:'Release discharge',help:'Prepare a lightning volley. This tower stops firing while it holds the command. Release one armour-piercing hit. Capacitor waits for its third volley; Forked current gives up its chain.'},
 } as const
+export const directCommand=(s:Pick<Sim,'challenge'>)=>s.challenge.siege===2
+export const commandCharge=(s:Sim)=>Math.max(0,Math.min(1,s.climate.waveSeconds/5.2))
+export const commandReady=(s:Sim)=>directCommand(s)&&s.waveActive&&!s.over&&!!s.techniques.length&&!s.director?.command&&!!commandTower(s)&&commandCharge(s)>=1
+export const DIRECT_COMMAND_HELP={
+ sol:'Burst all visible enemies in this Blast’s reach. Burning targets take extra damage. Interrupts a boss signal. The tower keeps firing while the command charges.',
+ mira:'Freeze the enemies in this Chime’s reach. Interrupt a boss signal to expose it. The tower keeps firing while the command charges.',
+ ivo:'Strike the strongest visible enemy in this Storm’s reach with an armour-piercing discharge. The tower keeps firing while the command charges.',
+} as const
 export function commandTower(s:Sim):Tower|null {
   const hero=s.challenge.hero;if(!s.director||!hero)return null
   const held=s.director.command
@@ -46,7 +54,7 @@ export function commandTower(s:Sim):Tower|null {
 }
 export function commandTargets(s:Sim){
   const t=commandTower(s);if(!t)return []
-  return s.enemies.filter(e=>e.alive&&Math.hypot(e.x-t.x,e.y-t.y)<=s.effRange(t)&&s.canSee(e,t.stats.detect)&&(s.challenge.hero!=='sol'||e.burnT>0&&e.burnDps>0))
+  return s.enemies.filter(e=>e.alive&&Math.hypot(e.x-t.x,e.y-t.y)<=s.effRange(t)&&s.canSee(e,t.stats.detect)&&(directCommand(s)||s.challenge.hero!=='sol'||e.burnT>0&&e.burnDps>0))
 }
 
 const g=(type:EnemyId,count:number,gap=.8,at=0,src:Group['src']='north'):Group=>({type,count,gap,at,src})
