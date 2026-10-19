@@ -1,57 +1,58 @@
 {
-  "sourceCommit": "5c54bb04741324aeafbb0eac5c48750c07ebfffb",
-  "zipSha256": "89ef8fe1ff62c0c776e79cb7d9066ccb5ce84ae23f607a02d4d94b5ce7dfbd42",
+  "sourceCommit": "98e9d66f6f255eea644fefa9075efb49f345aae9",
+  "zipSha256": "edac99a0f76f8e81b93d37bd93d1c61d90a6cb8fd5b274de2ccda3767b4c5d7d",
   "checks": [
     {
       "command": "npm run check",
       "exitCode": 0,
-      "result": "Full regression suite including contextual coach, recovery, audio gain tests and 30/60/120/144/165 Hz simulation parity"
+      "result": "Full regression suite passed, including the new learning tests, legacy campaign continuation and refresh-rate parity."
     },
     {
-      "command": "npm run build:crazygames",
+      "command": "npm run test:learning",
       "exitCode": 0,
-      "result": "Exact archive built from clean tracked source: 10 files, 817512 bytes unpacked, 292460 bytes ZIP"
+      "result": "Paid guided opening holds wave 3 with 24 light; full-value undo, free-move limit, saved whole-wave evidence, legal recovery and earned milestones pass."
     },
     {
-      "command": "npm run build",
+      "command": "npm run test:audio",
       "exitCode": 0,
-      "result": "Standalone production build and typechecks pass"
+      "result": "Interrupt priority, restoration resolution, gain routing, rate caps and muted/background silence pass."
     },
     {
       "command": "npm run test:portal-opening",
       "exitCode": 0,
-      "result": "Three seeded paid openings: 25 light, 322 glow after wave 1"
+      "result": "Three seeded paid openings finish wave 1 with 25 light and 322 glow."
     },
     {
       "command": "npm run balance:siege",
       "exitCode": 0,
-      "result": "8/12 Standard reference wins; every keeper has a winning route on both passages"
+      "result": "8/12 full-campaign Standard reference wins, with a winning build for every keeper on both passages."
     },
     {
-      "command": "npm run balance:approval",
+      "command": "npm run build",
       "exitCode": 0,
-      "result": "Eight paid diagnostic runs reproduce failures and verify preparation improves both affected builds on both passages"
+      "result": "Standalone production build and TypeScript checks pass."
+    },
+    {
+      "command": "npm run build:crazygames",
+      "exitCode": 0,
+      "result": "10 files, 832424 bytes unpacked, 297217 bytes ZIP."
     },
     {
       "command": "node scripts/crazygames-mp4.mjs",
       "exitCode": 0,
-      "result": "Both silent H.264 MP4 files encoded and fully decoded; representative frames visually inspected"
-    },
-    {
-      "command": "npm run check:crazygames-release",
-      "exitCode": 0,
-      "result": "Exact ZIP entries, source provenance, twelve layouts, scoped flows, covers and silent MP4s verified"
+      "result": "Both current gameplay previews encoded as silent H.264 MP4s, completely decoded and representative frames visually inspected."
     },
     {
       "command": "git diff --check",
       "exitCode": 0,
-      "result": "No whitespace errors"
+      "result": "No whitespace errors."
     }
   ],
   "notes": [
-    "Vite retains a 500 kB advisory warning for the uncompressed main JS chunk. The entire game archive is 0.29 MB.",
-    "Reference simulations establish viable strategies, not human enjoyment or retention.",
-    "No game rule or balance change was made in this latest quality pass. Published siege1 and current siege2 saves retain their rules."
+    "Tower damage, enemy health, wave composition and earned income are unchanged. The deliberate economy change is one free early Standard/Gentle siege2 relocation, plus planning-only undo.",
+    "The full regression pass included the current game logic. Final compact CSS was verified separately in the packaged browser and typechecked by production builds.",
+    "Vite retains its advisory main-chunk size warning; the complete game archive is 0.30 MB.",
+    "Reference simulations establish viable strategies, not human enjoyment or retention."
   ],
   "humanNewcomerSessions": "pending",
   "physicalDeviceTesting": "pending",

@@ -1,0 +1,80 @@
+{
+  "stableBefore": {
+    "bottom": 702,
+    "height": 650,
+    "left": 0,
+    "right": 390,
+    "top": 52,
+    "width": 390,
+    "x": 0,
+    "y": 52
+  },
+  "stableAfter": {
+    "bottom": 702,
+    "height": 650,
+    "left": 0,
+    "right": 390,
+    "top": 52,
+    "width": 390,
+    "x": 0,
+    "y": 52
+  },
+  "inspectorChecks": [
+    {
+      "height": 740,
+      "upgradeButtons": [
+        {
+          "text": "Choose Crowd volleys · 209 glow",
+          "visible": true
+        },
+        {
+          "text": "Choose Piercing sparks · 209 glow",
+          "visible": true
+        }
+      ],
+      "width": 320
+    },
+    {
+      "height": 844,
+      "upgradeButtons": [
+        {
+          "text": "Choose Crowd volleys · 209 glow",
+          "visible": true
+        },
+        {
+          "text": "Choose Piercing sparks · 209 glow",
+          "visible": true
+        }
+      ],
+      "width": 390
+    },
+    {
+      "height": 462,
+      "upgradeButtons": [
+        {
+          "text": "Choose Crowd volleys · 209 glow",
+          "visible": true
+        },
+        {
+          "text": "Choose Piercing sparks · 209 glow",
+          "visible": true
+        }
+      ],
+      "width": 821
+    },
+    {
+      "height": 510,
+      "upgradeButtons": [
+        {
+          "text": "Choose Crowd volleys · 209 glow",
+          "visible": true
+        },
+        {
+          "text": "Choose Piercing sparks · 209 glow",
+          "visible": true
+        }
+      ],
+      "width": 907
+    }
+  ]
+}

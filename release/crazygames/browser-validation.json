@@ -1,10 +1,10 @@
 {
   "version": 2,
-  "checkedAt": "2026-10-19T11:34:40.094Z",
-  "sourceCommit": "5c54bb04741324aeafbb0eac5c48750c07ebfffb",
-  "zipSha256": "89ef8fe1ff62c0c776e79cb7d9066ccb5ce84ae23f607a02d4d94b5ce7dfbd42",
+  "checkedAt": "2026-10-19T22:21:47.480Z",
+  "sourceCommit": "98e9d66f6f255eea644fefa9075efb49f345aae9",
+  "zipSha256": "edac99a0f76f8e81b93d37bd93d1c61d90a6cb8fd5b274de2ccda3767b4c5d7d",
   "edition": "Packaged CrazyGames production build under /games/nightward/",
-  "method": "Actual UI interaction in the Codex in-app browser. Fresh local profile, read-only DOM geometry, no hidden-state injection. Rendering pixel ratio approximately 1.",
+  "method": "Actual UI interaction through the in-app browser, with read-only DOM geometry and paid simulation checkpoints for development encounter tests. No hidden-state injection.",
   "viewports": [
     {
       "battlefield": {
@@ -175,7 +175,7 @@
       "width": 390
     }
   ],
-  "inspectors": [
+  "inspectorChecks": [
     {
       "height": 740,
       "upgradeButtons": [
@@ -245,22 +245,29 @@
     "menuNavigation": true,
     "reducedMotionUi": true,
     "savedVolume": true,
-    "skippableTips": true
+    "skippableTips": true,
+    "paidGuidedPlacement": true,
+    "preparationPurchaseUndo": true,
+    "preparationUpgradeUndo": true,
+    "earnedShopReveal": true,
+    "finalRestoration": true
   },
   "flowScope": {
     "production": [
-      "One click spends 110 of 330 glow; wave 1 starts automatically and clears with 25 light / 322 glow",
-      "Twelve viewport layouts at the first counter lesson, not twelve campaign playthroughs",
-      "Hide tips persists after reload; saved defence reloads paused",
-      "Spark inspector leaves the canvas bounds unchanged; both upgrade actions fit four compact viewports",
-      "Music 60 to 25 percent and Reduced motion On persist after reload; defaults restored after verification",
-      "Title, continue and More ways to play navigation; new title art rendered without missing resources"
+      "Normal first placement spends 110 of 330 glow; automatic wave 1 reaches 25 light and 322 glow.",
+      "Twelve battlefield/main-control layouts measured after the final short-desktop CSS correction; these are not twelve campaign playthroughs.",
+      "Both upgrade choices fit 320x740, 390x844, 821x462 and 907x510. Opening an inspector leaves the canvas bounds unchanged.",
+      "Guided Chime preview pauses planning, shows actual shared water and charges 150 glow. Undo restores the original 322 glow and removes the purchase.",
+      "A 209-glow Spark specialisation leaves 113; preparation undo restores 322 and the base Spark. Combat rollback is separately denied by regression tests.",
+      "Saved active and prepared defences reopen paused. Hide tips, Music volume 25 percent and Reduced motion On survive reload. Original 60 percent music, motion and teaching settings restored.",
+      "Title, campaign, continue, Settings and More ways to play navigation exercised."
     ],
     "developmentPaidFixtures": [
-      "Wave 3: both signature benefits/costs inspected, Wildfire chosen",
-      "Wave 7: first boss forecast shows counter and actual 8-light cost",
-      "Wave 40: Stillwater used once, button disabled, victory observed with 3 light",
-      "Landscape and portrait 16-second gameplay captures; three model-based cover exports"
+      "Wave 3: inspected both signature trade-offs and chose Wildfire.",
+      "Played waves 4 and 5 from the paid checkpoint: 25 light, 465 glow and the first-shop reopening banner observed after wave 5 cleared.",
+      "Wave 7: the Mire Tyrant forecast shows the interrupt counter and actual 8-light breach cost.",
+      "Wave 40: activated Stillwater once; used button disabled. The final city-restoration banner and 40/40 victory with 3 light were observed.",
+      "Fresh landscape and portrait gameplay recordings from the paid final-encounter checkpoint; encoded as silent MP4 files and fully decoded."
     ]
   },
   "consoleErrors": [],
@@ -269,8 +276,10 @@
   "humanAudioListening": false,
   "hostedPublisherPreview": false,
   "notes": [
-    "Local browser routing initially showed an unrelated app in the old tab. Those views were excluded. Production evidence comes from a fresh tab at localhost:5193 with verified Nightward UI.",
-    "Browser tests were muted. Audio graph tests verify gain routing, priority ducking, restore, cue rate limits and background suspension. A listening session remains outstanding.",
-    "Development encounter fixtures are paid simulation snapshots, not fresh human playthroughs."
+    "The source was frozen for gameplay verification; subsequent code corrections only changed compact inspector layout and were rechecked in the final packaged build.",
+    "A failed local connection and an unrelated app returned through a loopback route were excluded. Verification used localhost with visibly confirmed Nightward content.",
+    "The final milestone was observed before its automatic expiry. Its Continue handler is implemented; no timed skip success is claimed from that observation.",
+    "Audio graph tests verify interrupt priority, ducking, restoration notes and mute/background safety. Human listening remains pending.",
+    "Existing covers are retained because the illustrated tower, boss and building models are unchanged. Their hashes and dimensions are revalidated."
   ]
 }

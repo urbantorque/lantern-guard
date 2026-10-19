@@ -1,0 +1,170 @@
+[
+  {
+    "battlefield": {
+      "height": 366,
+      "width": 907.3333740234376,
+      "x": 0,
+      "y": 48
+    },
+    "battlefieldFits": true,
+    "controlsFit": true,
+    "height": 510,
+    "noHorizontalOverflow": true,
+    "outside": [],
+    "width": 907
+  },
+  {
+    "battlefield": {
+      "height": 318,
+      "width": 821.3333740234375,
+      "x": 0,
+      "y": 48
+    },
+    "battlefieldFits": true,
+    "controlsFit": true,
+    "height": 462,
+    "noHorizontalOverflow": true,
+    "outside": [],
+    "width": 821
+  },
+  {
+    "battlefield": {
+      "height": 524,
+      "width": 1216,
+      "x": 0,
+      "y": 52
+    },
+    "battlefieldFits": true,
+    "controlsFit": true,
+    "height": 684,
+    "noHorizontalOverflow": true,
+    "outside": [],
+    "width": 1216
+  },
+  {
+    "battlefield": {
+      "height": 446,
+      "width": 1077.3333740234375,
+      "x": 0,
+      "y": 52
+    },
+    "battlefieldFits": true,
+    "controlsFit": true,
+    "height": 606,
+    "noHorizontalOverflow": true,
+    "outside": [],
+    "width": 1077
+  },
+  {
+    "battlefield": {
+      "height": 608,
+      "width": 1366,
+      "x": 0,
+      "y": 52
+    },
+    "battlefieldFits": true,
+    "controlsFit": true,
+    "height": 768,
+    "noHorizontalOverflow": true,
+    "outside": [],
+    "width": 1366
+  },
+  {
+    "battlefield": {
+      "height": 920,
+      "width": 1800,
+      "x": 60,
+      "y": 52
+    },
+    "battlefieldFits": true,
+    "controlsFit": true,
+    "height": 1080,
+    "noHorizontalOverflow": true,
+    "outside": [],
+    "width": 1920
+  },
+  {
+    "battlefield": {
+      "height": 704,
+      "width": 1536,
+      "x": 0,
+      "y": 52
+    },
+    "battlefieldFits": true,
+    "controlsFit": true,
+    "height": 864,
+    "noHorizontalOverflow": true,
+    "outside": [],
+    "width": 1536
+  },
+  {
+    "battlefield": {
+      "height": 560,
+      "width": 1280,
+      "x": 0,
+      "y": 52
+    },
+    "battlefieldFits": true,
+    "controlsFit": true,
+    "height": 720,
+    "noHorizontalOverflow": true,
+    "outside": [],
+    "width": 1280
+  },
+  {
+    "battlefield": {
+      "height": 306,
+      "width": 800,
+      "x": 0,
+      "y": 48
+    },
+    "battlefieldFits": true,
+    "controlsFit": true,
+    "height": 450,
+    "noHorizontalOverflow": true,
+    "outside": [],
+    "width": 800
+  },
+  {
+    "battlefield": {
+      "height": 447.3333435058594,
+      "width": 1080,
+      "x": 0,
+      "y": 52
+    },
+    "battlefieldFits": true,
+    "controlsFit": true,
+    "height": 607,
+    "noHorizontalOverflow": true,
+    "outside": [],
+    "width": 1080
+  },
+  {
+    "battlefield": {
+      "height": 546,
+      "width": 320,
+      "x": 0,
+      "y": 52
+    },
+    "battlefieldFits": true,
+    "controlsFit": true,
+    "height": 740,
+    "noHorizontalOverflow": true,
+    "outside": [],
+    "width": 320
+  },
+  {
+    "battlefield": {
+      "height": 650,
+      "width": 390,
+      "x": 0,
+      "y": 52
+    },
+    "battlefieldFits": true,
+    "controlsFit": true,
+    "height": 844,
+    "noHorizontalOverflow": true,
+    "outside": [],
+    "width": 390
+  }
+]
