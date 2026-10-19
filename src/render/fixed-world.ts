@@ -89,9 +89,11 @@ export function drawFixedWorld(c:CanvasRenderingContext2D,s:Sim,view:ViewState,s
       let drawing=false;c.beginPath()
       for(let at=0;at<=seg.line.length;at+=5){const p=seg.line.at(at,{x:0,y:0,tx:0,ty:0}),covered=Math.hypot(p.x-ghost.x,p.y-ghost.y)<=reach;if(covered){if(drawing)c.lineTo(p.x,p.y);else c.moveTo(p.x,p.y)}drawing=covered}c.stroke()
     }
+    if(view.teaching)for(const attack of s.towers)if(attack.stats.damage>0||attack.stats.slow>0)sharedWater(c,s,ghost,attack)
     const partner=s.previewBond(ghost.pad,ghost.id);if(partner){if(s.challenge.watchTactics)sharedWater(c,s,ghost,partner);c.lineWidth=2;c.setLineDash([5,5]);c.beginPath();c.moveTo(ghost.x,ghost.y);c.lineTo(partner.x,partner.y);c.stroke();c.setLineDash([])}
     c.globalAlpha=.7;upright(c,ghost.x,ghost.y,wide,()=>drawFixedTower(c,ghost.x,ghost.y,{id:ghost.id,a:0,b:0,hero:s.challenge.hero,time:0,age:9,since:9,reducedMotion:true}));c.restore()
   }
+  if(s.challenge.siege===2&&s.wave===1&&s.waveActive&&s.time<5&&s.towers[0])sharedWater(c,s,s.towers[0],s.towers[0])
   if(selected){c.fillStyle='#d1f9e016';c.strokeStyle=s.sky.night?'#a5e8caaf':'#315f76aa';c.lineWidth=1.5;c.beginPath();c.arc(selected.x,selected.y,s.effRange(selected),0,Math.PI*2);c.fill();c.stroke()
     const nightReach=s.nightRange(selected)
     if(!s.sky.night&&Math.abs(nightReach-s.effRange(selected))>3){c.save();c.strokeStyle='#9870ad';c.setLineDash([5,5]);c.beginPath();c.arc(selected.x,selected.y,nightReach,0,Math.PI*2);c.stroke();c.restore()}
@@ -123,7 +125,9 @@ export function drawFixedWorld(c:CanvasRenderingContext2D,s:Sim,view:ViewState,s
       if(a.fire!==t.fireT){a.fire=t.fireT;a.shot=time}
       const turn=Math.atan2(Math.sin(t.angle-a.angle),Math.cos(t.angle-a.angle));a.angle+=turn*Math.min(1,(time-a.frame)*18);a.frame=time
       if(s.waveActive&&(held===t||s.mastery?.surge?.tower===t.uid&&['held','release'].includes(s.mastery.surge.phase))){upright(c,t.x,t.y,wide,()=>{c.save();const y=t.y-70,col=s.challenge.hero==='sol'?'#ffd196':'#b9f5ff';lightPool(c,t.x,y,33,col,.5,1);c.strokeStyle=col;c.lineWidth=2;c.beginPath();c.ellipse(t.x,y,23,9,reducedMotion?0:Math.sin(time)*.2,0,Math.PI*2);c.stroke();c.restore()})}
-      upright(c,t.x,t.y,wide,()=>drawFixedTower(c,t.x,t.y,{...t,angle:boardAngle(reducedMotion?t.angle:a.angle,wide),crest,hero:s.challenge.hero,mastery:keepsakes,firing:t.id==='beam'&&t.beamTargets.some(e=>e?.alive),volleyCharge:s.challenge.refinedWatch&&t.id==='storm'&&s.techniques.includes('capacitor')?t.tolls%3:undefined,charge:1-Math.max(0,t.cd)/t.stats.interval,time:reducedMotion?0:time,since:reducedMotion?9:time-a.shot,age:reducedMotion?9:time-a.born,upAge:reducedMotion?9:time-a.upgrade,reducedMotion}))
+      const obstructs=s.waveActive&&selected!==t&&s.enemies.some(e=>e.alive&&Math.hypot(e.x-t.x,e.y-t.y)<(e.def.boss?110:55))
+      c.save();if(obstructs)c.globalAlpha=.48
+      upright(c,t.x,t.y,wide,()=>drawFixedTower(c,t.x,t.y,{...t,angle:boardAngle(reducedMotion?t.angle:a.angle,wide),crest,hero:s.challenge.hero,mastery:keepsakes,firing:t.id==='beam'&&t.beamTargets.some(e=>e?.alive),volleyCharge:s.challenge.refinedWatch&&t.id==='storm'&&s.techniques.includes('capacitor')?t.tolls%3:undefined,charge:1-Math.max(0,t.cd)/t.stats.interval,time:reducedMotion?0:time,since:reducedMotion?9:time-a.shot,age:reducedMotion?9:time-a.born,upAge:reducedMotion?9:time-a.upgrade,reducedMotion}));c.restore()
     }else if(item.e){const e=item.e;
       if((e.exposedT??0)>0){c.save();c.strokeStyle='#ffdf91';c.lineWidth=2.5;for(let i=0;i<3;i++){c.beginPath();c.arc(e.x,e.y,e.def.radius+10,i*Math.PI*2/3,i*Math.PI*2/3+1.25);c.stroke()}c.restore()}
       if(escortCover(s,e)){c.save();c.strokeStyle='#ffdda5aa';c.lineWidth=2.5;c.beginPath();c.arc(e.x,e.y,25,-Math.PI*.8,Math.PI*.1);c.stroke();c.restore()}

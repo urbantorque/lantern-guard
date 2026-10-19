@@ -132,7 +132,7 @@ export class Sound {
       this.rates.set(key, r)
     }
     if (now - r.last > 1 / maxPerSec) {
-      const priority=/^(encounter|boss|leak|tap|deny|command)/.test(key)
+      const priority=/^(encounter|boss|leak|tap|deny|command|tactic-interrupt|restoration)/.test(key)
       if(!this.mix.admit(now,priority))return false
       this.cueVoice=priority
       r.last = now
@@ -199,6 +199,16 @@ export class Sound {
     this.noise(0.025, 'highpass', 3500, 0.7, 0.05)
   }
 
+  restoration(wave:number){
+    if(!this.ok('restoration',.2))return
+    this.focus(2.2)
+    const root=wave===40?50:62
+    for(const [i,n] of [0,7,12,16].entries()){
+      this.tone(mtof(root+n),'sine',.025,.8,.095/(1+i*.2),undefined,i*.16)
+      this.tone(mtof(root+n)*2,'sine',.008,.32,.022,undefined,i*.16)
+    }
+  }
+
   clink() {
     if (!this.ok('clink', 10)) return
     this.tone(2400 + Math.random() * 300, 'triangle', 0.001, 0.07, 0.07)
@@ -227,6 +237,7 @@ export class Sound {
   /** Sparse tactical cues stay legible over crowds and never use the boss roar. */
   tactic(kind:'ignite'|'spread'|'interrupt'|'charged'|'push'|'sun'){
     if(!this.ok('tactic-'+kind,kind==='interrupt'?2:3))return
+    if(kind==='interrupt')this.focus(.65)
     const note={ignite:50,spread:74,interrupt:81,charged:57,push:62,sun:69}[kind],freq=mtof(note)
     if(kind==='interrupt'||kind==='sun'){this.tone(freq,'sine',.01,.45,.12);this.tone(freq*1.5,'sine',.015,.35,.045,undefined,.07)}
     else if(kind==='ignite'||kind==='charged'){const {o,t}=this.tone(freq,'triangle',.008,.2,.13);o.frequency.exponentialRampToValueAtTime(freq*.5,t+.18);this.noise(.06,'bandpass',kind==='ignite'?800:2200,.7,.045)}

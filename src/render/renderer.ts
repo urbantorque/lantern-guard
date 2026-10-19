@@ -1,3 +1,4 @@
+import {drawRestoration} from './restoration'
 import { drawSettlement } from './settlement'
 import { platformHaptic } from '../core/platform'
 import { spring, TAU, vrand } from '../core/math'
@@ -29,6 +30,8 @@ export type Selection =
 export type MapZone = 'canal' | 'harbour' | 'gardens' | 'overview'
 
 export interface ViewState {
+  teaching?:boolean
+  restoration?:{wave:number;progress:number}|null
   moving?: { tower: Tower; destination: number | null; fromZone: MapZone }
   feedbackRoute?: string
   routeDir?: 0 | 1
@@ -837,6 +840,7 @@ export class Renderer {
       if(!this.settings.reduceMotion){c.save();c.globalCompositeOperation='screen';this.fx.drawGlow(c,true);c.restore()}
       // Decisions remain visible over explosions, beam trails and weather.
       drawSecondWatch(c,sim,this.time,this.settings.reduceMotion,this.fixedLandscape,true,this.scale)
+      if(view.restoration)drawRestoration(c,sim,view.restoration.wave,view.restoration.progress,this.fixedLandscape,this.scale,this.settings.reduceMotion)
       sound.beam(view.paused||sim.over?0:sim.beamIntensity)
       return
     }

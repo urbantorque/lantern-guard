@@ -1,3 +1,4 @@
+import {earnedRestoration} from '../game/restoration'
 import {secondWatch} from '../game/second-watch'
 import { paintCanalLandscape, groveCanopies } from './canal-art'
 import { districtStyle } from './district-style'
@@ -23,7 +24,7 @@ export function districtGradient(c:CanvasRenderingContext2D,s:Sim,x=0,y=-105,w=7
 
 /** Paint once per district/lighting change; keep the playable centre free of decoration. */
 export function scenery(s:Sim,stage:number,keepsakes:readonly string[],wide=false){
-  const day=!s.sky.night,chapter=Math.min(4,Math.floor(Math.max(0,s.wave-1)/8)),key=stage+':'+chapter+':'+keepsakes.join(',')+':'+day+':'+wide+':'+firstShopOpen(s),old=terrain.get(s.level)
+  const day=!s.sky.night,chapter=Math.min(4,Math.floor(Math.max(0,s.wave-1)/8)),key=stage+':'+chapter+':'+keepsakes.join(',')+':'+day+':'+wide+':'+firstShopOpen(s)+':'+['market','observatory','gardens'].map(id=>earnedRestoration(s,id as 'market'|'observatory'|'gardens')).join(','),old=terrain.get(s.level)
   if(old?.key===key)return old.canvas
   const canvas=document.createElement('canvas');canvas.width=1840;canvas.height=2140
   const c=canvas.getContext('2d')!;c.scale(2,2);c.translate(50,140);setArchitectureLight(c,day)
@@ -48,14 +49,14 @@ export function livingDistrict(c:CanvasRenderingContext2D,s:Sim,time:number,redu
   if(s.challenge.watchExperience){
     const homes=districtLayout(s).filter(p=>p.kind==='house'),ids=['market','observatory','gardens'] as const
     for(const [i,p] of homes.entries()){
-      const id=ids[i%3],restored=keepsakes.some(k=>k.startsWith('project:'+id+':')),celebrating=s.won,reopened=i===0&&firstShopOpen(s)
+      const id=ids[i%3],restored=earnedRestoration(s,id)>=2||keepsakes.some(k=>k.startsWith('project:'+id+':')),celebrating=s.won,reopened=i===0&&firstShopOpen(s)
       if(!restored&&!celebrating&&!reopened)continue
       const {x,y}=p
       upright(c,x,y,wide,()=>{
         c.save();lightPool(c,x,y,restored?45:25,'#ffe5ac',s.sky.night||celebrating?.6:.18)
         if(restored){c.save();c.translate(x,y);c.scale(.96,.96);projectDetails(c,0,0,id,time,reduced);c.restore()}
         // Residents stay on reserved plazas, never over water or tower plots.
-        if(!s.waveActive||celebrating)for(let j=0;j<2;j++){const dx=x-10+j*20+(reduced?0:Math.sin(time*.7+i+j)*3),dy=y+18;c.fillStyle='#ffe2ae';c.beginPath();c.arc(dx,dy-6,2.5,0,Math.PI*2);c.fill();c.fillStyle=j?'#a2dace':'#cf9398';c.fillRect(dx-2,dy-3,4,6)}
+        if(!s.waveActive||celebrating)for(let j=0;j<(restored?4:2);j++){const dx=x-10+j*20+(reduced?0:Math.sin(time*.7+i+j)*3),dy=y+18;c.fillStyle='#ffe2ae';c.beginPath();c.arc(dx,dy-6,2.5,0,Math.PI*2);c.fill();c.fillStyle=j?'#a2dace':'#cf9398';c.fillRect(dx-2,dy-3,4,6)}
         c.restore()
       })
     }

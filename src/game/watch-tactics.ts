@@ -60,7 +60,7 @@ export function breachDetail(s:Sim,e:Enemy):BreachDetail {
 export function breachAdvice(leak:LeakReport):string {
   const d=leak.detail
   if(!d)return ''
-  return ({hidden:'It reached the lantern unseen. Extend Scout sight across the lower damage towers.',armour:`It still carried ${Math.ceil(d.shell)} armour. Add heavy damage or a Chime–Blast Bond before the last bend.`,runaway:'Its armour had broken, but the marked bend had no slowing tower. Put a Chime beside the finishing damage.',coverage:'The marked bend had no damage tower in reach. Add a finishing tower there or extend its night reach.',pressure:`It reached the lantern with ${Math.ceil(d.hp)} health. ${d.controlTowers?'Control covered the marked bend; strengthen its finishing damage.':'Add a slow over the marked bend to buy the finishing towers another volley.'}`} as const)[d.cause]
+  return ({hidden:'It reached the lantern unseen. Extend Scout sight across the lower damage towers.',armour:`It still carried ${Math.ceil(d.shell)} armour. Add heavy damage or a Chime–Blast Bond before the last bend.`,runaway:'Its armour had broken, but the marked bend had no slowing tower. Put a Chime beside the finishing damage.',coverage:'The marked bend had no damage tower in reach. Add finishing damage there, or move a tower so its range covers that water.',pressure:`It reached the lantern with ${Math.ceil(d.hp)} health. ${d.controlTowers?'Control covered the marked bend; strengthen its finishing damage.':'Add a slow over the marked bend to buy the finishing towers another volley.'}`} as const)[d.cause]
 }
 
 /** A checkpoint from another seed, mode, hero or wave must never become a rehearsal. */

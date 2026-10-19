@@ -1,3 +1,5 @@
+import {waveDiagnosis} from './wave-diagnosis'
+import {teachingPlot} from './watch-learning'
 import type {Sim} from './sim'
 import {ENEMIES,type EnemyId,type TowerId} from './defs'
 import {siegeHeld,SIEGE_ACTS} from './siege'
@@ -29,15 +31,19 @@ export function threatPlan(s:Sim,wave=s.planningWave):{title:string;text:string;
  return {title:'Hold the firing line',text:'Cover a long bend, then strengthen the water nearest the lantern.',tower:'wick'}
 }
 
-export function recoveryPlan(s:Sim,leak=s.lastLeak){
+export function recoveryPlan(s:Sim,leak=s.lastLeak,evidence=s){
  if(!leak)return null
- const cause=leak.detail?.cause??(leak.hidden?'hidden':leak.armoured?'armour':'pressure')
- const boss=ENEMIES[leak.enemy].boss?threatPlan(s,leak.wave):null
+ const diagnosis=waveDiagnosis(evidence,leak.wave)
+ const cause=diagnosis?.cause??leak.detail?.cause??(leak.hidden?'hidden':leak.armoured?'armour':'pressure')
+ const enemy=diagnosis?.enemy??leak.enemy
+ const boss=ENEMIES[enemy].boss?threatPlan(evidence,leak.wave):null
  const tower:TowerId=boss?.tower??(cause==='hidden'?'owl':cause==='armour'?'cracker':cause==='runaway'?'bell':'wick')
- const action={hidden:'Add Scout sight over your finishing towers.',armour:'Add or specialise a Blast on the final bend.',runaway:'Overlap a Chime with your finishing damage.',coverage:'Add damage over the final bend.',pressure:'Specialise your finishing damage and save the command for the crowded front.'}[cause]
+ const action={hidden:'Add Scout sight over your damage towers.',armour:'Overlap a Blast with your slowing towers.',runaway:'Overlap a Chime with your finishing damage.',coverage:'Extend your damage coverage through a shared bend.',pressure:'Strengthen shared damage and save the command for the crowded front.'}[cause]
  const point=leak.detail?{x:leak.detail.x,y:leak.detail.y}:s.level.def.home
- const plots=s.pads.map((p,index)=>({index,distance:Math.hypot(p.x-point.x,p.y-point.y)})).filter(p=>s.padAvailable(p.index)&&!s.pads[p.index].tower).sort((a,b)=>a.distance-b.distance)
- return {tower,role:ROLE_NAMES[tower],text:boss?.text??action,point,plot:plots[0]?.index,cause}
+ const available=s.keeperAllowed(tower),cost=s.towerCost(tower),candidate=available?teachingPlot(s,tower):null
+ const canBuy=available&&cost<=s.glow&&!!candidate
+ const budget=!available?`${ROLE_NAMES[tower]} opens at wave ${s.keeperWave(tower)}. Reposition existing damage for now.`:!candidate?'All available plots are occupied. Inspect an existing tower to move or specialise it.':cost>s.glow?`${ROLE_NAMES[tower]} costs ${cost}; you have ${Math.floor(s.glow)}. Move existing coverage or undo a preparation purchase first.`:`${ROLE_NAMES[tower]} costs ${cost}; ${Math.floor(s.glow-cost)} glow remains.`
+ return {tower,role:ROLE_NAMES[tower],text:boss?.text??action,point,plot:canBuy?candidate!.index:undefined,cause,canBuy,budget,diagnosis}
 }
 
 export function campaignMilestone(s:Sim){

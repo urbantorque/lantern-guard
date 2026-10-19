@@ -1,3 +1,6 @@
+import {RESTORATIONS} from './game/restoration'
+import {bossReadout} from './game/boss-readout'
+import {PreparationHistory,teachingPlot,reserveWarning} from './game/watch-learning'
 import {audioLevels,type AudioLevels} from './core/audio-levels'
 import {advanceWatchFrame} from './game/frame-clock'
 import {lessonCard,threatCard,recoveryCard} from './ui/watch-coach'
@@ -21,7 +24,7 @@ import { TACTICS_RULES, bondHelp, crownTechnique, breachAdvice, matchingCheckpoi
 import { REFINEMENT_RULES, restorationLimit, HERO_BUILDS } from './game/watch-refinement'
 import { LIVING_RULES, currentWeek, weeklyWatch, livingTechnique, MASTERY, nextMastery } from './game/living-watch'
 import { BESTIARY, enemyName, bestiaryText } from './game/bestiary'
-import { TECHNIQUES, CRAFT_RULES, techniqueOffers, towerObstacle, dredgerOpen, type TechniqueId } from './game/watch-craft'
+import { TECHNIQUES, CRAFT_RULES, techniqueOffers, towerObstacle, type TechniqueId } from './game/watch-craft'
 import { PROJECTS, PROJECT_STEPS, projectStage, projectNext, projectProgress, districtKeepsakes } from './game/district-projects'
 import { districtPanorama } from './render/district-projects'
 import { watchLesson, watchInsights } from './game/watch-guidance'
@@ -41,7 +44,6 @@ import { sound, profileSound } from './core/audio'
 import { watchAppState } from './core/platform'
 import { crazyGamesBuild } from './core/portal'
 import { upgradeBenefits, STREAM_ROLES, streamChoice } from './game/fixed-copy'
-import { wardenEscorts } from './game/harbour'
 import { WATCH_TEMPO, waveCountdown } from './game/watch-tempo'
 import { DEPTH_RULES, EXPEDITIONS, EXPEDITION_UNLOCK, expeditionBonus, featuredExpedition, isExpedition, hasSunReserve, landmark, SUN_HELP } from './game/watch-depth'
 import { setPalette } from './render/palette'
@@ -99,9 +101,12 @@ export class FixedApp {
   private projectNoticeLeft=0
   private retrySuggestion:ReturnType<typeof recoveryPlan>=null
   private witnessed=new Set<string>()
+  private preparationHistory=new PreparationHistory()
+  private coachPreview=false
+  private restoration:{wave:number;left:number;duration:number}|null=null
   private rehearsal:{original:SaveSnapshotV2;blooms:number[];checkpoint:SaveSnapshotV2;finished:boolean}|null=null
 
-  private get preparing(){const s=this.sim;return !!s&&!s.waveActive&&!s.over&&(passagePending(s)||!!this.rehearsal?.finished||this.preparedWave!==s.wave+1&&(!!this.rehearsal||!!preparationBeat(s.challenge,s.wave+1)))}
+  private get preparing(){const s=this.sim;return !!s&&!s.waveActive&&!s.over&&(!!this.restoration||passagePending(s)||!!this.rehearsal?.finished||this.preparedWave!==s.wave+1&&(!!this.rehearsal||!!preparationBeat(s.challenge,s.wave+1)))}
   private get paused(){return battlePaused(this.planning,this.drawer)}
   private get portalOpening(){return crazyGamesBuild&&!!this.sim?.challenge.siege&&this.sim.wave===0&&!this.sim.waveActive&&!this.sim.over}
 
@@ -257,8 +262,8 @@ export class FixedApp {
     this.rehearsal=null
     if(!sim.isChallenge)this.endurance=!!sim.challenge.endurance
     document.body.classList.add('playing')
-    this.sim=sim;if(sim.challenge.hero)this.hero=sim.challenge.hero;this.map=sim.challenge.variant??0;this.difficulty=sim.difficulty;this.selection=null;this.moving=null;this.accumulator=0;this.endShown=false;this.drawer='';this.recap='';this.lastHUD='';this.nextWaveIn=null;this.buildGhost=null;this.preparedWave=0;this.celebrationLeft=0;this.celebrationSeen=false;this.projectNotice='';this.projectNoticeLeft=0;this.moment='';this.momentUntil=0;this.witnessed.clear();this.retrySuggestion=null
-    $('app').innerHTML=`<main class="game"><header class="hud"><div class="stat">${icon('heart')}<b id="light"></b><span>Light</span></div><div class="stat">${icon('sparkle')}<b id="glow"></b><span>Glow</span></div><div class="wave-stat" id="wave"></div>${button('menu',icon('gear')+'<span class="sr-only">Watch menu</span>','icon-button')}</header><section id="battlefield" class="battlefield" aria-label="Battlefield"><canvas id="canvas" aria-label="Fixed paths through the district"></canvas><div id="plots" aria-label="Tower plots"></div><button id="sky" class="sky-strip" data-action="sky"></button><div id="board-status" class="board-status"></div><div id="lantern-watch" class="lantern-watch" hidden aria-live="polite"></div><div id="prepare-watch" class="prepare-watch" hidden></div><div id="district-notice" class="district-notice" role="status" hidden></div><aside id="watch-lesson" class="watch-lesson" aria-label="Teaching tip" hidden></aside><div id="campaign-goal" class="campaign-goal" hidden></div><div id="boss-status" class="boss-status" hidden></div><div id="battle-moment" class="battle-moment" role="status" hidden></div><div class="map-caption"><span id="map-name">${WATCH_NAMES[this.map]}${sim.challenge.hero?" · "+HEROES[sim.challenge.hero].name:""}</span><span id="act"></span></div></section><footer class="playbar"><div class="wave-brief"><button data-action="forecast" class="forecast-button" id="forecast"></button><span id="wave-recap" class="wave-recap"></span><button id="breach-review" data-action="breach-review" class="text-button breach-review" hidden>Review the breach</button></div><button id="technique-offer" data-action="techniques" class="technique-offer" hidden>Choose a technique</button><div id="command-controls" class="command-controls"><span id="command-readout" class="command-readout"></span><button id="command-aim" data-action="command-aim" class="command-aim" hidden>Choose target</button><button id="surge-command" data-action="surge" class="surge-command" hidden></button><button id="command-discard" data-action="command-cancel" class="command-discard" aria-label="Discard banked command and resume automatic fire" hidden>${icon('close')}</button></div><div class="watch-flow"><span id="flow-label"></span><div id="wave-progress" class="wave-progress" role="progressbar" aria-label="Wave cleared" aria-valuemin="0" aria-valuemax="100"><i></i></div></div></footer></main><div id="modal-root"></div><div id="live" class="sr-only" aria-live="polite"></div><p id="save-warning" role="status"></p>`
+    this.preparationHistory=new PreparationHistory();this.coachPreview=false;this.restoration=null;this.sim=sim;if(sim.challenge.hero)this.hero=sim.challenge.hero;this.map=sim.challenge.variant??0;this.difficulty=sim.difficulty;this.selection=null;this.moving=null;this.accumulator=0;this.endShown=false;this.drawer='';this.recap='';this.lastHUD='';this.nextWaveIn=null;this.buildGhost=null;this.preparedWave=0;this.celebrationLeft=0;this.celebrationSeen=false;this.projectNotice='';this.projectNoticeLeft=0;this.moment='';this.momentUntil=0;this.witnessed.clear();this.retrySuggestion=null
+    $('app').innerHTML=`<main class="game"><header class="hud"><div class="stat">${icon('heart')}<b id="light"></b><span>Light</span></div><div class="stat">${icon('sparkle')}<b id="glow"></b><span>Glow</span></div><div class="wave-stat" id="wave"></div>${button('menu',icon('gear')+'<span class="sr-only">Watch menu</span>','icon-button')}</header><section id="battlefield" class="battlefield" aria-label="Battlefield"><canvas id="canvas" aria-label="Fixed paths through the district"></canvas><div id="plots" aria-label="Tower plots"></div><button id="sky" class="sky-strip" data-action="sky"></button><div id="board-status" class="board-status"></div><button id="preparation-undo" class="preparation-undo" data-action="undo-preparation" hidden>Undo last change</button><div id="lantern-watch" class="lantern-watch" hidden aria-live="polite"></div><div id="prepare-watch" class="prepare-watch" hidden></div><aside id="restoration-reveal" class="restoration-reveal" hidden></aside><div id="district-notice" class="district-notice" role="status" hidden></div><aside id="watch-lesson" class="watch-lesson" aria-label="Teaching tip" hidden></aside><div id="campaign-goal" class="campaign-goal" hidden></div><div id="boss-status" class="boss-status" hidden></div><div id="battle-moment" class="battle-moment" role="status" hidden></div><div class="map-caption"><span id="map-name">${WATCH_NAMES[this.map]}${sim.challenge.hero?" · "+HEROES[sim.challenge.hero].name:""}</span><span id="act"></span></div></section><footer class="playbar"><div class="wave-brief"><button data-action="forecast" class="forecast-button" id="forecast"></button><span id="wave-recap" class="wave-recap"></span><button id="breach-review" data-action="breach-review" class="text-button breach-review" hidden>Review the breach</button></div><button id="technique-offer" data-action="techniques" class="technique-offer" hidden>Choose a technique</button><div id="command-controls" class="command-controls"><span id="command-readout" class="command-readout"></span><button id="command-aim" data-action="command-aim" class="command-aim" hidden>Choose target</button><button id="surge-command" data-action="surge" class="surge-command" hidden></button><button id="command-discard" data-action="command-cancel" class="command-discard" aria-label="Discard banked command and resume automatic fire" hidden>${icon('close')}</button></div><div class="watch-flow"><span id="flow-label"></span><div id="wave-progress" class="wave-progress" role="progressbar" aria-label="Wave cleared" aria-valuemin="0" aria-valuemax="100"><i></i></div></div></footer></main><div id="modal-root"></div><div id="live" class="sr-only" aria-live="polite"></div><p id="save-warning" role="status"></p>`
     this.renderer=new Renderer($<HTMLCanvasElement>('canvas')); this.renderer.attach(sim);if(blooms.length)this.renderer.importBlooms(blooms)
     document.querySelector('.hud .icon-button')?.insertAdjacentHTML('beforebegin','<button id="pause-toggle" data-action="pause" class="icon-button pause-toggle" aria-label="Pause to plan">'+icon('pause')+'</button>')
     $('battlefield').insertAdjacentHTML('beforeend','<div id="pause-status" class="pause-status" role="status" hidden>Paused · plan your defence</div>')
@@ -306,6 +311,7 @@ export class FixedApp {
     const s=this.sim;if(!s||!$('light'))return
     const pause=$('pause-toggle');pause.innerHTML=icon(this.paused?'play':'pause');pause.setAttribute('aria-label',this.paused?'Resume defence':'Pause to plan');pause.setAttribute('aria-pressed',String(this.paused));(pause as HTMLButtonElement).disabled=!!s.over
     $('pause-status').hidden=!this.paused||!!s.over;$('pause-status').textContent=this.planning?'Paused · plan your defence':'Paused · close to continue'
+    $('preparation-undo').hidden=s.waveActive||!!s.over||!this.preparationHistory.size||!!this.drawer
     $('light').textContent=String(s.lives);$('glow').textContent=String(Math.floor(s.glow))
     const audio=$('sound-toggle');if(audio){audio.innerHTML=icon(sound.settings.muted?'speakerOff':'speaker')+`<span>Sound ${sound.settings.muted?'off':'on'}</span>`;audio.setAttribute('aria-label',this.sessionMuted?'Sound muted for this playtest':this.profile.settings.muted?'Turn sound on':'Turn sound off');audio.setAttribute('aria-pressed',String(!sound.settings.muted));(audio as HTMLButtonElement).disabled=this.sessionMuted}
     const sky=s.sky
@@ -362,11 +368,11 @@ export class FixedApp {
     $('wave-progress').style.setProperty('--wave-progress',progress+'%')
     const boss=s.enemies.find(e=>e.alive&&e.def.boss),bossStatus=$('boss-status')
     bossStatus.hidden=!boss
-    if(boss){const health=Math.max(0,Math.round(100*boss.hp/boss.maxHp)),phase=(boss.exposedT??0)>0?`Opening: heavy hits +20% · ${Math.ceil(boss.exposedT!)}s`:boss.def.id==='dredger'?(dredgerOpen(boss)?'Core exposed: +40% damage':'Armour closed: 60% damage'):s.challenge.watchDepth?(boss.def.id==='warden'?(boss.phase===0?'Escorts at 70%':boss.phase===1?'Escorts incoming':boss.phase>=3?'Surging':wardenEscorts(s,boss).length?'Clear escorts':'Shield down'):boss.def.id==='gloom'&&boss.shrouded?'Splits at the stone':boss.def.id==='bloomheart'&&(boss.signalT??0)>0?secondWatch(s.challenge)?`Healing · break tether or interrupt · ${boss.signalT!.toFixed(1)}s`:s.challenge.livingWatch?'Healing: stun to interrupt':'Healing pulse incoming':boss.def.id==='toad'&&boss.phase===0?'Escort at half health':boss.def.id==='toad'&&(boss.signalT??0)>0?(s.challenge.watchTactics?'Brood call: stun to interrupt':'Escort incoming'):''):'';bossStatus.innerHTML=`<span>${boss.def.name}${phase?` · ${phase}`:''}</span><b>${health}%</b><i style="width:${health}%"></i>`;bossStatus.setAttribute('aria-label',`${boss.def.name}: ${health}% health. ${phase}`)}
+    if(boss){const health=Math.max(0,Math.round(100*boss.hp/boss.maxHp)),read=bossReadout(s,boss);bossStatus.innerHTML=`<span><b>${read.label}</b> · ${read.help}</span><strong>${health}%</strong><i style="width:${health}%;background:${read.colour}"></i>`;bossStatus.setAttribute('aria-label',`${boss.def.name}: ${health}% health. ${read.label}. ${read.help}`)}
     const previewWave=forecastWave(s,s.waveActive),preview=s.waveDef(previewWave),groups=preview.groups
     const unique=[...new Set(groups.map(g=>g.type))]
     $('forecast').innerHTML=`<span class="eyebrow">${s.over?'Watch complete':s.wave===s.finalWave?'Final wave':`${s.waveActive?'Now':'Next'} · Wave ${previewWave-s.waveOffset}`} ${icon('caretRight')}</span><b>${bestiaryText(preview.encounter??unique.slice(0,3).map(e=>enemyName(e)).join(' · '))}${!preview.encounter&&unique.length>3?' +'+(unique.length-3):''}</b>`
-    $('board-status').textContent=this.moving!==null?'Choose an empty plot · 25 glow':!s.towers.length?(s.wave===s.waveOffset?'Tap a + to build your first tower':'Build a tower to guard the water'):''
+    $('board-status').textContent=this.moving!==null?'Choose an empty plot · '+(s.relocationCost()===0?'first move free':s.relocationCost()+' glow'):!s.towers.length?(s.wave===s.waveOffset?'Tap a + to build your first tower':'Build a tower to guard the water'):''
     $('wave-recap').textContent=!s.waveActive?this.recap:''
     const phase=$('sky-panel-phase');if(phase)phase.textContent=`${sky.night?'Dawn':'Nightfall'} in ${clockText(sky.phaseLeft/WATCH_TEMPO)}`
     const weather=$('sky-panel-weather');if(weather)weather.textContent=WEATHER[sky.weather].name
@@ -379,10 +385,13 @@ export class FixedApp {
     document.querySelectorAll('.sky-cycle>div').forEach((e,i)=>e.classList.toggle('current',i===Number(sky.night)))
     const offer=$('technique-offer');if(offer){offer.hidden=!!s.over||!techniqueOffers(s).length||this.preparing;offer.textContent=s.director?'Choose signature':`Choose technique ${s.techniques.length+1}/2`}
     const lesson=watchLesson(s,this.profile.lessons),hint=$('watch-lesson');document.querySelector('[data-action="plot:0"]')?.classList.toggle('teaching',lesson?.id==='refined-place'||lesson?.id==='story-place'||lesson?.id==='siege2-place');if(hint){hint.hidden=!lesson||!!this.drawer||!!boss||this.portalOpening;if(lesson&&hint.dataset.lesson!==lesson.id){hint.innerHTML=lessonCard(s,lesson);hint.dataset.lesson=lesson.id}}
+    const reveal=$('restoration-reveal');reveal.hidden=!this.restoration||!!this.drawer;if(this.restoration){const beat=RESTORATIONS[this.restoration.wave];reveal.innerHTML=`<div><b>${beat.title}</b><p>${beat.detail}</p></div>${button('restoration-skip','Continue','secondary')}`}
     const milestone=campaignMilestone(s),goal=$('campaign-goal');goal.hidden=!milestone||!!this.drawer||!!boss||!hint.hidden;if(milestone)goal.textContent=milestone.label
-    if(this.retrySuggestion&&!s.waveActive){const advice=this.retrySuggestion;document.querySelectorAll('.plot-hit').forEach(p=>p.classList.toggle('recovery-target',p.getAttribute('data-action')==='plot:'+advice.plot));$('board-status').textContent=advice.text}
+    if(this.retrySuggestion&&!s.waveActive){const advice=this.retrySuggestion;document.querySelectorAll('.plot-hit').forEach(p=>p.classList.toggle('recovery-target',p.getAttribute('data-action')==='plot:'+advice.plot));$('board-status').textContent=advice.canBuy?`Suggested ${advice.role}: select the marked plot.`:advice.budget}
     const obstacle=$('tower-obstacle');if(obstacle&&this.selection?.kind==='tower'){obstacle.textContent=towerObstacle(s,this.selection.tower);obstacle.hidden=!obstacle.textContent}
     const prep=$('prepare-watch');prep.hidden=!this.preparing||!!this.drawer;if(this.preparing)prep.innerHTML=passagePending(s)?'<b>Choose your passage</b><p>Shape the next three waves around your defence.</p>'+button('passages','Inspect both routes','primary'):techniqueOffers(s).length?'<b>Choose your signature</b><p>Shape your defence before wave '+(s.wave+1)+'.</p>'+button('techniques','Choose signature','primary'):this.rehearsal?.finished?'<b>Practice complete</b>'+button('practice-report','Review practice','primary'):'<b>'+(this.rehearsal?'Practice · adjust for wave ':s.challenge.siege&&siegeBoundary(s.wave)?siegeAct(s.wave+1).name+' · Wave ':'Prepare for wave ')+(s.wave+1-s.waveOffset)+'</b><p>'+(this.rehearsal?'Adjust the defence using the original budget.':preparationSummary(s)||preparationBeat(s.challenge,s.wave+1))+'</p>'+button('begin-next','Ready · begin wave','primary');
+    if(this.preparing&&!hint.hidden&&lesson?.id!=='siege2-command'){const repeated=prep.querySelector('p');if(repeated)repeated.hidden=true}
+    if(this.restoration){hint.hidden=true;goal.hidden=true;prep.hidden=true;$('district-notice').hidden=true}
     document.querySelector('.game')?.classList.toggle('portal-opening',this.portalOpening||this.portalReturn)
     if(this.portalReturn){
       prep.hidden=!!this.drawer
@@ -397,7 +406,7 @@ export class FixedApp {
     if(this.rehearsal)$('flow-label').textContent=this.rehearsal.finished?'Practice complete':s.waveActive?'One-wave practice':'Practice · take your time'
     const watch=$('lantern-watch'),danger=s.enemies.filter(e=>e.alive&&e.remaining<360);watch.hidden=!this.drawer||!danger.length;watch.classList.toggle('urgent',danger.some(e=>e.remaining<150));watch.textContent=danger.length+' approaching the lantern';
     const breach=$('breach-review');if(breach)breach.hidden=!s.lastLeak?.detail
-    const notice=$('district-notice');notice.hidden=this.projectNoticeLeft<=0||!!this.drawer||!!boss;if(!notice.hidden)notice.textContent=this.projectNotice;
+    const notice=$('district-notice');notice.hidden=this.projectNoticeLeft<=0||!!this.drawer||!!boss||!!this.restoration;if(!notice.hidden)notice.textContent=this.projectNotice;
     $('save-warning').textContent=storageMessage
     document.querySelectorAll<HTMLButtonElement>('[data-cost]').forEach(b=>{b.disabled=s.glow<Number(b.dataset.cost)||s.planningWave<Number(b.dataset.wave??0)||!!s.over})
     if($('inspector-state')){
@@ -454,7 +463,7 @@ export class FixedApp {
     this.buildGhost=id;this.selection={kind:'pad',index:pad}
     const assessment=placementReadout(s,t)
     const partner=s.previewBond(pad,id),sheltered=s.sheltered(t),reach=Math.round(s.effRange(t)),night=Math.round(s.nightRange(t))
-    this.show(ROLE_NAMES[id],`<div class="placement-summary"><img src="${fixedTowerIcon(id,0,0,0,s.challenge.hero)}" alt=""/><div><b>${ROLE_NAMES[id]} · ${role[id]}</b><p>${t.def.blurb}</p></div></div><p class="placement-judgement">${assessment.tradeoff}</p>${partner?`<p class="placement-bond">Pairs with ${ROLE_NAMES[partner.id]} · ${partner.def.name}</p>`:''}${s.challenge.contract==='small-company'&&s.towers.length>=6?'<p class="notice">A seventh tower misses Small company.</p>':''}<details class="placement-details"><summary>Coverage & details</summary><p>Gold water is covered. Cyan marks shared Bond reach.</p><div class="coverage-zones">${assessment.zones.map(z=>`<span><b>${z.percent}%</b>${z.label}</span>`).join('')}</div><p>${reach} reach${secondWatch(s.challenge)?'':` · ${night} at night · ${lamplit(id)?'Lamplit':sheltered?'Sheltered':'Outside scout shelter'}`}</p>${partner?`<p>${bondHelp(s,id,partner.id)}</p>`:''}</details>`,'placement')
+    this.show(ROLE_NAMES[id],`<div class="placement-summary"><img src="${fixedTowerIcon(id,0,0,0,s.challenge.hero)}" alt=""/><div><b>${ROLE_NAMES[id]} · ${role[id]}</b><p>${t.def.blurb}</p></div></div>${this.coachPreview?`<p class="guided-placement">Gold shows ${ROLE_NAMES[id]} reach. Mint water is shared with your existing towers. Preview only: nothing spent.</p>`:''}<p class="placement-judgement">${assessment.tradeoff}</p>${partner?`<p class="placement-bond">Pairs with ${ROLE_NAMES[partner.id]} · ${partner.def.name}</p>`:''}${s.challenge.contract==='small-company'&&s.towers.length>=6?'<p class="notice">A seventh tower misses Small company.</p>':''}<details class="placement-details"><summary>Coverage & details</summary><p>Gold water is covered. Cyan marks shared Bond reach.</p><div class="coverage-zones">${assessment.zones.map(z=>`<span><b>${z.percent}%</b>${z.label}</span>`).join('')}</div><p>${reach} reach${secondWatch(s.challenge)?'':` · ${night} at night · ${lamplit(id)?'Lamplit':sheltered?'Sheltered':'Outside scout shelter'}`}</p>${partner?`<p>${bondHelp(s,id,partner.id)}</p>`:''}</details>`,'placement')
     const firstSpark=this.portalOpening&&!s.towers.length&&s.challenge.hero==='sol'
     document.querySelector('.drawer.placement')?.insertAdjacentHTML('beforeend',`<footer class="placement-actions">${button(firstSpark?'close':'plot:'+pad,firstSpark?'Choose plot':'Change tower','text-button')}<button class="primary" data-action="place:${pad}:${id}" data-cost="${s.towerCost(id)}">Build here · ${s.towerCost(id)}</button></footer>`)
     this.refresh()
@@ -472,13 +481,14 @@ export class FixedApp {
     const s=this.sim!,stage=stageOf(t)
     const replacing=this.drawer==='tower',body=document.querySelector<HTMLElement>('.drawer-body'),scroll=body?.scrollTop??0,focus=(document.activeElement as HTMLElement)?.dataset.action,bondOpen=!!document.querySelector<HTMLDetailsElement>('.bond-picker')?.open
     this.selection={kind:'tower',tower:t}
-    const upgrades=this.towerUpgrades(t)
+    const warning=reserveWarning(s,s.specialiseCost(t)??s.fixedPrice(t)??0)
+    const upgrades=(warning?`<p class="reserve-warning">${warning} You can undo this before combat.</p>`:'')+this.towerUpgrades(t)+(this.preparationHistory.size&&!s.waveActive?button('undo-preparation','Undo last preparation change','secondary wide'):'')
     const bond=s.bonds.find(b=>b.a===t.uid||b.b===t.uid),partner=bond?s.towers.find(q=>q.uid===(bond.a===t.uid?bond.b:bond.a)):null
     const partners=s.towers.filter(q=>q!==t&&bondName(t.id,q.id)&&s.sharedCoverage(t,q)&&!s.bonds.some(b=>[b.a,b.b].includes(q.uid)))
     const income=t.id==='garden'?`<p class="notice">${Math.round(t.stats.income*1.4)} glow in a daylight wave, ${Math.round(t.stats.income*.55)} at night${s.challenge.watchExperience?'':', before rain'}. Pays at wave end for time active. Selling loses unpaid harvest; ${s.finalWave-s.wave} remain. Invested: ${t.spent}. Earned: ${Math.floor(t.earned)}.</p>`:''
     this.show(ROLE_NAMES[t.id],`<div class="tower-heading compact"><img src="${fixedTowerIcon(t.id,t.a,t.b,t.refinement,this.sim?.challenge.hero)}" alt="${secondWatch(s.challenge)?SECOND_STAGES[stage===4?2:stage===2?1:0]:STAGES[stage]} ${t.def.name}"/><div><p class="eyebrow">${role[t.id]}</p><div class="tier-pips" aria-label="Stage ${secondWatch(s.challenge)?stage===4?3:stage===2?2:1:stage+1} of ${secondWatch(s.challenge)?3:5}">${(secondWatch(s.challenge)?[0,2,4]:[0,1,2,3,4]).map(i=>`<i class="${i<=stage?'filled':''}"></i>`).join('')}</div><p class="muted"><span id="tower-reach">${Math.round(s.effRange(t))}</span> reach · <span id="tower-damage">${Math.round(t.damageDealt??0)}</span> total damage</p></div></div>${s.challenge.watchDepth?'<p id="tower-synergy" class="tower-synergy" hidden></p><p id="tower-obstacle" class="tower-obstacle" hidden></p>':''}${upgrades}${secondWatch(s.challenge)&&s.challenge.hero&&t.id===COMMANDS[s.challenge.hero].tower?button('command-owner:'+t.uid,s.director?.owner===t.uid?'Command tower selected':'Use this command tower','secondary wide',!!s.director?.command):''}${t.refinement&&crownTechnique(s,t)?`<p class="crown-technique"><b>${crownTechnique(s,t)!.name}</b><span>${crownTechnique(s,t)!.help}</span></p>`:''}${this.bondControls(t)}<details class="tower-details"><summary>Stats & manage</summary>${s.challenge.hero?`<p class="notice">${HEROES[s.challenge.hero].towers[t.id].trait}</p>`:''}${income}${s.challenge.refinedWatch&&t.id==='garden'?`<p class="small muted">Restoration: ${Math.max(0,restorationLimit(s.difficulty)-(s.stats.lightRestored??0))} light left this watch, shared by all Gardens.</p>`:''}${this.towerFacts(t)}${s.challenge.watchExperience?`<p class="support-credit">${Math.round(t.armourRemoved??0)} armour removed · ${t.spotted} reveals · ${t.interrupts??0} signals interrupted${t.signatureHits?' · '+t.signatureHits+' signature hits':''}</p>`:''}${secondWatch(s.challenge)?'':'<p class="small muted">Dashed violet ring: night reach.</p>'}<p class="sky-tower-note">${skyTowerHelp(t.id,!!s.challenge.watchExperience,secondWatch(s.challenge))}${!secondWatch(s.challenge)&&!lamplit(t.id)?` <b>${s.sheltered(t)?'Sheltered by an Owl.':'Outside Owl shelter.'}</b>`:''}</p>
       ${s.challenge.watchDepth?`<div class="bond-section"><h3>${s.challenge.watchExperience?'Tower Bond':'Automatic Bond'}</h3>${partner?`<p><b>${bondName(t.id,partner.id,true)}</b> · ${partner.def.name}</p><p class="small muted">${bondHelp(s,t.id,partner.id)} Both towers must reach the target.</p>`:`<p class="small muted">Choose a compatible tower in the Bond partner menu. Both towers must cover the same water. ${s.bondSlots} of 2 slots open.</p>`}${hasSunReserve(t)?`<p class="small muted">${SUN_HELP}</p>`:''}</div>`:s.wave>=5?`<div class="bond-section"><h3>Tower Bond</h3>${partner?`<p><b>${bondName(t.id,partner.id)}</b> with ${partner.def.name}.</p><p class="small muted">${BOND_HELP[bondName(t.id,partner.id)!]} Activated ${bond!.activations} times.</p>${button('unbond:'+t.uid,'Remove Bond','secondary')}`:partners.length?`<p class="small muted">One tower per Bond. ${s.wave>=20?2:1} Bond slots available for this watch.</p>${partners.map(q=>button(`bond:${t.uid}:${q.uid}`,`${bondName(t.id,q.id)} · ${q.def.name}`,'secondary wide',s.bonds.length>=(s.wave>=20?2:1))).join('')}`:'<p class="small muted">A Moonbell and Cracker, or an Owl and Wickling, can bond when their ranges share the stream.</p>'}</div>`:''}
-      <p class="small muted">Pause whenever you need time to plan.</p><div class="utility-actions"><button data-action="move:${t.uid}" data-cost="25" class="secondary">Move · 25</button>${button('sell:'+t.uid,`Sell · ${s.sellValue(t)}`,'secondary',s.challenge.commission==='garden'&&t.id==='garden')}</div></details>`,'tower')
+      <p class="small muted">Pause whenever you need time to plan.</p><div class="utility-actions"><button data-action="move:${t.uid}" data-cost="${s.relocationCost()}" class="secondary">Move · ${s.relocationCost()===0?'first move free':s.relocationCost()}</button>${button('sell:'+t.uid,`Sell · ${s.sellValue(t)}`,'secondary',s.challenge.commission==='garden'&&t.id==='garden')}</div></details>`,'tower')
     if(replacing){const picker=document.querySelector<HTMLDetailsElement>('.bond-picker');if(picker&&bondOpen)picker.open=true;const next=document.querySelector<HTMLElement>('.drawer-body');if(next)next.scrollTop=reset?0:scroll;if(!reset)document.querySelector<HTMLButtonElement>(`[data-action="${focus}"]`)?.focus({preventScroll:true})}
   }
   private forecast(current=this.sim?.waveActive??false) {
@@ -629,13 +639,15 @@ export class FixedApp {
   }
   private change(fn:()=>unknown) {
     if(this.sim!.over)return
-    fn();this.save();this.plots();this.refresh()
+    const before=this.preparationHistory.capture(this.sim!)
+    fn();this.preparationHistory.commit(before,this.sim!);this.save();this.plots();this.refresh()
   }
   private startNextWave(){
     const s=this.sim!;this.nextWaveIn=null
     if(s.over||s.waveActive||this.rehearsal?.finished||!s.towers.length&&s.wave===s.waveOffset)return
     this.writePlanning(s.snapshot());this.recap=''
     if(s.startWave()){
+      this.preparationHistory.clear();this.coachPreview=false
       this.retrySuggestion=null
       $('live').textContent=`Wave ${s.wave-s.waveOffset} begins.`;this.save()
       if(this.drawer==='tower'&&this.selection?.kind==='tower')this.towerSheet(this.selection.tower)
@@ -705,19 +717,22 @@ export class FixedApp {
     if(cmd==='sound'){this.profile.settings.muted=!this.profile.settings.muted;writeJSON('profile',this.profile);this.applySettings();sound.unlock();this.refresh();return}
     if(cmd==='guardian'){this.guardian=a;this.profile.guardian=a;writeJSON('profile',this.profile);if(this.renderer)this.renderer.crest=a;this.settings();return}
     if(!s)return
+    if(cmd==='restoration-skip'){this.restoration=null;this.refresh();return}
+    if(cmd==='undo-preparation'){const history=this.preparationHistory,snap=history.take(s);if(snap){const blooms=this.renderer!.exportBlooms(),rehearsal=this.rehearsal;this.begin(Sim.restore(snap),blooms);this.rehearsal=rehearsal;this.preparationHistory=history;this.planning=true;this.recap='Preparation change undone · full glow restored';this.save();this.refresh()}return}
+    if(cmd==='coach-place'){const id=a as TowerId,p=teachingPlot(s,id);if(p){this.coachPreview=true;this.planning=true;this.buildPreview(p.index,id)}return}
     if(cmd==='opening-place'&&this.portalOpening&&!s.towers.length){this.action('place:0:wick');return}
     if(cmd==='portal-build'&&this.portalOpening&&!s.towers.length){this.buildPreview(0,'wick');return}
     if(cmd==='portal-continue'){this.portalReturn=false;this.planning=false;this.accumulator=0;this.refresh();return}
     if(cmd==='pause'){if(this.paused){this.portalReturn=false;this.planning=false;if(this.drawer&&!['tower','build','placement','plot'].includes(this.drawer))this.close()}else this.planning=true;this.accumulator=0;this.refresh();return}
     if(cmd==='siege-progress'){this.show('The Long Watch',`<p class="lead">${siegeHeld(s)}/40 waves held · ${s.lives} light remaining</p>${siegeTimeline(siegeHeld(s))}<p class="small muted">Your towers and upgrades carry through every act.</p>`,'siege-progress');return}
-    if(cmd==='retry-act'){const leak=s.lastLeak,retry=retrySiegeAct(s);if(retry){const advice=recoveryPlan(retry.sim,leak);this.begin(retry.sim,retry.blooms);this.retrySuggestion=advice;this.recap=advice?.text??'';this.planning=true;this.writePlanning(retry.sim.snapshot());this.save();this.refresh()}return}
+    if(cmd==='retry-act'){const leak=s.lastLeak,retry=retrySiegeAct(s);if(retry){const advice=recoveryPlan(retry.sim,leak,s);this.begin(retry.sim,retry.blooms);this.retrySuggestion=advice;this.recap=advice?[advice.text,advice.budget].join(' '):'';this.planning=true;this.writePlanning(retry.sim.snapshot());this.save();this.refresh()}return}
     if(cmd==='passages'){this.passages();return}
-    if(cmd==='passage'){if(s.choosePassage(a as Passage)){this.close();this.writePlanning(s.snapshot());this.save();this.recap='Passage chosen.'}return}
+    if(cmd==='passage'){const before=this.preparationHistory.capture(s);if(s.choosePassage(a as Passage)){this.preparationHistory.commit(before,s);this.close();this.writePlanning(s.snapshot());this.save();this.recap='Passage chosen.'}return}
     if(cmd==='command-cancel'){s.cancelCommand();if(this.drawer==='surge-help')this.close();this.save();this.refresh();return}
     if(cmd==='lesson'&&this.rehearsal)return
     if(cmd==='contract-status'){this.contractSheet();return}
     if(cmd==='surge-help'){this.surgeHelp();return}
-    if(cmd==='command-owner'){const t=s.towers.find(t=>t.uid===Number(a));if(t){s.designateCommand(t);this.save();this.towerSheet(t)}return}
+    if(cmd==='command-owner'){const t=s.towers.find(t=>t.uid===Number(a));if(t){this.change(()=>s.designateCommand(t));this.towerSheet(t)}return}
     if(cmd==='command-aim'){this.commandAim();return}
     if(cmd==='command-list'){this.commandList();return}
     if(cmd==='aim-cancel'){this.aiming=false;this.refresh();$('command-aim').focus();return}
@@ -727,7 +742,7 @@ export class FixedApp {
     if(cmd==='coach-show'){this.profile.lessons=[];writeJSON('profile',this.profile);this.settings();return}
     if(cmd==='lesson'){const tip=watchLesson(s,this.profile.lessons);if(tip){this.profile.lessons??=[];this.profile.lessons.push(tip.id);if(!this.qa)writeJSON('profile',this.profile)}this.refresh();return}
     if(cmd==='techniques'){this.techniqueSheet();return}
-    if(cmd==='technique'){if(s.chooseTechnique(a as TechniqueId)){this.save();this.close();this.recap=(s.challenge.livingWatch?livingTechnique(a as TechniqueId)?.name:undefined)??TECHNIQUES.find(t=>t.id===a)!.name;this.recap+=' chosen.'}return}
+    if(cmd==='technique'){const before=this.preparationHistory.capture(s);if(s.chooseTechnique(a as TechniqueId)){this.preparationHistory.commit(before,s);this.save();this.close();this.recap=(s.challenge.livingWatch?livingTechnique(a as TechniqueId)?.name:undefined)??TECHNIQUES.find(t=>t.id===a)!.name;this.recap+=' chosen.'}return}
     const tower=()=>s.towers.find(t=>t.uid===Number(a))!
     if(cmd==='begin-next'){if(this.portalOpening&&!s.towers.length)return;this.portalReturn=false;this.planning=false;this.preparedWave=s.wave+1;this.close();this.startNextWave();return}
     if(cmd==='celebration-done'){this.celebrationLeft=0;this.result();return}
@@ -735,11 +750,11 @@ export class FixedApp {
     if(cmd==='menu')this.menu()
     if(cmd==='landmark')this.landmarkSheet()
     if(cmd==='sky')this.skyForecast()
-    if(cmd==='breach-review'&&s.lastLeak?.detail)this.show('Where the defence gave way',`<p class="lead">${enemyName(s.lastLeak.enemy)} reached the lantern on wave ${s.lastLeak.wave}.</p><p>${breachAdvice(s.lastLeak)}</p>${recoveryCard(s)}<p class="small muted">The ! marker shows the lower bend used for this coverage check. This records the final breach, not every enemy in the wave.</p>`,'breach-review')
+    if(cmd==='breach-review'&&s.lastLeak?.detail)this.show('Where the defence gave way',`<p class="lead">${enemyName(s.lastLeak.enemy)} reached the lantern on wave ${s.lastLeak.wave}.</p><p>${breachAdvice(s.lastLeak)}</p>${recoveryCard(s)}<p class="small muted">The ! marker shows the lower bend used for this coverage check. The report counts light lost across this wave. The ! is a lower-bend coverage sample, not the cause of every escape.</p>`,'breach-review')
     if(cmd==='forecast')this.forecast(a==='current')
     if(cmd==='plot')this.selectPlot(Number(a))
     if(cmd==='unlock'){this.change(()=>s.unlockPlot(Number(a)));this.selectPlot(Number(a))}
-    if(cmd==='build'){this.buildPreview(Number(a),b as TowerId);return}
+    if(cmd==='build'){this.coachPreview=false;this.buildPreview(Number(a),b as TowerId);return}
     if(cmd==='place'){const first=this.portalOpening&&!s.towers.length;this.change(()=>s.build(Number(a),b as TowerId));const t=s.pads[Number(a)].tower;if(t){this.close();this.selection={kind:'tower',tower:t};this.recap=`${ROLE_NAMES[t.id]} ready.`;if(first){this.preparedWave=1;this.nextWaveIn=4;this.planning=false}}}
     if(cmd==='upgrade'){const t=tower();if(t){this.change(()=>stageOf(t)===3?s.refine(t):s.upgrade(t,Number(b) as 0|1));this.towerSheet(t,true)}}
     if(cmd==='specialise'){const t=tower();if(t){this.change(()=>s.specialise(t,Number(b) as 0|1));this.towerSheet(t,true)}}
@@ -793,6 +808,7 @@ export class FixedApp {
           r.settlement=Math.max(r.settlement,this.profile.settlement);r.keepsakes=districtKeepsakes(this.profile);this.resize();$('live').textContent=this.recap
           this.save()
           if(s.challenge.siege&&siegeCheckpointBoundary(s)&&!this.qa&&!this.rehearsal)saveActCheckpoint(s,r.exportBlooms())
+          if(s.challenge.siege===2&&RESTORATIONS[e.n]){const duration=this.profile.settings.reducedMotion?3:5;this.restoration={wave:e.n,left:duration,duration};sound.restoration(e.n)}
           if(s.challenge.siege===2&&s.wave===5){this.projectNotice='First shop reopened · a light returns to the market';this.projectNoticeLeft=5}
           if(s.challenge.siege&&s.wave%8===0){const act=siegeAct(s.wave);this.projectNotice=`${act.name} held · ${act.reward}`;this.projectNoticeLeft=10}
           if(this.drawer==='tower'&&this.selection?.kind==='tower')this.towerSheet(this.selection.tower)
@@ -805,10 +821,11 @@ export class FixedApp {
         if(proof){this.witnessed.add(proof.id);this.moment=proof.text;this.momentUntil=s.time+3.5}
       }
       if(this.moment&&s.time>=this.momentUntil)this.moment=''
+      if(this.restoration&&!hidden&&!this.drawer){this.restoration.left=Math.max(0,this.restoration.left-dt);if(!this.restoration.left){this.restoration=null;this.refresh()}}
       r.handleEvents(s)
-      r.draw(s,hidden?0:dt,{selection:this.selection,preview:this.buildGhost,armed:null,hint:null,paused:hidden||this.paused,forecastWave:this.forecastSelection})
+      r.draw(s,hidden?0:dt,{selection:this.selection,preview:this.buildGhost,armed:null,hint:null,paused:hidden||this.paused,forecastWave:this.forecastSelection,teaching:this.coachPreview,restoration:this.restoration?{wave:this.restoration.wave,progress:1-this.restoration.left/this.restoration.duration}:null})
       if(this.rehearsal&&(s.over||this.rehearsal.finished)&&!this.endShown){this.rehearsal.finished=true;this.practiceResult()}
-      if(s.over&&!this.endShown&&!this.rehearsal){
+      if(s.over&&!this.endShown&&!this.rehearsal&&!this.restoration){
         if(s.won&&s.challenge.watchExperience&&!s.challenge.story&&!s.challenge.siege&&!this.celebrationSeen){this.celebrationSeen=true;this.celebrationLeft=this.profile.settings.reducedMotion?2:5;this.close();this.show('The district wakes',`<p class="lead">Every light you kept is a home waking to morning.</p><img class="district-panorama" src="${districtPanorama(this.profile)}" alt="Your restored canal district"/><p>${PROJECTS.filter(p=>projectProgress(this.profile,p.id)>=1).map(p=>p.name).join(' · ')||'The canal is safe for another morning.'}</p>${button('celebration-done','View watch report','primary wide')}`,'celebration')}
         if(this.celebrationLeft>0){if(!hidden)this.celebrationLeft=Math.max(0,this.celebrationLeft-dt)}else this.result()
       }

@@ -114,3 +114,12 @@ assert(effectsDuck&&musicDuck,'Priority cues duck existing effects tails and mus
 ctx.currentTime+=3;sound.tick(.1,.5)
 assert.equal(effectsDuck.gain.value,1,'Ordinary effects return after the priority cue')
 assert.equal(musicDuck.gain.value,1,'Music returns after the priority cue')
+ctx.currentTime+=4;sound.spark();const beforeInterrupt=ctx.nodes.length
+sound.tactic('interrupt');assert(ctx.nodes.length>beforeInterrupt,'Interrupt is audible during routine fire')
+const afterInterrupt=ctx.nodes.length;sound.impact();assert.equal(ctx.nodes.length,afterInterrupt,'Interrupt reserves a brief gap in routine effects')
+ctx.currentTime+=4;const beforeRestoration=ctx.nodes.length;sound.restoration(8)
+assert(ctx.nodes.length>beforeRestoration,'Earned restoration schedules its musical resolution')
+const afterRestoration=ctx.nodes.length;sound.spark();assert.equal(ctx.nodes.length,afterRestoration,'Restoration has room above combat tails')
+ctx.currentTime+=4;sound.settings.muted=true;const silentRestoration=ctx.nodes.length;sound.restoration(40)
+assert.equal(ctx.nodes.length,silentRestoration,'Restoration respects mute')
+console.log('PASS interrupt priority, restoration resolution and muted milestone silence')

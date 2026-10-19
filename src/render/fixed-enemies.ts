@@ -1,3 +1,4 @@
+import {drawCompactInvader} from './compact-invaders'
 import type { Enemy } from '../game/sim'
 import type { EnemyId } from '../game/defs'
 import { currentPalette, ENEMY_MARK } from './palette'
@@ -43,7 +44,8 @@ export function drawFixedEnemy(c:CanvasRenderingContext2D,e:Enemy,reducedMotion=
     if(['wisp','veil','mender'].includes(id))c.translate(0,Math.sin(phase*3)*.075)
   }
   if(id==='skitter')c.rotate(Math.atan2(ty,tx))
-  drawInvader(c,e,phase,col,shellOpen)
+  if(showBars&&!e.def.boss&&r*viewScale<18)drawCompactInvader(c,e,col)
+  else drawInvader(c,e,phase,col,shellOpen)
   if(plated&&e.shell/e.maxShell<.28){stroke(c,[[.48,-1.02],[.26,-.72],[.51,-.47],[.3,-.13]],'#3d354f',.09);stroke(c,[[-.56,-.6],[-.36,-.48],[-.49,-.2]],'#fff0c5',.065)}
   if(fractured){stroke(c,[[-.21,-1],[-.06,-.72],[-.29,-.48],[.09,-.32]],'#503f54',.06);stroke(c,[[-.06,-.72],[.22,-.79]],'#fff0c5',.045)}
   if(e.hitT>0){c.strokeStyle='#fff3c3';c.lineWidth=.065;c.beginPath();c.arc(0,-.4,.72,Math.PI*1.03,Math.PI*1.77);c.stroke()}

@@ -261,6 +261,10 @@ export function validSnapshot(s: unknown): s is SaveSnapshot {
   if (s.waveReports !== undefined && (!s.challenge.guard || !Array.isArray(s.waveReports) || s.waveReports.length > 100 || !s.waveReports.every(r => object(r) && integer(r.wave, 1, 10000) && integer(r.slowSplashHits) && object(r.damage) && Object.entries(r.damage).every(([id, value]) => Object.hasOwn(TOWERS, id) && number(value, 0))))) return false
   if (s.embers !== undefined && (!Array.isArray(s.embers) || s.embers.length > 48 || !s.embers.every(p => object(p) && number(p.x) && number(p.y) && number(p.radius, 0, 1000) && number(p.life, 0, 3) && number(p.dps, 0) && integer(p.tower, 1)))) return false
   if (s.lastLeak !== undefined && s.lastLeak !== null && (!object(s.lastLeak) || !Object.hasOwn(ENEMIES, String(s.lastLeak.enemy)) || typeof s.lastLeak.route !== 'string' || typeof s.lastLeak.hidden !== 'boolean' || typeof s.lastLeak.armoured !== 'boolean' || !integer(s.lastLeak.wave, 1) || !number(s.lastLeak.light, 0))) return false
+  if(Array.isArray(s.waveReports))for(const r of s.waveReports){
+    if(r.escaped!==undefined&&(!object(r.escaped)||!Object.entries(r.escaped).every(([id,v])=>Object.hasOwn(ENEMIES,id)&&number(v,0))))return false
+    if(r.causes!==undefined&&(!object(r.causes)||!Object.entries(r.causes).every(([id,v])=>['hidden','armour','runaway','coverage','pressure'].includes(id)&&number(v,0))))return false
+  }
   if(object(s.lastLeak)&&s.lastLeak.detail!==undefined){const d=s.lastLeak.detail;if(!s.challenge.watchTactics||!object(d)||!['hidden','armour','runaway','coverage','pressure'].includes(String(d.cause))||!number(d.x)||!number(d.y)||!segments.has(String(d.segment))||!number(d.hp,0)||!number(d.shell,0)||!integer(d.damageTowers,0,maxPads)||!integer(d.controlTowers,0,maxPads))return false}
   if (!(s.openSources as unknown[]).every(id => ['north', 'west'].includes(String(id)))) return false
   if (!(s.enemies as unknown[]).every(e => object(e) && Object.hasOwn(ENEMIES, String(e.type)) && segments.has(String(e.seg)) && number(e.s, 0) && number(e.hp) && number(e.maxHp, 0) && integer(e.uid, 1) && integer(e.wave, 1, 10000))) return false

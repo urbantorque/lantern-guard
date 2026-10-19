@@ -12,9 +12,9 @@ export const ACTS = ['First lanterns', 'A gathering mist', 'The district wakes',
 export const MAP_HELP = ['Broad bends reward shared coverage.', 'Both entrances meet early. Build around the upper bend.', 'A mirrored reach rewards a fresh opening.', 'The side inlet joins late. Leave room for a lower defence.']
 export const FIXED_TIPS: Record<EnemyId, string> = {
   dredger: 'Its core opens at marked bends. Overlap damage there; slows extend the opening.',
-  drip: 'A gentle opening. Place a Wickling beside the stream.', skitter: 'Fast. A Moonbell buys your damage towers more time.',
-  shell: 'Armoured. Crackers and heavy upgrades break shells.', veil: 'Hidden. An Owl reveals enemies across its sight range.',
-  bloat: 'Splits into three Drips. Leave a little coverage downstream.', wisp: 'A close crowd. Cracker blasts catch several at once.',
+  drip: 'A gentle opening. Place a Spark beside the stream.', skitter: 'Fast. A Chime buys your damage towers more time.',
+  shell: 'Armoured. Blasts and heavy upgrades break shells.', veil: 'Hidden. An Owl reveals enemies across its sight range.',
+  bloat: 'Splits into three Drips. Leave a little coverage downstream.', wisp: 'A close crowd. Blast blasts catch several at once.',
   mender: 'Heals nearby enemies. Concentrate damage around a shared bend.', vshell: 'Hidden and armoured. Combine sight with heavy damage.',
   toad: 'Calls an escort burst at half health. Keep splash damage nearby.', gloom: 'Splits at the central stone into two smaller forms on the same path.',
   skiff: 'Accelerates when its armour breaks. Slow it within your firing line.', warden: 'Four escorts shield it. Clear them before focusing the Warden.',

@@ -1,3 +1,4 @@
+import {recordBreach} from './wave-diagnosis'
 import { restorationLimit, lateRewardScale, lateUpgradeScale, refinedWave } from './watch-refinement'
 import {siegeTowerWave,siegeWave,SIEGE_INLET,siegeBossBreach} from './siege'
 import {directCommand,commandReady} from './watch-director'
@@ -304,6 +305,7 @@ export interface Challenge {
 }
 
 export interface RunStats {
+  earlyRelocations?: number
   firesSpread?: number
   lightRestored?: number
   plotsUnlocked?: number
@@ -483,7 +485,7 @@ export interface SaveSnapshotV2 extends SnapshotBase {
 }
 
 export type SaveSnapshot = SaveSnapshotV1 | SaveSnapshotV2
-export interface WaveReport { wave: number; slowSplashHits: number; damage: Partial<Record<TowerId, number>> }
+export interface WaveReport { wave: number; slowSplashHits: number; damage: Partial<Record<TowerId, number>>; escaped?:Partial<Record<EnemyId,number>>; causes?:Partial<Record<BreachDetail['cause'],number>> }
 export interface EmberPatch { x: number; y: number; radius: number; life: number; dps: number; tower: number }
 export interface LeakReport { enemy: EnemyId; route: string; hidden: boolean; armoured: boolean; wave: number; light: number; detail?:BreachDetail }
 
@@ -967,6 +969,10 @@ export class Sim {
     return !!this.challenge.guard && (!this.isChallenge || !!this.challenge.fixed) && !this.over && (!this.waveActive || !!this.challenge.fixed) && this.towers.includes(t)
   }
 
+  relocationCost(): number {
+    return this.challenge.siege===2&&this.difficulty!=='nightfall'&&!this.waveActive&&this.wave<8&&!(this.stats.earlyRelocations??0)?0:RELOCATE_COST
+  }
+
   /** Preview destination support without moving or resetting the tower. */
   rangeAt(t: Tower, x: number, y: number): number {
     if (t.id === 'garden') return t.stats.range
@@ -981,8 +987,10 @@ export class Sim {
   /** Moving never rebuilds: timers, income, upgrades, credit and sell value stay attached. */
   relocate(t: Tower, padIndex: number): boolean {
     const pad = this.pads[padIndex]
-    if (!this.canRelocate(t) || !pad || pad.tower || !this.padAvailable(padIndex) || this.glow < RELOCATE_COST) return false
-    this.glow -= RELOCATE_COST
+    const cost=this.relocationCost()
+    if (!this.canRelocate(t) || !pad || pad.tower || !this.padAvailable(padIndex) || this.glow < cost) return false
+    this.glow -= cost
+    if(cost===0)this.stats.earlyRelocations=(this.stats.earlyRelocations??0)+1
     this.pads[t.pad].tower = null
     pad.tower = t
     t.pad = padIndex
@@ -1724,6 +1732,7 @@ export class Sim {
       if (!w) return
     }
     if (this.challenge.guard) this.lastLeak = { enemy: e.def.id, route: e.route, hidden: !!e.def.hidden && !e.revealedPerm && e.seenT <= 0, armoured: e.shell > 0, wave: e.wave, light: w,...(this.challenge.watchTactics?{detail:breachDetail(this,e)}:{}) }
+    if(this.challenge.siege===2&&this.lastLeak){const report=this.waveReports.find(r=>r.wave===e.wave);if(report)recordBreach(report,this.lastLeak,Math.min(this.lives,w))}
     this.lives = Math.max(0, this.lives - w)
     this.stats.leaked += w
     if(this.mastery)this.mastery.waveLeaks+=w
@@ -2656,7 +2665,7 @@ export class Sim {
       ...(this.mastery?{mastery:structuredClone(this.mastery)}:{}),
       ...(this.challenge.watchCraft?{techniques:[...this.techniques]}:{}),
       ...(this.challenge.fixed ? { bonds: this.bonds.map(b => ({...b})),climate:{...this.climate} } : {}),
-      ...(this.challenge.guard ? { waveReports: this.waveReports.map(r => ({ ...r, damage: { ...r.damage } })), embers: this.embers.map(p => ({ ...p })), lastLeak: this.lastLeak && { ...this.lastLeak } } : {}),
+      ...(this.challenge.guard ? { waveReports: structuredClone(this.waveReports), embers: this.embers.map(p => ({ ...p })), lastLeak: this.lastLeak && { ...this.lastLeak } } : {}),
       ...(this.challenge.expanding ? { canalStage: this.canalStage } : {}),
       ...(this.challenge.compact ? { plots: [...this.plots] } : {}),
       ...(this.challenge.plans ? { battlePlans: [...this.battlePlans] } : {}),
@@ -2779,7 +2788,7 @@ export class Sim {
     sim.stats = { ...sim.stats, ...JSON.parse(JSON.stringify(snap.stats)) }
     sim.stats.cheered ??= {}
     if (full) {
-      sim.waveReports = full.waveReports?.map(r => ({ ...r, damage: { ...r.damage } })) ?? []
+      sim.waveReports = structuredClone(full.waveReports??[])
       sim.embers = full.embers?.map(p => ({ ...p })) ?? []
       sim.lastLeak = full.lastLeak ? { ...full.lastLeak } : null
       sim.over = full.over

@@ -1,3 +1,4 @@
+import {bossReadout} from '../game/boss-readout'
 import type { Sim } from '../game/sim'
 import { secondWatch, designatedTarget } from '../game/second-watch'
 import { commandTargets,commandTower } from '../game/watch-director'
@@ -31,7 +32,17 @@ export function drawSecondWatch(c:CanvasRenderingContext2D,s:Sim,time:number,sti
     for(const sx of [-1,1])for(const sy of [-1,1]){c.beginPath();c.moveTo(owner.x+sx*(r-10),owner.y+sy*r);c.lineTo(owner.x+sx*r,owner.y+sy*r);c.lineTo(owner.x+sx*r,owner.y+sy*(r-10));c.stroke()}
     c.globalAlpha=1
   }
+  // One actual counter outcome, anchored to the affected creature.
+  if(s.challenge.siege===2&&s.wave<=3){
+    const proof=s.enemies.find(e=>e.alive&&(e.slowT>0||e.maxShell>0&&e.shell<e.maxShell*.5))
+    if(proof)upright(c,proof.x,proof.y,wide,()=>{const label=proof.maxShell>0&&proof.shell<proof.maxShell*.5?(proof.shell<=0?'ARMOUR BROKEN':'ARMOUR CRACKED'):'SLOWED';c.font=`700 ${Math.max(12,10/scale)}px sans-serif`;c.textAlign='center';c.lineWidth=5;c.strokeStyle='#102430';c.fillStyle='#cffff0';c.strokeText(label,proof.x,proof.y-proof.def.radius*2-20);c.fillText(label,proof.x,proof.y-proof.def.radius*2-20)})
+  }
   for(const boss of s.enemies){
+    if(boss.alive&&boss.def.boss){const read=bossReadout(s,boss);upright(c,boss.x,boss.y,wide,()=>{
+      const y=boss.y-boss.def.radius*2.8-20,font=Math.max(13,10/scale);c.font=`750 ${font}px sans-serif`;c.textAlign='center';const w=c.measureText(read.label).width+16
+      c.fillStyle='#0a1c29';c.fillRect(boss.x-w/2,y-font,w,font+8);c.fillStyle=read.colour;c.fillRect(boss.x-w/2,y+7,w,2/scale);c.fillText(read.label,boss.x,y)
+    })}
+
     if(boss.alive&&boss.def.boss&&(boss.signalT??0)>0){
       const r=Math.max(46,boss.def.radius*1.3),arc=-Math.PI/2+Math.PI*2*Math.min(1,boss.signalT!/3)
       c.strokeStyle='#101e2a';c.lineWidth=7;c.beginPath();c.arc(boss.x,boss.y,r,-Math.PI/2,arc);c.stroke()

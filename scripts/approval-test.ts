@@ -31,7 +31,7 @@ s.lastLeak={...s.lastLeak,enemy:'dredger',wave:16,hidden:false}
 assert(recoveryPlan(s)?.text.includes('core'),'Boss retry advice explains its actual vulnerability')
 const earlier=new Sim('standard',siegeChallenge('sol'))
 const suggestion=recoveryPlan(earlier,s.lastLeak)
-assert(suggestion?.plot!==undefined&&earlier.padAvailable(suggestion.plot)&&!earlier.pads[suggestion.plot].tower,'Retry suggestion uses available plots in the restored checkpoint')
+assert(suggestion&&!suggestion.canBuy&&suggestion.plot===undefined,'A locked counter must not suggest a misleading purchase at an earlier checkpoint')
 s.towers[0].damageDealt=99;assert(watchInsights(s).some(x=>x.includes('Spark')))
 
 const snapshots=[]
