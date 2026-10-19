@@ -105,8 +105,8 @@ export function drawFixedWorld(c:CanvasRenderingContext2D,s:Sim,view:ViewState,s
     const accent=p.tower?TOWER_COLOURS[p.tower.id].accent:s.padAvailable(i)?'#ffe3a1':'#a0cbc6'
     if(p.tower){
       const active=selected===p.tower
-      lightPool(c,p.x,p.y,active?59:42,accent,active?.6:.25)
-      c.strokeStyle=active?'#fff0bc':accent+'a0';c.lineWidth=active?3:2;c.beginPath();c.ellipse(p.x+4,p.y,34,17,0,0,Math.PI*2);c.stroke()
+      lightPool(c,p.x,p.y,active?59:36,accent,active?.6:.1)
+      c.strokeStyle=active?'#fff0bc':accent+'60';c.lineWidth=active?3:1.2;c.beginPath();c.ellipse(p.x+4,p.y,34,17,0,0,Math.PI*2);c.stroke()
     }else{
       c.fillStyle='#173f4b66';c.beginPath();c.ellipse(p.x+3,p.y+8,34,19,0,0,Math.PI*2);c.fill()
       c.fillStyle=chosen?'#426b71':s.sky.night?'#234f5d':'#3c7178';c.strokeStyle=accent;c.lineWidth=2.5;c.beginPath();c.ellipse(p.x,p.y,33,20,0,0,Math.PI*2);c.fill();c.stroke()
@@ -135,7 +135,6 @@ export function drawFixedWorld(c:CanvasRenderingContext2D,s:Sim,view:ViewState,s
     drawCanalShot(c,p,time,reducedMotion,wide)
   }
   for(const t of s.towers)if(t.id==='beam')for(const target of t.beamTargets)if(target?.alive)drawCanalBeam(c,t,target,time,reducedMotion,wide)
-  drawSecondWatch(c,s,time,reducedMotion,wide,true)
   const breach=s.lastLeak?.detail
   if(breach&&(!s.waveActive||s.over)&&!selected&&!ghost){upright(c,breach.x,breach.y,wide,()=>{c.save();c.fillStyle='#372c35';c.strokeStyle='#ffbe8e';c.lineWidth=2;c.beginPath();c.arc(breach.x,breach.y,16,0,Math.PI*2);c.fill();c.stroke();c.fillStyle='#ffe5c2';c.font='bold 20px sans-serif';c.textAlign='center';c.fillText('!',breach.x,breach.y+7);c.restore()})}
   const sky=s.sky

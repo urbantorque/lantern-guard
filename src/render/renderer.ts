@@ -16,6 +16,7 @@ import { FAMILY_COLOR, glowSprite, P, withAlpha } from './palette'
 import { drawPad, drawTower, PAD_R } from './towers'
 import { boardPoint, worldPoint, boardBounds, boardAngle, elevated, BOARD_DEPTH } from './board-view'
 import { drawFixedWorld } from './fixed-world'
+import { drawSecondWatch } from './second-watch'
 import { districtGradient } from './fixed-scenery'
 import { fixedShotOrigin } from './fixed-towers'
 
@@ -834,6 +835,8 @@ export class Renderer {
       this.fx.drawBase(c)
       // The previous fixed renderer omitted this layer, hiding hits, muzzle flashes and rewards.
       if(!this.settings.reduceMotion){c.save();c.globalCompositeOperation='screen';this.fx.drawGlow(c,true);c.restore()}
+      // Decisions remain visible over explosions, beam trails and weather.
+      drawSecondWatch(c,sim,this.time,this.settings.reduceMotion,this.fixedLandscape,true,this.scale)
       sound.beam(view.paused||sim.over?0:sim.beamIntensity)
       return
     }

@@ -22,11 +22,14 @@ export default defineConfig(({mode})=>({
           return `${name} ${version}\n${'='.repeat(72)}\n${readFileSync(new URL('LICENSE', root), 'utf8').trim()}`
         })
         this.emitFile({type:'asset',fileName:'THIRD-PARTY-NOTICES.txt',source:`Third-party components distributed with Nightward\n\n${notices.join('\n\n\n')}\n`})
+        this.emitFile({type:'asset',fileName:'icon.svg',source:readFileSync(new URL('./public/icon.svg',import.meta.url))})
       },
     },
     ...(mode==='crazygames'?[{name:'portal-entry',transformIndexHtml:(html:string)=>html.replace(/\s*<link rel="preload"[^>]*>/g,'')}]:[]),
   ],
   server: { host: true, port: 5173 },
   preview: { host: true, port: 4173 },
-  build: { target: 'es2022', assetsInlineLimit: 0, outDir:mode==='crazygames'?'dist-crazygames':'dist' },
+  // The title is rendered from gameplay art. Historical illustrations remain in
+  // source, but are no longer downloaded or shipped with either release build.
+  build: { target: 'es2022', assetsInlineLimit: 0, copyPublicDir:false, outDir:mode==='crazygames'?'dist-crazygames':'dist' },
 }))

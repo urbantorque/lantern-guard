@@ -108,3 +108,9 @@ const voices=[]
 for(const id of Object.keys(BOSS_VOICES)){ctx.currentTime+=3;const n=ctx.nodes.length;sound.bossRoar(id);voices.push(ctx.nodes.slice(n).flatMap(n=>n.frequency.values));const held=ctx.nodes.length;sound.spark();assert.equal(ctx.nodes.length,held,'boss cue reserves space from ordinary fire');ctx.currentTime+=2;sound.spark();assert(ctx.nodes.length>held,'fire resumes after boss cue')}
 assert.equal(new Set(voices.map(v=>JSON.stringify(v))).size,5,'all five boss cues differ in the actual audio graph')
 console.log('PASS five eight-wave musical acts, boss motifs, independent atmosphere and prioritized bounded combat mix')
+ctx.currentTime+=4;sound.bossRoar('dredger')
+const effectsDuck=ctx.nodes.find(n=>n.gain.values.includes(.24)),musicDuck=ctx.nodes.find(n=>n.gain.values.includes(.38))
+assert(effectsDuck&&musicDuck,'Priority cues duck existing effects tails and music, not only future triggers')
+ctx.currentTime+=3;sound.tick(.1,.5)
+assert.equal(effectsDuck.gain.value,1,'Ordinary effects return after the priority cue')
+assert.equal(musicDuck.gain.value,1,'Music returns after the priority cue')

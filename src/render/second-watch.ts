@@ -5,7 +5,7 @@ import { upright } from './board-view'
 import { block, lightPool } from './architecture'
 
 /** Persistent construction and targeting share the simulation's actual positions. */
-export function drawSecondWatch(c:CanvasRenderingContext2D,s:Sim,time:number,still:boolean,wide:boolean,signals=false){
+export function drawSecondWatch(c:CanvasRenderingContext2D,s:Sim,time:number,still:boolean,wide:boolean,signals=false,scale=1){
   if(!secondWatch(s.challenge))return
   c.save()
   if(!signals&&s.director?.passage==='convoy'){
@@ -23,7 +23,7 @@ export function drawSecondWatch(c:CanvasRenderingContext2D,s:Sim,time:number,sti
   }
   if(!signals){c.restore();return}
   const owner=commandTower(s),phase=s.director?.command?.phase
-  if(owner&&phase){
+  if(owner&&phase&&phase!=='spent'){
     // Mark the actual weapon that is giving up its normal fire for a command.
     // Four brass corners remain visible without adding another combat label.
     const r=34,pulse=still?1:.8+Math.sin(time*3)*.2
@@ -32,17 +32,23 @@ export function drawSecondWatch(c:CanvasRenderingContext2D,s:Sim,time:number,sti
     c.globalAlpha=1
   }
   for(const boss of s.enemies){
+    if(boss.alive&&boss.def.boss&&(boss.signalT??0)>0){
+      const r=Math.max(46,boss.def.radius*1.3),arc=-Math.PI/2+Math.PI*2*Math.min(1,boss.signalT!/3)
+      c.strokeStyle='#101e2a';c.lineWidth=7;c.beginPath();c.arc(boss.x,boss.y,r,-Math.PI/2,arc);c.stroke()
+      c.strokeStyle='#ffb36c';c.lineWidth=3;c.stroke()
+    }
     if(!boss.alive||!boss.channelLink||(boss.signalT??0)<=0)continue
     const escort=s.enemies.find(e=>e.alive&&e.uid===boss.channelLink);if(!escort)continue
     c.strokeStyle='#182e32';c.lineWidth=7;c.beginPath();c.moveTo(boss.x,boss.y);c.lineTo(escort.x,escort.y);c.stroke()
     c.strokeStyle='#dce99c';c.lineWidth=2.5;c.setLineDash([9,5]);c.lineDashOffset=still?0:-time*24;c.stroke();c.setLineDash([])
     c.strokeStyle='#fff0b6';c.lineWidth=2.5;c.beginPath();c.arc(escort.x,escort.y,escort.def.radius+10,0,Math.PI*2);c.stroke()
-    upright(c,escort.x,escort.y,wide,()=>{c.font='600 12px "DM Sans Variable",sans-serif';c.textAlign='center';c.fillStyle='#fff0b6';c.strokeStyle='#102733';c.lineWidth=4;c.strokeText('BREAK TETHER',escort.x,escort.y-escort.def.radius*2-15);c.fillText('BREAK TETHER',escort.x,escort.y-escort.def.radius*2-15)})
+    upright(c,escort.x,escort.y,wide,()=>{c.font=`650 ${Math.max(12,10/scale)}px "DM Sans Variable",sans-serif`;c.textAlign='center';c.fillStyle='#fff0b6';c.strokeStyle='#102733';c.lineWidth=5;c.strokeText('BREAK TETHER',escort.x,escort.y-escort.def.radius*2-15);c.fillText('BREAK TETHER',escort.x,escort.y-escort.def.radius*2-15)})
   }
   if(s.director?.command?.phase==='held'){
     const chosen=s.challenge.hero==='ivo'?designatedTarget(s):null
     for(const e of commandTargets(s)){
       const selected=s.challenge.hero!=='ivo'||chosen===e,r=e.def.radius+9
+      if(!selected)continue
       c.strokeStyle=selected?'#ffe2a0':'#9cb8ba80';c.lineWidth=selected?3:1.5
       for(const side of [-1,1]){c.beginPath();c.moveTo(e.x+side*(r-7),e.y-r);c.lineTo(e.x+side*r,e.y-r);c.lineTo(e.x+side*r,e.y+r);c.lineTo(e.x+side*(r-7),e.y+r);c.stroke()}
     }

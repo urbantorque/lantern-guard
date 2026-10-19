@@ -636,6 +636,7 @@ export class FixedApp {
     if(s.over||s.waveActive||this.rehearsal?.finished||!s.towers.length&&s.wave===s.waveOffset)return
     this.writePlanning(s.snapshot());this.recap=''
     if(s.startWave()){
+      this.retrySuggestion=null
       $('live').textContent=`Wave ${s.wave-s.waveOffset} begins.`;this.save()
       if(this.drawer==='tower'&&this.selection?.kind==='tower')this.towerSheet(this.selection.tower)
       else if(['build','plot'].includes(this.drawer)&&this.selection?.kind==='pad')this.selectPlot(this.selection.index)
@@ -709,7 +710,7 @@ export class FixedApp {
     if(cmd==='portal-continue'){this.portalReturn=false;this.planning=false;this.accumulator=0;this.refresh();return}
     if(cmd==='pause'){if(this.paused){this.portalReturn=false;this.planning=false;if(this.drawer&&!['tower','build','placement','plot'].includes(this.drawer))this.close()}else this.planning=true;this.accumulator=0;this.refresh();return}
     if(cmd==='siege-progress'){this.show('The Long Watch',`<p class="lead">${siegeHeld(s)}/40 waves held · ${s.lives} light remaining</p>${siegeTimeline(siegeHeld(s))}<p class="small muted">Your towers and upgrades carry through every act.</p>`,'siege-progress');return}
-    if(cmd==='retry-act'){const advice=recoveryPlan(s),retry=retrySiegeAct(s);if(retry){this.begin(retry.sim,retry.blooms);this.retrySuggestion=advice;this.recap=advice?.text??'';this.planning=true;this.writePlanning(retry.sim.snapshot());this.save();this.refresh()}return}
+    if(cmd==='retry-act'){const leak=s.lastLeak,retry=retrySiegeAct(s);if(retry){const advice=recoveryPlan(retry.sim,leak);this.begin(retry.sim,retry.blooms);this.retrySuggestion=advice;this.recap=advice?.text??'';this.planning=true;this.writePlanning(retry.sim.snapshot());this.save();this.refresh()}return}
     if(cmd==='passages'){this.passages();return}
     if(cmd==='passage'){if(s.choosePassage(a as Passage)){this.close();this.writePlanning(s.snapshot());this.save();this.recap='Passage chosen.'}return}
     if(cmd==='command-cancel'){s.cancelCommand();if(this.drawer==='surge-help')this.close();this.save();this.refresh();return}

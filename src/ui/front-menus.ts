@@ -4,6 +4,7 @@ import { heroPortrait } from '../render/heroes'
 import { fixedEnemyIcon } from '../render/fixed-world'
 import { EXPEDITIONS, type ExpeditionId } from '../game/watch-depth'
 import { COMMANDS } from '../game/watch-director'
+import { titleScene } from '../render/title-scene'
 import { WATCH_NAMES } from '../game/compact'
 import { PROJECTS, projectProgress } from '../game/district-projects'
 import type { VillageProfile } from '../game/fixed-store'
@@ -15,7 +16,7 @@ export function titleScreen(profile:VillageProfile,_campaign:SaveSnapshot|undefi
   const saved=siege&&!siege.over?{snapshot:siege,slot:'siege'}:null
   const completed=PROJECTS.filter(p=>projectProgress(profile,p.id)>=1).length
   const resume=saved?`<button data-action="resume:siege" class="title-primary"><span>Continue defence<small>Wave ${Math.min(40,saved.snapshot.wave+(saved.snapshot.enemies.length||saved.snapshot.spawners.length?0:1))}/40 · ${saved.snapshot.towers.length} ${saved.snapshot.towers.length===1?'tower':'towers'} · ${saved.snapshot.lives} light</small></span>${chevron()}</button>`:''
-  return `<main class="home nocturne-home"><img class="title-art" src="${import.meta.env.BASE_URL}nightward-nocturne.png" alt="A brass lantern tower watches over a winding canal and the illuminated city after dusk" fetchpriority="high"/><div class="home-shade"></div>
+  return `<main class="home nocturne-home"><img class="title-art" src="${titleScene()}" alt="Blast and Chime towers defend the lit canal shops against an armoured Dredger"/><div class="home-shade"></div>
     <header class="title-top"><span class="title-emblem" aria-hidden="true">${icon('waves')}</span>${menuButton('settings',icon('gear')+'<span>Settings</span>','title-settings')}</header>
     <div class="home-content"><p class="eyebrow">A canal defence game</p><h1 class="wordmark" aria-label="Nightward">NIGHT<span>WARD</span></h1><p class="home-intro">Defend the city after dark.</p><div class="home-actions">${resume}
       <button data-action="campaign" class="${saved?'title-secondary':'title-primary'}"><span>${saved?'The Long Watch':'Begin the campaign'}<small>40 waves · One continuous defence</small></span>${chevron()}</button>
