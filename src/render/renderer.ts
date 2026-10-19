@@ -420,7 +420,7 @@ export class Renderer {
         }
         case 'crack': {
           const at=sim.challenge.fixed?elevated(ev.x,ev.y,8,this.fixedLandscape):ev
-          if(!this.settings.reduceMotion){fx.shards(at.x,at.y,P.coral,sim.challenge.fixed?3:calm?3:7);fx.flash(at.x,at.y,26,P.coral,.2)}
+          if(!this.settings.reduceMotion){fx.shards(at.x,at.y,sim.challenge.fixed?'#d7ae77':P.coral,sim.challenge.fixed?5:calm?3:7);fx.flash(at.x,at.y,26,'#ffe4ad',.13);if(sim.challenge.fixed)fx.add({kind:'impact',x:at.x,y:at.y,size:24,color:'#f9dfad',life:.22,rot:.6})}
           else fx.ring(at.x,at.y,10,P.coral,.15,1.5)
           sound.crack()
           break
@@ -460,7 +460,8 @@ export class Renderer {
             else{
               fx.add({kind:'shock',x:ev.x,y:ev.y,size:ev.r,color:'#ffd29b',life:.42})
               fx.add({kind:'impact',x:hit.x,y:hit.y,size:Math.min(28,ev.r*.55),color:'#ffc181',life:.23})
-              fx.flash(hit.x,hit.y,Math.min(48,ev.r*.75),P.coral,.2)
+              fx.flash(hit.x,hit.y,Math.min(48,ev.r*.75),'#ffe6bd',.12)
+              fx.shards(hit.x,hit.y,'#a98669',ev.big?6:3)
               fx.burst(hit.x,hit.y,'#ffe6aa',ev.big?8:4,ev.r*1.8,2.4,.4)
               fx.add({kind:'ripple',x:ev.x,y:ev.y,size:ev.r*.6,color:'#90b4b7',life:.9})
             }

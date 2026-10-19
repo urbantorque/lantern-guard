@@ -1,5 +1,7 @@
 # Nightward: CrazyGames Basic Launch
 
+The current resubmission candidate and verification limits are documented in [CRAZYGAMES-RESUBMISSION.md](CRAZYGAMES-RESUBMISSION.md). The initial submission was rejected with a general quality message. The revised build is prepared separately and has not been resubmitted.
+
 The portal edition opens directly on the existing continuous 40-wave campaign. New profiles start with Sol on Standard at Millpond, the campaign's established map. The first plot opens a Spark preview immediately; the player still chooses where to build, pays the normal price and starts the first wave. A short footer explains automatic firing and permanent tower continuity. Keeper and difficulty choices remain in the campaign menu.
 
 Existing campaigns restore exactly and wait paused for **Continue defence**. Defeat and victory saves reopen their reports. A damaged primary save uses the existing backup; if both are unreadable, onboarding does not overwrite them. Other save slots and the standalone/native menu entry are preserved.
@@ -39,10 +41,10 @@ Copy-ready listing fields are in `release/crazygames/listing.json`.
 | Landscape cover | 1920 × 1080 | Authored composition of existing game models |
 | Portrait cover | 800 × 1200 | Same identity, recomposed for portrait |
 | Square cover | 800 × 800 | Same identity, recomposed for square |
-| Landscape preview | 1920 × 1080, H.264 MP4 | Silent Dredger encounter capture |
-| Portrait preview | 1080 × 1620, H.264 MP4 | Silent Dredger encounter capture |
+| Landscape preview | 1920 × 1080, H.264 MP4 | Silent Matriarch encounter capture |
+| Portrait preview | 1080 × 1620, H.264 MP4 | Silent Matriarch encounter capture |
 
-Covers contain only the game title, without platform logos, borders or promotional slogans. Videos begin on the matching cover and show real gameplay at the normal simulation tempo. They contain no audio track, cursor, promotional text or letterboxing.
+Covers contain only the game title, without platform logos, borders or promotional slogans. Videos begin on the matching cover and show real gameplay at the normal simulation tempo. They contain no audio track or cursor. The revised captures frame the real battlefield with the game title and live wave/resource labels.
 
 The live submission form accepts **MP4 or MOV**, so upload the `.mp4` previews. The `.webm` files are source captures. Set `FFMPEG_PATH` to a local FFmpeg executable with `libx264`, then run `node scripts/crazygames-mp4.mjs` to convert both captures, replace the opening cover frame and verify full decoding, dimensions, duration and silence. `--verify-only` checks existing MP4s without encoding. The default executable path is the local `imageio-ffmpeg` install under ignored `artifacts/crazygames/encoder/`. Title placement clears the different badge overlays shown by the portal's landscape, portrait and square crop tools.
 
@@ -66,7 +68,7 @@ Run a real Chrome/Edge browser pass and physical Android/iPhone browser sessions
 
 The public developer credit is **Urban Torque**. The account owner uploaded the verified build and confirmed that the hosted preview loads, accepts tower placement and starts wave 1 in their usual browser. That is a user-reported hosted smoke test; the in-app browser's game-file host was blocked by Cloudflare. The automated local checks remain separate evidence. No mobile support claim is selected.
 
-**Submitted on 16 October 2026.** The owner completed billing and explicitly approved both the Developer Portal terms and the PEGI 12 suitability declaration. The portal confirms **AWAITING REVIEW**, with the uploaded build marked **Submitted**. The listing includes all three covers and both MP4 previews. This is a submission receipt, not approval or a live launch; CrazyGames will notify the owner after review.
+**Submitted on 16 October 2026.** The owner completed billing and explicitly approved both the Developer Portal terms and the PEGI 12 suitability declaration. That submission subsequently received a general quality rejection. It is not an approved or live launch. The listing includes all three covers and both MP4 previews. The original submission receipt remains historical evidence; the new candidate requires its own upload and review.
 
 `release/crazygames/publisher-status.json` records the observed status against the exact ZIP hash. The release check carries that status into `readiness.json` only when its archive matches the submitted build. A new build with a different hash remains unsubmitted until its own receipt is recorded. Private portal and preview identifiers remain outside the public repository.
 

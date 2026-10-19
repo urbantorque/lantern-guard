@@ -35,6 +35,9 @@ export function drawCanalShot(c:CanvasRenderingContext2D,p:Proj,time:number,redu
  if(lob){
   const u=Math.min(1,p.t/Math.max(.001,p.dur)),x=p.sx+(p.ex-p.sx)*u,y=p.sy+(p.ey-p.sy)*u
   c.save();c.globalAlpha*=.28;upright(c,x,y,wide,()=>oval(c,x,y,4+(p.heavy?2:0),2,'#081e2b'));c.restore()
+  // A narrowing landing cue connects the airborne mortar to its real splash area.
+  // Only the last fifth of the flight is marked, avoiding a field of target rings.
+  if(!reduced&&p.kind==='firework'&&u>.78){c.save();c.globalAlpha=(u-.78)/.22*.55;c.strokeStyle='#f1c17f';c.lineWidth=1.2;c.beginPath();c.arc(p.ex,p.ey,7+(1-u)*28,0,Math.PI*2);c.stroke();c.restore()}
  }
  // Sample the authored ballistic arc, not a straight smoke line across its bend.
  // Six short segments are the entire trail budget; no particle history is retained.
@@ -69,7 +72,7 @@ export function drawCanalShot(c:CanvasRenderingContext2D,p:Proj,time:number,redu
     const seam=reduced?0:Math.sin(p.t*18)*r*.5;line(c,[[-r*.65,seam],[1,seam*.4],[r*.55,-seam*.3]],'#322d35',.9)
    polygon(c,[[-r,-2],[-r-5,-3],[-r-3,0],[-r-5,3],[-r,2]],'#a3b9b0');oval(c,-r-2,0,2.1,1.1,'#fff3bf')
   }else{
-   const r=p.heavy?4:2.8
+   const r=p.heavy?4.6:3.1
    polygon(c,[[6,0],[-2,-r],[-10,-r*.3],[-tail,0],[-9,r*.45],[-2,r]],'#f9b668');polygon(c,[[5,0],[-2,-r*.5],[-13,0],[-2,r*.5]],'#fff9d6')
    if(!reduced){c.strokeStyle='#ffeab4';c.lineWidth=.8;c.beginPath();c.moveTo(-4,-2);c.quadraticCurveTo(-11,-4-Math.sin(time*33),-18,-1);c.stroke()}
   }

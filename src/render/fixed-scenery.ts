@@ -6,6 +6,7 @@ import type { Sim } from '../game/sim'
 import { setArchitectureLight, lightPool } from './architecture'
 import { districtLayout } from './district-layout'
 import { projectDetails } from './place-art'
+import {firstShopOpen} from '../game/siege'
 
 const terrain=new WeakMap<Sim['level'],{key:string;canvas:HTMLCanvasElement}>()
 const cityGround=[
@@ -22,7 +23,7 @@ export function districtGradient(c:CanvasRenderingContext2D,s:Sim,x=0,y=-105,w=7
 
 /** Paint once per district/lighting change; keep the playable centre free of decoration. */
 export function scenery(s:Sim,stage:number,keepsakes:readonly string[],wide=false){
-  const day=!s.sky.night,chapter=Math.min(3,Math.floor(s.wave/10)),key=stage+':'+chapter+':'+keepsakes.join(',')+':'+day+':'+wide,old=terrain.get(s.level)
+  const day=!s.sky.night,chapter=Math.min(4,Math.floor(Math.max(0,s.wave-1)/8)),key=stage+':'+chapter+':'+keepsakes.join(',')+':'+day+':'+wide+':'+firstShopOpen(s),old=terrain.get(s.level)
   if(old?.key===key)return old.canvas
   const canvas=document.createElement('canvas');canvas.width=1840;canvas.height=2140
   const c=canvas.getContext('2d')!;c.scale(2,2);c.translate(50,140);setArchitectureLight(c,day)
@@ -47,8 +48,8 @@ export function livingDistrict(c:CanvasRenderingContext2D,s:Sim,time:number,redu
   if(s.challenge.watchExperience){
     const homes=districtLayout(s).filter(p=>p.kind==='house'),ids=['market','observatory','gardens'] as const
     for(const [i,p] of homes.entries()){
-      const id=ids[i%3],restored=keepsakes.some(k=>k.startsWith('project:'+id+':')),celebrating=s.won
-      if(!restored&&!celebrating)continue
+      const id=ids[i%3],restored=keepsakes.some(k=>k.startsWith('project:'+id+':')),celebrating=s.won,reopened=i===0&&firstShopOpen(s)
+      if(!restored&&!celebrating&&!reopened)continue
       const {x,y}=p
       upright(c,x,y,wide,()=>{
         c.save();lightPool(c,x,y,restored?45:25,'#ffe5ac',s.sky.night||celebrating?.6:.18)

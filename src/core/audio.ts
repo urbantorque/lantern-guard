@@ -223,9 +223,10 @@ export class Sound {
   }
 
   crack() {
-    if (!this.ok('crack', 12)) return
-    this.noise(0.09, 'bandpass', 1800, 1.2, 0.35)
-    const { o } = this.tone(180, 'sine', 0.002, 0.12, 0.25)
+    if (!this.ok('crack', 5)) return
+    this.noise(0.065, 'bandpass', 1250, .8, 0.19)
+    this.tone(540,'triangle',.002,.09,.055,undefined,.025)
+    const { o } = this.tone(180, 'sine', 0.002, 0.16, 0.21)
     o.frequency.exponentialRampToValueAtTime(70, this.ctx!.currentTime + 0.12)
   }
 
@@ -256,19 +257,20 @@ export class Sound {
   }
 
   launch() {
-    if (!this.ok('launch', 8)) return
-    const n = this.noise(0.22, 'lowpass', 400, 1, 0.14)
-    n.f.frequency.exponentialRampToValueAtTime(2400, n.t + 0.2)
+    if (!this.ok('launch', 5)) return
+    this.tone(105,'triangle',.002,.11,.11)
+    const n = this.noise(0.16, 'lowpass', 500, .7, 0.12)
+    n.f.frequency.exponentialRampToValueAtTime(1600, n.t + 0.15)
   }
 
   boom(big = false) {
-    if (!this.ok('boom', 10)) return
+    if (!this.ok('boom', 5)) return
     const ctx = this.ctx!
     const { o } = this.tone(big ? 110 : 150, 'sine', 0.003, big ? 0.35 : 0.2, 0.32)
     o.frequency.exponentialRampToValueAtTime(45, ctx.currentTime + 0.25)
     this.noise(big ? 0.35 : 0.2, 'lowpass', 1400, 0.8, 0.22)
-    // crackle tail
-    for (let i = 0; i < (big ? 7 : 4); i++) this.noise(0.02, 'highpass', 4000, 1, 0.06 + Math.random() * 0.05, 0.05 + Math.random() * 0.25)
+    // Short falling debris follows the low impact; crowded waves leave room for tells.
+    for (let i = 0; i < (big ? 3 : 2); i++) this.noise(.025,'bandpass',1200+i*460,.7,.045-i*.009,.06+i*.065)
   }
 
   /** Mechanical tells, a low impact and a short bright release leave room for the score. */
@@ -394,6 +396,11 @@ export class Sound {
 
   waveClear(wave=0,campaign=false) {
     if (!this.audible) return
+    if(campaign&&wave===5){
+      this.focus(.6)
+      for(const [i,f] of [293.66,369.99,440,587.33].entries())this.tone(f,'sine',.015,.75,.055,undefined,i*.11)
+      return
+    }
     if(campaign&&wave%8!==0){
       // A small confirmation leaves the continuous siege moving forward.
       this.tone(scaleNote(wave%3+5),'sine',.008,.34,.065)

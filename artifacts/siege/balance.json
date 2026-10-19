@@ -3,371 +3,371 @@
     "hero": "sol",
     "build": "Wildfire relay",
     "passage": "convoy",
-    "won": false,
+    "won": true,
     "wave": 40,
-    "light": 0,
-    "seconds": 1220,
-    "commands": 26,
+    "light": 15,
+    "seconds": 1278,
+    "commands": 28,
     "waves": [
       {
         "wave": 1,
         "light": 25,
         "spent": 319,
-        "glow": 232,
+        "glow": 113,
         "crowns": 0,
-        "seconds": 15,
+        "seconds": 7,
         "commands": 0
       },
       {
         "wave": 2,
         "light": 25,
-        "spent": 519,
-        "glow": 156,
+        "spent": 319,
+        "glow": 234,
         "crowns": 0,
-        "seconds": 28,
+        "seconds": 17,
         "commands": 0
       },
       {
         "wave": 3,
         "light": 25,
         "spent": 519,
-        "glow": 298,
+        "glow": 165,
         "crowns": 0,
-        "seconds": 42,
+        "seconds": 29,
         "commands": 0
       },
       {
         "wave": 4,
         "light": 25,
         "spent": 669,
-        "glow": 298,
+        "glow": 163,
         "crowns": 0,
-        "seconds": 53,
+        "seconds": 45,
         "commands": 0
       },
       {
         "wave": 5,
         "light": 25,
-        "spent": 869,
-        "glow": 258,
+        "spent": 669,
+        "glow": 315,
         "crowns": 0,
-        "seconds": 68,
+        "seconds": 59,
         "commands": 0
       },
       {
         "wave": 6,
         "light": 25,
         "spent": 869,
-        "glow": 429,
+        "glow": 282,
         "crowns": 0,
-        "seconds": 87,
+        "seconds": 79,
         "commands": 0
       },
       {
         "wave": 7,
         "light": 25,
-        "spent": 1069,
-        "glow": 263,
+        "spent": 1154,
+        "glow": 161,
         "crowns": 0,
-        "seconds": 102,
+        "seconds": 93,
         "commands": 0
       },
       {
         "wave": 8,
         "light": 25,
-        "spent": 1069,
-        "glow": 616,
+        "spent": 1154,
+        "glow": 505,
         "crowns": 0,
-        "seconds": 145,
+        "seconds": 140,
         "commands": 1
       },
       {
         "wave": 9,
         "light": 25,
-        "spent": 1504,
-        "glow": 242,
+        "spent": 1354,
+        "glow": 352,
         "crowns": 0,
-        "seconds": 160,
+        "seconds": 164,
         "commands": 1
       },
       {
         "wave": 10,
         "light": 25,
         "spent": 1504,
-        "glow": 461,
+        "glow": 267,
         "crowns": 0,
-        "seconds": 180,
+        "seconds": 183,
         "commands": 1
       },
       {
         "wave": 11,
         "light": 25,
-        "spent": 1884,
-        "glow": 309,
+        "spent": 1789,
+        "glow": 194,
         "crowns": 0,
-        "seconds": 198,
+        "seconds": 208,
         "commands": 1
       },
       {
         "wave": 12,
         "light": 25,
-        "spent": 2169,
-        "glow": 269,
+        "spent": 1789,
+        "glow": 422,
         "crowns": 0,
-        "seconds": 223,
+        "seconds": 233,
         "commands": 1
       },
       {
         "wave": 13,
         "light": 25,
         "spent": 2169,
-        "glow": 522,
+        "glow": 277,
         "crowns": 0,
-        "seconds": 243,
+        "seconds": 253,
         "commands": 1
       },
       {
         "wave": 14,
         "light": 25,
-        "spent": 2549,
-        "glow": 433,
+        "spent": 2169,
+        "glow": 549,
         "crowns": 0,
-        "seconds": 264,
+        "seconds": 273,
         "commands": 2
       },
       {
         "wave": 15,
         "light": 25,
-        "spent": 2929,
-        "glow": 326,
+        "spent": 2549,
+        "glow": 422,
         "crowns": 0,
-        "seconds": 288,
-        "commands": 2
+        "seconds": 294,
+        "commands": 3
       },
       {
         "wave": 16,
         "light": 25,
         "spent": 2929,
-        "glow": 806,
+        "glow": 501,
         "crowns": 0,
-        "seconds": 335,
-        "commands": 3
+        "seconds": 339,
+        "commands": 4
       },
       {
         "wave": 17,
         "light": 25,
         "spent": 3329,
-        "glow": 615,
+        "glow": 387,
         "crowns": 0,
-        "seconds": 358,
-        "commands": 4
+        "seconds": 361,
+        "commands": 5
       },
       {
         "wave": 18,
         "light": 25,
         "spent": 3652,
-        "glow": 664,
+        "glow": 410,
         "crowns": 0,
-        "seconds": 384,
-        "commands": 5
+        "seconds": 387,
+        "commands": 6
       },
       {
         "wave": 19,
         "light": 25,
         "spent": 4089,
-        "glow": 610,
+        "glow": 322,
         "crowns": 0,
-        "seconds": 416,
-        "commands": 6
+        "seconds": 419,
+        "commands": 7
       },
       {
         "wave": 20,
         "light": 25,
         "spent": 4089,
-        "glow": 1018,
+        "glow": 711,
         "crowns": 0,
-        "seconds": 446,
-        "commands": 7
+        "seconds": 448,
+        "commands": 8
       },
       {
         "wave": 21,
         "light": 25,
-        "spent": 4809,
-        "glow": 531,
-        "crowns": 0,
-        "seconds": 478,
-        "commands": 8
+        "spent": 4791,
+        "glow": 437,
+        "crowns": 1,
+        "seconds": 482,
+        "commands": 9
       },
       {
         "wave": 22,
         "light": 25,
-        "spent": 4809,
-        "glow": 954,
-        "crowns": 0,
-        "seconds": 507,
-        "commands": 9
+        "spent": 4791,
+        "glow": 829,
+        "crowns": 1,
+        "seconds": 509,
+        "commands": 10
       },
       {
         "wave": 23,
         "light": 25,
-        "spent": 5511,
-        "glow": 642,
+        "spent": 4791,
+        "glow": 1193,
         "crowns": 1,
-        "seconds": 536,
-        "commands": 10
+        "seconds": 541,
+        "commands": 11
       },
       {
         "wave": 24,
         "light": 25,
         "spent": 5511,
-        "glow": 1346,
+        "glow": 838,
         "crowns": 1,
-        "seconds": 629,
-        "commands": 11
+        "seconds": 618,
+        "commands": 12
       },
       {
         "wave": 25,
         "light": 25,
-        "spent": 6596,
-        "glow": 707,
-        "crowns": 2,
-        "seconds": 658,
-        "commands": 12
+        "spent": 5511,
+        "glow": 1235,
+        "crowns": 1,
+        "seconds": 649,
+        "commands": 13
       },
       {
         "wave": 26,
         "light": 25,
         "spent": 6596,
-        "glow": 1210,
+        "glow": 624,
         "crowns": 2,
-        "seconds": 698,
-        "commands": 13
+        "seconds": 693,
+        "commands": 14
       },
       {
         "wave": 27,
         "light": 25,
-        "spent": 7553,
-        "glow": 690,
-        "crowns": 3,
-        "seconds": 724,
-        "commands": 14
+        "spent": 6596,
+        "glow": 1043,
+        "crowns": 2,
+        "seconds": 719,
+        "commands": 15
       },
       {
         "wave": 28,
         "light": 25,
         "spent": 7553,
-        "glow": 1127,
+        "glow": 490,
         "crowns": 3,
-        "seconds": 757,
-        "commands": 15
+        "seconds": 756,
+        "commands": 16
       },
       {
         "wave": 29,
         "light": 25,
-        "spent": 8510,
-        "glow": 744,
-        "crowns": 4,
-        "seconds": 790,
-        "commands": 16
+        "spent": 7553,
+        "glow": 1033,
+        "crowns": 3,
+        "seconds": 793,
+        "commands": 17
       },
       {
         "wave": 30,
         "light": 25,
         "spent": 8510,
-        "glow": 1274,
+        "glow": 567,
         "crowns": 4,
-        "seconds": 824,
-        "commands": 17
+        "seconds": 828,
+        "commands": 18
       },
       {
         "wave": 31,
         "light": 25,
-        "spent": 9787,
-        "glow": 455,
-        "crowns": 5,
-        "seconds": 855,
-        "commands": 17
-      },
-      {
-        "wave": 32,
-        "light": 25,
-        "spent": 9787,
-        "glow": 1261,
-        "crowns": 5,
-        "seconds": 904,
-        "commands": 18
-      },
-      {
-        "wave": 33,
-        "light": 25,
-        "spent": 11064,
-        "glow": 534,
-        "crowns": 6,
-        "seconds": 934,
+        "spent": 8510,
+        "glow": 993,
+        "crowns": 4,
+        "seconds": 864,
         "commands": 19
       },
       {
-        "wave": 34,
-        "light": 25,
-        "spent": 11064,
-        "glow": 1021,
-        "crowns": 6,
-        "seconds": 960,
+        "wave": 32,
+        "light": 15,
+        "spent": 8510,
+        "glow": 1587,
+        "crowns": 4,
+        "seconds": 945,
         "commands": 20
       },
       {
-        "wave": 35,
-        "light": 25,
-        "spent": 11064,
-        "glow": 1598,
-        "crowns": 6,
-        "seconds": 1005,
+        "wave": 33,
+        "light": 15,
+        "spent": 9878,
+        "glow": 711,
+        "crowns": 4,
+        "seconds": 984,
         "commands": 21
       },
       {
-        "wave": 36,
-        "light": 25,
-        "spent": 12432,
-        "glow": 820,
-        "crowns": 6,
-        "seconds": 1036,
+        "wave": 34,
+        "light": 15,
+        "spent": 9878,
+        "glow": 1229,
+        "crowns": 4,
+        "seconds": 1018,
         "commands": 22
       },
       {
-        "wave": 37,
-        "light": 25,
-        "spent": 12432,
-        "glow": 1412,
-        "crowns": 6,
-        "seconds": 1072,
+        "wave": 35,
+        "light": 15,
+        "spent": 11155,
+        "glow": 466,
+        "crowns": 5,
+        "seconds": 1063,
         "commands": 23
       },
       {
-        "wave": 38,
-        "light": 25,
-        "spent": 13709,
-        "glow": 759,
-        "crowns": 7,
-        "seconds": 1108,
+        "wave": 36,
+        "light": 15,
+        "spent": 11155,
+        "glow": 993,
+        "crowns": 5,
+        "seconds": 1095,
         "commands": 24
       },
       {
-        "wave": 39,
-        "light": 25,
-        "spent": 13709,
-        "glow": 1351,
-        "crowns": 7,
-        "seconds": 1141,
+        "wave": 37,
+        "light": 15,
+        "spent": 11155,
+        "glow": 1612,
+        "crowns": 5,
+        "seconds": 1134,
         "commands": 25
       },
       {
-        "wave": 40,
-        "light": 0,
-        "spent": 15177,
-        "glow": 28,
-        "crowns": 8,
-        "seconds": 1220,
+        "wave": 38,
+        "light": 15,
+        "spent": 12623,
+        "glow": 747,
+        "crowns": 6,
+        "seconds": 1172,
         "commands": 26
+      },
+      {
+        "wave": 39,
+        "light": 15,
+        "spent": 12623,
+        "glow": 1355,
+        "crowns": 6,
+        "seconds": 1207,
+        "commands": 27
+      },
+      {
+        "wave": 40,
+        "light": 15,
+        "spent": 13900,
+        "glow": 1086,
+        "crowns": 7,
+        "seconds": 1278,
+        "commands": 28
       }
     ]
   },
@@ -377,369 +377,369 @@
     "passage": "runners",
     "won": true,
     "wave": 40,
-    "light": 25,
-    "seconds": 1228,
-    "commands": 25,
+    "light": 3,
+    "seconds": 1250,
+    "commands": 26,
     "waves": [
       {
         "wave": 1,
         "light": 25,
         "spent": 319,
-        "glow": 232,
+        "glow": 113,
         "crowns": 0,
-        "seconds": 15,
+        "seconds": 7,
         "commands": 0
       },
       {
         "wave": 2,
         "light": 25,
-        "spent": 519,
-        "glow": 156,
+        "spent": 319,
+        "glow": 234,
         "crowns": 0,
-        "seconds": 28,
+        "seconds": 17,
         "commands": 0
       },
       {
         "wave": 3,
         "light": 25,
         "spent": 519,
-        "glow": 298,
+        "glow": 165,
         "crowns": 0,
-        "seconds": 42,
+        "seconds": 29,
         "commands": 0
       },
       {
         "wave": 4,
         "light": 25,
         "spent": 669,
-        "glow": 298,
+        "glow": 163,
         "crowns": 0,
-        "seconds": 53,
+        "seconds": 45,
         "commands": 0
       },
       {
         "wave": 5,
         "light": 25,
-        "spent": 869,
-        "glow": 258,
+        "spent": 669,
+        "glow": 315,
         "crowns": 0,
-        "seconds": 68,
+        "seconds": 59,
         "commands": 0
       },
       {
         "wave": 6,
         "light": 25,
         "spent": 869,
-        "glow": 429,
+        "glow": 282,
         "crowns": 0,
-        "seconds": 87,
+        "seconds": 79,
         "commands": 0
       },
       {
         "wave": 7,
         "light": 25,
-        "spent": 1069,
-        "glow": 263,
+        "spent": 1154,
+        "glow": 161,
         "crowns": 0,
-        "seconds": 102,
+        "seconds": 93,
         "commands": 0
       },
       {
         "wave": 8,
         "light": 25,
-        "spent": 1069,
-        "glow": 616,
+        "spent": 1154,
+        "glow": 505,
         "crowns": 0,
-        "seconds": 145,
+        "seconds": 140,
         "commands": 1
       },
       {
         "wave": 9,
         "light": 25,
-        "spent": 1504,
-        "glow": 242,
+        "spent": 1354,
+        "glow": 352,
         "crowns": 0,
-        "seconds": 160,
+        "seconds": 164,
         "commands": 1
       },
       {
         "wave": 10,
         "light": 25,
         "spent": 1504,
-        "glow": 461,
+        "glow": 267,
         "crowns": 0,
-        "seconds": 180,
+        "seconds": 183,
         "commands": 1
       },
       {
         "wave": 11,
         "light": 25,
-        "spent": 1884,
-        "glow": 309,
+        "spent": 1789,
+        "glow": 194,
         "crowns": 0,
-        "seconds": 198,
+        "seconds": 208,
         "commands": 1
       },
       {
         "wave": 12,
         "light": 25,
-        "spent": 2169,
-        "glow": 269,
+        "spent": 1789,
+        "glow": 422,
         "crowns": 0,
-        "seconds": 223,
+        "seconds": 233,
         "commands": 1
       },
       {
         "wave": 13,
         "light": 25,
         "spent": 2169,
-        "glow": 522,
+        "glow": 277,
         "crowns": 0,
-        "seconds": 243,
+        "seconds": 253,
         "commands": 1
       },
       {
         "wave": 14,
         "light": 25,
-        "spent": 2549,
-        "glow": 433,
+        "spent": 2169,
+        "glow": 549,
         "crowns": 0,
-        "seconds": 264,
+        "seconds": 273,
         "commands": 2
       },
       {
         "wave": 15,
         "light": 25,
-        "spent": 2929,
-        "glow": 326,
+        "spent": 2549,
+        "glow": 422,
         "crowns": 0,
-        "seconds": 288,
-        "commands": 2
+        "seconds": 294,
+        "commands": 3
       },
       {
         "wave": 16,
         "light": 25,
         "spent": 2929,
-        "glow": 806,
+        "glow": 501,
         "crowns": 0,
-        "seconds": 335,
-        "commands": 3
+        "seconds": 339,
+        "commands": 4
       },
       {
         "wave": 17,
         "light": 25,
-        "spent": 3422,
-        "glow": 383,
+        "spent": 3099,
+        "glow": 378,
         "crowns": 0,
-        "seconds": 355,
-        "commands": 4
+        "seconds": 359,
+        "commands": 5
       },
       {
         "wave": 18,
         "light": 25,
-        "spent": 3652,
-        "glow": 349,
+        "spent": 3422,
+        "glow": 446,
         "crowns": 0,
-        "seconds": 385,
-        "commands": 4
+        "seconds": 382,
+        "commands": 6
       },
       {
         "wave": 19,
         "light": 25,
-        "spent": 3652,
-        "glow": 805,
+        "spent": 3422,
+        "glow": 858,
         "crowns": 0,
-        "seconds": 416,
-        "commands": 5
+        "seconds": 413,
+        "commands": 7
       },
       {
         "wave": 20,
         "light": 25,
-        "spent": 4089,
-        "glow": 773,
-        "crowns": 0,
-        "seconds": 443,
-        "commands": 6
+        "spent": 4124,
+        "glow": 468,
+        "crowns": 1,
+        "seconds": 435,
+        "commands": 8
       },
       {
         "wave": 21,
         "light": 25,
-        "spent": 4791,
-        "glow": 524,
+        "spent": 4124,
+        "glow": 790,
         "crowns": 1,
-        "seconds": 472,
-        "commands": 7
+        "seconds": 465,
+        "commands": 9
       },
       {
         "wave": 22,
         "light": 25,
-        "spent": 4791,
-        "glow": 960,
+        "spent": 4124,
+        "glow": 1116,
         "crowns": 1,
-        "seconds": 501,
-        "commands": 8
+        "seconds": 494,
+        "commands": 10
       },
       {
         "wave": 23,
         "light": 25,
-        "spent": 5511,
-        "glow": 410,
+        "spent": 4844,
+        "glow": 497,
         "crowns": 1,
-        "seconds": 531,
-        "commands": 9
+        "seconds": 521,
+        "commands": 11
       },
       {
         "wave": 24,
         "light": 25,
-        "spent": 5511,
-        "glow": 1128,
+        "spent": 5074,
+        "glow": 686,
         "crowns": 1,
-        "seconds": 601,
-        "commands": 10
+        "seconds": 591,
+        "commands": 12
       },
       {
         "wave": 25,
         "light": 25,
-        "spent": 6596,
-        "glow": 467,
-        "crowns": 2,
-        "seconds": 634,
-        "commands": 11
+        "spent": 5511,
+        "glow": 662,
+        "crowns": 1,
+        "seconds": 622,
+        "commands": 13
       },
       {
         "wave": 26,
         "light": 25,
-        "spent": 6596,
-        "glow": 949,
-        "crowns": 2,
-        "seconds": 677,
-        "commands": 12
+        "spent": 5511,
+        "glow": 1095,
+        "crowns": 1,
+        "seconds": 662,
+        "commands": 14
       },
       {
         "wave": 27,
         "light": 25,
-        "spent": 7553,
-        "glow": 468,
-        "crowns": 3,
-        "seconds": 702,
-        "commands": 13
+        "spent": 6596,
+        "glow": 457,
+        "crowns": 2,
+        "seconds": 688,
+        "commands": 15
       },
       {
         "wave": 28,
         "light": 25,
-        "spent": 7553,
-        "glow": 913,
-        "crowns": 3,
-        "seconds": 738,
-        "commands": 14
+        "spent": 6596,
+        "glow": 903,
+        "crowns": 2,
+        "seconds": 719,
+        "commands": 16
       },
       {
         "wave": 29,
         "light": 25,
-        "spent": 8510,
-        "glow": 496,
-        "crowns": 4,
-        "seconds": 772,
-        "commands": 15
+        "spent": 7553,
+        "glow": 425,
+        "crowns": 3,
+        "seconds": 755,
+        "commands": 17
       },
       {
         "wave": 30,
         "light": 25,
-        "spent": 8510,
-        "glow": 1041,
-        "crowns": 4,
-        "seconds": 810,
-        "commands": 16
+        "spent": 7553,
+        "glow": 936,
+        "crowns": 3,
+        "seconds": 794,
+        "commands": 18
       },
       {
         "wave": 31,
         "light": 25,
         "spent": 8510,
-        "glow": 1510,
+        "glow": 445,
         "crowns": 4,
-        "seconds": 845,
-        "commands": 17
-      },
-      {
-        "wave": 32,
-        "light": 25,
-        "spent": 9878,
-        "glow": 938,
-        "crowns": 4,
-        "seconds": 901,
-        "commands": 18
-      },
-      {
-        "wave": 33,
-        "light": 25,
-        "spent": 9878,
-        "glow": 1484,
-        "crowns": 4,
-        "seconds": 940,
+        "seconds": 829,
         "commands": 19
       },
       {
-        "wave": 34,
-        "light": 25,
-        "spent": 11346,
-        "glow": 557,
-        "crowns": 5,
-        "seconds": 975,
+        "wave": 32,
+        "light": 15,
+        "spent": 8510,
+        "glow": 1027,
+        "crowns": 4,
+        "seconds": 908,
         "commands": 20
       },
       {
-        "wave": 35,
-        "light": 25,
-        "spent": 11346,
-        "glow": 1264,
-        "crowns": 5,
-        "seconds": 1024,
+        "wave": 33,
+        "light": 15,
+        "spent": 8510,
+        "glow": 1527,
+        "crowns": 4,
+        "seconds": 946,
         "commands": 21
       },
       {
-        "wave": 36,
-        "light": 25,
-        "spent": 12623,
-        "glow": 595,
-        "crowns": 6,
-        "seconds": 1059,
+        "wave": 34,
+        "light": 15,
+        "spent": 9878,
+        "glow": 624,
+        "crowns": 4,
+        "seconds": 977,
         "commands": 22
       },
       {
-        "wave": 37,
-        "light": 25,
-        "spent": 12623,
-        "glow": 1293,
-        "crowns": 6,
-        "seconds": 1098,
+        "wave": 35,
+        "light": 15,
+        "spent": 9878,
+        "glow": 1182,
+        "crowns": 4,
+        "seconds": 1025,
         "commands": 23
       },
       {
-        "wave": 38,
-        "light": 25,
-        "spent": 13900,
-        "glow": 768,
-        "crowns": 7,
-        "seconds": 1136,
+        "wave": 36,
+        "light": 15,
+        "spent": 11155,
+        "glow": 414,
+        "crowns": 5,
+        "seconds": 1062,
         "commands": 24
+      },
+      {
+        "wave": 37,
+        "light": 15,
+        "spent": 11155,
+        "glow": 1001,
+        "crowns": 5,
+        "seconds": 1098,
+        "commands": 24
+      },
+      {
+        "wave": 38,
+        "light": 15,
+        "spent": 11155,
+        "glow": 1602,
+        "crowns": 5,
+        "seconds": 1134,
+        "commands": 25
       },
       {
         "wave": 39,
-        "light": 25,
-        "spent": 13900,
-        "glow": 1359,
-        "crowns": 7,
-        "seconds": 1170,
-        "commands": 24
+        "light": 15,
+        "spent": 12623,
+        "glow": 692,
+        "crowns": 6,
+        "seconds": 1169,
+        "commands": 25
       },
       {
         "wave": 40,
-        "light": 25,
-        "spent": 15177,
-        "glow": 1146,
-        "crowns": 8,
-        "seconds": 1228,
-        "commands": 25
+        "light": 3,
+        "spent": 12623,
+        "glow": 1493,
+        "crowns": 6,
+        "seconds": 1250,
+        "commands": 26
       }
     ]
   },
@@ -749,2529 +749,2025 @@
     "passage": "convoy",
     "won": true,
     "wave": 40,
-    "light": 13,
-    "seconds": 1241,
+    "light": 25,
+    "seconds": 1077,
+    "commands": 29,
+    "waves": [
+      {
+        "wave": 1,
+        "light": 25,
+        "spent": 319,
+        "glow": 113,
+        "crowns": 0,
+        "seconds": 7,
+        "commands": 0
+      },
+      {
+        "wave": 2,
+        "light": 25,
+        "spent": 319,
+        "glow": 234,
+        "crowns": 0,
+        "seconds": 17,
+        "commands": 0
+      },
+      {
+        "wave": 3,
+        "light": 25,
+        "spent": 519,
+        "glow": 165,
+        "crowns": 0,
+        "seconds": 29,
+        "commands": 0
+      },
+      {
+        "wave": 4,
+        "light": 25,
+        "spent": 669,
+        "glow": 163,
+        "crowns": 0,
+        "seconds": 45,
+        "commands": 0
+      },
+      {
+        "wave": 5,
+        "light": 25,
+        "spent": 669,
+        "glow": 315,
+        "crowns": 0,
+        "seconds": 59,
+        "commands": 0
+      },
+      {
+        "wave": 6,
+        "light": 25,
+        "spent": 954,
+        "glow": 197,
+        "crowns": 0,
+        "seconds": 79,
+        "commands": 0
+      },
+      {
+        "wave": 7,
+        "light": 25,
+        "spent": 954,
+        "glow": 361,
+        "crowns": 0,
+        "seconds": 93,
+        "commands": 0
+      },
+      {
+        "wave": 8,
+        "light": 25,
+        "spent": 1334,
+        "glow": 325,
+        "crowns": 0,
+        "seconds": 130,
+        "commands": 1
+      },
+      {
+        "wave": 9,
+        "light": 25,
+        "spent": 1564,
+        "glow": 335,
+        "crowns": 0,
+        "seconds": 146,
+        "commands": 1
+      },
+      {
+        "wave": 10,
+        "light": 25,
+        "spent": 1564,
+        "glow": 593,
+        "crowns": 0,
+        "seconds": 165,
+        "commands": 1
+      },
+      {
+        "wave": 11,
+        "light": 25,
+        "spent": 2001,
+        "glow": 421,
+        "crowns": 0,
+        "seconds": 183,
+        "commands": 1
+      },
+      {
+        "wave": 12,
+        "light": 25,
+        "spent": 2171,
+        "glow": 381,
+        "crowns": 0,
+        "seconds": 207,
+        "commands": 2
+      },
+      {
+        "wave": 13,
+        "light": 25,
+        "spent": 2494,
+        "glow": 370,
+        "crowns": 0,
+        "seconds": 227,
+        "commands": 3
+      },
+      {
+        "wave": 14,
+        "light": 25,
+        "spent": 2494,
+        "glow": 748,
+        "crowns": 0,
+        "seconds": 250,
+        "commands": 4
+      },
+      {
+        "wave": 15,
+        "light": 25,
+        "spent": 2834,
+        "glow": 627,
+        "crowns": 0,
+        "seconds": 270,
+        "commands": 5
+      },
+      {
+        "wave": 16,
+        "light": 25,
+        "spent": 3480,
+        "glow": 496,
+        "crowns": 0,
+        "seconds": 297,
+        "commands": 6
+      },
+      {
+        "wave": 17,
+        "light": 25,
+        "spent": 3973,
+        "glow": 498,
+        "crowns": 0,
+        "seconds": 318,
+        "commands": 7
+      },
+      {
+        "wave": 18,
+        "light": 25,
+        "spent": 3973,
+        "glow": 886,
+        "crowns": 0,
+        "seconds": 343,
+        "commands": 8
+      },
+      {
+        "wave": 19,
+        "light": 25,
+        "spent": 4675,
+        "glow": 608,
+        "crowns": 1,
+        "seconds": 371,
+        "commands": 9
+      },
+      {
+        "wave": 20,
+        "light": 25,
+        "spent": 4675,
+        "glow": 1003,
+        "crowns": 1,
+        "seconds": 392,
+        "commands": 10
+      },
+      {
+        "wave": 21,
+        "light": 25,
+        "spent": 5395,
+        "glow": 427,
+        "crowns": 1,
+        "seconds": 415,
+        "commands": 11
+      },
+      {
+        "wave": 22,
+        "light": 25,
+        "spent": 5395,
+        "glow": 818,
+        "crowns": 1,
+        "seconds": 441,
+        "commands": 12
+      },
+      {
+        "wave": 23,
+        "light": 25,
+        "spent": 5395,
+        "glow": 1245,
+        "crowns": 1,
+        "seconds": 464,
+        "commands": 13
+      },
+      {
+        "wave": 24,
+        "light": 25,
+        "spent": 6115,
+        "glow": 974,
+        "crowns": 1,
+        "seconds": 518,
+        "commands": 14
+      },
+      {
+        "wave": 25,
+        "light": 25,
+        "spent": 7072,
+        "glow": 424,
+        "crowns": 2,
+        "seconds": 545,
+        "commands": 15
+      },
+      {
+        "wave": 26,
+        "light": 25,
+        "spent": 7072,
+        "glow": 898,
+        "crowns": 2,
+        "seconds": 579,
+        "commands": 16
+      },
+      {
+        "wave": 27,
+        "light": 25,
+        "spent": 7072,
+        "glow": 1335,
+        "crowns": 2,
+        "seconds": 604,
+        "commands": 17
+      },
+      {
+        "wave": 28,
+        "light": 25,
+        "spent": 8157,
+        "glow": 654,
+        "crowns": 3,
+        "seconds": 629,
+        "commands": 18
+      },
+      {
+        "wave": 29,
+        "light": 25,
+        "spent": 8157,
+        "glow": 1164,
+        "crowns": 3,
+        "seconds": 666,
+        "commands": 19
+      },
+      {
+        "wave": 30,
+        "light": 25,
+        "spent": 9242,
+        "glow": 592,
+        "crowns": 4,
+        "seconds": 702,
+        "commands": 20
+      },
+      {
+        "wave": 31,
+        "light": 25,
+        "spent": 9242,
+        "glow": 1030,
+        "crowns": 4,
+        "seconds": 732,
+        "commands": 21
+      },
+      {
+        "wave": 32,
+        "light": 25,
+        "spent": 9242,
+        "glow": 1785,
+        "crowns": 4,
+        "seconds": 783,
+        "commands": 22
+      },
+      {
+        "wave": 33,
+        "light": 25,
+        "spent": 10610,
+        "glow": 948,
+        "crowns": 4,
+        "seconds": 819,
+        "commands": 23
+      },
+      {
+        "wave": 34,
+        "light": 25,
+        "spent": 10610,
+        "glow": 1402,
+        "crowns": 4,
+        "seconds": 850,
+        "commands": 24
+      },
+      {
+        "wave": 35,
+        "light": 25,
+        "spent": 11978,
+        "glow": 573,
+        "crowns": 4,
+        "seconds": 897,
+        "commands": 25
+      },
+      {
+        "wave": 36,
+        "light": 25,
+        "spent": 11978,
+        "glow": 1115,
+        "crowns": 4,
+        "seconds": 936,
+        "commands": 26
+      },
+      {
+        "wave": 37,
+        "light": 25,
+        "spent": 13255,
+        "glow": 399,
+        "crowns": 5,
+        "seconds": 976,
+        "commands": 27
+      },
+      {
+        "wave": 38,
+        "light": 25,
+        "spent": 13255,
+        "glow": 1000,
+        "crowns": 5,
+        "seconds": 1008,
+        "commands": 28
+      },
+      {
+        "wave": 39,
+        "light": 25,
+        "spent": 13255,
+        "glow": 1539,
+        "crowns": 5,
+        "seconds": 1041,
+        "commands": 28
+      },
+      {
+        "wave": 40,
+        "light": 25,
+        "spent": 14723,
+        "glow": 995,
+        "crowns": 6,
+        "seconds": 1077,
+        "commands": 29
+      }
+    ]
+  },
+  {
+    "hero": "sol",
+    "build": "Ignition siege",
+    "passage": "runners",
+    "won": true,
+    "wave": 40,
+    "light": 25,
+    "seconds": 1070,
+    "commands": 28,
+    "waves": [
+      {
+        "wave": 1,
+        "light": 25,
+        "spent": 319,
+        "glow": 113,
+        "crowns": 0,
+        "seconds": 7,
+        "commands": 0
+      },
+      {
+        "wave": 2,
+        "light": 25,
+        "spent": 319,
+        "glow": 234,
+        "crowns": 0,
+        "seconds": 17,
+        "commands": 0
+      },
+      {
+        "wave": 3,
+        "light": 25,
+        "spent": 519,
+        "glow": 165,
+        "crowns": 0,
+        "seconds": 29,
+        "commands": 0
+      },
+      {
+        "wave": 4,
+        "light": 25,
+        "spent": 669,
+        "glow": 163,
+        "crowns": 0,
+        "seconds": 45,
+        "commands": 0
+      },
+      {
+        "wave": 5,
+        "light": 25,
+        "spent": 669,
+        "glow": 315,
+        "crowns": 0,
+        "seconds": 59,
+        "commands": 0
+      },
+      {
+        "wave": 6,
+        "light": 25,
+        "spent": 954,
+        "glow": 197,
+        "crowns": 0,
+        "seconds": 79,
+        "commands": 0
+      },
+      {
+        "wave": 7,
+        "light": 25,
+        "spent": 954,
+        "glow": 361,
+        "crowns": 0,
+        "seconds": 93,
+        "commands": 0
+      },
+      {
+        "wave": 8,
+        "light": 25,
+        "spent": 1334,
+        "glow": 325,
+        "crowns": 0,
+        "seconds": 130,
+        "commands": 1
+      },
+      {
+        "wave": 9,
+        "light": 25,
+        "spent": 1564,
+        "glow": 335,
+        "crowns": 0,
+        "seconds": 146,
+        "commands": 1
+      },
+      {
+        "wave": 10,
+        "light": 25,
+        "spent": 1564,
+        "glow": 593,
+        "crowns": 0,
+        "seconds": 165,
+        "commands": 1
+      },
+      {
+        "wave": 11,
+        "light": 25,
+        "spent": 2001,
+        "glow": 421,
+        "crowns": 0,
+        "seconds": 183,
+        "commands": 1
+      },
+      {
+        "wave": 12,
+        "light": 25,
+        "spent": 2171,
+        "glow": 381,
+        "crowns": 0,
+        "seconds": 207,
+        "commands": 2
+      },
+      {
+        "wave": 13,
+        "light": 25,
+        "spent": 2494,
+        "glow": 370,
+        "crowns": 0,
+        "seconds": 227,
+        "commands": 3
+      },
+      {
+        "wave": 14,
+        "light": 25,
+        "spent": 2494,
+        "glow": 748,
+        "crowns": 0,
+        "seconds": 250,
+        "commands": 4
+      },
+      {
+        "wave": 15,
+        "light": 25,
+        "spent": 2834,
+        "glow": 627,
+        "crowns": 0,
+        "seconds": 270,
+        "commands": 5
+      },
+      {
+        "wave": 16,
+        "light": 25,
+        "spent": 3480,
+        "glow": 496,
+        "crowns": 0,
+        "seconds": 297,
+        "commands": 6
+      },
+      {
+        "wave": 17,
+        "light": 25,
+        "spent": 3650,
+        "glow": 415,
+        "crowns": 0,
+        "seconds": 318,
+        "commands": 7
+      },
+      {
+        "wave": 18,
+        "light": 25,
+        "spent": 3973,
+        "glow": 573,
+        "crowns": 0,
+        "seconds": 341,
+        "commands": 8
+      },
+      {
+        "wave": 19,
+        "light": 25,
+        "spent": 3973,
+        "glow": 1091,
+        "crowns": 0,
+        "seconds": 372,
+        "commands": 9
+      },
+      {
+        "wave": 20,
+        "light": 25,
+        "spent": 4693,
+        "glow": 539,
+        "crowns": 0,
+        "seconds": 395,
+        "commands": 10
+      },
+      {
+        "wave": 21,
+        "light": 25,
+        "spent": 4693,
+        "glow": 903,
+        "crowns": 0,
+        "seconds": 423,
+        "commands": 11
+      },
+      {
+        "wave": 22,
+        "light": 25,
+        "spent": 5395,
+        "glow": 612,
+        "crowns": 1,
+        "seconds": 450,
+        "commands": 12
+      },
+      {
+        "wave": 23,
+        "light": 25,
+        "spent": 5395,
+        "glow": 1039,
+        "crowns": 1,
+        "seconds": 474,
+        "commands": 13
+      },
+      {
+        "wave": 24,
+        "light": 25,
+        "spent": 6115,
+        "glow": 757,
+        "crowns": 1,
+        "seconds": 527,
+        "commands": 14
+      },
+      {
+        "wave": 25,
+        "light": 25,
+        "spent": 6115,
+        "glow": 1188,
+        "crowns": 1,
+        "seconds": 556,
+        "commands": 15
+      },
+      {
+        "wave": 26,
+        "light": 25,
+        "spent": 7072,
+        "glow": 705,
+        "crowns": 2,
+        "seconds": 590,
+        "commands": 15
+      },
+      {
+        "wave": 27,
+        "light": 25,
+        "spent": 7072,
+        "glow": 1115,
+        "crowns": 2,
+        "seconds": 615,
+        "commands": 16
+      },
+      {
+        "wave": 28,
+        "light": 25,
+        "spent": 8157,
+        "glow": 434,
+        "crowns": 3,
+        "seconds": 641,
+        "commands": 17
+      },
+      {
+        "wave": 29,
+        "light": 25,
+        "spent": 8157,
+        "glow": 966,
+        "crowns": 3,
+        "seconds": 679,
+        "commands": 18
+      },
+      {
+        "wave": 30,
+        "light": 25,
+        "spent": 8157,
+        "glow": 1466,
+        "crowns": 3,
+        "seconds": 715,
+        "commands": 19
+      },
+      {
+        "wave": 31,
+        "light": 25,
+        "spent": 9525,
+        "glow": 524,
+        "crowns": 3,
+        "seconds": 745,
+        "commands": 20
+      },
+      {
+        "wave": 32,
+        "light": 25,
+        "spent": 9525,
+        "glow": 1291,
+        "crowns": 3,
+        "seconds": 785,
+        "commands": 21
+      },
+      {
+        "wave": 33,
+        "light": 25,
+        "spent": 10610,
+        "glow": 734,
+        "crowns": 4,
+        "seconds": 821,
+        "commands": 22
+      },
+      {
+        "wave": 34,
+        "light": 25,
+        "spent": 10610,
+        "glow": 1188,
+        "crowns": 4,
+        "seconds": 851,
+        "commands": 23
+      },
+      {
+        "wave": 35,
+        "light": 25,
+        "spent": 11887,
+        "glow": 451,
+        "crowns": 5,
+        "seconds": 895,
+        "commands": 24
+      },
+      {
+        "wave": 36,
+        "light": 25,
+        "spent": 11887,
+        "glow": 1005,
+        "crowns": 5,
+        "seconds": 928,
+        "commands": 25
+      },
+      {
+        "wave": 37,
+        "light": 25,
+        "spent": 11887,
+        "glow": 1560,
+        "crowns": 5,
+        "seconds": 964,
+        "commands": 26
+      },
+      {
+        "wave": 38,
+        "light": 25,
+        "spent": 13255,
+        "glow": 778,
+        "crowns": 5,
+        "seconds": 999,
+        "commands": 27
+      },
+      {
+        "wave": 39,
+        "light": 25,
+        "spent": 13255,
+        "glow": 1334,
+        "crowns": 5,
+        "seconds": 1031,
+        "commands": 27
+      },
+      {
+        "wave": 40,
+        "light": 25,
+        "spent": 14723,
+        "glow": 749,
+        "crowns": 6,
+        "seconds": 1070,
+        "commands": 28
+      }
+    ]
+  },
+  {
+    "hero": "mira",
+    "build": "Frozen battery",
+    "passage": "convoy",
+    "won": false,
+    "wave": 16,
+    "light": 0,
+    "seconds": 624,
+    "commands": 8,
+    "waves": [
+      {
+        "wave": 1,
+        "light": 25,
+        "spent": 260,
+        "glow": 172,
+        "crowns": 0,
+        "seconds": 7,
+        "commands": 0
+      },
+      {
+        "wave": 2,
+        "light": 21,
+        "spent": 260,
+        "glow": 289,
+        "crowns": 0,
+        "seconds": 28,
+        "commands": 0
+      },
+      {
+        "wave": 3,
+        "light": 15,
+        "spent": 545,
+        "glow": 129,
+        "crowns": 0,
+        "seconds": 76,
+        "commands": 0
+      },
+      {
+        "wave": 4,
+        "light": 9,
+        "spent": 545,
+        "glow": 271,
+        "crowns": 0,
+        "seconds": 123,
+        "commands": 1
+      },
+      {
+        "wave": 5,
+        "light": 9,
+        "spent": 745,
+        "glow": 223,
+        "crowns": 0,
+        "seconds": 158,
+        "commands": 2
+      },
+      {
+        "wave": 6,
+        "light": 9,
+        "spent": 945,
+        "glow": 190,
+        "crowns": 0,
+        "seconds": 190,
+        "commands": 3
+      },
+      {
+        "wave": 7,
+        "light": 9,
+        "spent": 945,
+        "glow": 354,
+        "crowns": 0,
+        "seconds": 223,
+        "commands": 4
+      },
+      {
+        "wave": 8,
+        "light": 1,
+        "spent": 1095,
+        "glow": 366,
+        "crowns": 0,
+        "seconds": 297,
+        "commands": 4
+      },
+      {
+        "wave": 9,
+        "light": 1,
+        "spent": 1295,
+        "glow": 213,
+        "crowns": 0,
+        "seconds": 336,
+        "commands": 5
+      },
+      {
+        "wave": 10,
+        "light": 1,
+        "spent": 1504,
+        "glow": 209,
+        "crowns": 0,
+        "seconds": 362,
+        "commands": 5
+      },
+      {
+        "wave": 11,
+        "light": 1,
+        "spent": 1504,
+        "glow": 421,
+        "crowns": 0,
+        "seconds": 394,
+        "commands": 5
+      },
+      {
+        "wave": 12,
+        "light": 1,
+        "spent": 1884,
+        "glow": 269,
+        "crowns": 0,
+        "seconds": 436,
+        "commands": 6
+      },
+      {
+        "wave": 13,
+        "light": 1,
+        "spent": 2169,
+        "glow": 219,
+        "crowns": 0,
+        "seconds": 471,
+        "commands": 6
+      },
+      {
+        "wave": 14,
+        "light": 1,
+        "spent": 2169,
+        "glow": 491,
+        "crowns": 0,
+        "seconds": 511,
+        "commands": 7
+      },
+      {
+        "wave": 15,
+        "light": 1,
+        "spent": 2549,
+        "glow": 364,
+        "crowns": 0,
+        "seconds": 550,
+        "commands": 8
+      },
+      {
+        "wave": 16,
+        "light": 0,
+        "spent": 2929,
+        "glow": 22,
+        "crowns": 0,
+        "seconds": 624,
+        "commands": 8
+      }
+    ]
+  },
+  {
+    "hero": "mira",
+    "build": "Frozen battery",
+    "passage": "runners",
+    "won": false,
+    "wave": 16,
+    "light": 0,
+    "seconds": 624,
+    "commands": 8,
+    "waves": [
+      {
+        "wave": 1,
+        "light": 25,
+        "spent": 260,
+        "glow": 172,
+        "crowns": 0,
+        "seconds": 7,
+        "commands": 0
+      },
+      {
+        "wave": 2,
+        "light": 21,
+        "spent": 260,
+        "glow": 289,
+        "crowns": 0,
+        "seconds": 28,
+        "commands": 0
+      },
+      {
+        "wave": 3,
+        "light": 15,
+        "spent": 545,
+        "glow": 129,
+        "crowns": 0,
+        "seconds": 76,
+        "commands": 0
+      },
+      {
+        "wave": 4,
+        "light": 9,
+        "spent": 545,
+        "glow": 271,
+        "crowns": 0,
+        "seconds": 123,
+        "commands": 1
+      },
+      {
+        "wave": 5,
+        "light": 9,
+        "spent": 745,
+        "glow": 223,
+        "crowns": 0,
+        "seconds": 158,
+        "commands": 2
+      },
+      {
+        "wave": 6,
+        "light": 9,
+        "spent": 945,
+        "glow": 190,
+        "crowns": 0,
+        "seconds": 190,
+        "commands": 3
+      },
+      {
+        "wave": 7,
+        "light": 9,
+        "spent": 945,
+        "glow": 354,
+        "crowns": 0,
+        "seconds": 223,
+        "commands": 4
+      },
+      {
+        "wave": 8,
+        "light": 1,
+        "spent": 1095,
+        "glow": 366,
+        "crowns": 0,
+        "seconds": 297,
+        "commands": 4
+      },
+      {
+        "wave": 9,
+        "light": 1,
+        "spent": 1295,
+        "glow": 213,
+        "crowns": 0,
+        "seconds": 336,
+        "commands": 5
+      },
+      {
+        "wave": 10,
+        "light": 1,
+        "spent": 1504,
+        "glow": 209,
+        "crowns": 0,
+        "seconds": 362,
+        "commands": 5
+      },
+      {
+        "wave": 11,
+        "light": 1,
+        "spent": 1504,
+        "glow": 421,
+        "crowns": 0,
+        "seconds": 394,
+        "commands": 5
+      },
+      {
+        "wave": 12,
+        "light": 1,
+        "spent": 1884,
+        "glow": 269,
+        "crowns": 0,
+        "seconds": 436,
+        "commands": 6
+      },
+      {
+        "wave": 13,
+        "light": 1,
+        "spent": 2169,
+        "glow": 219,
+        "crowns": 0,
+        "seconds": 471,
+        "commands": 6
+      },
+      {
+        "wave": 14,
+        "light": 1,
+        "spent": 2169,
+        "glow": 491,
+        "crowns": 0,
+        "seconds": 511,
+        "commands": 7
+      },
+      {
+        "wave": 15,
+        "light": 1,
+        "spent": 2549,
+        "glow": 364,
+        "crowns": 0,
+        "seconds": 550,
+        "commands": 8
+      },
+      {
+        "wave": 16,
+        "light": 0,
+        "spent": 2929,
+        "glow": 22,
+        "crowns": 0,
+        "seconds": 624,
+        "commands": 8
+      }
+    ]
+  },
+  {
+    "hero": "mira",
+    "build": "Undertow corridor",
+    "passage": "convoy",
+    "won": true,
+    "wave": 40,
+    "light": 3,
+    "seconds": 1351,
+    "commands": 30,
+    "waves": [
+      {
+        "wave": 1,
+        "light": 25,
+        "spent": 260,
+        "glow": 172,
+        "crowns": 0,
+        "seconds": 7,
+        "commands": 0
+      },
+      {
+        "wave": 2,
+        "light": 21,
+        "spent": 260,
+        "glow": 289,
+        "crowns": 0,
+        "seconds": 28,
+        "commands": 0
+      },
+      {
+        "wave": 3,
+        "light": 21,
+        "spent": 469,
+        "glow": 211,
+        "crowns": 0,
+        "seconds": 39,
+        "commands": 0
+      },
+      {
+        "wave": 4,
+        "light": 21,
+        "spent": 669,
+        "glow": 159,
+        "crowns": 0,
+        "seconds": 51,
+        "commands": 0
+      },
+      {
+        "wave": 5,
+        "light": 21,
+        "spent": 819,
+        "glow": 161,
+        "crowns": 0,
+        "seconds": 70,
+        "commands": 0
+      },
+      {
+        "wave": 6,
+        "light": 21,
+        "spent": 819,
+        "glow": 328,
+        "crowns": 0,
+        "seconds": 97,
+        "commands": 1
+      },
+      {
+        "wave": 7,
+        "light": 21,
+        "spent": 969,
+        "glow": 202,
+        "crowns": 0,
+        "seconds": 113,
+        "commands": 1
+      },
+      {
+        "wave": 8,
+        "light": 13,
+        "spent": 969,
+        "glow": 507,
+        "crowns": 0,
+        "seconds": 189,
+        "commands": 2
+      },
+      {
+        "wave": 9,
+        "light": 13,
+        "spent": 1199,
+        "glow": 339,
+        "crowns": 0,
+        "seconds": 210,
+        "commands": 2
+      },
+      {
+        "wave": 10,
+        "light": 13,
+        "spent": 1484,
+        "glow": 291,
+        "crowns": 0,
+        "seconds": 230,
+        "commands": 2
+      },
+      {
+        "wave": 11,
+        "light": 13,
+        "spent": 1769,
+        "glow": 257,
+        "crowns": 0,
+        "seconds": 255,
+        "commands": 3
+      },
+      {
+        "wave": 12,
+        "light": 13,
+        "spent": 2054,
+        "glow": 232,
+        "crowns": 0,
+        "seconds": 286,
+        "commands": 4
+      },
+      {
+        "wave": 13,
+        "light": 13,
+        "spent": 2054,
+        "glow": 482,
+        "crowns": 0,
+        "seconds": 312,
+        "commands": 5
+      },
+      {
+        "wave": 14,
+        "light": 13,
+        "spent": 2491,
+        "glow": 382,
+        "crowns": 0,
+        "seconds": 355,
+        "commands": 6
+      },
+      {
+        "wave": 15,
+        "light": 13,
+        "spent": 2871,
+        "glow": 331,
+        "crowns": 0,
+        "seconds": 385,
+        "commands": 7
+      },
+      {
+        "wave": 16,
+        "light": 3,
+        "spent": 2871,
+        "glow": 761,
+        "crowns": 0,
+        "seconds": 454,
+        "commands": 7
+      },
+      {
+        "wave": 17,
+        "light": 3,
+        "spent": 3381,
+        "glow": 462,
+        "crowns": 0,
+        "seconds": 490,
+        "commands": 8
+      },
+      {
+        "wave": 18,
+        "light": 3,
+        "spent": 3704,
+        "glow": 468,
+        "crowns": 0,
+        "seconds": 540,
+        "commands": 9
+      },
+      {
+        "wave": 19,
+        "light": 3,
+        "spent": 3704,
+        "glow": 864,
+        "crowns": 0,
+        "seconds": 587,
+        "commands": 10
+      },
+      {
+        "wave": 20,
+        "light": 3,
+        "spent": 4044,
+        "glow": 663,
+        "crowns": 0,
+        "seconds": 626,
+        "commands": 11
+      },
+      {
+        "wave": 21,
+        "light": 3,
+        "spent": 4690,
+        "glow": 378,
+        "crowns": 0,
+        "seconds": 653,
+        "commands": 12
+      },
+      {
+        "wave": 22,
+        "light": 3,
+        "spent": 4690,
+        "glow": 782,
+        "crowns": 0,
+        "seconds": 681,
+        "commands": 13
+      },
+      {
+        "wave": 23,
+        "light": 3,
+        "spent": 5336,
+        "glow": 530,
+        "crowns": 0,
+        "seconds": 711,
+        "commands": 14
+      },
+      {
+        "wave": 24,
+        "light": 3,
+        "spent": 5336,
+        "glow": 1170,
+        "crowns": 0,
+        "seconds": 777,
+        "commands": 14
+      },
+      {
+        "wave": 25,
+        "light": 3,
+        "spent": 6056,
+        "glow": 441,
+        "crowns": 0,
+        "seconds": 804,
+        "commands": 15
+      },
+      {
+        "wave": 26,
+        "light": 3,
+        "spent": 6056,
+        "glow": 854,
+        "crowns": 0,
+        "seconds": 843,
+        "commands": 16
+      },
+      {
+        "wave": 27,
+        "light": 3,
+        "spent": 6758,
+        "glow": 527,
+        "crowns": 1,
+        "seconds": 865,
+        "commands": 17
+      },
+      {
+        "wave": 28,
+        "light": 3,
+        "spent": 6758,
+        "glow": 967,
+        "crowns": 1,
+        "seconds": 890,
+        "commands": 18
+      },
+      {
+        "wave": 29,
+        "light": 3,
+        "spent": 7715,
+        "glow": 525,
+        "crowns": 2,
+        "seconds": 922,
+        "commands": 19
+      },
+      {
+        "wave": 30,
+        "light": 3,
+        "spent": 7715,
+        "glow": 965,
+        "crowns": 2,
+        "seconds": 955,
+        "commands": 20
+      },
+      {
+        "wave": 31,
+        "light": 3,
+        "spent": 8672,
+        "glow": 442,
+        "crowns": 3,
+        "seconds": 983,
+        "commands": 21
+      },
+      {
+        "wave": 32,
+        "light": 3,
+        "spent": 8672,
+        "glow": 1184,
+        "crowns": 3,
+        "seconds": 1035,
+        "commands": 22
+      },
+      {
+        "wave": 33,
+        "light": 3,
+        "spent": 9757,
+        "glow": 561,
+        "crowns": 4,
+        "seconds": 1068,
+        "commands": 23
+      },
+      {
+        "wave": 34,
+        "light": 3,
+        "spent": 9757,
+        "glow": 1030,
+        "crowns": 4,
+        "seconds": 1095,
+        "commands": 24
+      },
+      {
+        "wave": 35,
+        "light": 3,
+        "spent": 10714,
+        "glow": 603,
+        "crowns": 5,
+        "seconds": 1140,
+        "commands": 25
+      },
+      {
+        "wave": 36,
+        "light": 3,
+        "spent": 10714,
+        "glow": 1089,
+        "crowns": 5,
+        "seconds": 1178,
+        "commands": 26
+      },
+      {
+        "wave": 37,
+        "light": 3,
+        "spent": 10714,
+        "glow": 1668,
+        "crowns": 5,
+        "seconds": 1217,
+        "commands": 27
+      },
+      {
+        "wave": 38,
+        "light": 3,
+        "spent": 12082,
+        "glow": 864,
+        "crowns": 5,
+        "seconds": 1255,
+        "commands": 28
+      },
+      {
+        "wave": 39,
+        "light": 3,
+        "spent": 12082,
+        "glow": 1345,
+        "crowns": 5,
+        "seconds": 1292,
+        "commands": 29
+      },
+      {
+        "wave": 40,
+        "light": 3,
+        "spent": 13359,
+        "glow": 981,
+        "crowns": 6,
+        "seconds": 1351,
+        "commands": 30
+      }
+    ]
+  },
+  {
+    "hero": "mira",
+    "build": "Undertow corridor",
+    "passage": "runners",
+    "won": true,
+    "wave": 40,
+    "light": 3,
+    "seconds": 1460,
+    "commands": 29,
+    "waves": [
+      {
+        "wave": 1,
+        "light": 25,
+        "spent": 260,
+        "glow": 172,
+        "crowns": 0,
+        "seconds": 7,
+        "commands": 0
+      },
+      {
+        "wave": 2,
+        "light": 21,
+        "spent": 260,
+        "glow": 289,
+        "crowns": 0,
+        "seconds": 28,
+        "commands": 0
+      },
+      {
+        "wave": 3,
+        "light": 21,
+        "spent": 469,
+        "glow": 211,
+        "crowns": 0,
+        "seconds": 39,
+        "commands": 0
+      },
+      {
+        "wave": 4,
+        "light": 21,
+        "spent": 669,
+        "glow": 159,
+        "crowns": 0,
+        "seconds": 51,
+        "commands": 0
+      },
+      {
+        "wave": 5,
+        "light": 21,
+        "spent": 819,
+        "glow": 161,
+        "crowns": 0,
+        "seconds": 70,
+        "commands": 0
+      },
+      {
+        "wave": 6,
+        "light": 21,
+        "spent": 819,
+        "glow": 328,
+        "crowns": 0,
+        "seconds": 97,
+        "commands": 1
+      },
+      {
+        "wave": 7,
+        "light": 21,
+        "spent": 969,
+        "glow": 202,
+        "crowns": 0,
+        "seconds": 113,
+        "commands": 1
+      },
+      {
+        "wave": 8,
+        "light": 13,
+        "spent": 969,
+        "glow": 507,
+        "crowns": 0,
+        "seconds": 189,
+        "commands": 2
+      },
+      {
+        "wave": 9,
+        "light": 13,
+        "spent": 1199,
+        "glow": 339,
+        "crowns": 0,
+        "seconds": 210,
+        "commands": 2
+      },
+      {
+        "wave": 10,
+        "light": 13,
+        "spent": 1484,
+        "glow": 291,
+        "crowns": 0,
+        "seconds": 230,
+        "commands": 2
+      },
+      {
+        "wave": 11,
+        "light": 13,
+        "spent": 1769,
+        "glow": 257,
+        "crowns": 0,
+        "seconds": 255,
+        "commands": 3
+      },
+      {
+        "wave": 12,
+        "light": 13,
+        "spent": 2054,
+        "glow": 232,
+        "crowns": 0,
+        "seconds": 286,
+        "commands": 4
+      },
+      {
+        "wave": 13,
+        "light": 13,
+        "spent": 2054,
+        "glow": 482,
+        "crowns": 0,
+        "seconds": 312,
+        "commands": 5
+      },
+      {
+        "wave": 14,
+        "light": 13,
+        "spent": 2491,
+        "glow": 382,
+        "crowns": 0,
+        "seconds": 355,
+        "commands": 6
+      },
+      {
+        "wave": 15,
+        "light": 13,
+        "spent": 2871,
+        "glow": 331,
+        "crowns": 0,
+        "seconds": 385,
+        "commands": 7
+      },
+      {
+        "wave": 16,
+        "light": 3,
+        "spent": 2871,
+        "glow": 761,
+        "crowns": 0,
+        "seconds": 454,
+        "commands": 7
+      },
+      {
+        "wave": 17,
+        "light": 3,
+        "spent": 3041,
+        "glow": 716,
+        "crowns": 0,
+        "seconds": 484,
+        "commands": 8
+      },
+      {
+        "wave": 18,
+        "light": 3,
+        "spent": 3381,
+        "glow": 586,
+        "crowns": 0,
+        "seconds": 526,
+        "commands": 9
+      },
+      {
+        "wave": 19,
+        "light": 3,
+        "spent": 3721,
+        "glow": 502,
+        "crowns": 0,
+        "seconds": 570,
+        "commands": 10
+      },
+      {
+        "wave": 20,
+        "light": 3,
+        "spent": 4044,
+        "glow": 569,
+        "crowns": 0,
+        "seconds": 600,
+        "commands": 11
+      },
+      {
+        "wave": 21,
+        "light": 3,
+        "spent": 4044,
+        "glow": 922,
+        "crowns": 0,
+        "seconds": 630,
+        "commands": 12
+      },
+      {
+        "wave": 22,
+        "light": 3,
+        "spent": 4690,
+        "glow": 659,
+        "crowns": 0,
+        "seconds": 671,
+        "commands": 13
+      },
+      {
+        "wave": 23,
+        "light": 3,
+        "spent": 5336,
+        "glow": 412,
+        "crowns": 0,
+        "seconds": 700,
+        "commands": 13
+      },
+      {
+        "wave": 24,
+        "light": 3,
+        "spent": 5336,
+        "glow": 1052,
+        "crowns": 0,
+        "seconds": 771,
+        "commands": 13
+      },
+      {
+        "wave": 25,
+        "light": 3,
+        "spent": 6056,
+        "glow": 443,
+        "crowns": 0,
+        "seconds": 806,
+        "commands": 14
+      },
+      {
+        "wave": 26,
+        "light": 3,
+        "spent": 6056,
+        "glow": 851,
+        "crowns": 0,
+        "seconds": 855,
+        "commands": 15
+      },
+      {
+        "wave": 27,
+        "light": 3,
+        "spent": 6758,
+        "glow": 551,
+        "crowns": 1,
+        "seconds": 879,
+        "commands": 16
+      },
+      {
+        "wave": 28,
+        "light": 3,
+        "spent": 6758,
+        "glow": 991,
+        "crowns": 1,
+        "seconds": 907,
+        "commands": 17
+      },
+      {
+        "wave": 29,
+        "light": 3,
+        "spent": 7715,
+        "glow": 522,
+        "crowns": 2,
+        "seconds": 948,
+        "commands": 18
+      },
+      {
+        "wave": 30,
+        "light": 3,
+        "spent": 7715,
+        "glow": 979,
+        "crowns": 2,
+        "seconds": 988,
+        "commands": 19
+      },
+      {
+        "wave": 31,
+        "light": 3,
+        "spent": 8672,
+        "glow": 484,
+        "crowns": 3,
+        "seconds": 1021,
+        "commands": 20
+      },
+      {
+        "wave": 32,
+        "light": 3,
+        "spent": 8672,
+        "glow": 1192,
+        "crowns": 3,
+        "seconds": 1081,
+        "commands": 21
+      },
+      {
+        "wave": 33,
+        "light": 3,
+        "spent": 9757,
+        "glow": 616,
+        "crowns": 4,
+        "seconds": 1121,
+        "commands": 22
+      },
+      {
+        "wave": 34,
+        "light": 3,
+        "spent": 9757,
+        "glow": 1084,
+        "crowns": 4,
+        "seconds": 1157,
+        "commands": 23
+      },
+      {
+        "wave": 35,
+        "light": 3,
+        "spent": 10714,
+        "glow": 626,
+        "crowns": 5,
+        "seconds": 1204,
+        "commands": 24
+      },
+      {
+        "wave": 36,
+        "light": 3,
+        "spent": 10714,
+        "glow": 1156,
+        "crowns": 5,
+        "seconds": 1251,
+        "commands": 25
+      },
+      {
+        "wave": 37,
+        "light": 3,
+        "spent": 11991,
+        "glow": 431,
+        "crowns": 6,
+        "seconds": 1305,
+        "commands": 26
+      },
+      {
+        "wave": 38,
+        "light": 3,
+        "spent": 11991,
+        "glow": 1004,
+        "crowns": 6,
+        "seconds": 1352,
+        "commands": 27
+      },
+      {
+        "wave": 39,
+        "light": 3,
+        "spent": 11991,
+        "glow": 1490,
+        "crowns": 6,
+        "seconds": 1391,
+        "commands": 28
+      },
+      {
+        "wave": 40,
+        "light": 3,
+        "spent": 13359,
+        "glow": 1036,
+        "crowns": 6,
+        "seconds": 1460,
+        "commands": 29
+      }
+    ]
+  },
+  {
+    "hero": "ivo",
+    "build": "Chain network",
+    "passage": "convoy",
+    "won": false,
+    "wave": 24,
+    "light": 0,
+    "seconds": 806,
     "commands": 11,
     "waves": [
       {
         "wave": 1,
         "light": 25,
         "spent": 319,
-        "glow": 232,
+        "glow": 113,
         "crowns": 0,
-        "seconds": 15,
+        "seconds": 6,
         "commands": 0
       },
       {
         "wave": 2,
         "light": 25,
-        "spent": 519,
-        "glow": 156,
+        "spent": 319,
+        "glow": 234,
         "crowns": 0,
-        "seconds": 28,
+        "seconds": 16,
         "commands": 0
       },
       {
         "wave": 3,
         "light": 25,
-        "spent": 519,
-        "glow": 298,
+        "spent": 319,
+        "glow": 365,
         "crowns": 0,
-        "seconds": 42,
+        "seconds": 27,
         "commands": 0
       },
       {
         "wave": 4,
         "light": 25,
-        "spent": 669,
-        "glow": 298,
+        "spent": 599,
+        "glow": 233,
         "crowns": 0,
-        "seconds": 53,
+        "seconds": 39,
         "commands": 0
       },
       {
         "wave": 5,
         "light": 25,
-        "spent": 954,
-        "glow": 173,
+        "spent": 749,
+        "glow": 235,
         "crowns": 0,
-        "seconds": 68,
+        "seconds": 55,
         "commands": 0
       },
       {
         "wave": 6,
         "light": 25,
-        "spent": 954,
-        "glow": 344,
+        "spent": 949,
+        "glow": 202,
         "crowns": 0,
-        "seconds": 87,
+        "seconds": 77,
         "commands": 0
       },
       {
         "wave": 7,
         "light": 25,
-        "spent": 954,
-        "glow": 518,
+        "spent": 949,
+        "glow": 366,
         "crowns": 0,
-        "seconds": 102,
+        "seconds": 91,
         "commands": 0
       },
       {
         "wave": 8,
-        "light": 25,
-        "spent": 1334,
-        "glow": 491,
+        "light": 17,
+        "spent": 1234,
+        "glow": 386,
         "crowns": 0,
-        "seconds": 155,
-        "commands": 0
-      },
-      {
-        "wave": 9,
-        "light": 25,
-        "spent": 1564,
-        "glow": 372,
-        "crowns": 0,
-        "seconds": 170,
-        "commands": 0
-      },
-      {
-        "wave": 10,
-        "light": 25,
-        "spent": 1564,
-        "glow": 612,
-        "crowns": 0,
-        "seconds": 189,
-        "commands": 0
-      },
-      {
-        "wave": 11,
-        "light": 25,
-        "spent": 2001,
-        "glow": 445,
-        "crowns": 0,
-        "seconds": 207,
-        "commands": 0
-      },
-      {
-        "wave": 12,
-        "light": 25,
-        "spent": 2341,
-        "glow": 291,
-        "crowns": 0,
-        "seconds": 231,
-        "commands": 0
-      },
-      {
-        "wave": 13,
-        "light": 25,
-        "spent": 2664,
-        "glow": 327,
-        "crowns": 0,
-        "seconds": 251,
-        "commands": 0
-      },
-      {
-        "wave": 14,
-        "light": 25,
-        "spent": 2987,
-        "glow": 401,
-        "crowns": 0,
-        "seconds": 276,
+        "seconds": 164,
         "commands": 1
       },
       {
-        "wave": 15,
-        "light": 25,
-        "spent": 2987,
-        "glow": 716,
+        "wave": 9,
+        "light": 17,
+        "spent": 1614,
+        "glow": 193,
         "crowns": 0,
-        "seconds": 302,
+        "seconds": 191,
+        "commands": 1
+      },
+      {
+        "wave": 10,
+        "light": 17,
+        "spent": 1614,
+        "glow": 398,
+        "crowns": 0,
+        "seconds": 218,
+        "commands": 1
+      },
+      {
+        "wave": 11,
+        "light": 17,
+        "spent": 1894,
+        "glow": 190,
+        "crowns": 0,
+        "seconds": 253,
         "commands": 2
       },
       {
-        "wave": 16,
-        "light": 13,
-        "spent": 2987,
-        "glow": 1206,
-        "crowns": 0,
-        "seconds": 369,
-        "commands": 2
-      },
-      {
-        "wave": 17,
-        "light": 13,
-        "spent": 3973,
-        "glow": 452,
-        "crowns": 0,
-        "seconds": 398,
-        "commands": 3
-      },
-      {
-        "wave": 18,
-        "light": 13,
-        "spent": 3973,
-        "glow": 824,
-        "crowns": 0,
-        "seconds": 439,
-        "commands": 3
-      },
-      {
-        "wave": 19,
-        "light": 13,
-        "spent": 4693,
-        "glow": 551,
-        "crowns": 0,
-        "seconds": 475,
-        "commands": 3
-      },
-      {
-        "wave": 20,
-        "light": 13,
-        "spent": 4693,
-        "glow": 969,
-        "crowns": 0,
-        "seconds": 503,
-        "commands": 3
-      },
-      {
-        "wave": 21,
-        "light": 13,
-        "spent": 5413,
+        "wave": 12,
+        "light": 17,
+        "spent": 1894,
         "glow": 418,
         "crowns": 0,
-        "seconds": 532,
-        "commands": 3
-      },
-      {
-        "wave": 22,
-        "light": 13,
-        "spent": 5413,
-        "glow": 862,
-        "crowns": 0,
-        "seconds": 570,
-        "commands": 3
-      },
-      {
-        "wave": 23,
-        "light": 13,
-        "spent": 6115,
-        "glow": 614,
-        "crowns": 1,
-        "seconds": 597,
-        "commands": 3
-      },
-      {
-        "wave": 24,
-        "light": 13,
-        "spent": 6115,
-        "glow": 1281,
-        "crowns": 1,
-        "seconds": 648,
-        "commands": 4
-      },
-      {
-        "wave": 25,
-        "light": 13,
-        "spent": 7072,
-        "glow": 812,
-        "crowns": 2,
-        "seconds": 680,
-        "commands": 5
-      },
-      {
-        "wave": 26,
-        "light": 13,
-        "spent": 7072,
-        "glow": 1300,
-        "crowns": 2,
-        "seconds": 717,
-        "commands": 5
-      },
-      {
-        "wave": 27,
-        "light": 13,
-        "spent": 8157,
-        "glow": 627,
-        "crowns": 3,
-        "seconds": 749,
-        "commands": 5
-      },
-      {
-        "wave": 28,
-        "light": 13,
-        "spent": 8157,
-        "glow": 1112,
-        "crowns": 3,
-        "seconds": 780,
-        "commands": 5
-      },
-      {
-        "wave": 29,
-        "light": 13,
-        "spent": 9242,
-        "glow": 598,
-        "crowns": 4,
-        "seconds": 818,
-        "commands": 6
-      },
-      {
-        "wave": 30,
-        "light": 13,
-        "spent": 9242,
-        "glow": 1079,
-        "crowns": 4,
-        "seconds": 855,
-        "commands": 7
-      },
-      {
-        "wave": 31,
-        "light": 13,
-        "spent": 9242,
-        "glow": 1586,
-        "crowns": 4,
-        "seconds": 893,
-        "commands": 7
-      },
-      {
-        "wave": 32,
-        "light": 13,
-        "spent": 10610,
-        "glow": 1020,
-        "crowns": 4,
-        "seconds": 934,
-        "commands": 8
-      },
-      {
-        "wave": 33,
-        "light": 13,
-        "spent": 10610,
-        "glow": 1528,
-        "crowns": 4,
-        "seconds": 971,
-        "commands": 8
-      },
-      {
-        "wave": 34,
-        "light": 13,
-        "spent": 11978,
-        "glow": 710,
-        "crowns": 4,
-        "seconds": 1005,
-        "commands": 8
-      },
-      {
-        "wave": 35,
-        "light": 13,
-        "spent": 11978,
-        "glow": 1273,
-        "crowns": 4,
-        "seconds": 1055,
-        "commands": 8
-      },
-      {
-        "wave": 36,
-        "light": 13,
-        "spent": 13255,
-        "glow": 540,
-        "crowns": 5,
-        "seconds": 1085,
-        "commands": 9
-      },
-      {
-        "wave": 37,
-        "light": 13,
-        "spent": 13255,
-        "glow": 1196,
-        "crowns": 5,
-        "seconds": 1118,
-        "commands": 10
-      },
-      {
-        "wave": 38,
-        "light": 13,
-        "spent": 13255,
-        "glow": 1803,
-        "crowns": 5,
-        "seconds": 1162,
-        "commands": 10
-      },
-      {
-        "wave": 39,
-        "light": 13,
-        "spent": 14723,
-        "glow": 960,
-        "crowns": 6,
-        "seconds": 1204,
-        "commands": 10
-      },
-      {
-        "wave": 40,
-        "light": 13,
-        "spent": 14723,
-        "glow": 2059,
-        "crowns": 6,
-        "seconds": 1241,
-        "commands": 11
-      }
-    ]
-  },
-  {
-    "hero": "sol",
-    "build": "Ignition siege",
-    "passage": "runners",
-    "won": true,
-    "wave": 40,
-    "light": 13,
-    "seconds": 1262,
-    "commands": 10,
-    "waves": [
-      {
-        "wave": 1,
-        "light": 25,
-        "spent": 319,
-        "glow": 232,
-        "crowns": 0,
-        "seconds": 15,
-        "commands": 0
-      },
-      {
-        "wave": 2,
-        "light": 25,
-        "spent": 519,
-        "glow": 156,
-        "crowns": 0,
-        "seconds": 28,
-        "commands": 0
-      },
-      {
-        "wave": 3,
-        "light": 25,
-        "spent": 519,
-        "glow": 298,
-        "crowns": 0,
-        "seconds": 42,
-        "commands": 0
-      },
-      {
-        "wave": 4,
-        "light": 25,
-        "spent": 669,
-        "glow": 298,
-        "crowns": 0,
-        "seconds": 53,
-        "commands": 0
-      },
-      {
-        "wave": 5,
-        "light": 25,
-        "spent": 954,
-        "glow": 173,
-        "crowns": 0,
-        "seconds": 68,
-        "commands": 0
-      },
-      {
-        "wave": 6,
-        "light": 25,
-        "spent": 954,
-        "glow": 344,
-        "crowns": 0,
-        "seconds": 87,
-        "commands": 0
-      },
-      {
-        "wave": 7,
-        "light": 25,
-        "spent": 954,
-        "glow": 518,
-        "crowns": 0,
-        "seconds": 102,
-        "commands": 0
-      },
-      {
-        "wave": 8,
-        "light": 25,
-        "spent": 1334,
-        "glow": 491,
-        "crowns": 0,
-        "seconds": 155,
-        "commands": 0
-      },
-      {
-        "wave": 9,
-        "light": 25,
-        "spent": 1564,
-        "glow": 372,
-        "crowns": 0,
-        "seconds": 170,
-        "commands": 0
-      },
-      {
-        "wave": 10,
-        "light": 25,
-        "spent": 1564,
-        "glow": 612,
-        "crowns": 0,
-        "seconds": 189,
-        "commands": 0
-      },
-      {
-        "wave": 11,
-        "light": 25,
-        "spent": 2001,
-        "glow": 445,
-        "crowns": 0,
-        "seconds": 207,
-        "commands": 0
-      },
-      {
-        "wave": 12,
-        "light": 25,
-        "spent": 2341,
-        "glow": 291,
-        "crowns": 0,
-        "seconds": 231,
-        "commands": 0
-      },
-      {
-        "wave": 13,
-        "light": 25,
-        "spent": 2664,
-        "glow": 327,
-        "crowns": 0,
-        "seconds": 251,
-        "commands": 0
-      },
-      {
-        "wave": 14,
-        "light": 25,
-        "spent": 2987,
-        "glow": 401,
-        "crowns": 0,
-        "seconds": 276,
-        "commands": 1
-      },
-      {
-        "wave": 15,
-        "light": 25,
-        "spent": 2987,
-        "glow": 716,
-        "crowns": 0,
-        "seconds": 302,
+        "seconds": 292,
         "commands": 2
       },
       {
-        "wave": 16,
-        "light": 13,
-        "spent": 2987,
-        "glow": 1206,
+        "wave": 13,
+        "light": 17,
+        "spent": 2064,
+        "glow": 343,
+        "crowns": 0,
+        "seconds": 326,
+        "commands": 2
+      },
+      {
+        "wave": 14,
+        "light": 17,
+        "spent": 2387,
+        "glow": 292,
         "crowns": 0,
         "seconds": 369,
-        "commands": 2
-      },
-      {
-        "wave": 17,
-        "light": 13,
-        "spent": 3327,
-        "glow": 1015,
-        "crowns": 0,
-        "seconds": 396,
         "commands": 3
-      },
-      {
-        "wave": 18,
-        "light": 13,
-        "spent": 3973,
-        "glow": 824,
-        "crowns": 0,
-        "seconds": 427,
-        "commands": 4
-      },
-      {
-        "wave": 19,
-        "light": 13,
-        "spent": 4675,
-        "glow": 652,
-        "crowns": 1,
-        "seconds": 458,
-        "commands": 4
-      },
-      {
-        "wave": 20,
-        "light": 13,
-        "spent": 4675,
-        "glow": 1095,
-        "crowns": 1,
-        "seconds": 488,
-        "commands": 4
-      },
-      {
-        "wave": 21,
-        "light": 13,
-        "spent": 5395,
-        "glow": 554,
-        "crowns": 1,
-        "seconds": 516,
-        "commands": 4
-      },
-      {
-        "wave": 22,
-        "light": 13,
-        "spent": 5395,
-        "glow": 962,
-        "crowns": 1,
-        "seconds": 547,
-        "commands": 5
-      },
-      {
-        "wave": 23,
-        "light": 13,
-        "spent": 6115,
-        "glow": 476,
-        "crowns": 1,
-        "seconds": 577,
-        "commands": 5
-      },
-      {
-        "wave": 24,
-        "light": 13,
-        "spent": 6115,
-        "glow": 1167,
-        "crowns": 1,
-        "seconds": 630,
-        "commands": 6
-      },
-      {
-        "wave": 25,
-        "light": 13,
-        "spent": 7072,
-        "glow": 667,
-        "crowns": 2,
-        "seconds": 667,
-        "commands": 6
-      },
-      {
-        "wave": 26,
-        "light": 13,
-        "spent": 7072,
-        "glow": 1170,
-        "crowns": 2,
-        "seconds": 708,
-        "commands": 6
-      },
-      {
-        "wave": 27,
-        "light": 13,
-        "spent": 8157,
-        "glow": 497,
-        "crowns": 3,
-        "seconds": 743,
-        "commands": 6
-      },
-      {
-        "wave": 28,
-        "light": 13,
-        "spent": 8157,
-        "glow": 968,
-        "crowns": 3,
-        "seconds": 773,
-        "commands": 6
-      },
-      {
-        "wave": 29,
-        "light": 13,
-        "spent": 9242,
-        "glow": 457,
-        "crowns": 4,
-        "seconds": 812,
-        "commands": 7
-      },
-      {
-        "wave": 30,
-        "light": 13,
-        "spent": 9242,
-        "glow": 945,
-        "crowns": 4,
-        "seconds": 851,
-        "commands": 7
-      },
-      {
-        "wave": 31,
-        "light": 13,
-        "spent": 9242,
-        "glow": 1445,
-        "crowns": 4,
-        "seconds": 888,
-        "commands": 7
-      },
-      {
-        "wave": 32,
-        "light": 13,
-        "spent": 10610,
-        "glow": 886,
-        "crowns": 4,
-        "seconds": 930,
-        "commands": 8
-      },
-      {
-        "wave": 33,
-        "light": 13,
-        "spent": 10610,
-        "glow": 1394,
-        "crowns": 4,
-        "seconds": 970,
-        "commands": 8
-      },
-      {
-        "wave": 34,
-        "light": 13,
-        "spent": 11978,
-        "glow": 573,
-        "crowns": 4,
-        "seconds": 1003,
-        "commands": 8
-      },
-      {
-        "wave": 35,
-        "light": 13,
-        "spent": 11978,
-        "glow": 1137,
-        "crowns": 4,
-        "seconds": 1056,
-        "commands": 8
-      },
-      {
-        "wave": 36,
-        "light": 13,
-        "spent": 11978,
-        "glow": 1700,
-        "crowns": 4,
-        "seconds": 1099,
-        "commands": 9
-      },
-      {
-        "wave": 37,
-        "light": 13,
-        "spent": 13446,
-        "glow": 993,
-        "crowns": 5,
-        "seconds": 1143,
-        "commands": 9
-      },
-      {
-        "wave": 38,
-        "light": 13,
-        "spent": 13446,
-        "glow": 1611,
-        "crowns": 5,
-        "seconds": 1188,
-        "commands": 9
-      },
-      {
-        "wave": 39,
-        "light": 13,
-        "spent": 14723,
-        "glow": 1041,
-        "crowns": 6,
-        "seconds": 1222,
-        "commands": 9
-      },
-      {
-        "wave": 40,
-        "light": 13,
-        "spent": 14723,
-        "glow": 2092,
-        "crowns": 6,
-        "seconds": 1262,
-        "commands": 10
-      }
-    ]
-  },
-  {
-    "hero": "mira",
-    "build": "Frozen battery",
-    "passage": "convoy",
-    "won": false,
-    "wave": 40,
-    "light": 0,
-    "seconds": 1506,
-    "commands": 12,
-    "waves": [
-      {
-        "wave": 1,
-        "light": 25,
-        "spent": 260,
-        "glow": 291,
-        "crowns": 0,
-        "seconds": 15,
-        "commands": 0
-      },
-      {
-        "wave": 2,
-        "light": 25,
-        "spent": 545,
-        "glow": 130,
-        "crowns": 0,
-        "seconds": 32,
-        "commands": 0
-      },
-      {
-        "wave": 3,
-        "light": 25,
-        "spent": 545,
-        "glow": 272,
-        "crowns": 0,
-        "seconds": 53,
-        "commands": 0
-      },
-      {
-        "wave": 4,
-        "light": 25,
-        "spent": 745,
-        "glow": 222,
-        "crowns": 0,
-        "seconds": 87,
-        "commands": 0
-      },
-      {
-        "wave": 5,
-        "light": 25,
-        "spent": 945,
-        "glow": 182,
-        "crowns": 0,
-        "seconds": 118,
-        "commands": 1
-      },
-      {
-        "wave": 6,
-        "light": 25,
-        "spent": 945,
-        "glow": 353,
-        "crowns": 0,
-        "seconds": 152,
-        "commands": 2
-      },
-      {
-        "wave": 7,
-        "light": 25,
-        "spent": 1095,
-        "glow": 237,
-        "crowns": 0,
-        "seconds": 187,
-        "commands": 3
-      },
-      {
-        "wave": 8,
-        "light": 17,
-        "spent": 1304,
-        "glow": 346,
-        "crowns": 0,
-        "seconds": 262,
-        "commands": 3
-      },
-      {
-        "wave": 9,
-        "light": 17,
-        "spent": 1504,
-        "glow": 207,
-        "crowns": 0,
-        "seconds": 284,
-        "commands": 3
-      },
-      {
-        "wave": 10,
-        "light": 17,
-        "spent": 1504,
-        "glow": 426,
-        "crowns": 0,
-        "seconds": 310,
-        "commands": 3
-      },
-      {
-        "wave": 11,
-        "light": 17,
-        "spent": 1884,
-        "glow": 275,
-        "crowns": 0,
-        "seconds": 343,
-        "commands": 3
-      },
-      {
-        "wave": 12,
-        "light": 17,
-        "spent": 2169,
-        "glow": 235,
-        "crowns": 0,
-        "seconds": 383,
-        "commands": 3
-      },
-      {
-        "wave": 13,
-        "light": 17,
-        "spent": 2169,
-        "glow": 487,
-        "crowns": 0,
-        "seconds": 418,
-        "commands": 4
-      },
-      {
-        "wave": 14,
-        "light": 17,
-        "spent": 2549,
-        "glow": 398,
-        "crowns": 0,
-        "seconds": 457,
-        "commands": 5
       },
       {
         "wave": 15,
         "light": 17,
-        "spent": 2929,
-        "glow": 291,
+        "spent": 2387,
+        "glow": 545,
         "crowns": 0,
-        "seconds": 486,
-        "commands": 5
-      },
-      {
-        "wave": 16,
-        "light": 5,
-        "spent": 2929,
-        "glow": 697,
-        "crowns": 0,
-        "seconds": 557,
-        "commands": 5
-      },
-      {
-        "wave": 17,
-        "light": 5,
-        "spent": 3329,
-        "glow": 491,
-        "crowns": 0,
-        "seconds": 588,
-        "commands": 5
-      },
-      {
-        "wave": 18,
-        "light": 5,
-        "spent": 3652,
-        "glow": 510,
-        "crowns": 0,
-        "seconds": 626,
-        "commands": 6
-      },
-      {
-        "wave": 19,
-        "light": 5,
-        "spent": 4089,
-        "glow": 467,
-        "crowns": 0,
-        "seconds": 666,
-        "commands": 7
-      },
-      {
-        "wave": 20,
-        "light": 5,
-        "spent": 4089,
-        "glow": 881,
-        "crowns": 0,
-        "seconds": 701,
-        "commands": 8
-      },
-      {
-        "wave": 21,
-        "light": 5,
-        "spent": 4791,
-        "glow": 569,
-        "crowns": 1,
-        "seconds": 728,
-        "commands": 8
-      },
-      {
-        "wave": 22,
-        "light": 5,
-        "spent": 4791,
-        "glow": 961,
-        "crowns": 1,
-        "seconds": 762,
-        "commands": 8
-      },
-      {
-        "wave": 23,
-        "light": 5,
-        "spent": 5511,
-        "glow": 447,
-        "crowns": 1,
-        "seconds": 789,
-        "commands": 8
-      },
-      {
-        "wave": 24,
-        "light": 5,
-        "spent": 5511,
-        "glow": 1117,
-        "crowns": 1,
-        "seconds": 865,
-        "commands": 8
-      },
-      {
-        "wave": 25,
-        "light": 5,
-        "spent": 6596,
-        "glow": 491,
-        "crowns": 2,
-        "seconds": 897,
-        "commands": 8
-      },
-      {
-        "wave": 26,
-        "light": 5,
-        "spent": 6596,
-        "glow": 953,
-        "crowns": 2,
-        "seconds": 934,
-        "commands": 8
-      },
-      {
-        "wave": 27,
-        "light": 5,
-        "spent": 7553,
-        "glow": 398,
-        "crowns": 3,
-        "seconds": 962,
-        "commands": 8
-      },
-      {
-        "wave": 28,
-        "light": 5,
-        "spent": 7553,
-        "glow": 851,
-        "crowns": 3,
-        "seconds": 989,
-        "commands": 8
-      },
-      {
-        "wave": 29,
-        "light": 5,
-        "spent": 8510,
-        "glow": 440,
-        "crowns": 4,
-        "seconds": 1026,
-        "commands": 8
-      },
-      {
-        "wave": 30,
-        "light": 5,
-        "spent": 8510,
-        "glow": 919,
-        "crowns": 4,
-        "seconds": 1060,
-        "commands": 8
-      },
-      {
-        "wave": 31,
-        "light": 5,
-        "spent": 8510,
-        "glow": 1383,
-        "crowns": 4,
-        "seconds": 1092,
-        "commands": 8
-      },
-      {
-        "wave": 32,
-        "light": 5,
-        "spent": 9878,
-        "glow": 803,
-        "crowns": 4,
-        "seconds": 1143,
-        "commands": 8
-      },
-      {
-        "wave": 33,
-        "light": 5,
-        "spent": 9878,
-        "glow": 1299,
-        "crowns": 4,
-        "seconds": 1179,
-        "commands": 8
-      },
-      {
-        "wave": 34,
-        "light": 5,
-        "spent": 11155,
-        "glow": 533,
-        "crowns": 5,
-        "seconds": 1211,
-        "commands": 8
-      },
-      {
-        "wave": 35,
-        "light": 5,
-        "spent": 11155,
-        "glow": 1086,
-        "crowns": 5,
-        "seconds": 1261,
-        "commands": 8
-      },
-      {
-        "wave": 36,
-        "light": 5,
-        "spent": 11155,
-        "glow": 1611,
-        "crowns": 5,
-        "seconds": 1298,
-        "commands": 9
-      },
-      {
-        "wave": 37,
-        "light": 5,
-        "spent": 12623,
-        "glow": 864,
-        "crowns": 6,
-        "seconds": 1340,
-        "commands": 10
-      },
-      {
-        "wave": 38,
-        "light": 5,
-        "spent": 12623,
-        "glow": 1503,
-        "crowns": 6,
-        "seconds": 1382,
-        "commands": 11
-      },
-      {
-        "wave": 39,
-        "light": 5,
-        "spent": 13900,
-        "glow": 826,
-        "crowns": 7,
-        "seconds": 1421,
-        "commands": 11
-      },
-      {
-        "wave": 40,
-        "light": 0,
-        "spent": 13900,
-        "glow": 968,
-        "crowns": 7,
-        "seconds": 1506,
-        "commands": 12
-      }
-    ]
-  },
-  {
-    "hero": "mira",
-    "build": "Frozen battery",
-    "passage": "runners",
-    "won": true,
-    "wave": 40,
-    "light": 5,
-    "seconds": 1595,
-    "commands": 10,
-    "waves": [
-      {
-        "wave": 1,
-        "light": 25,
-        "spent": 260,
-        "glow": 291,
-        "crowns": 0,
-        "seconds": 15,
-        "commands": 0
-      },
-      {
-        "wave": 2,
-        "light": 25,
-        "spent": 545,
-        "glow": 130,
-        "crowns": 0,
-        "seconds": 32,
-        "commands": 0
-      },
-      {
-        "wave": 3,
-        "light": 25,
-        "spent": 545,
-        "glow": 272,
-        "crowns": 0,
-        "seconds": 53,
-        "commands": 0
-      },
-      {
-        "wave": 4,
-        "light": 25,
-        "spent": 745,
-        "glow": 222,
-        "crowns": 0,
-        "seconds": 87,
-        "commands": 0
-      },
-      {
-        "wave": 5,
-        "light": 25,
-        "spent": 945,
-        "glow": 182,
-        "crowns": 0,
-        "seconds": 118,
-        "commands": 1
-      },
-      {
-        "wave": 6,
-        "light": 25,
-        "spent": 945,
-        "glow": 353,
-        "crowns": 0,
-        "seconds": 152,
-        "commands": 2
-      },
-      {
-        "wave": 7,
-        "light": 25,
-        "spent": 1095,
-        "glow": 237,
-        "crowns": 0,
-        "seconds": 187,
-        "commands": 3
-      },
-      {
-        "wave": 8,
-        "light": 17,
-        "spent": 1304,
-        "glow": 346,
-        "crowns": 0,
-        "seconds": 262,
-        "commands": 3
-      },
-      {
-        "wave": 9,
-        "light": 17,
-        "spent": 1504,
-        "glow": 207,
-        "crowns": 0,
-        "seconds": 284,
-        "commands": 3
-      },
-      {
-        "wave": 10,
-        "light": 17,
-        "spent": 1504,
-        "glow": 426,
-        "crowns": 0,
-        "seconds": 310,
-        "commands": 3
-      },
-      {
-        "wave": 11,
-        "light": 17,
-        "spent": 1884,
-        "glow": 275,
-        "crowns": 0,
-        "seconds": 343,
-        "commands": 3
-      },
-      {
-        "wave": 12,
-        "light": 17,
-        "spent": 2169,
-        "glow": 235,
-        "crowns": 0,
-        "seconds": 383,
-        "commands": 3
-      },
-      {
-        "wave": 13,
-        "light": 17,
-        "spent": 2169,
-        "glow": 487,
-        "crowns": 0,
-        "seconds": 418,
+        "seconds": 405,
         "commands": 4
       },
       {
-        "wave": 14,
-        "light": 17,
-        "spent": 2549,
-        "glow": 398,
-        "crowns": 0,
-        "seconds": 457,
-        "commands": 5
-      },
-      {
-        "wave": 15,
-        "light": 17,
-        "spent": 2929,
-        "glow": 291,
-        "crowns": 0,
-        "seconds": 486,
-        "commands": 5
-      },
-      {
         "wave": 16,
-        "light": 5,
-        "spent": 2929,
-        "glow": 697,
+        "light": 7,
+        "spent": 2919,
+        "glow": 397,
         "crowns": 0,
-        "seconds": 557,
+        "seconds": 468,
         "commands": 5
       },
       {
         "wave": 17,
-        "light": 5,
-        "spent": 3099,
-        "glow": 596,
+        "light": 7,
+        "spent": 3119,
+        "glow": 330,
         "crowns": 0,
-        "seconds": 587,
+        "seconds": 504,
         "commands": 5
       },
       {
         "wave": 18,
-        "light": 5,
-        "spent": 3329,
-        "glow": 584,
+        "light": 7,
+        "spent": 3399,
+        "glow": 347,
         "crowns": 0,
-        "seconds": 621,
+        "seconds": 543,
         "commands": 5
       },
       {
         "wave": 19,
-        "light": 5,
-        "spent": 3652,
-        "glow": 719,
+        "light": 7,
+        "spent": 3779,
+        "glow": 285,
         "crowns": 0,
-        "seconds": 658,
+        "seconds": 578,
         "commands": 6
       },
       {
         "wave": 20,
-        "light": 5,
-        "spent": 4089,
-        "glow": 696,
-        "crowns": 0,
-        "seconds": 689,
-        "commands": 7
-      },
-      {
-        "wave": 21,
-        "light": 5,
-        "spent": 4791,
-        "glow": 404,
-        "crowns": 1,
-        "seconds": 718,
-        "commands": 7
-      },
-      {
-        "wave": 22,
-        "light": 5,
-        "spent": 4791,
-        "glow": 787,
-        "crowns": 1,
-        "seconds": 751,
-        "commands": 7
-      },
-      {
-        "wave": 23,
-        "light": 5,
-        "spent": 4791,
-        "glow": 1207,
-        "crowns": 1,
-        "seconds": 786,
-        "commands": 7
-      },
-      {
-        "wave": 24,
-        "light": 5,
-        "spent": 5511,
-        "glow": 938,
-        "crowns": 1,
-        "seconds": 858,
-        "commands": 7
-      },
-      {
-        "wave": 25,
-        "light": 5,
-        "spent": 6468,
-        "glow": 433,
-        "crowns": 2,
-        "seconds": 894,
-        "commands": 7
-      },
-      {
-        "wave": 26,
-        "light": 5,
-        "spent": 6468,
-        "glow": 894,
-        "crowns": 2,
-        "seconds": 938,
-        "commands": 7
-      },
-      {
-        "wave": 27,
-        "light": 5,
-        "spent": 6468,
-        "glow": 1296,
-        "crowns": 2,
-        "seconds": 967,
-        "commands": 7
-      },
-      {
-        "wave": 28,
-        "light": 5,
-        "spent": 7553,
-        "glow": 675,
-        "crowns": 3,
-        "seconds": 1000,
-        "commands": 7
-      },
-      {
-        "wave": 29,
-        "light": 5,
-        "spent": 7553,
-        "glow": 1209,
-        "crowns": 3,
-        "seconds": 1043,
-        "commands": 8
-      },
-      {
-        "wave": 30,
-        "light": 5,
-        "spent": 8510,
-        "glow": 731,
-        "crowns": 4,
-        "seconds": 1089,
-        "commands": 8
-      },
-      {
-        "wave": 31,
-        "light": 5,
-        "spent": 8510,
-        "glow": 1225,
-        "crowns": 4,
-        "seconds": 1133,
-        "commands": 8
-      },
-      {
-        "wave": 32,
-        "light": 5,
-        "spent": 9787,
-        "glow": 692,
-        "crowns": 5,
-        "seconds": 1197,
-        "commands": 9
-      },
-      {
-        "wave": 33,
-        "light": 5,
-        "spent": 9787,
-        "glow": 1235,
-        "crowns": 5,
-        "seconds": 1242,
-        "commands": 9
-      },
-      {
-        "wave": 34,
-        "light": 5,
-        "spent": 11064,
-        "glow": 442,
-        "crowns": 6,
-        "seconds": 1281,
-        "commands": 9
-      },
-      {
-        "wave": 35,
-        "light": 5,
-        "spent": 11064,
-        "glow": 994,
-        "crowns": 6,
-        "seconds": 1337,
-        "commands": 9
-      },
-      {
-        "wave": 36,
-        "light": 5,
-        "spent": 11064,
-        "glow": 1535,
-        "crowns": 6,
-        "seconds": 1384,
-        "commands": 9
-      },
-      {
-        "wave": 37,
-        "light": 5,
-        "spent": 12432,
-        "glow": 775,
-        "crowns": 6,
-        "seconds": 1432,
-        "commands": 10
-      },
-      {
-        "wave": 38,
-        "light": 5,
-        "spent": 12432,
-        "glow": 1369,
-        "crowns": 6,
-        "seconds": 1481,
-        "commands": 10
-      },
-      {
-        "wave": 39,
-        "light": 5,
-        "spent": 13709,
-        "glow": 624,
-        "crowns": 7,
-        "seconds": 1524,
-        "commands": 10
-      },
-      {
-        "wave": 40,
-        "light": 5,
-        "spent": 13709,
-        "glow": 1572,
-        "crowns": 7,
-        "seconds": 1595,
-        "commands": 10
-      }
-    ]
-  },
-  {
-    "hero": "mira",
-    "build": "Undertow corridor",
-    "passage": "convoy",
-    "won": true,
-    "wave": 40,
-    "light": 5,
-    "seconds": 1349,
-    "commands": 24,
-    "waves": [
-      {
-        "wave": 1,
-        "light": 25,
-        "spent": 260,
-        "glow": 291,
-        "crowns": 0,
-        "seconds": 15,
-        "commands": 0
-      },
-      {
-        "wave": 2,
-        "light": 25,
-        "spent": 469,
-        "glow": 206,
-        "crowns": 0,
-        "seconds": 28,
-        "commands": 0
-      },
-      {
-        "wave": 3,
-        "light": 25,
-        "spent": 469,
-        "glow": 348,
-        "crowns": 0,
-        "seconds": 42,
-        "commands": 0
-      },
-      {
-        "wave": 4,
-        "light": 25,
-        "spent": 819,
-        "glow": 148,
-        "crowns": 0,
-        "seconds": 54,
-        "commands": 0
-      },
-      {
-        "wave": 5,
-        "light": 25,
-        "spent": 819,
-        "glow": 308,
-        "crowns": 0,
-        "seconds": 68,
-        "commands": 0
-      },
-      {
-        "wave": 6,
-        "light": 25,
-        "spent": 1104,
-        "glow": 194,
-        "crowns": 0,
-        "seconds": 88,
-        "commands": 0
-      },
-      {
-        "wave": 7,
-        "light": 25,
-        "spent": 1104,
-        "glow": 368,
-        "crowns": 0,
-        "seconds": 104,
-        "commands": 0
-      },
-      {
-        "wave": 8,
-        "light": 17,
-        "spent": 1254,
-        "glow": 392,
-        "crowns": 0,
-        "seconds": 183,
-        "commands": 1
-      },
-      {
-        "wave": 9,
-        "light": 17,
-        "spent": 1484,
-        "glow": 238,
-        "crowns": 0,
-        "seconds": 202,
-        "commands": 1
-      },
-      {
-        "wave": 10,
-        "light": 17,
-        "spent": 1484,
-        "glow": 482,
-        "crowns": 0,
-        "seconds": 226,
-        "commands": 2
-      },
-      {
-        "wave": 11,
-        "light": 17,
-        "spent": 1921,
-        "glow": 351,
-        "crowns": 0,
-        "seconds": 250,
-        "commands": 3
-      },
-      {
-        "wave": 12,
-        "light": 17,
-        "spent": 2206,
-        "glow": 380,
-        "crowns": 0,
-        "seconds": 282,
-        "commands": 3
-      },
-      {
-        "wave": 13,
-        "light": 17,
-        "spent": 2491,
-        "glow": 379,
-        "crowns": 0,
-        "seconds": 313,
-        "commands": 4
-      },
-      {
-        "wave": 14,
-        "light": 17,
-        "spent": 2871,
-        "glow": 358,
-        "crowns": 0,
-        "seconds": 362,
-        "commands": 5
-      },
-      {
-        "wave": 15,
-        "light": 17,
-        "spent": 2871,
-        "glow": 692,
-        "crowns": 0,
-        "seconds": 397,
-        "commands": 6
-      },
-      {
-        "wave": 16,
-        "light": 5,
-        "spent": 2871,
-        "glow": 1152,
-        "crowns": 0,
-        "seconds": 467,
-        "commands": 6
-      },
-      {
-        "wave": 17,
-        "light": 5,
-        "spent": 3704,
-        "glow": 540,
-        "crowns": 0,
-        "seconds": 502,
-        "commands": 7
-      },
-      {
-        "wave": 18,
-        "light": 5,
-        "spent": 4044,
-        "glow": 336,
-        "crowns": 0,
-        "seconds": 545,
-        "commands": 8
-      },
-      {
-        "wave": 19,
-        "light": 5,
-        "spent": 4044,
-        "glow": 755,
-        "crowns": 0,
-        "seconds": 590,
-        "commands": 9
-      },
-      {
-        "wave": 20,
-        "light": 5,
-        "spent": 4690,
-        "glow": 496,
-        "crowns": 0,
-        "seconds": 616,
-        "commands": 10
-      },
-      {
-        "wave": 21,
-        "light": 5,
-        "spent": 4690,
-        "glow": 879,
-        "crowns": 0,
-        "seconds": 652,
-        "commands": 11
-      },
-      {
-        "wave": 22,
-        "light": 5,
-        "spent": 5336,
-        "glow": 662,
-        "crowns": 0,
-        "seconds": 681,
-        "commands": 11
-      },
-      {
-        "wave": 23,
-        "light": 5,
-        "spent": 6038,
-        "glow": 385,
-        "crowns": 1,
-        "seconds": 709,
-        "commands": 11
-      },
-      {
-        "wave": 24,
-        "light": 5,
-        "spent": 6038,
-        "glow": 1046,
-        "crowns": 1,
-        "seconds": 768,
-        "commands": 11
-      },
-      {
-        "wave": 25,
-        "light": 5,
-        "spent": 6758,
-        "glow": 566,
-        "crowns": 1,
-        "seconds": 795,
-        "commands": 11
-      },
-      {
-        "wave": 26,
-        "light": 5,
-        "spent": 6758,
-        "glow": 1020,
-        "crowns": 1,
-        "seconds": 833,
-        "commands": 11
-      },
-      {
-        "wave": 27,
-        "light": 5,
-        "spent": 7715,
-        "glow": 464,
-        "crowns": 2,
-        "seconds": 854,
-        "commands": 12
-      },
-      {
-        "wave": 28,
-        "light": 5,
-        "spent": 7715,
-        "glow": 917,
-        "crowns": 2,
-        "seconds": 879,
-        "commands": 12
-      },
-      {
-        "wave": 29,
-        "light": 5,
-        "spent": 8672,
-        "glow": 506,
-        "crowns": 3,
-        "seconds": 913,
-        "commands": 13
-      },
-      {
-        "wave": 30,
-        "light": 5,
-        "spent": 8672,
-        "glow": 992,
-        "crowns": 3,
-        "seconds": 946,
-        "commands": 14
-      },
-      {
-        "wave": 31,
-        "light": 5,
-        "spent": 9629,
-        "glow": 488,
-        "crowns": 4,
-        "seconds": 976,
-        "commands": 15
-      },
-      {
-        "wave": 32,
-        "light": 5,
-        "spent": 9629,
-        "glow": 1266,
-        "crowns": 4,
-        "seconds": 1026,
-        "commands": 16
-      },
-      {
-        "wave": 33,
-        "light": 5,
-        "spent": 10714,
-        "glow": 686,
-        "crowns": 5,
-        "seconds": 1060,
-        "commands": 17
-      },
-      {
-        "wave": 34,
-        "light": 5,
-        "spent": 10714,
-        "glow": 1176,
-        "crowns": 5,
-        "seconds": 1088,
-        "commands": 18
-      },
-      {
-        "wave": 35,
-        "light": 5,
-        "spent": 11991,
-        "glow": 464,
-        "crowns": 6,
-        "seconds": 1134,
-        "commands": 19
-      },
-      {
-        "wave": 36,
-        "light": 5,
-        "spent": 11991,
-        "glow": 994,
-        "crowns": 6,
-        "seconds": 1173,
-        "commands": 20
-      },
-      {
-        "wave": 37,
-        "light": 5,
-        "spent": 11991,
-        "glow": 1605,
-        "crowns": 6,
-        "seconds": 1213,
-        "commands": 21
-      },
-      {
-        "wave": 38,
-        "light": 5,
-        "spent": 13359,
-        "glow": 840,
-        "crowns": 6,
-        "seconds": 1254,
-        "commands": 22
-      },
-      {
-        "wave": 39,
-        "light": 5,
-        "spent": 13359,
-        "glow": 1359,
-        "crowns": 6,
-        "seconds": 1288,
-        "commands": 23
-      },
-      {
-        "wave": 40,
-        "light": 5,
-        "spent": 14827,
-        "glow": 854,
-        "crowns": 7,
-        "seconds": 1349,
-        "commands": 24
-      }
-    ]
-  },
-  {
-    "hero": "mira",
-    "build": "Undertow corridor",
-    "passage": "runners",
-    "won": true,
-    "wave": 40,
-    "light": 5,
-    "seconds": 1387,
-    "commands": 28,
-    "waves": [
-      {
-        "wave": 1,
-        "light": 25,
-        "spent": 260,
-        "glow": 291,
-        "crowns": 0,
-        "seconds": 15,
-        "commands": 0
-      },
-      {
-        "wave": 2,
-        "light": 25,
-        "spent": 469,
-        "glow": 206,
-        "crowns": 0,
-        "seconds": 28,
-        "commands": 0
-      },
-      {
-        "wave": 3,
-        "light": 25,
-        "spent": 469,
-        "glow": 348,
-        "crowns": 0,
-        "seconds": 42,
-        "commands": 0
-      },
-      {
-        "wave": 4,
-        "light": 25,
-        "spent": 819,
-        "glow": 148,
-        "crowns": 0,
-        "seconds": 54,
-        "commands": 0
-      },
-      {
-        "wave": 5,
-        "light": 25,
-        "spent": 819,
-        "glow": 308,
-        "crowns": 0,
-        "seconds": 68,
-        "commands": 0
-      },
-      {
-        "wave": 6,
-        "light": 25,
-        "spent": 1104,
-        "glow": 194,
-        "crowns": 0,
-        "seconds": 88,
-        "commands": 0
-      },
-      {
-        "wave": 7,
-        "light": 25,
-        "spent": 1104,
-        "glow": 368,
-        "crowns": 0,
-        "seconds": 104,
-        "commands": 0
-      },
-      {
-        "wave": 8,
-        "light": 17,
-        "spent": 1254,
-        "glow": 392,
-        "crowns": 0,
-        "seconds": 183,
-        "commands": 1
-      },
-      {
-        "wave": 9,
-        "light": 17,
-        "spent": 1484,
-        "glow": 238,
-        "crowns": 0,
-        "seconds": 202,
-        "commands": 1
-      },
-      {
-        "wave": 10,
-        "light": 17,
-        "spent": 1484,
-        "glow": 482,
-        "crowns": 0,
-        "seconds": 226,
-        "commands": 2
-      },
-      {
-        "wave": 11,
-        "light": 17,
-        "spent": 1921,
-        "glow": 351,
-        "crowns": 0,
-        "seconds": 250,
-        "commands": 3
-      },
-      {
-        "wave": 12,
-        "light": 17,
-        "spent": 2206,
-        "glow": 380,
-        "crowns": 0,
-        "seconds": 282,
-        "commands": 3
-      },
-      {
-        "wave": 13,
-        "light": 17,
-        "spent": 2491,
-        "glow": 379,
-        "crowns": 0,
-        "seconds": 313,
-        "commands": 4
-      },
-      {
-        "wave": 14,
-        "light": 17,
-        "spent": 2871,
-        "glow": 358,
-        "crowns": 0,
-        "seconds": 362,
-        "commands": 5
-      },
-      {
-        "wave": 15,
-        "light": 17,
-        "spent": 2871,
-        "glow": 692,
-        "crowns": 0,
-        "seconds": 397,
-        "commands": 6
-      },
-      {
-        "wave": 16,
-        "light": 5,
-        "spent": 2871,
-        "glow": 1152,
-        "crowns": 0,
-        "seconds": 467,
-        "commands": 6
-      },
-      {
-        "wave": 17,
-        "light": 5,
-        "spent": 3381,
-        "glow": 563,
-        "crowns": 0,
-        "seconds": 497,
-        "commands": 7
-      },
-      {
-        "wave": 18,
-        "light": 5,
-        "spent": 3721,
-        "glow": 447,
-        "crowns": 0,
-        "seconds": 536,
-        "commands": 8
-      },
-      {
-        "wave": 19,
-        "light": 5,
-        "spent": 4044,
-        "glow": 633,
-        "crowns": 0,
-        "seconds": 576,
-        "commands": 9
-      },
-      {
-        "wave": 20,
-        "light": 5,
-        "spent": 4690,
-        "glow": 394,
-        "crowns": 0,
-        "seconds": 605,
-        "commands": 10
-      },
-      {
-        "wave": 21,
-        "light": 5,
-        "spent": 4690,
-        "glow": 772,
-        "crowns": 0,
-        "seconds": 632,
-        "commands": 11
-      },
-      {
-        "wave": 22,
-        "light": 5,
-        "spent": 5336,
-        "glow": 538,
-        "crowns": 0,
-        "seconds": 676,
-        "commands": 12
-      },
-      {
-        "wave": 23,
-        "light": 5,
-        "spent": 5336,
-        "glow": 964,
-        "crowns": 0,
-        "seconds": 705,
-        "commands": 12
-      },
-      {
-        "wave": 24,
-        "light": 5,
-        "spent": 6038,
-        "glow": 924,
-        "crowns": 1,
-        "seconds": 766,
-        "commands": 12
-      },
-      {
-        "wave": 25,
-        "light": 5,
-        "spent": 6995,
-        "glow": 427,
-        "crowns": 2,
-        "seconds": 797,
-        "commands": 13
-      },
-      {
-        "wave": 26,
-        "light": 5,
-        "spent": 6995,
-        "glow": 880,
-        "crowns": 2,
-        "seconds": 832,
-        "commands": 14
-      },
-      {
-        "wave": 27,
-        "light": 5,
-        "spent": 6995,
-        "glow": 1281,
-        "crowns": 2,
-        "seconds": 855,
-        "commands": 15
-      },
-      {
-        "wave": 28,
-        "light": 5,
-        "spent": 7715,
-        "glow": 576,
-        "crowns": 2,
-        "seconds": 881,
-        "commands": 16
-      },
-      {
-        "wave": 29,
-        "light": 5,
-        "spent": 7715,
-        "glow": 1122,
-        "crowns": 2,
-        "seconds": 920,
-        "commands": 17
-      },
-      {
-        "wave": 30,
-        "light": 5,
-        "spent": 8800,
-        "glow": 511,
-        "crowns": 3,
-        "seconds": 959,
-        "commands": 18
-      },
-      {
-        "wave": 31,
-        "light": 5,
-        "spent": 8800,
-        "glow": 986,
-        "crowns": 3,
-        "seconds": 991,
-        "commands": 19
-      },
-      {
-        "wave": 32,
-        "light": 5,
-        "spent": 9757,
-        "glow": 795,
-        "crowns": 4,
-        "seconds": 1046,
-        "commands": 20
-      },
-      {
-        "wave": 33,
-        "light": 5,
-        "spent": 9757,
-        "glow": 1299,
-        "crowns": 4,
-        "seconds": 1086,
-        "commands": 21
-      },
-      {
-        "wave": 34,
-        "light": 5,
-        "spent": 10714,
-        "glow": 865,
-        "crowns": 5,
-        "seconds": 1117,
-        "commands": 22
-      },
-      {
-        "wave": 35,
-        "light": 5,
-        "spent": 10714,
-        "glow": 1406,
-        "crowns": 5,
-        "seconds": 1164,
-        "commands": 23
-      },
-      {
-        "wave": 36,
-        "light": 5,
-        "spent": 12082,
-        "glow": 579,
-        "crowns": 5,
-        "seconds": 1203,
-        "commands": 24
-      },
-      {
-        "wave": 37,
-        "light": 5,
-        "spent": 12082,
-        "glow": 1207,
-        "crowns": 5,
-        "seconds": 1244,
-        "commands": 25
-      },
-      {
-        "wave": 38,
-        "light": 5,
-        "spent": 13359,
-        "glow": 497,
-        "crowns": 6,
-        "seconds": 1288,
-        "commands": 26
-      },
-      {
-        "wave": 39,
-        "light": 5,
-        "spent": 13359,
-        "glow": 1053,
-        "crowns": 6,
-        "seconds": 1324,
-        "commands": 27
-      },
-      {
-        "wave": 40,
-        "light": 5,
-        "spent": 13359,
-        "glow": 1987,
-        "crowns": 6,
-        "seconds": 1387,
-        "commands": 28
-      }
-    ]
-  },
-  {
-    "hero": "ivo",
-    "build": "Chain network",
-    "passage": "convoy",
-    "won": false,
-    "wave": 32,
-    "light": 0,
-    "seconds": 1030,
-    "commands": 6,
-    "waves": [
-      {
-        "wave": 1,
-        "light": 25,
-        "spent": 319,
-        "glow": 232,
-        "crowns": 0,
-        "seconds": 14,
-        "commands": 0
-      },
-      {
-        "wave": 2,
-        "light": 25,
-        "spent": 469,
-        "glow": 206,
-        "crowns": 0,
-        "seconds": 27,
-        "commands": 0
-      },
-      {
-        "wave": 3,
-        "light": 25,
-        "spent": 469,
-        "glow": 348,
-        "crowns": 0,
-        "seconds": 41,
-        "commands": 0
-      },
-      {
-        "wave": 4,
-        "light": 25,
-        "spent": 749,
-        "glow": 218,
-        "crowns": 0,
-        "seconds": 52,
-        "commands": 0
-      },
-      {
-        "wave": 5,
-        "light": 25,
-        "spent": 949,
-        "glow": 178,
-        "crowns": 0,
-        "seconds": 67,
-        "commands": 0
-      },
-      {
-        "wave": 6,
-        "light": 25,
-        "spent": 949,
-        "glow": 349,
-        "crowns": 0,
-        "seconds": 88,
-        "commands": 0
-      },
-      {
-        "wave": 7,
-        "light": 25,
-        "spent": 1234,
-        "glow": 238,
-        "crowns": 0,
-        "seconds": 104,
-        "commands": 0
-      },
-      {
-        "wave": 8,
-        "light": 25,
-        "spent": 1234,
-        "glow": 591,
-        "crowns": 0,
-        "seconds": 171,
-        "commands": 1
-      },
-      {
-        "wave": 9,
-        "light": 25,
-        "spent": 1514,
-        "glow": 372,
-        "crowns": 0,
-        "seconds": 186,
-        "commands": 1
-      },
-      {
-        "wave": 10,
-        "light": 25,
-        "spent": 1714,
-        "glow": 251,
-        "crowns": 0,
-        "seconds": 207,
-        "commands": 1
-      },
-      {
-        "wave": 11,
-        "light": 25,
-        "spent": 1714,
-        "glow": 479,
-        "crowns": 0,
-        "seconds": 235,
-        "commands": 1
-      },
-      {
-        "wave": 12,
-        "light": 25,
-        "spent": 2094,
-        "glow": 344,
-        "crowns": 0,
-        "seconds": 270,
-        "commands": 1
-      },
-      {
-        "wave": 13,
-        "light": 25,
-        "spent": 2094,
+        "light": 7,
+        "spent": 3779,
         "glow": 597,
         "crowns": 0,
-        "seconds": 301,
-        "commands": 1
+        "seconds": 607,
+        "commands": 7
       },
       {
-        "wave": 14,
-        "light": 25,
-        "spent": 2626,
-        "glow": 356,
-        "crowns": 0,
-        "seconds": 333,
-        "commands": 2
-      },
-      {
-        "wave": 15,
-        "light": 25,
-        "spent": 3006,
-        "glow": 249,
-        "crowns": 0,
-        "seconds": 366,
-        "commands": 2
-      },
-      {
-        "wave": 16,
-        "light": 13,
-        "spent": 3006,
-        "glow": 654,
-        "crowns": 0,
-        "seconds": 428,
-        "commands": 3
-      },
-      {
-        "wave": 17,
-        "light": 13,
-        "spent": 3456,
-        "glow": 360,
-        "crowns": 0,
-        "seconds": 460,
-        "commands": 3
-      },
-      {
-        "wave": 18,
-        "light": 13,
-        "spent": 3779,
-        "glow": 356,
-        "crowns": 0,
-        "seconds": 498,
-        "commands": 3
-      },
-      {
-        "wave": 19,
-        "light": 13,
-        "spent": 3779,
-        "glow": 697,
-        "crowns": 0,
-        "seconds": 527,
-        "commands": 3
-      },
-      {
-        "wave": 20,
-        "light": 13,
+        "wave": 21,
+        "light": 7,
         "spent": 4311,
+        "glow": 387,
+        "crowns": 0,
+        "seconds": 638,
+        "commands": 8
+      },
+      {
+        "wave": 22,
+        "light": 7,
+        "spent": 4311,
+        "glow": 713,
+        "crowns": 0,
+        "seconds": 679,
+        "commands": 9
+      },
+      {
+        "wave": 23,
+        "light": 7,
+        "spent": 4843,
         "glow": 502,
         "crowns": 0,
-        "seconds": 554,
-        "commands": 3
-      },
-      {
-        "wave": 21,
-        "light": 13,
-        "spent": 4843,
-        "glow": 317,
-        "crowns": 0,
-        "seconds": 583,
-        "commands": 3
-      },
-      {
-        "wave": 22,
-        "light": 13,
-        "spent": 4843,
-        "glow": 668,
-        "crowns": 0,
-        "seconds": 619,
-        "commands": 3
-      },
-      {
-        "wave": 23,
-        "light": 13,
-        "spent": 5545,
-        "glow": 314,
-        "crowns": 1,
-        "seconds": 650,
-        "commands": 4
+        "seconds": 714,
+        "commands": 10
       },
       {
         "wave": 24,
-        "light": 13,
-        "spent": 5545,
-        "glow": 935,
-        "crowns": 1,
-        "seconds": 726,
-        "commands": 5
-      },
-      {
-        "wave": 25,
-        "light": 13,
-        "spent": 6265,
-        "glow": 377,
-        "crowns": 1,
-        "seconds": 757,
-        "commands": 5
-      },
-      {
-        "wave": 26,
-        "light": 13,
-        "spent": 6265,
-        "glow": 774,
-        "crowns": 1,
-        "seconds": 796,
-        "commands": 5
-      },
-      {
-        "wave": 27,
-        "light": 13,
-        "spent": 6265,
-        "glow": 1144,
-        "crowns": 1,
-        "seconds": 826,
-        "commands": 5
-      },
-      {
-        "wave": 28,
-        "light": 13,
-        "spent": 7222,
-        "glow": 580,
-        "crowns": 2,
-        "seconds": 854,
-        "commands": 5
-      },
-      {
-        "wave": 29,
-        "light": 13,
-        "spent": 7222,
-        "glow": 1048,
-        "crowns": 2,
-        "seconds": 888,
-        "commands": 5
-      },
-      {
-        "wave": 30,
-        "light": 13,
-        "spent": 8307,
-        "glow": 402,
-        "crowns": 3,
-        "seconds": 922,
-        "commands": 5
-      },
-      {
-        "wave": 31,
-        "light": 13,
-        "spent": 8307,
-        "glow": 818,
-        "crowns": 3,
-        "seconds": 955,
-        "commands": 5
-      },
-      {
-        "wave": 32,
         "light": 0,
-        "spent": 8307,
-        "glow": 894,
-        "crowns": 3,
-        "seconds": 1030,
-        "commands": 6
+        "spent": 4843,
+        "glow": 576,
+        "crowns": 0,
+        "seconds": 806,
+        "commands": 11
       }
     ]
   },
@@ -3280,670 +2776,598 @@
     "build": "Chain network",
     "passage": "runners",
     "won": false,
-    "wave": 32,
+    "wave": 24,
     "light": 0,
-    "seconds": 1052,
-    "commands": 12,
-    "waves": [
-      {
-        "wave": 1,
-        "light": 25,
-        "spent": 319,
-        "glow": 232,
-        "crowns": 0,
-        "seconds": 14,
-        "commands": 0
-      },
-      {
-        "wave": 2,
-        "light": 25,
-        "spent": 469,
-        "glow": 206,
-        "crowns": 0,
-        "seconds": 27,
-        "commands": 0
-      },
-      {
-        "wave": 3,
-        "light": 25,
-        "spent": 469,
-        "glow": 348,
-        "crowns": 0,
-        "seconds": 41,
-        "commands": 0
-      },
-      {
-        "wave": 4,
-        "light": 25,
-        "spent": 749,
-        "glow": 218,
-        "crowns": 0,
-        "seconds": 52,
-        "commands": 0
-      },
-      {
-        "wave": 5,
-        "light": 25,
-        "spent": 949,
-        "glow": 178,
-        "crowns": 0,
-        "seconds": 67,
-        "commands": 0
-      },
-      {
-        "wave": 6,
-        "light": 25,
-        "spent": 949,
-        "glow": 349,
-        "crowns": 0,
-        "seconds": 88,
-        "commands": 0
-      },
-      {
-        "wave": 7,
-        "light": 25,
-        "spent": 1234,
-        "glow": 238,
-        "crowns": 0,
-        "seconds": 104,
-        "commands": 0
-      },
-      {
-        "wave": 8,
-        "light": 25,
-        "spent": 1234,
-        "glow": 591,
-        "crowns": 0,
-        "seconds": 171,
-        "commands": 1
-      },
-      {
-        "wave": 9,
-        "light": 25,
-        "spent": 1514,
-        "glow": 372,
-        "crowns": 0,
-        "seconds": 186,
-        "commands": 1
-      },
-      {
-        "wave": 10,
-        "light": 25,
-        "spent": 1714,
-        "glow": 251,
-        "crowns": 0,
-        "seconds": 207,
-        "commands": 1
-      },
-      {
-        "wave": 11,
-        "light": 25,
-        "spent": 1714,
-        "glow": 479,
-        "crowns": 0,
-        "seconds": 235,
-        "commands": 1
-      },
-      {
-        "wave": 12,
-        "light": 25,
-        "spent": 2094,
-        "glow": 344,
-        "crowns": 0,
-        "seconds": 270,
-        "commands": 1
-      },
-      {
-        "wave": 13,
-        "light": 25,
-        "spent": 2094,
-        "glow": 597,
-        "crowns": 0,
-        "seconds": 301,
-        "commands": 1
-      },
-      {
-        "wave": 14,
-        "light": 25,
-        "spent": 2626,
-        "glow": 356,
-        "crowns": 0,
-        "seconds": 333,
-        "commands": 2
-      },
-      {
-        "wave": 15,
-        "light": 25,
-        "spent": 3006,
-        "glow": 249,
-        "crowns": 0,
-        "seconds": 366,
-        "commands": 2
-      },
-      {
-        "wave": 16,
-        "light": 13,
-        "spent": 3006,
-        "glow": 654,
-        "crowns": 0,
-        "seconds": 428,
-        "commands": 3
-      },
-      {
-        "wave": 17,
-        "light": 13,
-        "spent": 3176,
-        "glow": 554,
-        "crowns": 0,
-        "seconds": 457,
-        "commands": 3
-      },
-      {
-        "wave": 18,
-        "light": 13,
-        "spent": 3456,
-        "glow": 467,
-        "crowns": 0,
-        "seconds": 491,
-        "commands": 3
-      },
-      {
-        "wave": 19,
-        "light": 13,
-        "spent": 3779,
-        "glow": 579,
-        "crowns": 0,
-        "seconds": 522,
-        "commands": 4
-      },
-      {
-        "wave": 20,
-        "light": 13,
-        "spent": 4311,
-        "glow": 384,
-        "crowns": 0,
-        "seconds": 548,
-        "commands": 4
-      },
-      {
-        "wave": 21,
-        "light": 13,
-        "spent": 4311,
-        "glow": 731,
-        "crowns": 0,
-        "seconds": 581,
-        "commands": 4
-      },
-      {
-        "wave": 22,
-        "light": 13,
-        "spent": 4843,
-        "glow": 550,
-        "crowns": 0,
-        "seconds": 616,
-        "commands": 4
-      },
-      {
-        "wave": 23,
-        "light": 13,
-        "spent": 4843,
-        "glow": 898,
-        "crowns": 0,
-        "seconds": 648,
-        "commands": 5
-      },
-      {
-        "wave": 24,
-        "light": 13,
-        "spent": 5545,
-        "glow": 817,
-        "crowns": 1,
-        "seconds": 738,
-        "commands": 6
-      },
-      {
-        "wave": 25,
-        "light": 13,
-        "spent": 5545,
-        "glow": 1199,
-        "crowns": 1,
-        "seconds": 772,
-        "commands": 7
-      },
-      {
-        "wave": 26,
-        "light": 13,
-        "spent": 6265,
-        "glow": 436,
-        "crowns": 1,
-        "seconds": 812,
-        "commands": 7
-      },
-      {
-        "wave": 27,
-        "light": 13,
-        "spent": 6265,
-        "glow": 806,
-        "crowns": 1,
-        "seconds": 841,
-        "commands": 7
-      },
-      {
-        "wave": 28,
-        "light": 13,
-        "spent": 6265,
-        "glow": 1199,
-        "crowns": 1,
-        "seconds": 871,
-        "commands": 8
-      },
-      {
-        "wave": 29,
-        "light": 13,
-        "spent": 7222,
-        "glow": 710,
-        "crowns": 2,
-        "seconds": 906,
-        "commands": 9
-      },
-      {
-        "wave": 30,
-        "light": 13,
-        "spent": 7222,
-        "glow": 1149,
-        "crowns": 2,
-        "seconds": 942,
-        "commands": 10
-      },
-      {
-        "wave": 31,
-        "light": 13,
-        "spent": 8307,
-        "glow": 480,
-        "crowns": 3,
-        "seconds": 977,
-        "commands": 11
-      },
-      {
-        "wave": 32,
-        "light": 0,
-        "spent": 8307,
-        "glow": 556,
-        "crowns": 3,
-        "seconds": 1052,
-        "commands": 12
-      }
-    ]
-  },
-  {
-    "hero": "ivo",
-    "build": "Capacitor bastion",
-    "passage": "convoy",
-    "won": true,
-    "wave": 40,
-    "light": 13,
-    "seconds": 1428,
+    "seconds": 793,
     "commands": 9,
     "waves": [
       {
         "wave": 1,
         "light": 25,
         "spent": 319,
-        "glow": 232,
+        "glow": 113,
         "crowns": 0,
-        "seconds": 14,
+        "seconds": 6,
         "commands": 0
       },
       {
         "wave": 2,
         "light": 25,
-        "spent": 469,
-        "glow": 206,
+        "spent": 319,
+        "glow": 234,
         "crowns": 0,
-        "seconds": 27,
+        "seconds": 16,
         "commands": 0
       },
       {
         "wave": 3,
         "light": 25,
-        "spent": 469,
-        "glow": 348,
+        "spent": 319,
+        "glow": 365,
         "crowns": 0,
-        "seconds": 41,
+        "seconds": 27,
         "commands": 0
       },
       {
         "wave": 4,
         "light": 25,
-        "spent": 749,
-        "glow": 218,
+        "spent": 599,
+        "glow": 233,
         "crowns": 0,
-        "seconds": 52,
+        "seconds": 39,
         "commands": 0
       },
       {
         "wave": 5,
         "light": 25,
-        "spent": 949,
-        "glow": 178,
+        "spent": 749,
+        "glow": 235,
         "crowns": 0,
-        "seconds": 67,
+        "seconds": 55,
         "commands": 0
       },
       {
         "wave": 6,
         "light": 25,
         "spent": 949,
-        "glow": 349,
+        "glow": 202,
         "crowns": 0,
-        "seconds": 88,
+        "seconds": 77,
         "commands": 0
       },
       {
         "wave": 7,
         "light": 25,
-        "spent": 1099,
+        "spent": 949,
+        "glow": 366,
+        "crowns": 0,
+        "seconds": 91,
+        "commands": 0
+      },
+      {
+        "wave": 8,
+        "light": 17,
+        "spent": 1234,
+        "glow": 386,
+        "crowns": 0,
+        "seconds": 164,
+        "commands": 1
+      },
+      {
+        "wave": 9,
+        "light": 17,
+        "spent": 1614,
+        "glow": 193,
+        "crowns": 0,
+        "seconds": 191,
+        "commands": 1
+      },
+      {
+        "wave": 10,
+        "light": 17,
+        "spent": 1614,
+        "glow": 398,
+        "crowns": 0,
+        "seconds": 218,
+        "commands": 1
+      },
+      {
+        "wave": 11,
+        "light": 17,
+        "spent": 1894,
+        "glow": 190,
+        "crowns": 0,
+        "seconds": 253,
+        "commands": 2
+      },
+      {
+        "wave": 12,
+        "light": 17,
+        "spent": 1894,
+        "glow": 418,
+        "crowns": 0,
+        "seconds": 292,
+        "commands": 2
+      },
+      {
+        "wave": 13,
+        "light": 17,
+        "spent": 2064,
+        "glow": 343,
+        "crowns": 0,
+        "seconds": 326,
+        "commands": 2
+      },
+      {
+        "wave": 14,
+        "light": 17,
+        "spent": 2387,
+        "glow": 292,
+        "crowns": 0,
+        "seconds": 369,
+        "commands": 3
+      },
+      {
+        "wave": 15,
+        "light": 17,
+        "spent": 2387,
+        "glow": 545,
+        "crowns": 0,
+        "seconds": 405,
+        "commands": 4
+      },
+      {
+        "wave": 16,
+        "light": 7,
+        "spent": 2919,
+        "glow": 397,
+        "crowns": 0,
+        "seconds": 468,
+        "commands": 5
+      },
+      {
+        "wave": 17,
+        "light": 7,
+        "spent": 3119,
+        "glow": 344,
+        "crowns": 0,
+        "seconds": 500,
+        "commands": 5
+      },
+      {
+        "wave": 18,
+        "light": 7,
+        "spent": 3499,
+        "glow": 355,
+        "crowns": 0,
+        "seconds": 536,
+        "commands": 5
+      },
+      {
+        "wave": 19,
+        "light": 7,
+        "spent": 3499,
+        "glow": 767,
+        "crowns": 0,
+        "seconds": 570,
+        "commands": 6
+      },
+      {
+        "wave": 20,
+        "light": 7,
+        "spent": 3779,
+        "glow": 479,
+        "crowns": 0,
+        "seconds": 598,
+        "commands": 6
+      },
+      {
+        "wave": 21,
+        "light": 7,
+        "spent": 4311,
+        "glow": 269,
+        "crowns": 0,
+        "seconds": 629,
+        "commands": 7
+      },
+      {
+        "wave": 22,
+        "light": 7,
+        "spent": 4311,
+        "glow": 595,
+        "crowns": 0,
+        "seconds": 666,
+        "commands": 7
+      },
+      {
+        "wave": 23,
+        "light": 7,
+        "spent": 4843,
+        "glow": 384,
+        "crowns": 0,
+        "seconds": 701,
+        "commands": 8
+      },
+      {
+        "wave": 24,
+        "light": 0,
+        "spent": 4843,
+        "glow": 458,
+        "crowns": 0,
+        "seconds": 793,
+        "commands": 9
+      }
+    ]
+  },
+  {
+    "hero": "ivo",
+    "build": "Capacitor bastion",
+    "passage": "convoy",
+    "won": true,
+    "wave": 40,
+    "light": 15,
+    "seconds": 1476,
+    "commands": 12,
+    "waves": [
+      {
+        "wave": 1,
+        "light": 25,
+        "spent": 319,
+        "glow": 113,
+        "crowns": 0,
+        "seconds": 6,
+        "commands": 0
+      },
+      {
+        "wave": 2,
+        "light": 25,
+        "spent": 319,
+        "glow": 234,
+        "crowns": 0,
+        "seconds": 16,
+        "commands": 0
+      },
+      {
+        "wave": 3,
+        "light": 25,
+        "spent": 319,
+        "glow": 365,
+        "crowns": 0,
+        "seconds": 27,
+        "commands": 0
+      },
+      {
+        "wave": 4,
+        "light": 25,
+        "spent": 599,
         "glow": 233,
         "crowns": 0,
-        "seconds": 104,
+        "seconds": 39,
+        "commands": 0
+      },
+      {
+        "wave": 5,
+        "light": 25,
+        "spent": 749,
+        "glow": 235,
+        "crowns": 0,
+        "seconds": 55,
+        "commands": 0
+      },
+      {
+        "wave": 6,
+        "light": 25,
+        "spent": 949,
+        "glow": 202,
+        "crowns": 0,
+        "seconds": 77,
+        "commands": 0
+      },
+      {
+        "wave": 7,
+        "light": 25,
+        "spent": 949,
+        "glow": 366,
+        "crowns": 0,
+        "seconds": 92,
         "commands": 0
       },
       {
         "wave": 8,
         "light": 25,
         "spent": 1099,
-        "glow": 586,
+        "glow": 420,
         "crowns": 0,
-        "seconds": 166,
+        "seconds": 155,
         "commands": 1
       },
       {
         "wave": 9,
         "light": 25,
-        "spent": 1669,
-        "glow": 217,
+        "spent": 1384,
+        "glow": 322,
         "crowns": 0,
-        "seconds": 185,
+        "seconds": 178,
         "commands": 1
       },
       {
         "wave": 10,
         "light": 25,
         "spent": 1669,
-        "glow": 436,
+        "glow": 242,
         "crowns": 0,
-        "seconds": 207,
+        "seconds": 200,
         "commands": 1
       },
       {
         "wave": 11,
         "light": 25,
-        "spent": 2049,
-        "glow": 284,
+        "spent": 1669,
+        "glow": 454,
         "crowns": 0,
-        "seconds": 239,
+        "seconds": 233,
         "commands": 1
       },
       {
         "wave": 12,
         "light": 25,
-        "spent": 2219,
-        "glow": 219,
+        "spent": 1839,
+        "glow": 372,
         "crowns": 0,
-        "seconds": 278,
+        "seconds": 268,
         "commands": 1
       },
       {
         "wave": 13,
         "light": 25,
-        "spent": 2219,
-        "glow": 472,
+        "spent": 2162,
+        "glow": 284,
         "crowns": 0,
-        "seconds": 312,
+        "seconds": 300,
         "commands": 1
       },
       {
         "wave": 14,
         "light": 25,
-        "spent": 2542,
-        "glow": 440,
+        "spent": 2162,
+        "glow": 556,
         "crowns": 0,
-        "seconds": 356,
+        "seconds": 344,
         "commands": 2
       },
       {
         "wave": 15,
         "light": 25,
-        "spent": 2542,
-        "glow": 713,
+        "spent": 2694,
+        "glow": 277,
         "crowns": 0,
-        "seconds": 394,
+        "seconds": 384,
         "commands": 2
       },
       {
         "wave": 16,
-        "light": 13,
-        "spent": 3074,
-        "glow": 586,
+        "light": 15,
+        "spent": 2694,
+        "glow": 661,
         "crowns": 0,
-        "seconds": 459,
+        "seconds": 447,
         "commands": 3
       },
       {
         "wave": 17,
-        "light": 13,
-        "spent": 3414,
-        "glow": 402,
+        "light": 15,
+        "spent": 3034,
+        "glow": 454,
         "crowns": 0,
-        "seconds": 498,
+        "seconds": 486,
         "commands": 3
       },
       {
         "wave": 18,
-        "light": 13,
+        "light": 15,
         "spent": 3414,
-        "glow": 721,
+        "glow": 371,
         "crowns": 0,
-        "seconds": 541,
-        "commands": 3
+        "seconds": 530,
+        "commands": 4
       },
       {
         "wave": 19,
-        "light": 13,
-        "spent": 4134,
-        "glow": 342,
+        "light": 15,
+        "spent": 3414,
+        "glow": 689,
         "crowns": 0,
-        "seconds": 579,
-        "commands": 4
+        "seconds": 568,
+        "commands": 5
       },
       {
         "wave": 20,
-        "light": 13,
-        "spent": 4134,
-        "glow": 679,
+        "light": 15,
+        "spent": 4060,
+        "glow": 355,
         "crowns": 0,
-        "seconds": 608,
-        "commands": 4
+        "seconds": 601,
+        "commands": 6
       },
       {
         "wave": 21,
-        "light": 13,
-        "spent": 4780,
-        "glow": 380,
+        "light": 15,
+        "spent": 4060,
+        "glow": 677,
         "crowns": 0,
-        "seconds": 637,
-        "commands": 4
-      },
-      {
-        "wave": 22,
-        "light": 13,
-        "spent": 4780,
-        "glow": 731,
-        "crowns": 0,
-        "seconds": 677,
-        "commands": 4
-      },
-      {
-        "wave": 23,
-        "light": 13,
-        "spent": 5482,
-        "glow": 377,
-        "crowns": 1,
-        "seconds": 706,
-        "commands": 4
-      },
-      {
-        "wave": 24,
-        "light": 13,
-        "spent": 5482,
-        "glow": 998,
-        "crowns": 1,
-        "seconds": 765,
-        "commands": 5
-      },
-      {
-        "wave": 25,
-        "light": 13,
-        "spent": 6202,
-        "glow": 440,
-        "crowns": 1,
-        "seconds": 800,
-        "commands": 5
-      },
-      {
-        "wave": 26,
-        "light": 13,
-        "spent": 6202,
-        "glow": 837,
-        "crowns": 1,
-        "seconds": 835,
-        "commands": 5
-      },
-      {
-        "wave": 27,
-        "light": 13,
-        "spent": 6202,
-        "glow": 1207,
-        "crowns": 1,
-        "seconds": 863,
-        "commands": 5
-      },
-      {
-        "wave": 28,
-        "light": 13,
-        "spent": 7159,
-        "glow": 643,
-        "crowns": 2,
-        "seconds": 891,
-        "commands": 5
-      },
-      {
-        "wave": 29,
-        "light": 13,
-        "spent": 7159,
-        "glow": 1111,
-        "crowns": 2,
-        "seconds": 933,
-        "commands": 5
-      },
-      {
-        "wave": 30,
-        "light": 13,
-        "spent": 8116,
-        "glow": 593,
-        "crowns": 3,
-        "seconds": 974,
-        "commands": 5
-      },
-      {
-        "wave": 31,
-        "light": 13,
-        "spent": 8116,
-        "glow": 1009,
-        "crowns": 3,
-        "seconds": 1006,
-        "commands": 5
-      },
-      {
-        "wave": 32,
-        "light": 13,
-        "spent": 9201,
-        "glow": 636,
-        "crowns": 4,
-        "seconds": 1060,
-        "commands": 6
-      },
-      {
-        "wave": 33,
-        "light": 13,
-        "spent": 9201,
-        "glow": 1102,
-        "crowns": 4,
-        "seconds": 1103,
-        "commands": 6
-      },
-      {
-        "wave": 34,
-        "light": 13,
-        "spent": 10569,
-        "glow": 179,
-        "crowns": 4,
-        "seconds": 1139,
-        "commands": 6
-      },
-      {
-        "wave": 35,
-        "light": 13,
-        "spent": 10569,
-        "glow": 666,
-        "crowns": 4,
-        "seconds": 1184,
-        "commands": 6
-      },
-      {
-        "wave": 36,
-        "light": 13,
-        "spent": 10569,
-        "glow": 1158,
-        "crowns": 4,
-        "seconds": 1232,
-        "commands": 6
-      },
-      {
-        "wave": 37,
-        "light": 13,
-        "spent": 11846,
-        "glow": 431,
-        "crowns": 5,
-        "seconds": 1279,
+        "seconds": 635,
         "commands": 7
       },
       {
-        "wave": 38,
-        "light": 13,
-        "spent": 11846,
-        "glow": 963,
-        "crowns": 5,
-        "seconds": 1331,
+        "wave": 22,
+        "light": 15,
+        "spent": 4762,
+        "glow": 301,
+        "crowns": 1,
+        "seconds": 677,
+        "commands": 7
+      },
+      {
+        "wave": 23,
+        "light": 15,
+        "spent": 4762,
+        "glow": 622,
+        "crowns": 1,
+        "seconds": 712,
+        "commands": 7
+      },
+      {
+        "wave": 24,
+        "light": 15,
+        "spent": 4762,
+        "glow": 1216,
+        "crowns": 1,
+        "seconds": 775,
         "commands": 8
+      },
+      {
+        "wave": 25,
+        "light": 15,
+        "spent": 5482,
+        "glow": 409,
+        "crowns": 1,
+        "seconds": 814,
+        "commands": 8
+      },
+      {
+        "wave": 26,
+        "light": 15,
+        "spent": 5482,
+        "glow": 777,
+        "crowns": 1,
+        "seconds": 860,
+        "commands": 8
+      },
+      {
+        "wave": 27,
+        "light": 15,
+        "spent": 6202,
+        "glow": 398,
+        "crowns": 1,
+        "seconds": 895,
+        "commands": 8
+      },
+      {
+        "wave": 28,
+        "light": 15,
+        "spent": 6202,
+        "glow": 760,
+        "crowns": 1,
+        "seconds": 926,
+        "commands": 8
+      },
+      {
+        "wave": 29,
+        "light": 15,
+        "spent": 6202,
+        "glow": 1197,
+        "crowns": 1,
+        "seconds": 967,
+        "commands": 8
+      },
+      {
+        "wave": 30,
+        "light": 15,
+        "spent": 7159,
+        "glow": 647,
+        "crowns": 2,
+        "seconds": 1010,
+        "commands": 8
+      },
+      {
+        "wave": 31,
+        "light": 15,
+        "spent": 7159,
+        "glow": 1031,
+        "crowns": 2,
+        "seconds": 1044,
+        "commands": 8
+      },
+      {
+        "wave": 32,
+        "light": 15,
+        "spent": 8116,
+        "glow": 753,
+        "crowns": 3,
+        "seconds": 1098,
+        "commands": 9
+      },
+      {
+        "wave": 33,
+        "light": 15,
+        "spent": 8116,
+        "glow": 1184,
+        "crowns": 3,
+        "seconds": 1143,
+        "commands": 9
+      },
+      {
+        "wave": 34,
+        "light": 15,
+        "spent": 9201,
+        "glow": 511,
+        "crowns": 4,
+        "seconds": 1181,
+        "commands": 9
+      },
+      {
+        "wave": 35,
+        "light": 15,
+        "spent": 9201,
+        "glow": 963,
+        "crowns": 4,
+        "seconds": 1232,
+        "commands": 9
+      },
+      {
+        "wave": 36,
+        "light": 15,
+        "spent": 9201,
+        "glow": 1418,
+        "crowns": 4,
+        "seconds": 1282,
+        "commands": 10
+      },
+      {
+        "wave": 37,
+        "light": 15,
+        "spent": 10569,
+        "glow": 563,
+        "crowns": 4,
+        "seconds": 1330,
+        "commands": 10
+      },
+      {
+        "wave": 38,
+        "light": 15,
+        "spent": 10569,
+        "glow": 1058,
+        "crowns": 4,
+        "seconds": 1378,
+        "commands": 11
       },
       {
         "wave": 39,
-        "light": 13,
-        "spent": 11846,
-        "glow": 1451,
-        "crowns": 5,
-        "seconds": 1367,
-        "commands": 8
+        "light": 15,
+        "spent": 10569,
+        "glow": 1508,
+        "crowns": 4,
+        "seconds": 1420,
+        "commands": 11
       },
       {
         "wave": 40,
-        "light": 13,
-        "spent": 13214,
-        "glow": 962,
-        "crowns": 5,
-        "seconds": 1428,
-        "commands": 9
+        "light": 15,
+        "spent": 11937,
+        "glow": 978,
+        "crowns": 4,
+        "seconds": 1476,
+        "commands": 12
       }
     ]
   },
@@ -3953,369 +3377,369 @@
     "passage": "runners",
     "won": true,
     "wave": 40,
-    "light": 13,
-    "seconds": 1405,
-    "commands": 8,
+    "light": 15,
+    "seconds": 1486,
+    "commands": 15,
     "waves": [
       {
         "wave": 1,
         "light": 25,
         "spent": 319,
-        "glow": 232,
+        "glow": 113,
         "crowns": 0,
-        "seconds": 14,
+        "seconds": 6,
         "commands": 0
       },
       {
         "wave": 2,
         "light": 25,
-        "spent": 469,
-        "glow": 206,
+        "spent": 319,
+        "glow": 234,
         "crowns": 0,
-        "seconds": 27,
+        "seconds": 16,
         "commands": 0
       },
       {
         "wave": 3,
         "light": 25,
-        "spent": 469,
-        "glow": 348,
+        "spent": 319,
+        "glow": 365,
         "crowns": 0,
-        "seconds": 41,
+        "seconds": 27,
         "commands": 0
       },
       {
         "wave": 4,
         "light": 25,
-        "spent": 749,
-        "glow": 218,
+        "spent": 599,
+        "glow": 233,
         "crowns": 0,
-        "seconds": 52,
+        "seconds": 39,
         "commands": 0
       },
       {
         "wave": 5,
         "light": 25,
-        "spent": 949,
-        "glow": 178,
+        "spent": 749,
+        "glow": 235,
         "crowns": 0,
-        "seconds": 67,
+        "seconds": 55,
         "commands": 0
       },
       {
         "wave": 6,
         "light": 25,
         "spent": 949,
-        "glow": 349,
+        "glow": 202,
         "crowns": 0,
-        "seconds": 88,
+        "seconds": 77,
         "commands": 0
       },
       {
         "wave": 7,
         "light": 25,
-        "spent": 1099,
-        "glow": 233,
+        "spent": 949,
+        "glow": 366,
         "crowns": 0,
-        "seconds": 104,
+        "seconds": 92,
         "commands": 0
       },
       {
         "wave": 8,
         "light": 25,
         "spent": 1099,
-        "glow": 586,
+        "glow": 420,
         "crowns": 0,
-        "seconds": 166,
+        "seconds": 155,
         "commands": 1
       },
       {
         "wave": 9,
         "light": 25,
-        "spent": 1669,
-        "glow": 217,
+        "spent": 1384,
+        "glow": 322,
         "crowns": 0,
-        "seconds": 185,
+        "seconds": 178,
         "commands": 1
       },
       {
         "wave": 10,
         "light": 25,
         "spent": 1669,
-        "glow": 436,
+        "glow": 242,
         "crowns": 0,
-        "seconds": 207,
+        "seconds": 200,
         "commands": 1
       },
       {
         "wave": 11,
         "light": 25,
-        "spent": 2049,
-        "glow": 284,
+        "spent": 1669,
+        "glow": 454,
         "crowns": 0,
-        "seconds": 239,
+        "seconds": 233,
         "commands": 1
       },
       {
         "wave": 12,
         "light": 25,
-        "spent": 2219,
-        "glow": 219,
+        "spent": 1839,
+        "glow": 372,
         "crowns": 0,
-        "seconds": 278,
+        "seconds": 268,
         "commands": 1
       },
       {
         "wave": 13,
         "light": 25,
-        "spent": 2219,
-        "glow": 472,
+        "spent": 2162,
+        "glow": 284,
         "crowns": 0,
-        "seconds": 312,
+        "seconds": 300,
         "commands": 1
       },
       {
         "wave": 14,
         "light": 25,
-        "spent": 2542,
-        "glow": 440,
+        "spent": 2162,
+        "glow": 556,
         "crowns": 0,
-        "seconds": 356,
+        "seconds": 344,
         "commands": 2
       },
       {
         "wave": 15,
         "light": 25,
-        "spent": 2542,
-        "glow": 713,
+        "spent": 2694,
+        "glow": 277,
         "crowns": 0,
-        "seconds": 394,
+        "seconds": 384,
         "commands": 2
       },
       {
         "wave": 16,
-        "light": 13,
-        "spent": 3074,
-        "glow": 586,
+        "light": 15,
+        "spent": 2694,
+        "glow": 661,
         "crowns": 0,
-        "seconds": 459,
+        "seconds": 447,
         "commands": 3
       },
       {
         "wave": 17,
-        "light": 13,
-        "spent": 3414,
-        "glow": 416,
+        "light": 15,
+        "spent": 3034,
+        "glow": 368,
         "crowns": 0,
-        "seconds": 490,
+        "seconds": 484,
         "commands": 3
       },
       {
         "wave": 18,
-        "light": 13,
+        "light": 15,
         "spent": 3414,
-        "glow": 829,
+        "glow": 379,
         "crowns": 0,
-        "seconds": 526,
+        "seconds": 524,
         "commands": 3
       },
       {
         "wave": 19,
-        "light": 13,
-        "spent": 4060,
-        "glow": 618,
+        "light": 15,
+        "spent": 3414,
+        "glow": 791,
         "crowns": 0,
-        "seconds": 553,
-        "commands": 3
+        "seconds": 559,
+        "commands": 4
       },
       {
         "wave": 20,
-        "light": 13,
+        "light": 15,
         "spent": 4060,
-        "glow": 955,
+        "glow": 457,
         "crowns": 0,
-        "seconds": 580,
-        "commands": 3
+        "seconds": 591,
+        "commands": 4
       },
       {
         "wave": 21,
-        "light": 13,
-        "spent": 4780,
-        "glow": 362,
+        "light": 15,
+        "spent": 4060,
+        "glow": 779,
         "crowns": 0,
-        "seconds": 608,
-        "commands": 3
+        "seconds": 626,
+        "commands": 5
       },
       {
         "wave": 22,
-        "light": 13,
-        "spent": 4780,
-        "glow": 713,
-        "crowns": 0,
-        "seconds": 643,
-        "commands": 3
+        "light": 15,
+        "spent": 4762,
+        "glow": 403,
+        "crowns": 1,
+        "seconds": 665,
+        "commands": 5
       },
       {
         "wave": 23,
-        "light": 13,
-        "spent": 5482,
-        "glow": 359,
+        "light": 15,
+        "spent": 4762,
+        "glow": 724,
         "crowns": 1,
-        "seconds": 672,
-        "commands": 3
-      },
-      {
-        "wave": 24,
-        "light": 13,
-        "spent": 5482,
-        "glow": 980,
-        "crowns": 1,
-        "seconds": 735,
-        "commands": 4
-      },
-      {
-        "wave": 25,
-        "light": 13,
-        "spent": 6439,
-        "glow": 405,
-        "crowns": 2,
-        "seconds": 768,
-        "commands": 4
-      },
-      {
-        "wave": 26,
-        "light": 13,
-        "spent": 6439,
-        "glow": 802,
-        "crowns": 2,
-        "seconds": 810,
-        "commands": 4
-      },
-      {
-        "wave": 27,
-        "light": 13,
-        "spent": 6439,
-        "glow": 1172,
-        "crowns": 2,
-        "seconds": 843,
-        "commands": 4
-      },
-      {
-        "wave": 28,
-        "light": 13,
-        "spent": 7159,
-        "glow": 405,
-        "crowns": 2,
-        "seconds": 875,
-        "commands": 4
-      },
-      {
-        "wave": 29,
-        "light": 13,
-        "spent": 7159,
-        "glow": 873,
-        "crowns": 2,
-        "seconds": 913,
-        "commands": 4
-      },
-      {
-        "wave": 30,
-        "light": 13,
-        "spent": 8116,
-        "glow": 355,
-        "crowns": 3,
-        "seconds": 951,
-        "commands": 4
-      },
-      {
-        "wave": 31,
-        "light": 13,
-        "spent": 8116,
-        "glow": 771,
-        "crowns": 3,
-        "seconds": 989,
-        "commands": 4
-      },
-      {
-        "wave": 32,
-        "light": 13,
-        "spent": 8116,
-        "glow": 1483,
-        "crowns": 3,
-        "seconds": 1040,
-        "commands": 5
-      },
-      {
-        "wave": 33,
-        "light": 13,
-        "spent": 9484,
-        "glow": 581,
-        "crowns": 3,
-        "seconds": 1080,
-        "commands": 5
-      },
-      {
-        "wave": 34,
-        "light": 13,
-        "spent": 9484,
-        "glow": 1026,
-        "crowns": 3,
-        "seconds": 1115,
-        "commands": 5
-      },
-      {
-        "wave": 35,
-        "light": 13,
-        "spent": 10569,
-        "glow": 428,
-        "crowns": 4,
-        "seconds": 1171,
-        "commands": 5
-      },
-      {
-        "wave": 36,
-        "light": 13,
-        "spent": 10569,
-        "glow": 920,
-        "crowns": 4,
-        "seconds": 1212,
-        "commands": 5
-      },
-      {
-        "wave": 37,
-        "light": 13,
-        "spent": 10569,
-        "glow": 1470,
-        "crowns": 4,
-        "seconds": 1257,
+        "seconds": 699,
         "commands": 6
       },
       {
-        "wave": 38,
-        "light": 13,
-        "spent": 11937,
-        "glow": 634,
-        "crowns": 4,
-        "seconds": 1301,
+        "wave": 24,
+        "light": 15,
+        "spent": 4762,
+        "glow": 1318,
+        "crowns": 1,
+        "seconds": 762,
         "commands": 7
+      },
+      {
+        "wave": 25,
+        "light": 15,
+        "spent": 5482,
+        "glow": 511,
+        "crowns": 1,
+        "seconds": 801,
+        "commands": 8
+      },
+      {
+        "wave": 26,
+        "light": 15,
+        "spent": 5482,
+        "glow": 879,
+        "crowns": 1,
+        "seconds": 846,
+        "commands": 8
+      },
+      {
+        "wave": 27,
+        "light": 15,
+        "spent": 5482,
+        "glow": 1220,
+        "crowns": 1,
+        "seconds": 884,
+        "commands": 8
+      },
+      {
+        "wave": 28,
+        "light": 15,
+        "spent": 6202,
+        "glow": 642,
+        "crowns": 1,
+        "seconds": 912,
+        "commands": 8
+      },
+      {
+        "wave": 29,
+        "light": 15,
+        "spent": 6202,
+        "glow": 1079,
+        "crowns": 1,
+        "seconds": 954,
+        "commands": 8
+      },
+      {
+        "wave": 30,
+        "light": 15,
+        "spent": 7159,
+        "glow": 529,
+        "crowns": 2,
+        "seconds": 996,
+        "commands": 8
+      },
+      {
+        "wave": 31,
+        "light": 15,
+        "spent": 7159,
+        "glow": 913,
+        "crowns": 2,
+        "seconds": 1032,
+        "commands": 9
+      },
+      {
+        "wave": 32,
+        "light": 15,
+        "spent": 8116,
+        "glow": 635,
+        "crowns": 3,
+        "seconds": 1087,
+        "commands": 10
+      },
+      {
+        "wave": 33,
+        "light": 15,
+        "spent": 8116,
+        "glow": 1066,
+        "crowns": 3,
+        "seconds": 1132,
+        "commands": 10
+      },
+      {
+        "wave": 34,
+        "light": 15,
+        "spent": 9201,
+        "glow": 393,
+        "crowns": 4,
+        "seconds": 1168,
+        "commands": 11
+      },
+      {
+        "wave": 35,
+        "light": 15,
+        "spent": 9201,
+        "glow": 845,
+        "crowns": 4,
+        "seconds": 1225,
+        "commands": 11
+      },
+      {
+        "wave": 36,
+        "light": 15,
+        "spent": 9201,
+        "glow": 1300,
+        "crowns": 4,
+        "seconds": 1272,
+        "commands": 11
+      },
+      {
+        "wave": 37,
+        "light": 15,
+        "spent": 10478,
+        "glow": 536,
+        "crowns": 5,
+        "seconds": 1322,
+        "commands": 12
+      },
+      {
+        "wave": 38,
+        "light": 15,
+        "spent": 10478,
+        "glow": 1031,
+        "crowns": 5,
+        "seconds": 1371,
+        "commands": 13
       },
       {
         "wave": 39,
-        "light": 13,
-        "spent": 11937,
-        "glow": 1122,
-        "crowns": 4,
-        "seconds": 1347,
-        "commands": 7
+        "light": 15,
+        "spent": 10478,
+        "glow": 1481,
+        "crowns": 5,
+        "seconds": 1417,
+        "commands": 14
       },
       {
         "wave": 40,
-        "light": 13,
-        "spent": 11937,
-        "glow": 2004,
-        "crowns": 4,
-        "seconds": 1405,
-        "commands": 8
+        "light": 15,
+        "spent": 11846,
+        "glow": 951,
+        "crowns": 5,
+        "seconds": 1486,
+        "commands": 15
       }
     ]
   }

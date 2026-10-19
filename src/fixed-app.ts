@@ -113,10 +113,13 @@ export class FixedApp {
     document.addEventListener('keydown',e=>this.key(e))
     watchAppState(()=>{this.background=true;this.accumulator=0;this.save();sound.suspend()},()=>{this.background=false;this.lastFrame=0;this.accumulator=0;if(sound.ctx)sound.unlock()})
     if(crazyGamesBuild)this.enterPortal();else this.home()
-    if(this.qa) {
-      const bar=document.createElement('nav');bar.className='qa-bar';bar.innerHTML='<details><summary>QA scenarios</summary>'+[0,15,30,39].map(n=>button('fixture:'+n,'Test wave '+n)).join('')+button('fixture:day','Test day')+button('fixture:night','Test night')+button('fixture:dredger','Test Dredger')+[3,5,7,40].map(n=>button('resubmission:'+n,'Campaign '+n)).join('')+'</details>';$('app').append(bar)
-    }
+    this.qaControls()
     requestAnimationFrame(t=>this.frame(t))
+  }
+
+  private qaControls(){
+    if(!import.meta.env.DEV||!this.qa||document.querySelector('.qa-bar'))return
+    const bar=document.createElement('nav');bar.className='qa-bar';bar.innerHTML='<details><summary>QA scenarios</summary>'+[0,15,30,39].map(n=>button('fixture:'+n,'Test wave '+n)).join('')+button('fixture:day','Test day')+button('fixture:night','Test night')+button('fixture:dredger','Test Dredger')+[3,5,7,40].map(n=>button('resubmission:'+n,'Campaign '+n)).join('')+button('qa-record','Record 16s preview')+['landscape','portrait','square'].map(n=>button('qa-cover:'+n,'Export '+n+' cover')).join('')+'</details>';$('app').append(bar)
   }
 
   private applySettings() {
@@ -255,6 +258,7 @@ export class FixedApp {
     this.renderer.keepsakes=districtKeepsakes(this.profile);this.renderer.crest=this.guardian
     this.applySettings()
     this.observer?.disconnect(); this.observer=new ResizeObserver(()=>this.resize());this.observer.observe($('battlefield'));this.resize();this.refresh()
+    this.qaControls()
   }
   private resize() {
     if(!this.renderer)return
@@ -628,6 +632,11 @@ export class FixedApp {
     if(cmd==='playtest-toggle'){this.playtest.setEnabled(!this.playtest.enabled);if(this.playtest.enabled)this.playtest.start({format:s?.challenge.id??'menu',wave:s?.wave??0});this.settings();return}
     if(cmd==='playtest-export'){const url=URL.createObjectURL(new Blob([this.playtest.export()],{type:'application/json'})),link=document.createElement('a');link.href=url;link.download='nightward-playtest.json';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);return}
     if(cmd==='playtest-clear'){this.playtest.clear();this.settings();return}
+    if(cmd==='qa-cover'&&import.meta.env.DEV&&this.qa){void import('./dev/record-preview').then(m=>m.exportCover(a));return}
+    if(cmd==='qa-record'&&import.meta.env.DEV&&this.qa){
+      document.querySelector<HTMLDetailsElement>('.qa-bar details')?.removeAttribute('open');this.close();this.planning=false
+      void import('./dev/record-preview').then(m=>m.recordPreview());return
+    }
     if(cmd==='resubmission'&&import.meta.env.DEV&&this.qa&&['3','5','7','40'].includes(a)){
       const file=a==='40'?'siege/active-40':`resubmission/prepare-${a}`
       void fetch(`${import.meta.env.BASE_URL}artifacts/${file}.json`).then(r=>r.json()).then((snap:SaveSnapshotV2)=>{this.begin(Sim.restore(snap));document.querySelector<HTMLDetailsElement>('.qa-bar details')?.removeAttribute('open')})

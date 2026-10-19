@@ -7,6 +7,7 @@ body .game>.hud,body .game>.battlefield,body .game>.playbar{grid-column:1}
 body .game.inspecting{grid-template-columns:minmax(0,1fr)!important;padding-bottom:env(safe-area-inset-bottom)!important}
 body .hud{background:#111f2d;border-bottom:1px solid #c5b18030;gap:18px}
 body .battlefield{background:#102735}
+body .sky-strip{position:absolute!important;top:8px!important;left:12px!important}
 body .playbar{display:grid;grid-template-columns:minmax(0,1fr) minmax(210px,.8fr);grid-template-rows:1fr;align-items:center;gap:8px 20px;padding:9px 18px;background:#101e2b;border-top:1px solid #acbcb932}
 .playbar>.wave-brief{grid-column:1;grid-row:1;min-width:0}
 .playbar>.watch-flow{grid-column:2;grid-row:1;justify-self:end;width:160px}
@@ -27,11 +28,13 @@ body .drawer.live-panel.panel-left{left:10px;right:auto}
 body .drawer.live-panel .drawer-body{padding:12px 16px}
 body .drawer.live-panel header{padding:10px 14px}body .drawer.live-panel h2{font-size:19px}
 body .tower .tower-heading{display:flex;gap:12px;margin:0 0 10px}.tower-heading img{width:48px;height:54px}
-body .quick-branches{display:grid;grid-template-columns:1fr;gap:10px}
+body .tower .quick-branches{display:grid;grid-template-columns:minmax(0,1fr)!important;gap:10px}
 .quick-branches>article{display:grid;grid-template-columns:1fr auto;gap:3px 10px;padding:8px 10px;border:1px solid #9bafa537;border-radius:7px;background:#1d3541}
 .quick-branches h3,.quick-branches .branch-benefit,.quick-branches .branch-cost{grid-column:1;margin:0;font-size:12px;line-height:1.35}
 .quick-branches h3{font-size:14px;color:#f1d5a2}.quick-branches .branch-cost{color:#aebec0}
 .quick-branches .live-purchase{grid-column:2;grid-row:1/4;align-self:center;min-width:75px;min-height:48px}
+body .tower .quick-branches>article{min-width:0;grid-template-columns:minmax(0,1fr) auto!important}
+body .tower .quick-branches .live-purchase{width:auto;min-width:84px;white-space:nowrap;padding:8px}
 body .drawer.techniques.live-panel{width:min(650px,calc(100vw - 32px));left:50%;right:auto;top:50%;bottom:auto;height:auto;max-height:calc(100svh - 32px);transform:translate(-50%,-50%);background:#122735;box-shadow:0 0 0 100vmax #06111cb0}
 .techniques .inspector-toolbar{display:none!important}.signature-intro{font-size:13px;color:#b8c8c8;margin:0 0 12px}
 .signature-choices{display:grid;grid-template-columns:1fr 1fr;gap:14px}
@@ -53,6 +56,13 @@ body .home-title{letter-spacing:-.045em}.campaign-other{opacity:.8}
 @media(max-height:540px) and (orientation:landscape){
  body .game,body .game.inspecting,body.playing:has(.drawer.live-panel) .game.inspecting{grid-template-rows:48px minmax(0,1fr) 96px}
  body .drawer.live-panel{top:56px;bottom:104px;width:300px}
+ body .drawer.live-panel>header{min-height:42px;padding:6px 12px}
+ body .drawer.tower .drawer-body{padding:7px 12px}
+ body .drawer.tower .tower-heading{margin:0 0 5px;gap:8px}
+ body .drawer.tower .tower-heading img{width:34px;height:36px}
+ body .drawer.tower .tower-synergy{font-size:11px;line-height:1.2;margin:4px 0}
+ body .drawer.tower .quick-branches{gap:7px}
+ body .drawer.tower .quick-branches>article{padding:7px}
  body .drawer.techniques.live-panel{top:50%;bottom:auto;width:650px;max-height:calc(100svh - 20px)}
  .signature-diagram{height:58px;margin:4px 0}.signature-diagram img{height:41px;width:40px}.signature-choices>article{padding:10px}.signature-benefit{font-size:13px}.signature-tip{font-size:11px}
  .signature-command{font-size:11px;margin-top:8px}.signature-choices h3{font-size:18px}
@@ -73,4 +83,4 @@ body .home-title{letter-spacing:-.045em}.campaign-other{opacity:.8}
  body .district-notice{max-width:92%;font-size:12px}
 }
 @media(prefers-reduced-motion:reduce){.surge-command,.drawer{transition:none!important;animation:none!important}}
-.qa-bar{max-width:440px;opacity:.9}.qa-bar details{font-size:11px}.qa-bar summary{cursor:pointer;padding:3px}.qa-bar details[open]{display:flex;flex-wrap:wrap}.qa-bar button{font-size:10px;padding:5px;min-height:28px}
+.qa-bar{top:auto;bottom:122px;right:8px;max-width:440px;opacity:.9}.qa-bar details{font-size:11px}.qa-bar summary{cursor:pointer;padding:3px}.qa-bar details[open]{display:flex;flex-wrap:wrap}.qa-bar button{font-size:10px;padding:5px;min-height:28px}

@@ -1,6 +1,6 @@
 import {heartLantern} from './canal-art'
 import {lowerBend,lowerGuard} from '../game/watch-mastery'
-import {MOON_ARCHES,hasMoonArches,commandTower} from '../game/watch-director'
+import {MOON_ARCHES,hasMoonArches,commandTower,commandReady} from '../game/watch-director'
 import {drawCanalShot,drawCanalBeam} from './shot-art'
 import { escortCover } from '../game/living-watch'
 import { upright, boardAngle } from './board-view'
@@ -58,7 +58,7 @@ export function drawFixedWorld(c:CanvasRenderingContext2D,s:Sim,view:ViewState,s
     if(!s.waveActive)upright(c,p.x,p.y,wide,()=>{c.font='600 11px "DM Sans Variable",sans-serif';c.textAlign='center';c.fillStyle=s.sky.night?'#d4fff2':'#204b5d';c.fillText('REVEALS · 6s',p.x,p.y-40)})
     c.restore()
   }
-  const held=s.director?.command?.phase==='held'?commandTower(s):null
+  const held=s.director?.command?.phase==='held'||commandReady(s)?commandTower(s):null
   if(held){c.save();c.strokeStyle=s.challenge.hero==='sol'?'#ffd196':'#bff4ed';c.fillStyle=s.challenge.hero==='sol'?'#ffc1700c':'#bff4ed0c';c.lineWidth=2;c.setLineDash([9,7]);c.lineDashOffset=reducedMotion?0:-time*15;c.beginPath();c.arc(held.x,held.y,s.effRange(held),0,Math.PI*2);c.fill();c.stroke();c.restore()}
   if(s.challenge.contract==='last-lantern'){
     const p=lowerBend(s),g=lowerGuard(s);c.save();c.strokeStyle=g.damage>=2&&g.scouts>=1?'#c8fff0':'#c6cbe9';c.lineWidth=2;c.setLineDash([5,4]);c.beginPath();c.arc(p.x,p.y,25,0,Math.PI*2);c.stroke();c.setLineDash([])

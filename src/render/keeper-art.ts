@@ -9,7 +9,7 @@ export const TOWER_COLOURS:Record<TowerId,Glaze>={
 const rank=(t:Miniature)=>t.refinement?4:Math.max(t.a,t.b)
 /** Fast strike, heavier return. Recoil is a pose; firing cadence stays in Sim. */
 export function weaponRecoil(id:TowerId,since:number){
-  const heavy=id==='cracker'||id==='ballista',peak=heavy?.055:.028,decay=heavy?7:15
+  const heavy=id==='cracker'||id==='ballista',peak=heavy?.055:.028,decay=heavy?5.8:15
   if(since<0||since>1.5)return 0
   return since<peak?Math.sin(since/peak*Math.PI/2):Math.exp(-(since-peak)*decay)
 }
@@ -92,7 +92,7 @@ export function drawFixedTower(c:CanvasRenderingContext2D,x:number,y:number,t:Mi
   const kick=weaponRecoil(t.id,since),flare=Math.max(0,1-since/(t.id==='cracker'?.15:.09)),settle=Math.sin(since*23)*Math.exp(-since*8)
  c.save();c.translate(x,y)
  if(!still&&(t.age??9)<.65){const q=Math.min(1,(t.age??9)/.65),rise=1-(1-q)**3;c.translate(0,(1-rise)*24);c.scale(1+Math.sin(q*Math.PI)*.055,Math.max(.1,rise+Math.sin(q*Math.PI)*.1))}
- if(!still&&(t.upAge??9)<.6){const q=Math.sin((t.upAge??9)/.6*Math.PI);c.scale(1+q*.045,1+q*.06)}
+  if(!still&&(t.upAge??9)<.85){const age=(t.upAge??9)/.85,q=Math.sin(age*Math.PI);c.scale(1+q*.045,1+q*.06);c.save();c.globalAlpha=(1-age)*.8;c.strokeStyle=m.accent;c.lineWidth=2;c.beginPath();c.ellipse(0,-age*58,30+age*8,10,0,0,TAU);c.stroke();c.restore()}
   if(!day)lightPool(c,0,-10,40,m.accent,.3);foundation(c,t,day)
   if(crown)crownHardware(c,t,mu.y,time,still)
  const badge=t.crest==='ember'?'#d98c70':t.crest==='reed'?'#a4cf99':t.crest==='tide'?'#9bced8':'#ebd39b'
@@ -108,7 +108,7 @@ export function drawFixedTower(c:CanvasRenderingContext2D,x:number,y:number,t:Mi
    const n=special&&!t.b?3:2
    // The breech opens on recoil and the piston returns ahead of the next shot.
    for(const side of [-1,1]){line(c,[[side*12,-29],[side*12,mu.y+18+kick*8]],'#213c46',5);line(c,[[side*12,-29],[side*12,mu.y+23+kick*8]],'#e6c08b',2)}
-  for(let i=0;i<n;i++){const px=(i-(n-1)/2)*14,cy=mu.y+16+(i%2)*3+kick*(i===0?10:6);vessel(c,px,cy,8,4,19+s*2,m);vessel(c,px,cy-16-s*2,9,4.6,5,BRASS);oval(c,px,cy-21-s*2,6,3,'#273943');oval(c,px,cy-21-s*2,3.6,1.8,flare>.01?'#fff1c2':'#bc7758');line(c,[[px-4,cy-13],[px-4,cy-3]],m.roof,1.4)}
+   for(let i=0;i<n;i++){const px=(i-(n-1)/2)*14,cy=mu.y+16+(i%2)*3+kick*(i===0?14:8);vessel(c,px,cy,8,4,19+s*2,m);vessel(c,px,cy-16-s*2,9,4.6,5,BRASS);oval(c,px,cy-21-s*2,6,3,'#273943');oval(c,px,cy-21-s*2,3.6,1.8,flare>.01?'#fff1c2':'#bc7758');line(c,[[px-4,cy-13],[px-4,cy-3]],m.roof,1.4)}
   for(const side of [-1,1]){line(c,[[side*19,-23],[side*20,mu.y+10+kick*7]],BRASS.side,5);line(c,[[side*19,-24],[side*20,mu.y+11+kick*7]],BRASS.roof,1.6);armour(c,[[side*9,-24],[side*23,-32],[side*25,-21],[side*13,-17]],m)}
   gear(c,-23,-26,6,charge*TAU,BRASS.front);gear(c,23,-26,5,-charge*TAU,BRASS.front);vent(c,-5,-27,4,m.accent)
   ignition(c,fixedShotOrigin(t).x,mu.y-5-s*2,-Math.PI/2,flare,'#ffd0a3')

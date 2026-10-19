@@ -8,6 +8,7 @@ import {BRASS,STONE,TAU,arch,leaf,line,orb,oval,vessel} from './miniature-art'
 import {drawProjectMiniature} from './place-art'
 import {PROJECTS} from '../game/district-projects'
 import {paintQuayGround,quayHouse} from './quay-art'
+import {firstShopOpen} from '../game/siege'
 
 const noise=(n:number)=>{const v=Math.sin(n*127.1+311.7)*43758.5453;return v-Math.floor(v)}
 const trees=new Map<string,HTMLCanvasElement>()
@@ -34,8 +35,8 @@ export function paintCanalLandscape(c:CanvasRenderingContext2D,s:Sim,stage:numbe
  c.lineJoin='round';c.lineCap='round'
  const network=()=>{c.beginPath();for(const seg of s.level.segs.values())seg.line.pts.forEach((p,i)=>i?c.lineTo(p.x,p.y):c.moveTo(p.x,p.y));c.stroke()}
  c.save();c.translate(3,8);c.strokeStyle=day?'#264e4945':'#061b3199';c.lineWidth=78;network();c.restore()
- for(const [w,col]of [[112,urban?(day?'#75817a':'#344c53'):'transparent'],[77,day?'#75977a':'#2e5358'],[70,urban?(day?'#b3b3a0':'#718a8c'):day?mat.bank[0]:'#7f9299'],[62,urban?(day?'#7a908b':'#435f69'):day?mat.bank[1]:'#4c676f'],[53,day?'#385c58':'#193b50']]as const){c.lineWidth=w;c.strokeStyle=col;network()}
- const water=c.createLinearGradient(0,0,650,840);water.addColorStop(0,urban?(day?'#396c70':'#1c4d60'):day?mat.water[1]:'#376f78');water.addColorStop(.45,urban?(day?'#234f61':'#12354b'):day?mat.water[0]:'#204c63');water.addColorStop(1,urban?(day?'#507e7d':'#2f6871'):day?mat.water[1]:'#326d79');c.strokeStyle=water;c.lineWidth=47;network()
+ for(const [w,col]of [[88,urban?(day?'#526660':'#233b44'):'transparent'],[77,day?'#526f65':'#233f49'],[70,urban?(day?'#8b9584':'#526a70'):day?mat.bank[0]:'#657c84'],[62,urban?(day?'#526e70':'#2b495b'):day?mat.bank[1]:'#3c5764'],[56,day?'#264a53':'#132d42']]as const){c.lineWidth=w;c.strokeStyle=col;network()}
+ const water=c.createLinearGradient(0,0,650,840);water.addColorStop(0,urban?(day?'#285664':'#184253'):day?mat.water[1]:'#376f78');water.addColorStop(.45,urban?(day?'#193b51':'#102c41'):day?mat.water[0]:'#204c63');water.addColorStop(1,urban?(day?'#3b6b70':'#215762'):day?mat.water[1]:'#326d79');c.strokeStyle=water;c.lineWidth=51;network()
  // A recessed channel separates water from the stone coping at small scales.
  c.save();c.translate(3,3);c.strokeStyle=day?'#092c3b66':'#06182477';c.lineWidth=40;network();c.restore()
  c.strokeStyle=day?'#72c1ba20':'#83d6d11c';c.lineWidth=23;network()
@@ -46,7 +47,7 @@ export function paintCanalLandscape(c:CanvasRenderingContext2D,s:Sim,stage:numbe
   for(const side of [-1,1]){
    const x=p.x-p.ty*30*side,y=p.y+p.tx*30*side
    if([...s.level.segs.values()].some(other=>other!==seg&&other.line.distanceTo(x,y)<34))continue
-   c.save();c.translate(x,y);c.rotate(Math.atan2(p.ty,p.tx));c.fillStyle=day?(Math.floor(at)%3?'#d6d0b0':'#eee4c4'):'#8c9f9b';c.beginPath();c.roundRect(-8,-3.6,15,7,2);c.fill();line(c,[[-7,-3],[6,-3]],day?'#fff2d788':'#b6c8c066',.9);line(c,[[7,-1],[7,3]],'#36575377',1);c.restore()
+   c.save();c.translate(x,y);c.rotate(Math.atan2(p.ty,p.tx));c.fillStyle=day?(Math.floor(at)%3?'#929d88':'#adb398'):'#627c7d';c.beginPath();c.roundRect(-8,-3.2,15,6.4,1);c.fill();line(c,[[-7,-3],[6,-3]],day?'#d0d5b955':'#91afac55',.9);line(c,[[7,-1],[7,3]],'#1f3e4c99',1);c.restore()
    if(!urban&&Math.floor(at/21)%4===0&&!s.pads.some(q=>Math.hypot(q.x-x,q.y-y)<63)){
     const rx=x-p.ty*side*11,ry=y+p.tx*side*11;for(let j=0;j<3;j++)leaf(c,rx+j*2,ry,6+j*2,(j-1)*.5,day?'#73915d':'#376764')
    }
@@ -61,7 +62,7 @@ export function paintCanalLandscape(c:CanvasRenderingContext2D,s:Sim,stage:numbe
   if(p.kind==='tree'){oval(c,x+9,y+3,28,10,day?'#183f4430':'#071e3033');line(c,[[x,y],[x-2,y-31]],day?'#6d6a4f':'#344f52',5);line(c,[[x-1,y-15],[x-12,y-33]],day?'#827653':'#40575a',2.5);return}
   const project=PROJECTS[houseIndex++%3],restored=keepsakes.find(k=>k.startsWith('project:'+project.id+':')),restoration=Number(keepsakes.find(k=>k.startsWith('stage:'+project.id+':'))?.split(':')[2]??0)
    if(restored||restoration){c.save();c.translate(x,y);c.scale(.96,.96);drawProjectMiniature(c,0,0,project.id,restored?3:restoration,project.colours[restored?.endsWith(':1')?1:0],!day);c.restore();return}
-   if(urban){quayHouse(c,x,y,style,!day);return}
+   if(urban){quayHouse(c,x,y,style,!day,houseIndex===1&&firstShopOpen(s));return}
   const w=34+style%2*5,h=(urban?46:28)+style%3*5,[front,roof,side]=urban?['#71837f','#a7b3a0','#314f5b']:mat.walls
   oval(c,x+8,y+4,37,15,day?'#294e442b':'#0c283331');vessel(c,x,y+2,31,10,3,STONE)
   if(!day)lightPool(c,x,y,40,'#ffce91',.42)

@@ -6,7 +6,7 @@ import { dredgerOpen } from '../game/watch-craft'
 import { boardPoint } from './board-view'
 import { drawInvader } from './invader-art'
 
-const colours:Record<EnemyId,string>={drip:'#536f70',skitter:'#427f88',shell:'#966751',veil:'#86bdd1',bloat:'#9f8147',wisp:'#d59357',mender:'#568a76',vshell:'#666280',toad:'#596e4c',gloom:'#425d80',skiff:'#7d6759',warden:'#4c6775',reedling:'#667655',bloomheart:'#905561',dredger:'#9d7e60'}
+const colours:Record<EnemyId,string>={drip:'#7b8672',skitter:'#659aa1',shell:'#c18a63',veil:'#a5cce1',bloat:'#b89856',wisp:'#e5a966',mender:'#81ae8e',vshell:'#8d81a3',toad:'#8b9360',gloom:'#6f8daf',skiff:'#aa8a70',warden:'#7a95a0',reedling:'#94a06d',bloomheart:'#bf7d84',dredger:'#c39e70'}
 const oval=(c:CanvasRenderingContext2D,x:number,y:number,rx:number,ry:number,fill:string)=>{c.fillStyle=fill;c.beginPath();c.ellipse(x,y,rx,ry,0,0,Math.PI*2);c.fill()}
 const stroke=(c:CanvasRenderingContext2D,points:number[][],colour:string,width=.08)=>{c.strokeStyle=colour;c.lineWidth=width;c.lineCap='round';c.lineJoin='round';c.beginPath();points.forEach(([x,y],i)=>i?c.lineTo(x,y):c.moveTo(x,y));c.stroke()}
 const shellPoses=new WeakMap<Enemy,{age:number;open:number}>()
@@ -15,7 +15,7 @@ const locomotion=new WeakMap<Enemy,{age:number;phase:number}>()
 
 /** Hostile anatomy owns the silhouette; this wrapper keeps combat state readable. */
 export function drawFixedEnemy(c:CanvasRenderingContext2D,e:Enemy,reducedMotion=false,showBars=true,wide=false,viewScale=1){
-  const id=e.def.id,base=e.def.radius*(e.visScale??1)*(e.def.boss?1.16:1.42),r=base*Math.min(1.22,Math.max(1,7/Math.max(1,base*viewScale)))
+  const id=e.def.id,base=e.def.radius*(e.visScale??1)*(e.def.boss?1.2:1.62),r=base*Math.min(1.3,Math.max(1,9/Math.max(1,base*viewScale)))
   const hidden=e.def.hidden&&!e.revealedPerm&&e.seenT<=0,moving=!reducedMotion&&e.stunT<=0
   const gait=locomotion.get(e)??{age:e.age,phase:e.age+e.uid*.37}
   if(moving)gait.phase+=Math.max(0,Math.min(.15,e.age-gait.age))*(e.slowT>0?.48:1)
@@ -55,8 +55,8 @@ export function drawFixedEnemy(c:CanvasRenderingContext2D,e:Enemy,reducedMotion=
       polygon(c,[[x-2,y],[x,y-8-flicker*3],[x+2,y]],'#ffe5a3')
     }
   }
-  if(e.slowT>0){c.strokeStyle='#d5ffff';c.lineWidth=1.4;c.setLineDash([4,5]);c.beginPath();c.ellipse(0,5,r*1.12,r*.35,0,0,Math.PI*2);c.stroke();c.setLineDash([])}
-  if(e.stunT>0)for(let i=0;i<3;i++){const a=i*Math.PI*2/3+(moving?t*4:0),x=Math.cos(a)*r*.65,y=-r*1.85+Math.sin(a)*r*.15;polygon(c,[[x,y-2],[x+2,y],[x,y+2],[x-2,y]],'#fff0a3')}
+  if(e.slowT>0){c.strokeStyle='#b7f2ed';c.lineWidth=1.4;c.beginPath();c.ellipse(0,5,r*1.12,r*.35,0,0,Math.PI*2);c.stroke();for(const side of [-1,1])polygon(c,[[side*r*.8,6],[side*r*1.1,-4],[side*r*1.3,5]],'#a8dfe0a8')}
+  if(e.stunT>0)for(let i=0;i<3;i++){const x=(i-1)*r*.7,y=4;polygon(c,[[x-3,y],[x-5,y-r*.5],[x+1,y-r*(.85+i*.12)],[x+5,y-4]],'#c7f5edaa');stroke(c,[[x+1,y-r*(.85+i*.12)],[x+2,y-3]],'#f0fffa',1)}
   if(e.def.hidden){c.strokeStyle=hidden?'#c9dcff':'#fff0b5';c.lineWidth=1.3;c.setLineDash(hidden?[3,4]:[]);c.beginPath();c.ellipse(0,4,r*.8,r*.27,0,0,Math.PI*2);c.stroke();c.setLineDash([])}
   const barY=-r*(e.def.boss?2.25:id==='reedling'?2.5:id==='shell'?2.05:1.85),barW=Math.max(19,r*1.8)
   if(showBars&&(e.def.boss||e.hp<e.maxHp)){c.fillStyle='#173546';c.fillRect(-barW/2-1,barY-1,barW+2,5);c.fillStyle='#bcf1bb';c.fillRect(-barW/2,barY,barW*Math.max(0,e.hp/e.maxHp),3)}
