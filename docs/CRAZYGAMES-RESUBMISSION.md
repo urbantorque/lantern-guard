@@ -2,6 +2,14 @@
 
 The rejected build received only the publisher's general quality message. No specific cause was supplied. This pass addresses the five weaknesses found in our own review; acceptance and retention still require external evidence.
 
+## Hosted resubmission draft, 20 October 2026
+
+The candidate is uploaded to the [CrazyGames draft](https://developer.crazygames.com/games/0716fe29-1efe-4331-a6c1-561aa089687f). The Strategy listing, controls, tool disclosure, three covers and both MP4 previews are saved. The public developer name is Urban Torque. Basic Launch, local progress saving and desktop-only support are selected. The final approval request has **not** been submitted.
+
+The [hosted QA preview](https://www.crazygames.com/preview/0716fe29-1efe-4331-a6c1-561aa089687f?gameBuildId=bfd20800-7462-4cf0-bbdc-71c637bb2961&qaTool=true&role=developer) loaded the release's script and stylesheet filenames and reported 0.8 MB total size. A paid Spark cleared wave 1 with 25 light and 322 glow. Pause, reload, saved continuation, mute, fullscreen, the Chime placement preview, a normal 150-glow Chime purchase and its full-value undo were observed. See [scoped hosted evidence](../release/crazygames/hosted-qa-validation.json). This is a QA link, not a public player release.
+
+The final form requires confirmation that the game loads and plays in desktop Chrome within 10 seconds without game errors, and that someone other than the developer has played it start to finish. These remain unconfirmed. Ownership/licensing, PEGI 12 suitability and acceptance of the Developer Portal terms also await the owner's confirmation. The verified English, desktop-only and clear-opening checks are selected.
+
 ## Latest quality pass, 20 October 2026
 
 All 40 waves remain one continuous defence. The new preparation tools apply to siege2 campaigns; published siege1 saves keep their existing rules. Tower damage, enemy health, wave composition and earned income are unchanged.
@@ -28,7 +36,7 @@ The review uses the publisher's [gameplay requirements](https://docs.crazygames.
 | Challenge and pacing | Original 12-run matrix retains 8 wins, with all keepers viable on both routes; targeted paid diagnostics below explain the two weak reference builds | Human difficulty curve and retention |
 | Coherent art and presentation | Menus and covers use actual game models; signal priority, quieter rings and hostile health contrast; final boss and compact screenshots checked | Subjective appeal with target players |
 | Comfortable sound | Saved independent levels, gain ducking/restoration, rate limits, motifs and visibility suspension pass automated tests | Listen on speakers/headphones and physical phones |
-| Loading, reliability and maintained content | 0.29 MB ZIP; full regression and both builds pass; production nested-path loading and console checked; English UI retained | Hosted publisher preview and sustained device runs |
+| Loading, reliability and maintained content | 0.30 MB ZIP; full regression and both builds pass; production nested-path loading and scoped hosted gameplay checked; English UI retained | Timed desktop Chrome check and sustained device runs |
 | Platform fit | Single-player campaign remains primary; no custom fullscreen, ads, purchases or cross-promotion; Basic Launch package retains notices | Publisher review of content, originality and final listing |
 
 ## Paid difficulty investigation
@@ -65,10 +73,10 @@ The updated MP4s show the Matriarch encounter at 1920×1080 and 1080×1620. The 
 
 - Observe eight fresh players using `release/crazygames/newcomer-sessions.csv`. Do not coach placement, slowing, the armour counter or the signature choice. Record time to first useful tower, wrong taps, help requests, first loss, wave reached and enjoyment. The sheet remains blank until real sessions occur.
 - Test on physical phones before claiming mobile support. Responsive viewport checks do not establish touch ergonomics, audio reactivation, battery use or sustained hardware performance. Listen to the mix on speakers and headphones. The initial submission can remain desktop-only.
-- Upload the new `dist-crazygames/` contents (or the verified ZIP where accepted), replace covers and both MP4 previews, and use the revised listing. Run the hosted QA preview. Then submit for review; this repository preparation does not submit to the publisher.
+- The uploaded build, covers, MP4 previews and revised listing are saved; scoped hosted QA has passed. Confirm the portal's desktop Chrome and independent start-to-finish playtest declarations. Obtain owner approval of rights, content suitability and portal terms, then submit for review.
 
 ## Suggested reviewer note
 
 Nightward keeps one continuous 40-wave campaign. This candidate adds optional on-board counter placement previews, full-value preparation undo, one free early move, whole-wave loss reports and affordable checkpoint-specific recovery advice. Compact enemy silhouettes and shared boss-state labels improve combat readability. Earned restoration beats now highlight the city rebuilding, with skippable presentation and a muted/reduced-motion-safe resolution cue. The archive is 0.30 MB and makes no external game requests. Published campaigns preserve their original rules.
 
-The release does not claim CrazyGames approval, measured retention, eight-player validation or physical mobile certification. Browser and simulation evidence is scoped in the release reports; human sessions, physical devices, audio listening and this candidate's hosted preview remain separate checks.
+The release does not claim CrazyGames approval, measured retention, eight-player validation or physical mobile certification. Browser, hosted QA and simulation evidence is scoped in the release reports; human sessions, physical devices and audio listening remain separate checks.

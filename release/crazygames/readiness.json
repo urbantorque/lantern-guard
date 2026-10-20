@@ -4,6 +4,7 @@
   "sourceCommit": "678dae7a0d21a27da394a0125fcc42e3de388731",
   "automatedChecks": "passed",
   "browserChecks": "passed",
+  "hostedQa": "passed scoped gameplay checks",
   "campaignWaves": 40,
   "campaignRules": "siege2; siege1 saves preserved",
   "ads": false,
@@ -11,14 +12,14 @@
   "humanPlaytest": "pending",
   "physicalMobileTest": "pending",
   "humanAudioListening": "pending",
-  "publisherSubmission": "prepared; not submitted",
+  "publisherSubmission": "draft; awaiting owner checks and declarations",
   "publisherSubmittedOn": null,
   "previousSubmissionStatus": "rejected",
   "remaining": [
-    "Observe eight newcomer sessions using newcomer-sessions.csv",
-    "Verify intended physical browser/device support",
+    "Observe eight newcomer sessions using newcomer-sessions.csv (design research)",
+    "Verify intended physical browser/device support; current draft is desktop-only",
     "Listen to the mix on speakers and headphones",
-    "Upload this candidate and check the hosted QA preview",
-    "Review and submit this build through the CrazyGames developer portal"
+    "Confirm the required desktop Chrome check and independent start-to-finish playthrough",
+    "Obtain owner confirmation of rights, PEGI 12 suitability and Developer Portal terms before submitting"
   ]
 }

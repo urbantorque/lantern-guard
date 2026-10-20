@@ -1,0 +1,49 @@
+{
+  "checkedOn": "2026-10-20",
+  "environment": "CrazyGames hosted QA preview in the Codex in-app browser",
+  "gameId": "0716fe29-1efe-4331-a6c1-561aa089687f",
+  "gameBuildId": "bfd20800-7462-4cf0-bbdc-71c637bb2961",
+  "zipSha256": "edac99a0f76f8e81b93d37bd93d1c61d90a6cb8fd5b274de2ccda3767b4c5d7d",
+  "sourceCommit": "678dae7a0d21a27da394a0125fcc42e3de388731",
+  "status": "passed",
+  "scope": "Opening gameplay and preparation controls, not a full hosted campaign playthrough.",
+  "hostedAssetNames": ["assets/index-qgoLq_fO.js", "assets/index-CxvLSRr-.css"],
+  "assetVerification": "Hosted DOM script and stylesheet filenames match the validated package. Hosted files were not downloaded or byte-hashed.",
+  "reportedTotalSizeMB": 0.8,
+  "observed": {
+    "gameLoaded": true,
+    "campaignWaveDisplay": "1 / 40",
+    "paidSparkPlacement": {"beforeGlow": 330, "cost": 110, "afterGlow": 220},
+    "automaticWave1Cleared": {"remainingLight": 25, "glow": 322},
+    "contextualChimeTip": true,
+    "pause": true,
+    "reloadRestoredDefence": {"towers": 1, "light": 25, "glow": 322, "wave": 1},
+    "continueSavedDefence": true,
+    "muteControlState": true,
+    "fullscreen": true,
+    "guidedChimePreview": true,
+    "mouseClickPaidChimePlacement": {"beforeGlow": 322, "cost": 150, "afterGlow": 172},
+    "fullValueUndo": {"afterGlow": 322, "remainingTowers": 1}
+  },
+  "console": {
+    "gameErrorsObserved": [],
+    "hostWarningsObserved": [
+      "CrazyGames wrapper TCF iframe cross-origin access error",
+      "Advertising safe-frame cross-origin access error"
+    ],
+    "note": "These messages came from the publisher wrapper and advertising frames. They did not prevent the observed game flows."
+  },
+  "notCertified": [
+    "Loading and playing in the user's desktop Chrome within 10 seconds",
+    "Independent human start-to-finish playthrough",
+    "Physical mobile support",
+    "Human audio listening",
+    "Signed-in cloud progress synchronization"
+  ],
+  "screenshots": [
+    "artifacts/submission/hosted-qa-wave1.png",
+    "artifacts/submission/hosted-qa-fullscreen.png",
+    "artifacts/submission/listing-media-uploaded.png",
+    "artifacts/submission/resubmission-final-declarations.png"
+  ]
+}
