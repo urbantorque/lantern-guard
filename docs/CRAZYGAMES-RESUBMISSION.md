@@ -2,13 +2,13 @@
 
 The rejected build received only the publisher's general quality message. No specific cause was supplied. This pass addresses the five weaknesses found in our own review; acceptance and retention still require external evidence.
 
-## Hosted resubmission draft, 20 October 2026
+## Resubmitted, 20 October 2026
 
-The candidate is uploaded to the [CrazyGames draft](https://developer.crazygames.com/games/0716fe29-1efe-4331-a6c1-561aa089687f). The Strategy listing, controls, tool disclosure, three covers and both MP4 previews are saved. The public developer name is Urban Torque. Basic Launch, local progress saving and desktop-only support are selected. The final approval request has **not** been submitted.
+Nightward has been resubmitted for Basic Launch. The [CrazyGames portal](https://developer.crazygames.com/games/0716fe29-1efe-4331-a6c1-561aa089687f) shows **Awaiting review**, a submission date of 20 October 2026, and build `bfd20800-7462-4cf0-bbdc-71c637bb2961` as **Submitted**. The portal confirms that this build passed QA and is under review. The Strategy listing, controls, tool disclosure, three covers and both MP4 previews are saved. The public developer name is Urban Torque. Local progress saving and desktop-only support are selected. See the [submission receipt](../artifacts/submission/resubmission-awaiting-review.png).
 
 The [hosted QA preview](https://www.crazygames.com/preview/0716fe29-1efe-4331-a6c1-561aa089687f?gameBuildId=bfd20800-7462-4cf0-bbdc-71c637bb2961&qaTool=true&role=developer) loaded the release's script and stylesheet filenames and reported 0.8 MB total size. A paid Spark cleared wave 1 with 25 light and 322 glow. Pause, reload, saved continuation, mute, fullscreen, the Chime placement preview, a normal 150-glow Chime purchase and its full-value undo were observed. See [scoped hosted evidence](../release/crazygames/hosted-qa-validation.json). This is a QA link, not a public player release.
 
-The final form requires confirmation that the game loads and plays in desktop Chrome within 10 seconds without game errors, and that someone other than the developer has played it start to finish. These remain unconfirmed. Ownership/licensing, PEGI 12 suitability and acceptance of the Developer Portal terms also await the owner's confirmation. The verified English, desktop-only and clear-opening checks are selected.
+The owner confirmed that the game loads and plays in desktop Chrome within 10 seconds without game errors, and that someone other than the developer has played it start to finish. The owner then authorized completion after reviewing the originality/ownership, PEGI 12 and Developer Portal terms declarations. All required checks were selected and the submission was completed. These owner confirmations are separate from the scoped automated and browser evidence.
 
 ## Latest quality pass, 20 October 2026
 
@@ -73,7 +73,7 @@ The updated MP4s show the Matriarch encounter at 1920×1080 and 1080×1620. The 
 
 - Observe eight fresh players using `release/crazygames/newcomer-sessions.csv`. Do not coach placement, slowing, the armour counter or the signature choice. Record time to first useful tower, wrong taps, help requests, first loss, wave reached and enjoyment. The sheet remains blank until real sessions occur.
 - Test on physical phones before claiming mobile support. Responsive viewport checks do not establish touch ergonomics, audio reactivation, battery use or sustained hardware performance. Listen to the mix on speakers and headphones. The initial submission can remain desktop-only.
-- The uploaded build, covers, MP4 previews and revised listing are saved; scoped hosted QA has passed. Confirm the portal's desktop Chrome and independent start-to-finish playtest declarations. Obtain owner approval of rights, content suitability and portal terms, then submit for review.
+- The build, covers, MP4 previews and revised listing are submitted. The owner confirmed the required desktop Chrome and independent playthrough checks and authorized the final declarations. Await the publisher's review; no further submission action is required now.
 
 ## Suggested reviewer note
 

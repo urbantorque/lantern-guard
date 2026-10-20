@@ -6,6 +6,8 @@ const out='release/crazygames',read=p=>JSON.parse(readFileSync(p,'utf8')),hash=p
 const manifest=read(`${out}/build-manifest.json`),browser=read('artifacts/crazygames/resubmission-browser.json'),media=read('artifacts/crazygames/media-report.json')
 const publisher=existsSync(`${out}/publisher-status.json`)?read(`${out}/publisher-status.json`):null
 const submittedBuild=publisher?.zipSha256===manifest.zipSha256
+const submittedToPortal=submittedBuild&&Boolean(publisher.submittedOn)
+const ownerTests=submittedBuild?publisher.ownerConfirmedTesting:null
 const hosted=existsSync(`${out}/hosted-qa-validation.json`)?read(`${out}/hosted-qa-validation.json`):null
 const hostedChecked=hosted?.zipSha256===manifest.zipSha256&&hosted?.sourceCommit===manifest.sourceCommit&&hosted?.status==='passed'
 assert.equal(manifest.zipSha256,hash(`${out}/nightward-basic.zip`))
@@ -30,17 +32,25 @@ writeFileSync(`${out}/readiness.json`,JSON.stringify({
   edition:'CrazyGames Basic Launch resubmission',zipSha256:manifest.zipSha256,sourceCommit:manifest.sourceCommit,
   automatedChecks:'passed',browserChecks:'passed',hostedQa:hostedChecked?'passed scoped gameplay checks':'pending',
   campaignWaves:40,campaignRules:'siege2; siege1 saves preserved',ads:false,sdk:false,
-  humanPlaytest:'pending',physicalMobileTest:'pending',humanAudioListening:'pending',
+  humanPlaytest:ownerTests?.independentStartToFinishPlaythrough?'confirmed by owner':'pending',
+  desktopChromeCheck:ownerTests?.desktopChromeWithin10SecondsWithoutGameErrors?'confirmed by owner':'pending',
+  newcomerStudy:'pending',physicalMobileTest:'pending',humanAudioListening:'pending',
   publisherSubmission:submittedBuild?publisher.status:'prepared; not submitted',
   publisherSubmittedOn:submittedBuild?publisher.submittedOn:null,
   previousSubmissionStatus:publisher?.previousSubmission?.status??publisher?.status??'unknown',
   remaining:[
     'Observe eight newcomer sessions using newcomer-sessions.csv (design research)',
-    'Verify intended physical browser/device support; current draft is desktop-only',
+    'Verify physical mobile support before expanding the current desktop-only release',
     'Listen to the mix on speakers and headphones',
     ...(hostedChecked?[]:['Upload this candidate and check the hosted QA preview']),
-    'Confirm the required desktop Chrome check and independent start-to-finish playthrough',
-    'Obtain owner confirmation of rights, PEGI 12 suitability and Developer Portal terms before submitting'
+    ...(submittedToPortal
+      ? ['Await CrazyGames review; no further submission action is required now']
+      : [
+        ...(!ownerTests?.desktopChromeWithin10SecondsWithoutGameErrors||!ownerTests?.independentStartToFinishPlaythrough
+          ? ['Confirm the required desktop Chrome check and independent start-to-finish playthrough'] : []),
+        ...(publisher?.ownerDeclarationsAccepted ? [] : ['Obtain owner confirmation of rights, PEGI 12 suitability and Developer Portal terms']),
+        'Submit the prepared build through the CrazyGames developer portal'
+      ])
   ]
 },null,2)+'\n')
 console.log('PASS resubmission pack: exact ZIP and source, twelve viewport layouts, observed UI flows, three covers, two silent previews and unfilled human playtest sheet.')

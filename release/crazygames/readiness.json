@@ -9,17 +9,18 @@
   "campaignRules": "siege2; siege1 saves preserved",
   "ads": false,
   "sdk": false,
-  "humanPlaytest": "pending",
+  "humanPlaytest": "confirmed by owner",
+  "desktopChromeCheck": "confirmed by owner",
+  "newcomerStudy": "pending",
   "physicalMobileTest": "pending",
   "humanAudioListening": "pending",
-  "publisherSubmission": "draft; awaiting owner checks and declarations",
-  "publisherSubmittedOn": null,
+  "publisherSubmission": "awaiting review",
+  "publisherSubmittedOn": "2026-10-20",
   "previousSubmissionStatus": "rejected",
   "remaining": [
     "Observe eight newcomer sessions using newcomer-sessions.csv (design research)",
-    "Verify intended physical browser/device support; current draft is desktop-only",
+    "Verify physical mobile support before expanding the current desktop-only release",
     "Listen to the mix on speakers and headphones",
-    "Confirm the required desktop Chrome check and independent start-to-finish playthrough",
-    "Obtain owner confirmation of rights, PEGI 12 suitability and Developer Portal terms before submitting"
+    "Await CrazyGames review; no further submission action is required now"
   ]
 }
